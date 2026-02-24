@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FILEY</title>
+    <link rel="stylesheet" href="test.css" />
+</head>
+<body>
+
+    <nav id="sideMenu">
+        <button id="closeBtn" class="close">✖</button>
+
+        <ul class="menu-ligne-text">
+            <a href="">Accueil</a>
+            <a href="">Clients</a>
+            <a href="">Gestion de la toile</a>
+        </ul>
+    </nav>
+
+    <main id="content">
+        <header class="box-title">
+            <button id="openBtn">☰</button>
+            <h1 class="title">FILEY</h1>
+        </header>
+
+        <div class="clien">
+            <input type="text" class="search" placeholder="Search for a client" id="searchInput">
+            <div id="clientsContainer" class="clients-grid"></div>
+        </div>
+    </main>
+
+    <script src="test.js"></script>
+</body>
+</html>
