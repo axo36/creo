@@ -354,7 +354,7 @@ body.menu-open #openBtn {
     
 }
 
-@media (max-width: 700px) {
+@media (max-width: 768px) {
     #sideMenu {
     position: fixed;
     top: 0;
