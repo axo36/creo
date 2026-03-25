@@ -138,7 +138,7 @@ h1.title {
 }
 
 body.menu-open {
-    margin-left: 18%;
+    margin-left: clamp(25%, 7vw, 18%);
 }
 
 body.menu-open #openBtn {
