@@ -166,7 +166,7 @@ function desktopTemplate(client) {
             </div>
 
             <div class="client-info">
-                <div class="client-info-line last-pc"></div>
+                <div class="client-info-line Last-pc"></div>
                 <div class="client-info-line date"></div>
             </div>
             
@@ -182,17 +182,23 @@ function desktopTemplate(client) {
 // ================================================
 function updateClients(clients) {
     clients.forEach(client => {
-        const card = document.getElementById(`client-${clef-toile.code}`);
+        const card = document.getElementById(`client-${client.code}`);
         if (!card) return;
 
-        card.querySelector(".last-pc").textContent = `Last-pc: ${clef-toile.last-pc || "N/A"}`;
-        card.querySelector(".code-pc").textContent = `Code-pc: ${clef-toile.code-pc || "N/A"}`;
-        card.querySelector(".date").textContent = `Date: ${clef-toile.date || "N/A"}`;
-        card.querySelector(".name").textContent = `Name: ${clef-toile.name || "N/A"}`;
-        card.querySelector(".surname").textContent = `Surname: ${clef-toile.surname || "N/A"}`;
+        const lastPc = card.querySelector(".last-pc");
+        const codePc = card.querySelector(".code-pc");
+        const date = card.querySelector(".date");
+        const name = card.querySelector(".name");
+        const surname = card.querySelector(".surname");
 
+        if (lastPc) lastPc.textContent = `Last-pc: ${client["last-pc"] || "N/A"}`;
+        if (codePc) codePc.textContent = `Code-pc: ${client["code-pc"] || "N/A"}`;
+        if (date) date.textContent = `Date: ${client.date || "N/A"}`;
+        if (name) name.textContent = `Name: ${client.name || "N/A"}`;
+        if (surname) surname.textContent = `Surname: ${client.surname || "N/A"}`;
     });
 }
+
 
 // ================================================
 // RECHERCHE
