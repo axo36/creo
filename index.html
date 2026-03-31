@@ -79,10 +79,37 @@
     transition: 0.2s;
   }
   .social button:hover { background: rgba(255,255,255,0.15); }
+
+  /* Overlay + mini fenêtre */
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+  }
+  #miniWindow {
+    width: 360px;
+    padding: 25px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+    text-align: center;
+    box-shadow: 0 0 25px rgba(0,140,255,0.3);
+    animation: pop 0.25s ease;
+  }
+  @keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
 </style>
 </head>
 
 <body>
+
 <div class="card">
   <h1>Connexion</h1>
   <p>Accès réservé</p>
@@ -103,6 +130,14 @@
   </div>
 </div>
 
+<!-- Mini fenêtre -->
+<div id="overlay">
+  <div id="miniWindow">
+    <h2>Connexion en cours…</h2>
+    <p>Veuillez terminer la connexion dans la fenêtre Google/GitHub.</p>
+  </div>
+</div>
+
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -115,6 +150,11 @@ const supabase = createClient(
 supabase.auth.getSession().then(({ data }) => {
   if (data.session) window.location.href = "client.html";
 });
+
+// Affiche la mini fenêtre
+function showMini() {
+  document.getElementById("overlay").style.display = "flex";
+}
 
 // Connexion email
 document.getElementById("loginBtn").onclick = async () => {
@@ -133,6 +173,7 @@ document.getElementById("loginBtn").onclick = async () => {
 
 // Google
 document.getElementById("googleBtn").onclick = async () => {
+  showMini();
   await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: window.location.origin + "/client.html" }
@@ -141,6 +182,7 @@ document.getElementById("googleBtn").onclick = async () => {
 
 // GitHub
 document.getElementById("githubBtn").onclick = async () => {
+  showMini();
   await supabase.auth.signInWithOAuth({
     provider: "github",
     options: { redirectTo: window.location.origin + "/client.html" }
