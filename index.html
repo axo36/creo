@@ -151,11 +151,6 @@ supabase.auth.getSession().then(({ data }) => {
   if (data.session) window.location.href = "client.html";
 });
 
-// Affiche la mini fenêtre
-function showMini() {
-  document.getElementById("overlay").style.display = "flex";
-}
-
 // Connexion email
 document.getElementById("loginBtn").onclick = async () => {
   const email = document.getElementById("email").value;
@@ -173,22 +168,25 @@ document.getElementById("loginBtn").onclick = async () => {
 
 // Google
 document.getElementById("googleBtn").onclick = async () => {
-  showMini();
   await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: window.location.origin + "/client.html" }
+    options: {
+      redirectTo: window.location.origin + "/client.html"
+    }
   });
 };
 
 // GitHub
 document.getElementById("githubBtn").onclick = async () => {
-  showMini();
   await supabase.auth.signInWithOAuth({
     provider: "github",
-    options: { redirectTo: window.location.origin + "/client.html" }
+    options: {
+      redirectTo: window.location.origin + "/client.html"
+    }
   });
 };
 </script>
+
 
 </body>
 </html>
