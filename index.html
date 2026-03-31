@@ -84,16 +84,13 @@
     transition: 0.2s;
   }
   .social button:hover { background: rgba(255,255,255,0.15); }
-  .bottom { margin-top: 15px; text-align: center; }
-  .bottom a { color: #0a9aff; text-decoration: none; }
-  .bottom a:hover { text-decoration: underline; }
 </style>
 </head>
 
 <body>
 <div class="card">
   <h1>Connexion</h1>
-  <p>Accède à ton espace sécurisé</p>
+  <p>Accès réservé</p>
 
   <label>Email</label>
   <input type="email" id="email" placeholder="exemple@mail.com">
@@ -106,31 +103,24 @@
   <div class="divider">ou</div>
 
   <div class="social">
-    <button onclick="googleLogin()">Continuer avec Google</button>
-    <button onclick="githubLogin()">Continuer avec GitHub</button>
-  </div>
-
-  <div class="bottom">
-    Pas de compte ?
-    <a href="#" onclick="createAccount()">Créer un compte</a>
+    <button onclick="googleLogin()">Google</button>
+    <button onclick="githubLogin()">GitHub</button>
   </div>
 </div>
 
 <script>
+/* CONFIG SUPABASE */
 const supabaseClient = supabase.createClient(
-  "https://tjiqssgrxvxnjqhewtrt.supabase.co", // ← remplace
-  "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp"                    // ← remplace
+  "https://TON-PROJET.supabase.co",  // ← remplace
+  "TON-ANON-KEY"                     // ← remplace
 );
 
-function goToClient() {
-  window.location.href = "client.html";
-}
-
-// Si déjà connecté → on saute la page login
+/* SI DÉJÀ CONNECTÉ → REDIRECTION */
 supabaseClient.auth.getSession().then(({ data }) => {
-  if (data.session) goToClient();
+  if (data.session) window.location.href = "client.html";
 });
 
+/* CONNEXION EMAIL */
 async function login() {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
@@ -141,41 +131,27 @@ async function login() {
   });
 
   if (error) {
-    alert("Erreur : " + error.message);
+    alert("Accès refusé");
     return;
   }
-  goToClient();
+
+  window.location.href = "client.html";
 }
 
-async function createAccount() {
-  const email = prompt("Ton email :");
-  const pass = prompt("Ton mot de passe :");
-
-  if (!email || !pass) return;
-
-  const { error } = await supabaseClient.auth.signUp({ email, password: pass });
-
-  if (error) {
-    alert("Erreur : " + error.message);
-    return;
-  }
-  goToClient();
-}
-
+/* GOOGLE */
 async function googleLogin() {
-  const { error } = await supabaseClient.auth.signInWithOAuth({
+  await supabaseClient.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: window.location.origin + "/client.html" }
   });
-  if (error) alert(error.message);
 }
 
+/* GITHUB */
 async function githubLogin() {
-  const { error } = await supabaseClient.auth.signInWithOAuth({
+  await supabaseClient.auth.signInWithOAuth({
     provider: "github",
     options: { redirectTo: window.location.origin + "/client.html" }
   });
-  if (error) alert(error.message);
 }
 </script>
 </body>
