@@ -243,20 +243,6 @@ body.menu-open #openBtn {
     white-space: nowrap;
 }
 
-/* =========================================================
-   SCREENSHOT
-========================================================= */
-.client-screenshot {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 5px;
-    border: 1px solid #00d4ff;
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    margin-top: 1rem;
-}
 
 /* =========================================================
    BADGES
@@ -270,42 +256,6 @@ body.menu-open #openBtn {
     font-size: 0.85em;
     display: inline-block;
     margin-top: 8px;
-}
-
-/* =========================================================
-   USB – STYLE ÉLÉGANT, MINIMALISTE, INTÉGRÉ
-========================================================= */
-
-.usb-list {
-    margin-top: 8px;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(0, 212, 255, 0.25);
-}
-
-.usb-title {
-    font-size: 0.85em;
-    color: #00a8cc;
-    margin-bottom: 4px;
-}
-
-.usb-item {
-    font-size: 0.82em;
-    color: #00d4ff; /* même couleur que ton thème */
-    margin-bottom: 3px;
-
-    /* Empêche le débordement */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    /* S’adapte automatiquement à la largeur de la carte */
-    max-width: 100%;
-    display: block;
-    opacity: 0.9;
-}
-
-.usb-item:hover {
-    opacity: 1;
 }
 
 
@@ -368,4 +318,17 @@ body.menu-open #openBtn {
     transition: 0.3s ease;
     transform: translateX(-100%);
     z-index: 900;
+}
+
+.client-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* 📱 Sur téléphone : bloc droit en dessous */
+@media (max-width: 480px) {
+    .client-row {
+        flex-direction: column;
+    }
 }
