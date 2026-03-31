@@ -2,19 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Connexion - Tech Neo</title>
+<title>Connexion - NeoTech</title>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Segoe UI", sans-serif;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
 
     body {
         height: 100vh;
-        background: #0a0f1a;
+        background: #050a12;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -22,7 +20,6 @@
         color: white;
     }
 
-    /* Glow bleu néon en bas */
     body::after {
         content: "";
         position: absolute;
@@ -44,33 +41,12 @@
         border-radius: 16px;
         backdrop-filter: blur(12px);
         box-shadow: 0 0 25px rgba(0,140,255,0.2);
-        animation: fadeIn 0.6s ease;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    h1 { text-align: center; margin-bottom: 10px; font-size: 1.8rem; }
+    p { text-align: center; margin-bottom: 25px; color: #9bb3d1; }
 
-    h1 {
-        text-align: center;
-        margin-bottom: 10px;
-        font-size: 1.8rem;
-        font-weight: 600;
-    }
-
-    p {
-        text-align: center;
-        margin-bottom: 25px;
-        color: #9bb3d1;
-        font-size: 0.9rem;
-    }
-
-    label {
-        font-size: 0.9rem;
-        margin-bottom: 6px;
-        display: block;
-    }
+    label { font-size: 0.9rem; margin-bottom: 6px; display: block; }
 
     input {
         width: 100%;
@@ -107,18 +83,9 @@
         box-shadow: 0 0 15px #008cff;
     }
 
-    .divider {
-        text-align: center;
-        margin: 18px 0;
-        color: #7a8aa6;
-        font-size: 0.85rem;
-    }
+    .divider { text-align: center; margin: 18px 0; color: #7a8aa6; }
 
-    .social {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
+    .social { display: flex; flex-direction: column; gap: 10px; }
 
     .social button {
         padding: 10px;
@@ -130,24 +97,11 @@
         transition: 0.2s;
     }
 
-    .social button:hover {
-        background: rgba(255,255,255,0.15);
-    }
+    .social button:hover { background: rgba(255,255,255,0.15); }
 
-    .bottom {
-        margin-top: 15px;
-        text-align: center;
-        font-size: 0.9rem;
-    }
-
-    .bottom a {
-        color: #0a9aff;
-        text-decoration: none;
-    }
-
-    .bottom a:hover {
-        text-decoration: underline;
-    }
+    .bottom { margin-top: 15px; text-align: center; }
+    .bottom a { color: #0a9aff; text-decoration: none; }
+    .bottom a:hover { text-decoration: underline; }
 </style>
 </head>
 
@@ -179,28 +133,83 @@
 </div>
 
 <script>
-function login() {
+/* ------------------------------
+   CONFIG SUPABASE
+--------------------------------*/
+const supabase = supabase.createClient(
+    "https://TON-PROJET.supabase.co",   // ← Mets ton URL
+    "TON-ANON-KEY"                      // ← Mets ta clé anon
+);
+
+/* ------------------------------
+   REDIRECTION
+--------------------------------*/
+function goToClient() {
+    window.location.href = "client.html";
+}
+
+/* ------------------------------
+   CONNEXION EMAIL + MOT DE PASSE
+--------------------------------*/
+async function login() {
     const email = document.getElementById("email").value;
     const pass = document.getElementById("password").value;
 
-    if (!email || !pass) {
-        alert("Veuillez remplir tous les champs");
+    const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: pass
+    });
+
+    if (error) {
+        alert("Erreur : " + error.message);
         return;
     }
 
-    alert("Connexion (démo) : " + email);
+    goToClient();
 }
 
-function googleLogin() {
-    alert("Redirection Google (démo)");
+/* ------------------------------
+   CRÉATION DE COMPTE
+--------------------------------*/
+async function createAccount() {
+    const email = prompt("Ton email :");
+    const pass = prompt("Ton mot de passe :");
+
+    const { error } = await supabase.auth.signUp({
+        email: email,
+        password: pass
+    });
+
+    if (error) {
+        alert("Erreur : " + error.message);
+        return;
+    }
+
+    goToClient();
 }
 
-function githubLogin() {
-    alert("Redirection GitHub (démo)");
+/* ------------------------------
+   GOOGLE LOGIN
+--------------------------------*/
+async function googleLogin() {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin + "/client.html" }
+    });
+
+    if (error) alert(error.message);
 }
 
-function createAccount() {
-    alert("Page création de compte (démo)");
+/* ------------------------------
+   GITHUB LOGIN
+--------------------------------*/
+async function githubLogin() {
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: { redirectTo: window.location.origin + "/client.html" }
+    });
+
+    if (error) alert(error.message);
 }
 </script>
 
