@@ -2,9 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Connexion - NeoTech</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>Connexion - FILEY</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
@@ -52,10 +51,6 @@
     outline: none;
     font-size: 1rem;
   }
-  input:focus {
-    box-shadow: 0 0 10px rgba(0,140,255,0.6);
-    border: 1px solid #008cff;
-  }
   .btn {
     width: 100%;
     padding: 12px;
@@ -98,61 +93,60 @@
   <label>Mot de passe</label>
   <input type="password" id="password" placeholder="••••••••">
 
-  <button class="btn" onclick="login()">Se connecter</button>
+  <button class="btn" id="loginBtn">Se connecter</button>
 
   <div class="divider">ou</div>
 
   <div class="social">
-    <button onclick="googleLogin()">Google</button>
-    <button onclick="githubLogin()">GitHub</button>
+    <button id="googleBtn">Google</button>
+    <button id="githubBtn">GitHub</button>
   </div>
 </div>
 
-<script>
-/* CONFIG SUPABASE */
-const supabaseClient = supabase.createClient(
-  "https://tjiqssgrxvxnjqhewtrt.supabase.co",  // ← remplace
-  "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp"                     // ← remplace
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+const supabase = createClient(
+  "https://TON-PROJET.supabase.co",
+  "TON-ANON-KEY"
 );
 
-/* SI DÉJÀ CONNECTÉ → REDIRECTION */
-supabaseClient.auth.getSession().then(({ data }) => {
+// Si déjà connecté → accès direct
+supabase.auth.getSession().then(({ data }) => {
   if (data.session) window.location.href = "client.html";
 });
 
-/* CONNEXION EMAIL */
-async function login() {
+// Connexion email
+document.getElementById("loginBtn").onclick = async () => {
   const email = document.getElementById("email").value;
   const pass = document.getElementById("password").value;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email,
     password: pass
   });
 
-  if (error) {
-    alert("Accès refusé");
-    return;
-  }
+  if (error) return alert("Accès refusé");
 
   window.location.href = "client.html";
-}
+};
 
-/* GOOGLE */
-async function googleLogin() {
-  await supabaseClient.auth.signInWithOAuth({
+// Google
+document.getElementById("googleBtn").onclick = async () => {
+  await supabase.auth.signInWithOAuth({
     provider: "google",
     options: { redirectTo: window.location.origin + "/client.html" }
   });
-}
+};
 
-/* GITHUB */
-async function githubLogin() {
-  await supabaseClient.auth.signInWithOAuth({
+// GitHub
+document.getElementById("githubBtn").onclick = async () => {
+  await supabase.auth.signInWithOAuth({
     provider: "github",
     options: { redirectTo: window.location.origin + "/client.html" }
   });
-}
+};
 </script>
+
 </body>
 </html>
