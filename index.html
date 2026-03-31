@@ -4,214 +4,179 @@
 <meta charset="UTF-8">
 <title>Connexion - NeoTech</title>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
-
-    body {
-        height: 100vh;
-        background: #050a12;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        color: white;
-    }
-
-    body::after {
-        content: "";
-        position: absolute;
-        bottom: -150px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 1200px;
-        height: 400px;
-        background: radial-gradient(circle, rgba(0,140,255,0.8), transparent 70%);
-        filter: blur(80px);
-        z-index: -1;
-    }
-
-    .card {
-        width: 380px;
-        padding: 32px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 16px;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 0 25px rgba(0,140,255,0.2);
-    }
-
-    h1 { text-align: center; margin-bottom: 10px; font-size: 1.8rem; }
-    p { text-align: center; margin-bottom: 25px; color: #9bb3d1; }
-
-    label { font-size: 0.9rem; margin-bottom: 6px; display: block; }
-
-    input {
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        border: none;
-        margin-bottom: 18px;
-        background: rgba(255,255,255,0.1);
-        color: white;
-        outline: none;
-        font-size: 1rem;
-    }
-
-    input:focus {
-        box-shadow: 0 0 10px rgba(0,140,255,0.6);
-        border: 1px solid #008cff;
-    }
-
-    .btn {
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        border: none;
-        background: #008cff;
-        color: white;
-        font-size: 1rem;
-        cursor: pointer;
-        margin-top: 5px;
-        transition: 0.2s;
-    }
-
-    .btn:hover {
-        background: #0a9aff;
-        box-shadow: 0 0 15px #008cff;
-    }
-
-    .divider { text-align: center; margin: 18px 0; color: #7a8aa6; }
-
-    .social { display: flex; flex-direction: column; gap: 10px; }
-
-    .social button {
-        padding: 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: rgba(255,255,255,0.08);
-        color: white;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .social button:hover { background: rgba(255,255,255,0.15); }
-
-    .bottom { margin-top: 15px; text-align: center; }
-    .bottom a { color: #0a9aff; text-decoration: none; }
-    .bottom a:hover { text-decoration: underline; }
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+  body {
+    height: 100vh;
+    background: #050a12;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: white;
+  }
+  body::after {
+    content: "";
+    position: absolute;
+    bottom: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1200px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,140,255,0.8), transparent 70%);
+    filter: blur(80px);
+    z-index: -1;
+  }
+  .card {
+    width: 380px;
+    padding: 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 25px rgba(0,140,255,0.2);
+  }
+  h1 { text-align: center; margin-bottom: 10px; font-size: 1.8rem; }
+  p { text-align: center; margin-bottom: 25px; color: #9bb3d1; }
+  label { font-size: 0.9rem; margin-bottom: 6px; display: block; }
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin-bottom: 18px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    outline: none;
+    font-size: 1rem;
+  }
+  input:focus {
+    box-shadow: 0 0 10px rgba(0,140,255,0.6);
+    border: 1px solid #008cff;
+  }
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: #008cff;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 5px;
+    transition: 0.2s;
+  }
+  .btn:hover {
+    background: #0a9aff;
+    box-shadow: 0 0 15px #008cff;
+  }
+  .divider { text-align: center; margin: 18px 0; color: #7a8aa6; }
+  .social { display: flex; flex-direction: column; gap: 10px; }
+  .social button {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .social button:hover { background: rgba(255,255,255,0.15); }
+  .bottom { margin-top: 15px; text-align: center; }
+  .bottom a { color: #0a9aff; text-decoration: none; }
+  .bottom a:hover { text-decoration: underline; }
 </style>
 </head>
 
 <body>
-
 <div class="card">
-    <h1>Connexion</h1>
-    <p>Accède à ton espace sécurisé</p>
+  <h1>Connexion</h1>
+  <p>Accède à ton espace sécurisé</p>
 
-    <label>Email</label>
-    <input type="email" id="email" placeholder="exemple@mail.com">
+  <label>Email</label>
+  <input type="email" id="email" placeholder="exemple@mail.com">
 
-    <label>Mot de passe</label>
-    <input type="password" id="password" placeholder="••••••••">
+  <label>Mot de passe</label>
+  <input type="password" id="password" placeholder="••••••••">
 
-    <button class="btn" onclick="login()">Se connecter</button>
+  <button class="btn" onclick="login()">Se connecter</button>
 
-    <div class="divider">ou</div>
+  <div class="divider">ou</div>
 
-    <div class="social">
-        <button onclick="googleLogin()">Continuer avec Google</button>
-        <button onclick="githubLogin()">Continuer avec GitHub</button>
-    </div>
+  <div class="social">
+    <button onclick="googleLogin()">Continuer avec Google</button>
+    <button onclick="githubLogin()">Continuer avec GitHub</button>
+  </div>
 
-    <div class="bottom">
-        Pas de compte ?
-        <a href="#" onclick="createAccount()">Créer un compte</a>
-    </div>
+  <div class="bottom">
+    Pas de compte ?
+    <a href="#" onclick="createAccount()">Créer un compte</a>
+  </div>
 </div>
 
 <script>
-/* ------------------------------
-   CONFIG SUPABASE
---------------------------------*/
-const supabase = supabase.createClient(
-    "https://TON-PROJET.supabase.co",   // ← Mets ton URL
-    "TON-ANON-KEY"                      // ← Mets ta clé anon
+const supabaseClient = supabase.createClient(
+  "https://TON-PROJET.supabase.co", // ← remplace
+  "TON-ANON-KEY"                    // ← remplace
 );
 
-/* ------------------------------
-   REDIRECTION
---------------------------------*/
 function goToClient() {
-    window.location.href = "client.html";
+  window.location.href = "client.html";
 }
 
-/* ------------------------------
-   CONNEXION EMAIL + MOT DE PASSE
---------------------------------*/
+// Si déjà connecté → on saute la page login
+supabaseClient.auth.getSession().then(({ data }) => {
+  if (data.session) goToClient();
+});
+
 async function login() {
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("password").value;
+  const email = document.getElementById("email").value;
+  const pass = document.getElementById("password").value;
 
-    const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: pass
-    });
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password: pass
+  });
 
-    if (error) {
-        alert("Erreur : " + error.message);
-        return;
-    }
-
-    goToClient();
+  if (error) {
+    alert("Erreur : " + error.message);
+    return;
+  }
+  goToClient();
 }
 
-/* ------------------------------
-   CRÉATION DE COMPTE
---------------------------------*/
 async function createAccount() {
-    const email = prompt("Ton email :");
-    const pass = prompt("Ton mot de passe :");
+  const email = prompt("Ton email :");
+  const pass = prompt("Ton mot de passe :");
 
-    const { error } = await supabase.auth.signUp({
-        email: email,
-        password: pass
-    });
+  if (!email || !pass) return;
 
-    if (error) {
-        alert("Erreur : " + error.message);
-        return;
-    }
+  const { error } = await supabaseClient.auth.signUp({ email, password: pass });
 
-    goToClient();
+  if (error) {
+    alert("Erreur : " + error.message);
+    return;
+  }
+  goToClient();
 }
 
-/* ------------------------------
-   GOOGLE LOGIN
---------------------------------*/
 async function googleLogin() {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: window.location.origin + "/client.html" }
-    });
-
-    if (error) alert(error.message);
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: window.location.origin + "/client.html" }
+  });
+  if (error) alert(error.message);
 }
 
-/* ------------------------------
-   GITHUB LOGIN
---------------------------------*/
 async function githubLogin() {
-    const { error } = await supabase.auth.signInWithOAuth({
-        provider: "github",
-        options: { redirectTo: window.location.origin + "/client.html" }
-    });
-
-    if (error) alert(error.message);
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: "github",
+    options: { redirectTo: window.location.origin + "/client.html" }
+  });
+  if (error) alert(error.message);
 }
 </script>
-
 </body>
 </html>
