@@ -79,32 +79,6 @@
     transition: 0.2s;
   }
   .social button:hover { background: rgba(255,255,255,0.15); }
-
-  /* Overlay + mini fenêtre */
-  #overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 50;
-  }
-  #miniWindow {
-    width: 360px;
-    padding: 25px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.2);
-    text-align: center;
-    box-shadow: 0 0 25px rgba(0,140,255,0.3);
-    animation: pop 0.25s ease;
-  }
-  @keyframes pop {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
 </style>
 </head>
 
@@ -130,14 +104,6 @@
   </div>
 </div>
 
-<!-- Mini fenêtre -->
-<div id="overlay">
-  <div id="miniWindow">
-    <h2>Connexion en cours…</h2>
-    <p>Veuillez terminer la connexion dans la fenêtre Google/GitHub.</p>
-  </div>
-</div>
-
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
@@ -151,17 +117,25 @@ supabase.auth.getSession().then(({ data }) => {
   if (data.session) window.location.href = "client.html";
 });
 
-// Connexion email
+// Connexion email/password
 document.getElementById("loginBtn").onclick = async () => {
-  const email = document.getElementById("email").value;
-  const pass = document.getElementById("password").value;
+  const emailValue = document.getElementById("email").value.trim();
+  const passValue = document.getElementById("password").value.trim();
+
+  if (!emailValue || !passValue) {
+    alert("Veuillez remplir tous les champs.");
+    return;
+  }
 
   const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password: pass
+    email: emailValue,
+    password: passValue
   });
 
-  if (error) return alert("Accès refusé");
+  if (error) {
+    alert("Accès refusé");
+    return;
+  }
 
   window.location.href = "client.html";
 };
@@ -186,7 +160,6 @@ document.getElementById("githubBtn").onclick = async () => {
   });
 };
 </script>
-
 
 </body>
 </html>
