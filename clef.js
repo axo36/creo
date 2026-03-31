@@ -38,18 +38,19 @@ document.addEventListener("click", (e) => {
 });
 
 // ================================================
-// CLIENTS
+// SUPABASE
 // ================================================
 
 const SUPABASE_URL = "https://tjiqssgrxvxnjqhewtrt.supabase.co";
 const SUPABASE_KEY = "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp";
 
 let allClients = [];
-let currentMode = null; // "mobile" ou "desktop"
+let currentMode = null;
 
 // ================================================
 // MODE RESPONSIVE GLOBAL
 // ================================================
+
 function detectMode() {
     return window.innerWidth > 400 ? "desktop" : "mobile";
 }
@@ -59,15 +60,92 @@ function updateDisplayMode() {
 
     if (newMode !== currentMode) {
         currentMode = newMode;
-        renderClients(allClients); // 🔥 recrée UNIQUEMENT si le mode change
+        renderClients(allClients);
     }
 }
 
 window.addEventListener("resize", updateDisplayMode);
 
 // ================================================
-// CHARGEMENT DES CLIENTS
+// TEMPLATE UNIQUE (gauche + droite)
 // ================================================
+
+function clientTemplate(client) {
+    return `
+        <div class="client-row">
+
+            <div class="client-left">
+                <div class="name title"></div>
+                <div class="code subtitle"></div>
+                <div class="date"></div>
+            </div>
+
+            <div class="client-right">
+                <div class="code-pc"></div>
+                <div class="pc-text"></div>
+            </div>
+
+        </div>
+    `;
+}
+
+// ================================================
+// RENDER (création des cartes)
+// ================================================
+
+function renderClients(clients) {
+    const container = document.getElementById("clientsContainer");
+    container.innerHTML = "";
+
+    clients.forEach(client => {
+        const card = document.createElement("div");
+        card.className = "client-card";
+        card.id = `client-${client.code}`;
+
+        card.innerHTML = clientTemplate(client);
+
+        container.appendChild(card);
+    });
+
+    updateClients(clients);
+}
+
+// ================================================
+// UPDATE (mise à jour sans recréer)
+// ================================================
+
+function updateClients(clients) {
+    clients.forEach(client => {
+        const card = document.getElementById(`client-${client.code}`);
+        if (!card) return;
+
+        // --- BLOC GAUCHE ---
+        const name = card.querySelector(".name");
+        const code = card.querySelector(".code");
+        const date = card.querySelector(".date");
+
+        if (name) name.textContent = client.name || "N/A";
+        if (code) code.textContent = client.code || "N/A";
+        if (date) date.textContent = client.date || "N/A";
+
+        // --- BLOC DROIT ---
+        const codePc = card.querySelector(".code-pc");
+        const pcText = card.querySelector(".pc-text");
+
+        if (codePc) codePc.textContent = client["code-pc"] || "N/A";
+
+        if (pcText) {
+            let text = client.text || "";
+            text = text.split("|||").join("\n"); // coupe en lignes
+            pcText.textContent = text;
+        }
+    });
+}
+
+// ================================================
+// CHARGEMENT DES CLIENTS (clef-toile uniquement)
+// ================================================
+
 async function loadClients() {
     try {
         const clientsUrl = `${SUPABASE_URL}/rest/v1/clef-toile?select=*&order=id.desc`;
@@ -80,26 +158,11 @@ async function loadClients() {
 
         allClients = await response.json();
 
-        // for (let client of allClients) {
-        //     const usbUrl = `${SUPABASE_URL}/rest/v1/usb_history?client_code=eq.${client.code}&order=last_seen.desc&limit=3`;
-        //     try {
-        //         const usbRes = await fetch(usbUrl, {
-        //             headers: {
-        //                 "Authorization": `Bearer ${SUPABASE_KEY}`,
-        //                 "apikey": SUPABASE_KEY
-        //             }
-        //         });
-        //         client.usb_history = await usbRes.json();
-        //     } catch {
-        //         client.usb_history = [];
-        //     }
-        // }
-
         if (!currentMode) {
             currentMode = detectMode();
-            renderClients(allClients); // 🔥 première création
+            renderClients(allClients);
         } else {
-            updateClients(allClients); // 🔥 mise à jour sans recréer
+            updateClients(allClients);
         }
 
     } catch (err) {
@@ -108,108 +171,16 @@ async function loadClients() {
 }
 
 // ================================================
-// CRÉATION DES CARTES (UNE FOIS PAR MODE)
-// ================================================
-function renderClients(clients) {
-    const container = document.getElementById("clientsContainer");
-    container.innerHTML = "";
-
-    const isMobile = currentMode === "mobile";
-
-    clients.forEach(client => {
-        const card = document.createElement("div");
-        card.className = "client-card";
-        card.id = `client-${client.code}`;
-
-        card.innerHTML = isMobile ? mobileTemplate(client) : desktopTemplate(client);
-
-        container.appendChild(card);
-    });
-
-    updateClients(clients);
-}
-
-// ================================================
-// TEMPLATES
-// ================================================
-function mobileTemplate(client) {
-    return `
-        <div class="texm-client">
-            <div class="flexm">
-                <div class="client-status">
-                    <span class="status-dot"></span>
-                    <span class="client-code">${client.code}</span>
-                </div>
-                <a class="fleche">></a>
-            </div>
-
-            <div class="client-info">
-                <div class="client-info-line user"></div>
-                <div class="client-info-line ip"></div>
-            </div>
-
-            <div class="usb-list"></div>
-        </div>
-
-        <div class="img-client">
-            <img class="client-screenshot" />
-        </div>
-    `;
-}
-
-function desktopTemplate(client) {
-    return `
-        <div class="texm-usb">
-            <div class="usb-status">
-                <div class="client-info-line name"></div>
-                <span class="client-code">${client.code}</span>
-            </div>
-
-            <div class="client-info">
-                <div class="client-info-line Last-pc"></div>
-                <div class="client-info-line date"></div>
-            </div>
-            
-            <div class="user">
-                <div class="client-info-line code-pc"></div>
-            </div>
-        </div>
-    `;
-}
-
-// ================================================
-// MISE À JOUR SANS RECRÉER
-// ================================================
-function updateClients(clients) {
-    clients.forEach(client => {
-        const card = document.getElementById(`client-${client.code}`);
-        if (!card) return;
-
-        const lastPc = card.querySelector(".last-pc");
-        const codePc = card.querySelector(".code-pc");
-        const date = card.querySelector(".date");
-        const name = card.querySelector(".name");
-        const surname = card.querySelector(".surname");
-
-        if (lastPc) lastPc.textContent = `Last-pc: ${client["last-pc"] || "N/A"}`;
-        if (codePc) codePc.textContent = `Code-pc: ${client["code-pc"] || "N/A"}`;
-        if (date) date.textContent = `Date: ${client.date || "N/A"}`;
-        if (name) name.textContent = `Name: ${client.name || "N/A"}`;
-        if (surname) surname.textContent = `Surname: ${client.surname || "N/A"}`;
-    });
-}
-
-
-// ================================================
 // RECHERCHE
 // ================================================
+
 const searchInput = document.getElementById("searchInput");
 if (searchInput) {
     searchInput.addEventListener("input", () => {
         const term = searchInput.value.toLowerCase();
         const filtered = allClients.filter(c =>
             c.code.toLowerCase().includes(term) ||
-            (c.username && c.username.toLowerCase().includes(term))
+            (c.name && c.name.toLowerCase().includes(term))
         );
         renderClients(filtered);
     });
@@ -218,5 +189,6 @@ if (searchInput) {
 // ================================================
 // INIT
 // ================================================
+
 loadClients();
 setInterval(loadClients, 5000);
