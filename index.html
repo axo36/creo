@@ -127,13 +127,23 @@ document.getElementById("loginBtn").onclick = async () => {
     return;
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: emailValue,
     password: passValue
   });
 
   if (error) {
-    alert("Accès refusé");
+    const msg = error.message;
+
+    if (msg.includes("Invalid login credentials")) {
+      alert("Email ou mot de passe incorrect.");
+    }
+    else if (msg.includes("Email not confirmed")) {
+      alert("Votre email n'est pas confirmé.");
+    }
+    else {
+      alert("Impossible de se connecter. Réessayez.");
+    }
     return;
   }
 
