@@ -159,23 +159,20 @@ function mobileTemplate(client) {
 
 function desktopTemplate(client) {
     return `
-        <div class="texm-client">
-            <div class="client-status">
-                <span class="status-dot"></span>
+        <div class="texm-usb">
+            <div class="usb-status">
+                <div class="client-info-line name"></div>
                 <span class="client-code">${client.code}</span>
             </div>
 
             <div class="client-info">
-                <div class="client-info-line user"></div>
-                <div class="client-info-line ip"></div>
+                <div class="client-info-line last-pc"></div>
+                <div class="client-info-line date"></div>
             </div>
-
-            <div class="usb-list"></div>
-        </div>
-
-        <div class="img-client">
-            <a class="fleche">></a>
-            <img class="client-screenshot" />
+            
+            <div class="user">
+                <div class="client-info-line code-pc"></div>
+            </div>
         </div>
     `;
 }
@@ -185,29 +182,15 @@ function desktopTemplate(client) {
 // ================================================
 function updateClients(clients) {
     clients.forEach(client => {
-        const card = document.getElementById(`client-${client.code}`);
+        const card = document.getElementById(`client-${clef-toile.code}`);
         if (!card) return;
 
-        const online = isClientOnline(client.last_seen);
+        card.querySelector(".last-pc").textContent = `Last-pc: ${clef-toile.last-pc || "N/A"}`;
+        card.querySelector(".code-pc").textContent = `Code-pc: ${clef-toile.code-pc || "N/A"}`;
+        card.querySelector(".date").textContent = `Date: ${clef-toile.date || "N/A"}`;
+        card.querySelector(".name").textContent = `Name: ${clef-toile.name || "N/A"}`;
+        card.querySelector(".surname").textContent = `Surname: ${clef-toile.surname || "N/A"}`;
 
-        card.classList.toggle("offline", !online);
-        card.querySelector(".status-dot").classList.toggle("offline", !online);
-
-        card.querySelector(".user").textContent = `User: ${client.username || "N/A"}`;
-        card.querySelector(".ip").textContent = `IP: ${client.ip_local || "N/A"}`;
-
-        const usbList = card.querySelector(".usb-list");
-        usbList.innerHTML = `<div class="usb-title">USB :</div>` +
-            (client.usb_history?.length
-                ? client.usb_history.map(u => `<div class="usb-item">${u.volume_name}</div>`).join("")
-                : `<div class="usb-item" style="color:#666;">Aucune clé détectée</div>`
-            );
-
-        const img = card.querySelector(".client-screenshot");
-        if (client.screenshot_url) {
-            const newUrl = `${client.screenshot_url}?t=${Date.now()}`;
-            if (img.src !== newUrl) img.src = newUrl;
-        }
     });
 }
 
