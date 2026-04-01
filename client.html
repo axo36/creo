@@ -3,59 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FILEY</title>
-    <link rel="stylesheet" href="stylec.css" />
+    <title>FILEY – Clients</title>
+    <link rel="stylesheet" href="stylec.css">
 </head>
 <body>
 
-    <nav id="sideMenu">
-        <button id="closeBtn" class="close">✖</button>
+<nav id="sideMenu">
+    <button id="closeBtn" class="close">✖</button>
 
-        <ul class="menu-ligne-text">
-            <a href="">Accueil</a>
-            <a href="client.html" class="active">Clients</a>
-            <a href="gestionaire-clef.html">Gestion de la toile</a>
-        </ul>
+    <ul class="menu-ligne-text">
+        <a href="">Accueil</a>
+        <a href="client.html" class="active">Clients</a>
+        <a href="gestionaire-clef.html">Gestion de la toile</a>
+    </ul>
 
-        <button id="logoutBtn" style="margin-top:20px;">Se déconnecter</button>
-    </nav>
+    <button id="logoutBtn">Se déconnecter</button>
+</nav>
 
-    <main id="content">
-        <header class="box-title">
-            <button id="openBtn">☰</button>
-            <h1 class="title">FILEY</h1>
-        </header>
+<main id="content">
+    <header class="box-title">
+        <button id="openBtn">☰</button>
+        <h1 class="title">FILEY</h1>
+    </header>
 
-        <div class="clien">
-            <input type="text" class="search" placeholder="Search for a client" id="searchInput">
-            <div id="clientsContainer" class="clients-grid"></div>
-        </div>
-    </main>
+    <div class="clien">
+        <input type="text" class="search" placeholder="Search for a client" id="searchInput">
+        <div id="clientsContainer" class="clients-grid"></div>
+    </div>
+</main>
 
-    <!-- TON SCRIPT SUPABASE + PROTECTION -->
-    <script type="module">
-        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-        const supabaseClient = createClient(
-            "https://mpnfvrizbluhhjcfzztc.supabase.co",   // ← ton URL
-            "TA_CLE_ANON_ICI"                             // ← surtout PAS la clé secrète
-        );
-
-        // PROTECTION DE LA PAGE
-        const { data } = await supabaseClient.auth.getSession();
-        if (!data.session) {
-            window.location.href = "index.html";
-        } else {
-            console.log("Utilisateur connecté :", data.session.user);
-        }
-
-        // DÉCONNEXION
-        document.getElementById("logoutBtn").addEventListener("click", async () => {
-            await supabaseClient.auth.signOut();
-            window.location.href = "index.html";
-        });
-    </script>
-
-    <script src="client.js"></script>
+<script type="module" src="protect.js"></script>
+<script src="client.js"></script>
 </body>
 </html>
