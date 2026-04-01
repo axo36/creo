@@ -369,6 +369,7 @@ body.menu-open #openBtn {
     transform: translateX(-100%);
     z-index: 900;
 }
+
 /* ----- AVATAR ICON ----- */
 .account-icon {
     margin-left: auto;
@@ -376,8 +377,8 @@ body.menu-open #openBtn {
 }
 
 .account-icon img {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     border: 2px solid #58a6ff;
     transition: 0.2s;
