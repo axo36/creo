@@ -2,7 +2,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const supabase = createClient(
     "https://mpnfvrizbluhhjcfzztc.supabase.co",
-    "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
+    "sb-publishable_PM0kkir75Ebuvi1gUlpmNTQ_7KTnMrEr"
 );
 
 // Vérification session
@@ -14,31 +14,38 @@ const user = data.session.user;
 // Avatar auto-généré
 const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${user.email}`;
 
-// Remplir le popup
-document.getElementById("popupAvatar").src = avatarUrl;
+// Remplir UI
 document.getElementById("avatarIcon").src = avatarUrl;
+document.getElementById("popupAvatar").src = avatarUrl;
 document.getElementById("popupEmail").textContent = user.email;
 document.getElementById("popupUsername").textContent = user.email.split("@")[0];
 
-// Ouvrir / fermer popup
-const popup = document.getElementById("accountPopup");
-document.getElementById("avatarIcon").addEventListener("click", () => {
-    popup.classList.toggle("hidden");
+// Gestion du dropdown
+const dropdown = document.getElementById("accountDropdown");
+const accountBtn = document.getElementById("accountBtn");
+
+accountBtn.addEventListener("click", () => {
+    dropdown.classList.toggle("hidden");
 });
 
-// Déconnexion (popup)
-document.getElementById("logoutBtnPopup").addEventListener("click", async () => {
+// Fermer si on clique dehors
+document.addEventListener("click", (e) => {
+    if (!dropdown.contains(e.target) && !accountBtn.contains(e.target)) {
+        dropdown.classList.add("hidden");
+    }
+});
+
+// Déconnexion depuis le dropdown
+document.getElementById("logoutBtnDropdown").addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.href = "index.html";
 });
 
-// Déconnexion (menu latéral)
-document.getElementById("logoutBtnMenu").addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    window.location.href = "index.html";
-});
-
-// Ouvrir popup depuis le menu latéral
-document.getElementById("menuAccountBtn").addEventListener("click", () => {
-    popup.classList.remove("hidden");
-});
+// (optionnel) si tu gardes un bouton déconnexion dans le menu latéral
+const logoutMenu = document.getElementById("logoutBtnMenu");
+if (logoutMenu) {
+    logoutMenu.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "index.html";
+    });
+}
