@@ -23,21 +23,24 @@
 
 <main id="content">
     <header class="box-title">
-        <button id="openBtn">☰</button>
-        <h1 class="title">FILEY</h1>
-
-        <!-- AVATAR -->
-        <div class="account-icon">
-            <img id="avatarIcon" src="" alt="avatar">
-        </div>
-
-        <!-- POPUP COMPTE -->
-        <div id="accountPopup" class="account-popup hidden">
-            <img id="popupAvatar" class="popup-avatar" src="" alt="avatar">
-            <h3 id="popupUsername"></h3>
-            <p id="popupEmail"></p>
-
-            <button id="logoutBtnPopup">Se déconnecter</button>
+        <div class="account-wrapper">
+            <button id="accountBtn" class="account-btn">
+                <img id="avatarIcon" src="" alt="avatar">
+            </button>
+        
+            <div id="accountPopup" class="account-dropdown hidden">
+                <div class="account-top">
+                    <img id="popupAvatar" class="popup-avatar" src="" alt="avatar">
+                    <div>
+                        <div id="popupUsername" class="popup-username"></div>
+                        <div id="popupEmail" class="popup-email"></div>
+                    </div>
+                </div>
+        
+                <div class="account-separator"></div>
+        
+                <button id="logoutBtnPopup" class="logout-btn">Se déconnecter</button>
+            </div>
         </div>
     </header>
 
