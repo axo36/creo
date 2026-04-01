@@ -29,10 +29,9 @@
             <button id="accountBtn" class="account-btn">
                 <img id="avatarIcon" src="asset/profile.jpg" alt="avatar">
             </button>
-
             <div id="accountPopup" class="account-dropdown hidden">
                 <div class="account-top">
-                    <img id="popupAvatar" class="popup-avatar" src="asset/profile.jpg" alt="avatar">
+                    <img id="popupAvatar" class="popup-avatar" src="" alt="avatar">
                     <div>
                         <div id="popupUsername" class="popup-username"></div>
                         <div id="popupEmail" class="popup-email"></div>
@@ -42,7 +41,15 @@
                 <div class="account-line">
                     <span id="lineUsername"></span>
                     <span id="lineEmail"></span>
-                    <span class="linePassword">••••••••</span>
+            
+                    <div class="password-view">
+                        <span id="linePassword">••••••••</span>
+                        <button id="togglePassword" class="eye-btn">👁️</button>
+                    </div>
+                </div>
+            
+                <div class="account-class">
+                    <span id="userClass"></span>
                 </div>
             
                 <div class="account-separator"></div>
