@@ -519,3 +519,23 @@ body.menu-open #openBtn {
 .active2 {
     color: #ff6b6b;
 }
+
+.account-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px 4px 12px;
+    font-size: 12px;
+    color: #c9d1d9;
+    gap: 8px;
+}
+
+.account-line span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.linePassword {
+    color: #8b949e;
+}
