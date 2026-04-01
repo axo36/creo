@@ -515,3 +515,7 @@ body.menu-open #openBtn {
     background: rgba(255, 77, 77, 0.2);
     box-shadow: 0 0 10px #ff4d4d;
 }
+
+.active2 {
+    color: #ff2828;
+}
