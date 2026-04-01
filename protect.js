@@ -5,34 +5,40 @@ const supabase = createClient(
     "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
 );
 
-// Vérification de session
+// Vérification session
 const { data } = await supabase.auth.getSession();
-
-if (!data.session) {
-    window.location.href = "index.html";
-}
+if (!data.session) window.location.href = "index.html";
 
 const user = data.session.user;
 
-// Affiche l’email dans le menu
-document.getElementById("userEmail").textContent = user.email;
+// Avatar auto-généré
+const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${user.email}`;
 
-// Ouvre / ferme le menu
-const accountBtn = document.getElementById("accountBtn");
-const dropdown = document.getElementById("accountDropdown");
+// Remplir le popup
+document.getElementById("popupAvatar").src = avatarUrl;
+document.getElementById("avatarIcon").src = avatarUrl;
+document.getElementById("popupEmail").textContent = user.email;
+document.getElementById("popupUsername").textContent = user.email.split("@")[0];
 
-accountBtn.addEventListener("click", () => {
-    dropdown.classList.toggle("hidden");
+// Ouvrir / fermer popup
+const popup = document.getElementById("accountPopup");
+document.getElementById("avatarIcon").addEventListener("click", () => {
+    popup.classList.toggle("hidden");
 });
 
-// Déconnexion (menu)
-document.getElementById("logoutBtn2").addEventListener("click", async () => {
+// Déconnexion (popup)
+document.getElementById("logoutBtnPopup").addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.href = "index.html";
 });
 
 // Déconnexion (menu latéral)
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+document.getElementById("logoutBtnMenu").addEventListener("click", async () => {
     await supabase.auth.signOut();
     window.location.href = "index.html";
+});
+
+// Ouvrir popup depuis le menu latéral
+document.getElementById("menuAccountBtn").addEventListener("click", () => {
+    popup.classList.remove("hidden");
 });
