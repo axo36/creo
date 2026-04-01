@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FILEY</title>
     <link rel="stylesheet" href="stylec.css" />
-
-    <!-- Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -35,38 +32,28 @@
         </div>
     </main>
 
-    <script>
-    /* ------------------------------
-       CONFIG SUPABASE
-    --------------------------------*/
-    const supabaseClient = supabase.createClient(
-        "https://TON-PROJET.supabase.co",   // ← remplace
-        "TON-ANON-KEY"                      // ← remplace
-    );
+    <!-- TON SCRIPT SUPABASE + PROTECTION -->
+    <script type="module">
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-    /* ------------------------------
-       PROTECTION DE LA PAGE
-    --------------------------------*/
-    supabaseClient.auth.getSession().then(({ data }) => {
+        const supabaseClient = createClient(
+            "https://mpnfvrizbluhhjcfzztc.supabase.co",   // ← ton URL
+            "TA_CLE_ANON_ICI"                             // ← surtout PAS la clé secrète
+        );
+
+        // PROTECTION DE LA PAGE
+        const { data } = await supabaseClient.auth.getSession();
         if (!data.session) {
-            // Pas connecté → retour à la page login
             window.location.href = "index.html";
-            return;
+        } else {
+            console.log("Utilisateur connecté :", data.session.user);
         }
 
-        // Affiche l'utilisateur connecté dans la console
-        console.log("Utilisateur connecté :", data.session.user);
-    });
-
-    /* ------------------------------
-       DÉCONNEXION
-    --------------------------------*/
-    async function logout() {
-        await supabaseClient.auth.signOut();
-        window.location.href = "index.html";
-    }
-
-    document.getElementById("logoutBtn").addEventListener("click", logout);
+        // DÉCONNEXION
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = "index.html";
+        });
     </script>
 
     <script src="client.js"></script>
