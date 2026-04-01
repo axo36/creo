@@ -368,114 +368,12 @@ body.menu-open #openBtn {
     transition: 0.3s ease;
     transform: translateX(-100%);
     z-index: 900;
+   }
 }
 
-/* ----- AVATAR ICON ----- */
-.account-icon {
-    margin-left: auto;
-    cursor: pointer;
-}
-
-.account-icon img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid #58a6ff;
-    transition: 0.2s;
-}
-
-.account-icon img:hover {
-    transform: scale(1.05);
-}
-
-/* ----- POPUP COMPTE ----- */
-.account-popup {
-    position: absolute;
-    top: 70px;
-    right: 20px;
-    background: #161b22;
-    padding: 20px;
-    width: 260px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    z-index: 999;
-}
-
-.account-popup.hidden {
-    display: none;
-}
-
-.popup-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: block;
-    margin: 0 auto 10px auto;
-    border: 2px solid #58a6ff;
-}
-
-.account-popup h3 {
-    text-align: center;
-    margin: 5px 0;
-    color: #fff;
-}
-
-.account-popup p {
-    text-align: center;
-    color: #c9d1d9;
-    margin-bottom: 15px;
-    font-size: 14px;
-}
-
-.account-popup button {
-    width: 100%;
-    padding: 10px;
-    background: #d73a49;
-    border: none;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-}
-
-.account-popup button:hover {
-    background: #f85149;
-}
-
-/* ----- MENU LATÉRAL ----- */
-#menuAccountBtn {
-    margin-top: 20px;
-    padding: 10px;
-    background: #21262d;
-    border: none;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-#menuAccountBtn:hover {
-    background: #30363d;
-}
-
-#logoutBtnMenu {
-    margin-top: 10px;
-    padding: 10px;
-    background: #d73a49;
-    border: none;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-#logoutBtnMenu:hover {
-    background: #f85149;
-}
-
-/* Le header doit servir de référence au dropdown */
-.box-title {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
+/* =========================================================
+   MENU COMPTE – VERSION FINALE
+========================================================= */
 
 /* Wrapper avatar + menu */
 .account-wrapper {
@@ -483,7 +381,7 @@ body.menu-open #openBtn {
     position: relative;
 }
 
-/* Bouton avatar (comme GitHub) */
+/* Bouton avatar */
 .account-btn {
     background: transparent;
     border: none;
@@ -491,49 +389,58 @@ body.menu-open #openBtn {
     padding: 0;
 }
 
-.account-btn img {
-    width: 32px;
-    height: 32px;
+.account-btn img,
+#avatarIcon {
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    border: 1px solid #30363d;
+    border: 2px solid #00d4ff;
+    transition: 0.2s;
 }
 
-/* Dropdown façon GitHub */
-.account-dropdown {
+.account-btn img:hover,
+#avatarIcon:hover {
+    transform: scale(1.05);
+}
+
+/* Popup compte */
+.account-dropdown,
+#accountPopup {
     position: absolute;
     right: 0;
-    top: 42px;
-    background: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 8px;
+    top: 55px;
+    background: #0b0f14;
+    border: 1px solid #00d4ff;
+    border-radius: 10px;
     width: 260px;
-    box-shadow: 0 16px 32px rgba(0,0,0,0.5);
-    padding: 10px 0;
-    z-index: 1000;
+    padding: 15px 0;
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    z-index: 999;
 }
 
 .hidden {
     display: none !important;
 }
 
+/* Haut du popup */
 .account-top {
     display: flex;
     align-items: center;
-    padding: 8px 12px 6px 12px;
-    gap: 10px;
+    padding: 10px 15px;
+    gap: 12px;
 }
 
 .popup-avatar {
-    width: 32px;
-    height: 32px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
-    border: 1px solid #30363d;
+    border: 2px solid #00d4ff;
 }
 
 .popup-username {
-    font-size: 14px;
-    color: #e6edf3;
-    font-weight: 600;
+    font-size: 15px;
+    color: #00d4ff;
+    font-weight: bold;
 }
 
 .popup-email {
@@ -541,23 +448,27 @@ body.menu-open #openBtn {
     color: #8b949e;
 }
 
+/* Séparateur */
 .account-separator {
     height: 1px;
-    background: #30363d;
-    margin: 6px 0;
+    background: #00d4ff33;
+    margin: 10px 0;
 }
 
-.logout-btn {
+/* Bouton déconnexion */
+.logout-btn,
+#logoutBtnPopup {
     width: 100%;
     text-align: left;
-    padding: 8px 12px;
+    padding: 10px 15px;
     background: transparent;
     border: none;
-    color: #f85149;
-    font-size: 13px;
+    color: #ff4d4d;
+    font-size: 14px;
     cursor: pointer;
 }
 
-.logout-btn:hover {
-    background: #21262d;
+.logout-btn:hover,
+#logoutBtnPopup:hover {
+    background: #00141a;
 }
