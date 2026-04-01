@@ -8,6 +8,9 @@
 </head>
 <body>
 
+<!-- ============================
+     MENU LATERAL
+============================= -->
 <nav id="sideMenu">
     <button id="closeBtn" class="close">✖</button>
 
@@ -21,13 +24,22 @@
     <button id="logoutBtnMenu">Se déconnecter</button>
 </nav>
 
+<!-- ============================
+     CONTENU PRINCIPAL
+============================= -->
 <main id="content">
+
+    <!-- HEADER -->
     <header class="box-title">
+        <button id="openBtn">☰</button>
+        <h1 class="title">FILEY</h1>
+
+        <!-- AVATAR + POPUP -->
         <div class="account-wrapper">
             <button id="accountBtn" class="account-btn">
                 <img id="avatarIcon" src="" alt="avatar">
             </button>
-        
+
             <div id="accountPopup" class="account-dropdown hidden">
                 <div class="account-top">
                     <img id="popupAvatar" class="popup-avatar" src="" alt="avatar">
@@ -36,22 +48,13 @@
                         <div id="popupEmail" class="popup-email"></div>
                     </div>
                 </div>
-        
+
                 <div class="account-separator"></div>
-        
+
                 <button id="logoutBtnPopup" class="logout-btn">Se déconnecter</button>
             </div>
         </div>
     </header>
 
+    <!-- SEARCH + CLIENTS -->
     <div class="clien">
-        <input type="text" class="search" placeholder="Search for a client" id="searchInput">
-        <div id="clientsContainer" class="clients-grid"></div>
-    </div>
-</main>
-
-<script type="module" src="protect.js"></script>
-<script src="client.js"></script>
-
-</body>
-</html>
