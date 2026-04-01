@@ -539,3 +539,19 @@ body.menu-open #openBtn {
 .linePassword {
     color: #8b949e;
 }
+
+.account-class {
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #00eaff;
+    text-align: left;
+}
+
+.account-class span {
+    background: rgba(0, 212, 255, 0.15);
+    border: 1px solid #00d4ff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px #00d4ff55;
+}
+
