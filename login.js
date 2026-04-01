@@ -5,10 +5,12 @@ const supabase = createClient(
   "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp"
 );
 
+// Si déjà connecté → accès direct
 supabase.auth.getSession().then(({ data }) => {
-  if (data.session) window.location.href = "client.html";
+  if (data.session) window.location.href = "./client.html";
 });
 
+// Connexion email/password
 document.getElementById("loginBtn").onclick = async () => {
   const emailValue = document.getElementById("email").value.trim();
   const passValue = document.getElementById("password").value.trim();
@@ -38,23 +40,25 @@ document.getElementById("loginBtn").onclick = async () => {
     return;
   }
 
-  window.location.href = "client.html";
+  window.location.href = "./client.html";
 };
 
+// Google
 document.getElementById("googleBtn").onclick = async () => {
   await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: window.location.origin + "/filey/client.html"
+      redirectTo: "https://axo36.github.io/filey/client.html"
     }
   });
 };
 
+// GitHub
 document.getElementById("githubBtn").onclick = async () => {
   await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: window.location.origin + "/filey/client.html"
+      redirectTo: "https://axo36.github.io/filey/client.html"
     }
   });
 };
