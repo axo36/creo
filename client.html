@@ -17,7 +17,8 @@
         <a href="gestionaire-clef.html">Gestion de la toile</a>
     </ul>
 
-    <button id="logoutBtn">Se déconnecter</button>
+    <button id="menuAccountBtn">Mon compte</button>
+    <button id="logoutBtnMenu">Se déconnecter</button>
 </nav>
 
 <main id="content">
@@ -25,14 +26,18 @@
         <button id="openBtn">☰</button>
         <h1 class="title">FILEY</h1>
 
-        <!-- MENU COMPTE -->
-        <div class="account-menu">
-            <button id="accountBtn">👤</button>
+        <!-- LOGO COMPTE -->
+        <div class="account-icon">
+            <img id="avatarIcon" src="https://api.dicebear.com/7.x/identicon/svg?seed=user" alt="avatar">
+        </div>
 
-            <div id="accountDropdown" class="dropdown hidden">
-                <p id="userEmail"></p>
-                <button id="logoutBtn2">Se déconnecter</button>
-            </div>
+        <!-- POPUP COMPTE -->
+        <div id="accountPopup" class="account-popup hidden">
+            <img id="popupAvatar" class="popup-avatar" src="" alt="avatar">
+            <h3 id="popupUsername"></h3>
+            <p id="popupEmail"></p>
+
+            <button id="logoutBtnPopup">Se déconnecter</button>
         </div>
     </header>
 
