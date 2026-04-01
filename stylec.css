@@ -369,3 +369,63 @@ body.menu-open #openBtn {
     transform: translateX(-100%);
     z-index: 900;
 }
+
+/* ----- MENU COMPTE ----- */
+
+.account-menu {
+    position: relative;
+    margin-left: auto;
+}
+
+#accountBtn {
+    background: #21262d;
+    border: none;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+#accountBtn:hover {
+    background: #30363d;
+}
+
+.dropdown {
+    position: absolute;
+    right: 0;
+    top: 45px;
+    background: #161b22;
+    padding: 15px;
+    border-radius: 8px;
+    width: 220px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    z-index: 999;
+}
+
+.dropdown.hidden {
+    display: none;
+}
+
+.dropdown p {
+    margin: 0 0 12px 0;
+    color: #c9d1d9;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+.dropdown button {
+    width: 100%;
+    padding: 10px;
+    background: #d73a49;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dropdown button:hover {
+    background: #f85149;
+}
