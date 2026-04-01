@@ -1,8 +1,8 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const supabase = createClient(
-  "https://tjiqssgrxvxnjqhewtrt.supabase.co",
-  "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp"
+  "https://mpnfvrizbluhhjcfzztc.supabase.co",
+  "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
 );
 
 // Si déjà connecté → accès direct
