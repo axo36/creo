@@ -66,7 +66,7 @@ h1.title {
     flex: 1;
     min-width: 0;
     margin: 0;
-    padding: 2rem 0rem;
+    padding: 1rem 0rem;
 }
 
 .box-title {
@@ -432,8 +432,8 @@ body.menu-open #openBtn {
 }
 
 .popup-avatar {
-    width: 45px;
-    height: 45px;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
     border: 2px solid #00d4ff;
 }
