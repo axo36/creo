@@ -19,10 +19,7 @@ const user = data.session.user;
 // ===============================
 //  AVATAR
 // ===============================
-const avatarUrl = `https://api.dicebear.com/7.x/identicon/svg?seed=${user.email}`;
 
-document.getElementById("avatarIcon").src = avatarUrl;
-document.getElementById("popupAvatar").src = avatarUrl;
 
 // ===============================
 //  PSEUDO + EMAIL
@@ -38,8 +35,8 @@ document.getElementById("lineEmail").textContent = user.email;
 // ===============================
 //  CLASSE DU COMPTE
 // ===============================
-// Tu peux changer ici : "Free", "Pro", "Admin", "Premium"
-let accountClass = "Free";
+// Tu peux changer ici : "Free", "Pro", "Admin", "Pro"
+let accountClass = "Admin";
 
 document.getElementById("userClass").textContent = accountClass;
 
