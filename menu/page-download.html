@@ -1,0 +1,63 @@
+<!-- ════════════════════════════════════════════
+     PAGE — TÉLÉCHARGER
+     Fragment à insérer dans _shell.html
+     Wrapping element : <div class="page" id="page-download-page">
+════════════════════════════════════════════ -->
+<div class="page" id="page-download-page">
+  <div class="subpage">
+
+    <!-- Hero -->
+    <div class="subpage-hero reveal">
+      <div class="tag">Télécharger Creo</div>
+      <h1 class="subpage-h1 grad-text">SUR TOUS<br>VOS APPAREILS.</h1>
+      <p class="subpage-sub">Creo est disponible sur toutes vos plateformes. Installez-le partout, connectez-vous une fois.</p>
+    </div>
+
+    <!-- Download cards -->
+    <div class="download-grid reveal" style="margin-bottom:3rem;">
+      <div class="dl-card primary" onclick="openModal()">
+        <div class="dl-icon-wrap">🍎</div>
+        <div class="dl-body">
+          <div class="dl-platform font-mono">macOS</div>
+          <div class="dl-name">Creo pour Mac</div>
+          <div class="dl-version">v3.2.1 · Apple Silicon + Intel · 48 MB</div>
+        </div>
+        <span class="dl-arrow">→</span>
+      </div>
+      <div class="dl-card primary" onclick="openModal()">
+        <div class="dl-icon-wrap">🪟</div>
+        <div class="dl-body">
+          <div class="dl-platform font-mono">Windows</div>
+          <div class="dl-name">Creo pour Windows</div>
+          <div class="dl-version">v3.2.1 · Windows 10/11 · 52 MB</div>
+        </div>
+        <span class="dl-arrow">→</span>
+      </div>
+      <div class="dl-card" onclick="openModal()">
+        <div class="dl-icon-wrap">🐧</div>
+        <div class="dl-body">
+          <div class="dl-platform font-mono">Linux</div>
+          <div class="dl-name">Creo pour Linux</div>
+          <div class="dl-version">AppImage / .deb / .rpm · 44 MB</div>
+        </div>
+        <span class="dl-arrow">→</span>
+      </div>
+      <div class="dl-card" onclick="openModal()">
+        <div class="dl-icon-wrap">📱</div>
+        <div class="dl-body">
+          <div class="dl-platform font-mono">iOS + Android</div>
+          <div class="dl-name">Creo Mobile</div>
+          <div class="dl-version">App Store · Google Play · Gratuit</div>
+        </div>
+        <span class="dl-arrow">→</span>
+      </div>
+    </div>
+
+    <!-- Account required notice -->
+    <div style="text-align:center;padding:2rem;background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-xl);" class="reveal">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text3);">Vous devez créer un compte gratuit pour télécharger et activer Creo.</p>
+      <button class="btn btn-primary btn-lg" style="margin-top:1.2rem;" onclick="openModal()">⚡ Créer un compte gratuit</button>
+    </div>
+
+  </div>
+</div><!-- end page-download-page -->

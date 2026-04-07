@@ -1,0 +1,291 @@
+<!-- ════════════════════════════════════════════
+     PAGE — ACCUEIL (Home)
+     Fragment à insérer dans _shell.html
+     Wrapping element : <div class="page active" id="page-home">
+════════════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="grid-overlay"></div>
+    <h1 class="hero-h1">
+      <span class="sub-line">Téléportez vos</span>
+      <span class="grad-text">FICHIERS.</span>
+    </h1>
+    <p class="hero-desc">Envoyez n'importe quel fichier entre vos appareils en un instant. Sans cloud. Sans câble. Chiffré de bout en bout. Juste vous et la vitesse.</p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary btn-lg" onclick="openModal()">⚡ Créer un compte gratuit</button>
+      <button class="btn btn-ghost btn-lg" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Voir la démo →</button>
+      <button class="btn btn-outline-blue btn-lg" onclick="showPage('download-page')">↓ Télécharger</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-num" data-count="2.4" data-dec="1" data-suf=" GB/s">2.4 GB/s</span><span class="hero-stat-label">vitesse max</span></div>
+      <div class="hero-stat"><span class="hero-stat-num" data-count="256" data-suf="-bit">256-bit</span><span class="hero-stat-label">AES chiffrement</span></div>
+      <div class="hero-stat"><span class="hero-stat-num">∞</span><span class="hero-stat-label">taille fichier</span></div>
+      <div class="hero-stat"><span class="hero-stat-num" data-count="0" data-suf=" ms">0 ms</span><span class="hero-stat-label">latence LAN</span></div>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-track"></div>
+      <span class="scroll-label">scroll</span>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <div class="marquee-item"><span class="m-dot"></span> Chiffrement AES-256</div>
+      <div class="marquee-item"><span class="m-dot"></span> Transfert P2P</div>
+      <div class="marquee-item"><span class="m-dot"></span> Wi-Fi Direct</div>
+      <div class="marquee-item"><span class="m-dot"></span> LAN Ultra-rapide</div>
+      <div class="marquee-item"><span class="m-dot"></span> Multi-plateforme</div>
+      <div class="marquee-item"><span class="m-dot"></span> Sans cloud</div>
+      <div class="marquee-item"><span class="m-dot"></span> Zéro serveur</div>
+      <div class="marquee-item"><span class="m-dot"></span> Sync auto</div>
+      <div class="marquee-item"><span class="m-dot"></span> Taille illimitée</div>
+      <div class="marquee-item"><span class="m-dot"></span> Open Source</div>
+      <div class="marquee-item"><span class="m-dot"></span> API REST</div>
+      <div class="marquee-item"><span class="m-dot"></span> Réseau distant</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="tag">Fonctionnalités</div>
+    <h2 class="section-h2">Tout ce dont<br>vous avez besoin.</h2>
+    <p class="section-desc">Architecture peer-to-peer, zéro intermédiaire, zéro compromis sur la vitesse ou la sécurité.</p>
+    <div class="features-layout">
+      <div class="feat-card reveal" onmousemove="trackMouse(this,event)">
+        <div class="feat-header"><div class="feat-icon-wrap">⚡</div><span class="feat-num font-mono">01</span></div>
+        <h3>Ultra-Rapide</h3>
+        <p>Transfert direct P2P via LAN ou Wi-Fi Direct. Aucun serveur intermédiaire. Atteignez les limites physiques de votre réseau.</p>
+        <span class="feat-chip">jusqu'à 2.4 GB/s</span>
+      </div>
+      <div class="feat-card reveal d1" onmousemove="trackMouse(this,event)">
+        <div class="feat-header"><div class="feat-icon-wrap">🔐</div><span class="feat-num font-mono">02</span></div>
+        <h3>Chiffrement Total</h3>
+        <p>AES-256 de bout en bout. Vos fichiers ne passent jamais par nos serveurs. Clés générées localement, données invisibles.</p>
+        <span class="feat-chip">AES-256 + TLS 1.3</span>
+      </div>
+      <div class="feat-card reveal" onmousemove="trackMouse(this,event)">
+        <div class="feat-header"><div class="feat-icon-wrap">📱</div><span class="feat-num font-mono">03</span></div>
+        <h3>Multi-Plateforme</h3>
+        <p>Windows, macOS, Linux, iOS, Android. Un compte suffit pour unifier tous vos appareils dans une expérience fluide.</p>
+        <span class="feat-chip">5 plateformes</span>
+      </div>
+      <div class="feat-card reveal d1" onmousemove="trackMouse(this,event)">
+        <div class="feat-header"><div class="feat-icon-wrap">🌐</div><span class="feat-num font-mono">04</span></div>
+        <h3>Réseau Distant</h3>
+        <p>Tunnel chiffré pour connecter des appareils sur différents réseaux. Bureau, maison, mobile — la distance disparaît.</p>
+        <span class="feat-chip">Relay chiffré</span>
+      </div>
+      <div class="feat-card wide reveal" onmousemove="trackMouse(this,event)">
+        <div class="feat-wide-inner">
+          <div>
+            <div class="feat-header"><div class="feat-icon-wrap">🔄</div><span class="feat-num font-mono">05</span></div>
+            <h3>Sync Auto</h3>
+            <p>Synchronisation continue entre vos appareils. Vos fichiers toujours à jour, partout, en temps réel.</p>
+            <span class="feat-chip">Temps réel</span>
+          </div>
+          <div>
+            <div class="feat-header"><div class="feat-icon-wrap">📂</div><span class="feat-num font-mono">06</span></div>
+            <h3>Dossiers Complets</h3>
+            <p>Structure intacte, compression à la volée, reprise automatique sur coupure réseau. Des centaines de GB sans effort.</p>
+            <span class="feat-chip">Reprise auto</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section id="demo">
+    <div class="tag">Démo live</div>
+    <h2 class="section-h2">Le transfert<br>en action.</h2>
+    <p class="section-desc">Regardez vos fichiers voyager en temps réel d'un appareil à l'autre. Chiffré. Instantané.</p>
+    <div class="demo-container reveal">
+      <!-- Source -->
+      <div class="device-pane source">
+        <div class="pane-header">
+          <span class="pane-device-name font-mono">💻 MacBook Pro</span>
+          <span class="pane-badge badge-green"><span class="glow-dot"></span> Source</span>
+        </div>
+        <div class="file-row"><span class="f-icon">🎬</span><div class="f-body"><div class="f-name">projet_final_v3.mp4</div><div class="f-meta">2.4 GB · Envoi en cours</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+        <div class="file-row"><span class="f-icon">🎨</span><div class="f-body"><div class="f-name">design_system_v4.fig</div><div class="f-meta">145 MB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+        <div class="file-row"><span class="f-icon">📦</span><div class="f-body"><div class="f-name">archives_2024.zip</div><div class="f-meta">8.3 GB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+        <div class="file-row"><span class="f-icon">📄</span><div class="f-body"><div class="f-name">rapport_annuel.pdf</div><div class="f-meta">8.2 MB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+      </div>
+      <!-- Pipe -->
+      <div class="demo-pipe">
+        <div class="pipe-track"></div>
+        <div class="pipe-speed">1.8<span class="pipe-unit">GB/s</span></div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-protocol font-mono">LAN<br>P2P</div>
+        <div class="pipe-track"></div>
+      </div>
+      <!-- Target -->
+      <div class="device-pane target">
+        <div class="pane-header">
+          <span class="pane-device-name font-mono">🖥️ PC Bureau</span>
+          <span class="pane-badge badge-blue">● Réception</span>
+        </div>
+        <div class="file-row queued"><span class="f-icon">🎬</span><div class="f-body"><div class="f-name">projet_final_v3.mp4</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+        <div class="file-row queued"><span class="f-icon">🎨</span><div class="f-body"><div class="f-name">design_system_v4.fig</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+        <div class="file-row queued"><span class="f-icon">📦</span><div class="f-body"><div class="f-name">archives_2024.zip</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+        <div class="file-row queued"><span class="f-icon">📄</span><div class="f-body"><div class="f-name">rapport_annuel.pdf</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+      </div>
+      <!-- Stats bar -->
+      <div class="demo-bar">
+        <div class="demo-bar-stat"><span class="dot"></span><span>Chiffrement</span><strong>AES-256</strong></div>
+        <div class="demo-bar-stat"><span class="dot"></span><span>Protocole</span><strong>P2P Direct</strong></div>
+        <div class="demo-bar-stat"><span class="dot"></span><span>Réseau</span><strong>LAN 10GbE</strong></div>
+        <div class="demo-bar-stat"><span class="dot"></span><span>Latence</span><strong>&lt; 1 ms</strong></div>
+        <div class="demo-bar-stat"><span class="glow-dot"></span><strong>Transfert actif</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="tag">Comment ça marche</div>
+    <h2 class="section-h2">Quatre étapes.<br>C'est tout.</h2>
+    <p class="section-desc">Pas de configuration réseau. Pas de câble. Pas de connaissance technique requise.</p>
+    <div class="steps-wrap">
+      <div class="step-card reveal"><div class="step-n">01</div><div class="step-icon">👤</div><h4>Créez un compte</h4><p>Email + mot de passe, ou OAuth avec Google ou GitHub. Votre compte relie tous vos appareils.</p></div>
+      <div class="step-card reveal d1"><div class="step-n">02</div><div class="step-icon">📲</div><h4>Installez l'app</h4><p>Disponible sur 5 plateformes. Connectez-vous une fois et l'appareil rejoint automatiquement votre réseau Creo.</p></div>
+      <div class="step-card reveal d2"><div class="step-n">03</div><div class="step-icon">🖱️</div><h4>Glissez & envoyez</h4><p>Drag & drop vers l'appareil cible, ou clic droit → "Envoyer via Creo" depuis l'explorateur.</p></div>
+      <div class="step-card reveal d3"><div class="step-n">✓</div><div class="step-icon">🎉</div><h4>Reçu instantanément</h4><p>Notification push sur l'appareil cible. Vos fichiers arrivent exactement là où vous voulez, intacts.</p></div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PREVIEW -->
+  <section id="dashboard">
+    <div class="tag">Interface</div>
+    <h2 class="section-h2">Un dashboard<br>pensé pour vous.</h2>
+    <p class="section-desc">Gérez vos transferts, appareils et historique depuis une interface claire et rapide.</p>
+    <div class="dash-frame reveal">
+      <div class="dash-topbar">
+        <span class="dash-dot r"></span><span class="dash-dot y"></span><span class="dash-dot g"></span>
+        <div class="dash-url-bar">app.creo.io / dashboard</div>
+      </div>
+      <div class="dash-body">
+        <aside class="dash-sidebar">
+          <div class="dash-logo-sm">CR<span>E</span>O</div>
+          <div class="sidebar-section">
+            <div class="sidebar-label">Principal</div>
+            <div class="sidebar-link active"><span class="s-icon">⚡</span> Transferts</div>
+            <div class="sidebar-link"><span class="s-icon">📱</span> Appareils</div>
+            <div class="sidebar-link"><span class="s-icon">📂</span> Fichiers</div>
+            <div class="sidebar-link"><span class="s-icon">🔄</span> Sync</div>
+          </div>
+          <div class="sidebar-section">
+            <div class="sidebar-label">Compte</div>
+            <div class="sidebar-link"><span class="s-icon">⚙️</span> Paramètres</div>
+            <div class="sidebar-link"><span class="s-icon">📊</span> Analytiques</div>
+          </div>
+        </aside>
+        <main class="dash-main">
+          <div class="dash-main-header">
+            <div class="dash-title">Transferts récents</div>
+            <div class="dash-search font-mono">🔍 Rechercher...</div>
+          </div>
+          <div class="dash-cards">
+            <div class="dash-card"><div class="dash-card-label">Total transféré</div><div class="dash-card-val">142 <span class="up">GB</span></div><div class="dash-card-sub">Ce mois · +38%</div></div>
+            <div class="dash-card"><div class="dash-card-label">Appareils actifs</div><div class="dash-card-val">6 <span class="up">↑</span></div><div class="dash-card-sub">Sur 3 réseaux</div></div>
+            <div class="dash-card"><div class="dash-card-label">Vitesse moy.</div><div class="dash-card-val">1.2 <span class="up">GB/s</span></div><div class="dash-card-sub">Réseau LAN local</div></div>
+          </div>
+          <div class="dash-table-header"><span>Fichier</span><span>Taille</span><span>Destination</span><span>Statut</span></div>
+          <div class="dash-row"><div class="r-name"><span class="r-icon">🎬</span><span class="r-fname">montage_final.mp4</span></div><span>4.2 GB</span><span>PC Bureau</span><span class="dash-status st-done">✓ Envoyé</span></div>
+          <div class="dash-row"><div class="r-name"><span class="r-icon">🎨</span><span class="r-fname">maquettes_v8.fig</span></div><span>210 MB</span><span>MacBook Air</span><span class="dash-status st-send">↑ Envoi</span></div>
+          <div class="dash-row"><div class="r-name"><span class="r-icon">📦</span><span class="r-fname">backup_janvier.zip</span></div><span>12.8 GB</span><span>NAS Home</span><span class="dash-status st-done">✓ Envoyé</span></div>
+          <div class="dash-row"><div class="r-name"><span class="r-icon">📄</span><span class="r-fname">rapport_annuel.pdf</span></div><span>1.4 MB</span><span>PC Bureau</span><span class="dash-status st-wait">⏳ File</span></div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING (résumé) -->
+  <section id="pricing-section">
+    <div class="tag">Tarification</div>
+    <h2 class="section-h2">Simple.<br>Transparent.</h2>
+    <p class="section-desc">Commencez gratuitement. Aucune carte de crédit. Évoluez quand vous êtes prêt.</p>
+    <div class="pricing-grid">
+      <div class="plan reveal">
+        <div class="plan-name font-mono">Gratuit</div><div class="plan-price"><sup>€</sup>0</div><div class="plan-period font-mono">pour toujours</div><div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="li-ok">✓</span><span>2 appareils connectés</span></li>
+          <li><span class="li-ok">✓</span><span>Fichiers jusqu'à 5 GB</span></li>
+          <li><span class="li-ok">✓</span><span>Chiffrement AES-256</span></li>
+          <li><span class="li-ok">✓</span><span>Transfert LAN local</span></li>
+          <li><span class="li-no">—</span><span>Réseau à distance</span></li>
+          <li><span class="li-no">—</span><span>Synchronisation auto</span></li>
+        </ul>
+        <button class="btn btn-ghost btn-full" onclick="openModal()">Commencer gratuitement</button>
+      </div>
+      <div class="plan featured reveal d1">
+        <div class="plan-badge">⚡ PLUS POPULAIRE</div>
+        <div class="plan-name font-mono">Pro</div><div class="plan-price"><sup>€</sup>9</div><div class="plan-period font-mono">par mois · sans engagement</div><div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="li-ok">✓</span><span>Appareils illimités</span></li>
+          <li><span class="li-ok">✓</span><span>Taille de fichier illimitée</span></li>
+          <li><span class="li-ok">✓</span><span>LAN + réseau distant</span></li>
+          <li><span class="li-ok">✓</span><span>Synchronisation auto</span></li>
+          <li><span class="li-ok">✓</span><span>Historique illimité</span></li>
+          <li><span class="li-ok">✓</span><span>Support prioritaire</span></li>
+        </ul>
+        <button class="btn btn-primary btn-full" onclick="openModal()">Passer au Pro</button>
+      </div>
+      <div class="plan reveal d2">
+        <div class="plan-name font-mono">Équipe</div><div class="plan-price"><sup>€</sup>29</div><div class="plan-period font-mono">par mois · 10 utilisateurs</div><div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="li-ok">✓</span><span>Tout du plan Pro</span></li>
+          <li><span class="li-ok">✓</span><span>Dashboard équipe centralisé</span></li>
+          <li><span class="li-ok">✓</span><span>Audit des transferts</span></li>
+          <li><span class="li-ok">✓</span><span>API REST complète</span></li>
+          <li><span class="li-ok">✓</span><span>SSO / SAML</span></li>
+          <li><span class="li-ok">✓</span><span>SLA 99.9%</span></li>
+        </ul>
+        <button class="btn btn-ghost btn-full" onclick="openModal()">Contacter l'équipe</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD (résumé) -->
+  <section id="download-section">
+    <div class="tag">Télécharger</div>
+    <h2 class="section-h2">Sur tous<br>vos appareils.</h2>
+    <p class="section-desc">Téléchargez Creo sur toutes vos plateformes. Installation en moins de 30 secondes.</p>
+    <div class="download-grid reveal">
+      <div class="dl-card primary" onclick="openModal()"><div class="dl-icon-wrap">🍎</div><div class="dl-body"><div class="dl-platform font-mono">macOS</div><div class="dl-name">Creo pour Mac</div><div class="dl-version">v3.2.1 · Apple Silicon + Intel · 48 MB</div></div><span class="dl-arrow">→</span></div>
+      <div class="dl-card primary" onclick="openModal()"><div class="dl-icon-wrap">🪟</div><div class="dl-body"><div class="dl-platform font-mono">Windows</div><div class="dl-name">Creo pour Windows</div><div class="dl-version">v3.2.1 · Windows 10/11 · 52 MB</div></div><span class="dl-arrow">→</span></div>
+      <div class="dl-card" onclick="openModal()"><div class="dl-icon-wrap">🐧</div><div class="dl-body"><div class="dl-platform font-mono">Linux</div><div class="dl-name">Creo pour Linux</div><div class="dl-version">AppImage / .deb / .rpm · 44 MB</div></div><span class="dl-arrow">→</span></div>
+      <div class="dl-card" onclick="openModal()"><div class="dl-icon-wrap">📱</div><div class="dl-body"><div class="dl-platform font-mono">iOS + Android</div><div class="dl-name">Creo Mobile</div><div class="dl-version">App Store · Google Play · Gratuit</div></div><span class="dl-arrow">→</span></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq-section">
+    <div class="tag">FAQ</div>
+    <h2 class="section-h2">Questions<br>fréquentes.</h2>
+    <p class="section-desc">Vous avez une question ? Nous avons la réponse.</p>
+    <div class="faq-grid reveal">
+      <div class="faq-item"><div class="faq-q">Creo stocke-t-il mes fichiers sur ses serveurs ?<span class="faq-icon">+</span></div><div class="faq-a">Non. Creo est une solution peer-to-peer pure. Vos fichiers ne transitent jamais par nos serveurs — ils vont directement d'un appareil à l'autre, chiffrés avec votre clé locale.</div></div>
+      <div class="faq-item"><div class="faq-q">Quelle est la taille maximale des fichiers ?<span class="faq-icon">+</span></div><div class="faq-a">Aucune limite sur les plans Pro et Équipe. Le plan gratuit est limité à 5 GB par fichier. Creo supporte la reprise automatique en cas de coupure réseau.</div></div>
+      <div class="faq-item"><div class="faq-q">Comment fonctionne le chiffrement ?<span class="faq-icon">+</span></div><div class="faq-a">Chaque transfert est chiffré avec AES-256-GCM. Les clés sont générées localement sur vos appareils et ne quittent jamais votre réseau. Même Creo ne peut pas lire vos fichiers.</div></div>
+      <div class="faq-item"><div class="faq-q">Puis-je transférer entre réseaux différents ?<span class="faq-icon">+</span></div><div class="faq-a">Oui, avec les plans Pro et Équipe. Creo utilise un relay chiffré pour traverser les NAT et firewalls. La connexion reste chiffrée de bout en bout même via le relay.</div></div>
+      <div class="faq-item"><div class="faq-q">Y a-t-il une version open source ?<span class="faq-icon">+</span></div><div class="faq-a">Le client Creo est open source sur GitHub. Vous pouvez auditer le code, contribuer ou même héberger votre propre relay pour un contrôle total.</div></div>
+      <div class="faq-item"><div class="faq-q">Comment annuler mon abonnement ?<span class="faq-icon">+</span></div><div class="faq-a">En un clic depuis les paramètres de votre compte. Pas d'engagement, pas de frais cachés. Vous restez sur le plan actif jusqu'à la fin de la période payée.</div></div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <div id="cta-band">
+    <div class="cta-label font-mono">// Prêt à commencer ?</div>
+    <h2 class="cta-h2 font-display grad-text">COMMENCEZ<br>GRATUITEMENT.</h2>
+    <p class="cta-sub">Aucune carte bancaire. Installation en 30 secondes. Transfert en 3 secondes.</p>
+    <div class="cta-actions">
+      <button class="btn btn-primary btn-lg" onclick="openModal()">⚡ Créer un compte</button>
+      <button class="btn btn-ghost btn-lg" onclick="showPage('download-page')">↓ Télécharger l'app</button>
+    </div>
+  </div>
+
+</div><!-- end page-home -->
