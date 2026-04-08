@@ -1,492 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creo — Transfer Without Limits</title>
-<meta name="description" content="Téléportez vos fichiers entre appareils. Ultra-rapide, chiffré, sans cloud.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-/* ══════════════════════════════════════════
-   VARIABLES
-══════════════════════════════════════════ */
-:root {
-  --black:#000;--dark1:#040404;--dark2:#080808;--dark3:#0e0e0e;
-  --dark4:#141414;--dark5:#1c1c1c;--dark6:#242424;
-  --border:rgba(255,255,255,.05);--border2:rgba(255,255,255,.09);
-  --border3:rgba(255,255,255,.16);--border4:rgba(255,255,255,.25);
-  --white:#fff;--text:#e2e2e2;--text2:#7a7a7a;--text3:#3a3a3a;
-  --blue:#1a6fff;--blue2:#4d8fff;--blue3:#80b3ff;
-  --cyan:#00d4ff;--green:#00ff88;--amber:#ffb800;--red:#ff3b5c;--purple:#8b5cf6;
-  --blue-glow:rgba(26,111,255,.2);--r:8px;--r-lg:14px;--r-xl:20px;--r-2xl:28px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{background:var(--black);color:var(--text);font-family:'Outfit',sans-serif;font-weight:300;line-height:1.65;overflow-x:hidden;}
-a{text-decoration:none;color:inherit;}ul{list-style:none;}
-button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;background:none;}
-input,textarea{font-family:'Outfit',sans-serif;}
-.font-mono{font-family:'JetBrains Mono',monospace;}
-.font-display{font-family:'Bebas Neue',sans-serif;letter-spacing:.03em;}
-
-/* ── ORB BG ── */
-.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-.orb{position:absolute;border-radius:50%;filter:blur(110px);opacity:0;animation:orbIn 2s ease forwards;}
-.orb-1{width:600px;height:600px;background:rgba(26,111,255,.13);top:-200px;left:-150px;animation-delay:.2s;}
-.orb-2{width:450px;height:450px;background:rgba(139,92,246,.09);top:30%;right:-180px;animation-delay:.5s;}
-.orb-3{width:350px;height:350px;background:rgba(0,212,255,.08);bottom:5%;left:25%;animation-delay:.8s;}
-.orb-4{width:250px;height:250px;background:rgba(0,255,136,.06);top:60%;left:10%;animation-delay:1s;}
-@keyframes orbIn{to{opacity:1;}}
-.grid-overlay{position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
-  background-size:56px 56px;mask-image:radial-gradient(ellipse 90% 70% at 50% 40%,black 20%,transparent 100%);}
-
-/* ── UTILITIES ── */
-.grad-text{background:linear-gradient(120deg,var(--white) 0%,var(--blue3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.grad-blue{background:linear-gradient(110deg,var(--blue) 0%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.glow-dot{width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;box-shadow:0 0 10px var(--green),0 0 20px rgba(0,255,136,.4);animation:dotBlink 2.5s ease infinite;flex-shrink:0;}
-@keyframes dotBlink{0%,100%{opacity:1;box-shadow:0 0 10px var(--green),0 0 20px rgba(0,255,136,.4);}50%{opacity:.4;box-shadow:0 0 4px var(--green);}}
-.tag{display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--blue2);text-transform:uppercase;letter-spacing:.14em;margin-bottom:1.4rem;}
-.tag::before{content:'//';color:var(--text3);margin-right:2px;}
-.section-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,6vw,5.5rem);line-height:.92;letter-spacing:.02em;color:var(--white);margin-bottom:1.2rem;}
-.section-desc{font-size:1rem;color:var(--text2);max-width:480px;line-height:1.8;margin-bottom:4.5rem;}
-
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:8px;padding:.65rem 1.6rem;border-radius:var(--r-lg);font-size:.875rem;font-weight:500;letter-spacing:.01em;transition:all .22s ease;position:relative;overflow:hidden;white-space:nowrap;}
-.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.06);opacity:0;transition:opacity .2s;}
-.btn:hover::after{opacity:1;}
-.btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 24px var(--blue-glow),inset 0 1px 0 rgba(255,255,255,.12);}
-.btn-primary:hover{background:#2a7aff;box-shadow:0 0 44px rgba(26,111,255,.5),inset 0 1px 0 rgba(255,255,255,.15);transform:translateY(-1px);}
-.btn-primary:active{transform:translateY(0);}
-.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border3);}
-.btn-ghost:hover{border-color:var(--border4);color:var(--text);background:var(--dark4);}
-.btn-outline-blue{background:rgba(26,111,255,.08);color:var(--blue2);border:1px solid rgba(26,111,255,.25);}
-.btn-outline-blue:hover{background:rgba(26,111,255,.14);border-color:rgba(26,111,255,.45);color:var(--blue3);}
-.btn-lg{padding:.9rem 2.2rem;font-size:.95rem;border-radius:var(--r-xl);}
-.btn-full{width:100%;justify-content:center;}
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* ══════════════════════════════════════════
-   NAV
-══════════════════════════════════════════ */
-#nav{position:fixed;top:0;left:0;right:0;z-index:800;height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 3.5rem;background:rgba(0,0,0,.6);backdrop-filter:blur(40px) saturate(1.4);border-bottom:1px solid var(--border);animation:navSlide .7s ease both;}
-@keyframes navSlide{from{opacity:0;transform:translateY(-14px);}to{opacity:1;transform:none;}}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;color:var(--white);display:flex;align-items:center;gap:2px;cursor:pointer;}
-.nav-logo .logo-e{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.nav-logo .logo-dot{width:5px;height:5px;background:var(--blue);border-radius:50%;margin-left:3px;box-shadow:0 0 8px var(--blue);align-self:flex-end;margin-bottom:8px;}
-.nav-pill{display:flex;background:var(--dark4);border:1px solid var(--border2);border-radius:99px;padding:4px;gap:2px;}
-.nav-pill a{padding:6px 18px;border-radius:99px;font-size:.82rem;color:var(--text3);font-weight:400;transition:all .2s;cursor:pointer;}
-.nav-pill a:hover{color:var(--text2);}
-.nav-pill a.active{background:var(--dark6);color:var(--text);}
-.nav-actions{display:flex;gap:10px;align-items:center;}
-
-/* ══════════════════════════════════════════
-   PAGE SYSTEM
-══════════════════════════════════════════ */
-.page{display:none;position:relative;z-index:1;}
-.page.active{display:block;}
-
-/* ══════════════════════════════════════════
-   HOME PAGE — HERO
-══════════════════════════════════════════ */
-#hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 2rem 7rem;z-index:1;overflow:hidden;}
-.hero-badge{display:inline-flex;align-items:center;gap:10px;padding:.45rem 1.2rem;background:rgba(26,111,255,.07);border:1px solid rgba(26,111,255,.22);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--blue2);margin-bottom:2.8rem;opacity:0;animation:fadeUp .6s .2s ease both;}
-.hero-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(5.5rem,16vw,13rem);line-height:.88;letter-spacing:.01em;margin-bottom:.5rem;opacity:0;animation:fadeUp .7s .4s ease both;}
-.hero-h1 .sub-line{display:block;font-family:'Outfit',sans-serif;font-size:clamp(.9rem,2vw,1.3rem);font-weight:300;color:var(--text2);letter-spacing:.45em;text-transform:uppercase;margin-bottom:1.2rem;}
-.hero-desc{max-width:500px;font-size:1.05rem;color:var(--text2);line-height:1.8;margin-bottom:3rem;opacity:0;animation:fadeUp .7s .6s ease both;}
-.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:5rem;opacity:0;animation:fadeUp .7s .8s ease both;}
-.hero-stats{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;opacity:0;animation:fadeUp .7s 1s ease both;}
-.hero-stat{padding:1.2rem 2.5rem;background:var(--dark2);text-align:center;flex:1;}
-.hero-stat-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);line-height:1;display:block;}
-.hero-stat-num em{color:var(--blue);font-style:normal;}
-.hero-stat-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;display:block;}
-.scroll-indicator{position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:fadeUp .6s 1.3s ease both;}
-.scroll-track{width:1px;height:55px;background:var(--dark5);border-radius:99px;position:relative;overflow:hidden;}
-.scroll-track::after{content:'';position:absolute;top:0;left:0;right:0;height:40%;background:linear-gradient(to bottom,transparent,var(--blue));animation:scrollPulse 1.8s ease-in-out infinite;}
-@keyframes scrollPulse{0%{top:-40%;opacity:1;}100%{top:140%;opacity:0;}}
-.scroll-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);letter-spacing:.2em;text-transform:uppercase;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
-
-/* ── MARQUEE ── */
-.marquee-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:var(--dark1);position:relative;z-index:1;}
-.marquee-track{display:flex;animation:marquee 22s linear infinite;width:max-content;}
-.marquee-item{display:flex;align-items:center;gap:1.5rem;padding:1rem 3rem;border-right:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
-.marquee-item .m-dot{width:4px;height:4px;background:var(--blue);border-radius:50%;}
-@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-
-/* ══════════════════════════════════════════
-   HOME — FEATURES
-══════════════════════════════════════════ */
-#features{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;}
-.features-layout{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;}
-.feat-card{background:var(--dark1);padding:3rem 2.8rem;position:relative;transition:background .3s;overflow:hidden;}
-.feat-card:hover{background:var(--dark2);}
-.feat-card.wide{grid-column:1/-1;}
-.feat-card::before{content:'';position:absolute;inset:0;background:radial-gradient(500px circle at var(--mx,50%) var(--my,50%),rgba(26,111,255,.05),transparent 40%);opacity:0;transition:opacity .35s;}
-.feat-card:hover::before{opacity:1;}
-.feat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity .3s;}
-.feat-card:hover::after{opacity:1;}
-.feat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;}
-.feat-icon-wrap{width:52px;height:52px;background:var(--dark4);border:1px solid var(--border3);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
-.feat-num{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);letter-spacing:.08em;}
-.feat-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:.6rem;}
-.feat-card p{font-size:.88rem;color:var(--text2);line-height:1.75;max-width:400px;}
-.feat-chip{display:inline-block;margin-top:1.2rem;padding:4px 12px;background:var(--dark4);border:1px solid var(--border2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--blue2);letter-spacing:.06em;}
-.feat-wide-inner{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
-
-/* ══════════════════════════════════════════
-   HOME — DEMO
-══════════════════════════════════════════ */
-#demo{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;}
-.demo-container{display:grid;grid-template-columns:1fr 120px 1fr;align-items:stretch;border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;background:var(--dark1);box-shadow:0 0 80px rgba(26,111,255,.06);}
-.device-pane{padding:2.5rem;}
-.device-pane.source{border-right:1px solid var(--border);}
-.device-pane.target{border-left:1px solid var(--border);}
-.pane-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.4rem;border-bottom:1px solid var(--border);margin-bottom:1.6rem;}
-.pane-device-name{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text);font-weight:500;}
-.pane-badge{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:4px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em;}
-.badge-green{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);}
-.badge-blue{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
-.file-row{display:flex;align-items:center;gap:12px;padding:.85rem 1rem;border-radius:var(--r);border:1px solid var(--border);background:var(--dark2);margin-bottom:8px;transition:all .3s;}
-.file-row.active{border-color:rgba(26,111,255,.4);background:rgba(26,111,255,.045);}
-.file-row.done{opacity:.35;}.file-row.queued{opacity:.35;}
-.f-icon{font-size:1.1rem;flex-shrink:0;}
-.f-body{flex:1;min-width:0;}
-.f-name{font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color .3s;}
-.file-row.active .f-name{color:var(--blue2);}
-.f-meta{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--text3);margin-top:2px;transition:color .3s;}
-.file-row.active .f-meta{color:var(--blue);}
-.f-check{font-size:.78rem;color:var(--green);opacity:0;transition:opacity .3s;flex-shrink:0;}
-.file-row.done .f-check{opacity:1;}
-.prog-bar{height:2px;background:var(--dark5);border-radius:99px;margin-top:5px;overflow:hidden;}
-.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .1s linear;}
-.demo-pipe{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:var(--dark2);padding:2rem 0;}
-.pipe-speed{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--white);text-align:center;line-height:1;}
-.pipe-unit{font-family:'Outfit',sans-serif;font-size:.62rem;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;text-align:center;display:block;margin-top:2px;}
-.pipe-track{width:2px;height:36px;background:var(--dark5);border-radius:99px;position:relative;overflow:hidden;}
-.pipe-track::after{content:'';position:absolute;top:-30px;left:0;right:0;height:30px;background:linear-gradient(to bottom,transparent,var(--blue),transparent);animation:flowDown 1.4s linear infinite;}
-@keyframes flowDown{to{top:110%;}}
-.pipe-arrow{color:var(--blue2);font-size:1rem;animation:arrowPulse 1.5s ease infinite;}
-@keyframes arrowPulse{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
-.pipe-protocol{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;text-align:center;}
-.demo-bar{border-top:1px solid var(--border);padding:1.2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;background:var(--dark2);grid-column:1/-1;}
-.demo-bar-stat{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text2);}
-.demo-bar-stat strong{color:var(--text);}
-.demo-bar-stat .dot{width:4px;height:4px;border-radius:50%;background:var(--blue);}
-
-/* ══════════════════════════════════════════
-   HOME — HOW IT WORKS
-══════════════════════════════════════════ */
-#how{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
-.steps-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;}
-.step-card{background:var(--dark1);padding:3rem 2.2rem;transition:background .25s;}
-.step-card:hover{background:var(--dark2);}
-.step-n{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:var(--dark5);line-height:1;margin-bottom:1.5rem;transition:color .3s;}
-.step-card:hover .step-n{color:var(--dark6);}
-.step-icon{font-size:1.8rem;margin-bottom:1rem;}
-.step-card h4{font-size:1rem;font-weight:600;color:var(--white);margin-bottom:.6rem;}
-.step-card p{font-size:.83rem;color:var(--text2);line-height:1.7;}
-
-/* ══════════════════════════════════════════
-   HOME — DASHBOARD PREVIEW
-══════════════════════════════════════════ */
-#dashboard{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
-.dash-frame{border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;background:var(--dark1);box-shadow:0 40px 120px rgba(0,0,0,.8),0 0 60px rgba(26,111,255,.05);}
-.dash-topbar{display:flex;align-items:center;gap:8px;padding:1.1rem 1.5rem;background:var(--dark3);border-bottom:1px solid var(--border);}
-.dash-dot{width:10px;height:10px;border-radius:50%;}
-.dash-dot.r{background:#ff5f57;}.dash-dot.y{background:#febc2e;}.dash-dot.g{background:#28c840;}
-.dash-url-bar{flex:1;max-width:320px;margin:0 auto;background:var(--dark4);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text3);text-align:center;}
-.dash-body{display:grid;grid-template-columns:220px 1fr;min-height:480px;}
-.dash-sidebar{background:var(--dark2);border-right:1px solid var(--border);padding:1.5rem 1rem;}
-.dash-logo-sm{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--white);letter-spacing:.1em;padding:0 .5rem;margin-bottom:2rem;}
-.dash-logo-sm span{color:var(--blue);}
-.sidebar-section{margin-bottom:1.8rem;}
-.sidebar-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;padding:0 .5rem;margin-bottom:.6rem;}
-.sidebar-link{display:flex;align-items:center;gap:10px;padding:.55rem .7rem;border-radius:var(--r);font-size:.82rem;color:var(--text2);margin-bottom:2px;cursor:pointer;transition:all .2s;}
-.sidebar-link:hover{background:var(--dark4);color:var(--text);}
-.sidebar-link.active{background:rgba(26,111,255,.1);color:var(--blue2);border:1px solid rgba(26,111,255,.2);}
-.sidebar-link .s-icon{font-size:.95rem;flex-shrink:0;}
-.dash-main{padding:2rem;overflow:hidden;}
-.dash-main-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
-.dash-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;color:var(--white);}
-.dash-search{display:flex;align-items:center;gap:8px;background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r);padding:.45rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);}
-.dash-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem;}
-.dash-card{background:var(--dark3);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.2rem 1.1rem;}
-.dash-card-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
-.dash-card-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);line-height:1;}
-.dash-card-sub{font-size:.7rem;color:var(--text3);margin-top:3px;}
-.dash-card-val .up{color:var(--green);font-size:.8rem;font-family:'Outfit',sans-serif;}
-.dash-table-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:.5rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);margin-bottom:6px;}
-.dash-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:.7rem .8rem;border-radius:var(--r);font-size:.8rem;color:var(--text2);align-items:center;border:1px solid transparent;margin-bottom:3px;transition:all .15s;}
-.dash-row:hover{background:var(--dark3);border-color:var(--border);}
-.dash-row .r-name{display:flex;align-items:center;gap:8px;}
-.dash-row .r-icon{font-size:.95rem;}
-.dash-row .r-fname{font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.dash-status{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:3px 8px;border-radius:99px;}
-.st-done{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);}
-.st-send{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
-.st-wait{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text3);}
-
-/* ══════════════════════════════════════════
-   HOME — PRICING
-══════════════════════════════════════════ */
-#pricing-section{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.plan{background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-2xl);padding:2.8rem 2.2rem;position:relative;transition:transform .3s,box-shadow .3s;}
-.plan:hover{transform:translateY(-5px);}
-.plan.featured{background:var(--dark3);border-color:rgba(26,111,255,.45);box-shadow:0 0 60px rgba(26,111,255,.12),inset 0 1px 0 rgba(26,111,255,.15);}
-.plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:4px 18px;border-radius:99px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;box-shadow:0 0 16px var(--blue-glow);}
-.plan-name{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:1.2rem;}
-.plan-price{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:var(--white);line-height:1;}
-.plan-price sup{font-size:1.6rem;vertical-align:super;font-weight:300;}
-.plan-period{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text3);margin-bottom:2.5rem;}
-.plan-divider{height:1px;background:var(--border);margin-bottom:2rem;}
-.plan-features{margin-bottom:2.5rem;}
-.plan-features li{display:flex;align-items:flex-start;gap:10px;font-size:.85rem;color:var(--text2);padding:.55rem 0;border-bottom:1px solid var(--border);}
-.plan-features li:last-child{border:none;}
-.li-ok{color:var(--green);flex-shrink:0;}
-.li-no{color:var(--dark6);flex-shrink:0;}
-.li-no+span{color:var(--text3);}
-
-/* ══════════════════════════════════════════
-   HOME — DOWNLOAD
-══════════════════════════════════════════ */
-#download-section{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
-.download-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
-.dl-card{background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-2xl);padding:2.5rem;display:flex;align-items:center;gap:1.5rem;transition:all .25s;cursor:pointer;}
-.dl-card:hover{background:var(--dark3);border-color:var(--border3);transform:translateY(-3px);}
-.dl-card.primary{border-color:rgba(26,111,255,.3);background:rgba(26,111,255,.04);}
-.dl-card.primary:hover{border-color:rgba(26,111,255,.5);background:rgba(26,111,255,.07);}
-.dl-icon-wrap{width:60px;height:60px;border-radius:var(--r-lg);background:var(--dark4);border:1px solid var(--border3);display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0;}
-.dl-body{flex:1;}
-.dl-platform{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
-.dl-name{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--white);letter-spacing:.04em;}
-.dl-version{font-size:.75rem;color:var(--text2);margin-top:2px;}
-.dl-arrow{font-size:1.2rem;color:var(--text3);transition:color .2s,transform .2s;}
-.dl-card:hover .dl-arrow{color:var(--blue2);transform:translateX(3px);}
-
-/* ══════════════════════════════════════════
-   HOME — FAQ
-══════════════════════════════════════════ */
-#faq-section{position:relative;z-index:1;padding:8rem 3.5rem;max-width:1200px;margin:0 auto;border-top:1px solid var(--border);}
-.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;}
-.faq-item{background:var(--dark1);padding:2rem 2.5rem;cursor:pointer;transition:background .2s;}
-.faq-item:hover{background:var(--dark2);}
-.faq-q{font-size:.95rem;font-weight:500;color:var(--text);margin-bottom:0;display:flex;justify-content:space-between;align-items:center;gap:1rem;}
-.faq-icon{color:var(--text3);font-size:1.1rem;transition:transform .25s,color .25s;flex-shrink:0;}
-.faq-a{font-size:.85rem;color:var(--text2);line-height:1.75;max-height:0;overflow:hidden;transition:max-height .35s ease,margin-top .25s ease;}
-.faq-item.open .faq-a{max-height:200px;margin-top:.9rem;}
-.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--blue2);}
-
-/* ══════════════════════════════════════════
-   CTA BAND
-══════════════════════════════════════════ */
-#cta-band{position:relative;z-index:1;border-top:1px solid var(--border);text-align:center;padding:8rem 2rem;overflow:hidden;}
-#cta-band::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:500px;background:radial-gradient(ellipse,rgba(26,111,255,.1) 0%,transparent 70%);pointer-events:none;}
-.cta-label{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--blue2);text-transform:uppercase;letter-spacing:.14em;margin-bottom:1.5rem;}
-.cta-h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,10vw,8rem);line-height:.9;letter-spacing:.02em;color:var(--white);margin-bottom:2rem;}
-.cta-sub{font-size:1.05rem;color:var(--text2);margin-bottom:3rem;}
-.cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-
-/* ══════════════════════════════════════════
-   SUBPAGES
-══════════════════════════════════════════ */
-.subpage{padding-top:130px;padding-bottom:6rem;max-width:1100px;margin:0 auto;padding-left:2rem;padding-right:2rem;}
-.subpage-hero{text-align:center;margin-bottom:6rem;}
-.subpage-hero .tag{justify-content:center;}
-.subpage-h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.5rem,8vw,7rem);line-height:.9;letter-spacing:.02em;margin-bottom:1.2rem;}
-.subpage-sub{font-size:1.05rem;color:var(--text2);max-width:540px;margin:0 auto;line-height:1.8;}
-
-/* About page */
-.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-bottom:5rem;align-items:center;}
-.about-text h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3.5rem);line-height:.95;letter-spacing:.03em;color:var(--white);margin-bottom:1.2rem;}
-.about-text p{font-size:.95rem;color:var(--text2);line-height:1.8;margin-bottom:1rem;}
-.about-visual{background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-2xl);padding:3rem;text-align:center;}
-.about-big-num{font-family:'Bebas Neue',sans-serif;font-size:6rem;line-height:1;margin-bottom:.5rem;}
-.about-big-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;}
-.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4rem;}
-.team-card{background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-xl);padding:2rem;text-align:center;transition:all .25s;}
-.team-card:hover{border-color:var(--border3);background:var(--dark3);}
-.team-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;border:2px solid var(--border2);}
-.team-name{font-weight:600;color:var(--text);margin-bottom:4px;}
-.team-role{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;}
-
-/* Values */
-.values-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;margin-top:3rem;}
-.value-card{background:var(--dark1);padding:2.5rem;transition:background .2s;}
-.value-card:hover{background:var(--dark2);}
-.value-icon{font-size:2rem;margin-bottom:1rem;}
-.value-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.04em;color:var(--white);margin-bottom:.5rem;}
-.value-desc{font-size:.85rem;color:var(--text2);line-height:1.7;}
-
-/* Contact page */
-.contact-layout{display:grid;grid-template-columns:1fr 1.3fr;gap:4rem;align-items:start;}
-.contact-info h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;}
-.contact-info p{font-size:.9rem;color:var(--text2);line-height:1.8;margin-bottom:2rem;}
-.contact-item{display:flex;align-items:center;gap:14px;padding:.9rem 0;border-bottom:1px solid var(--border);}
-.contact-item:last-child{border:none;}
-.contact-icon{width:40px;height:40px;background:var(--dark4);border:1px solid var(--border2);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.contact-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
-.contact-val{font-size:.88rem;color:var(--text);}
-.contact-form{background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-2xl);padding:2.8rem;position:relative;overflow:hidden;}
-.contact-form::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);}
-.field{margin-bottom:1.1rem;}
-.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;}
-.field input,.field textarea,.field select{width:100%;background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r-lg);padding:.78rem 1rem;color:var(--text);font-size:.9rem;outline:none;transition:border-color .2s,box-shadow .2s;}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
-.field input::placeholder,.field textarea::placeholder{color:var(--text3);}
-.field textarea{resize:vertical;min-height:120px;}
-
-/* ══════════════════════════════════════════
-   FOOTER
-══════════════════════════════════════════ */
-footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:4rem 3.5rem 2.5rem;}
-.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:3rem;margin-bottom:4rem;}
-.footer-brand{}
-.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.1em;color:var(--white);margin-bottom:1rem;cursor:pointer;}
-.footer-logo span{color:var(--blue);}
-.footer-tagline{font-size:.85rem;color:var(--text2);line-height:1.7;max-width:260px;}
-.footer-col h5{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;margin-bottom:1.2rem;}
-.footer-col a{display:block;font-size:.85rem;color:var(--text2);margin-bottom:.65rem;transition:color .2s;cursor:pointer;}
-.footer-col a:hover{color:var(--text);}
-.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding-top:2rem;border-top:1px solid var(--border);}
-.footer-copy{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text3);}
-.footer-socials{display:flex;gap:12px;}
-.social-btn{width:34px;height:34px;background:var(--dark4);border:1px solid var(--border2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--text3);transition:all .2s;cursor:pointer;}
-.social-btn:hover{background:var(--dark5);color:var(--text2);border-color:var(--border3);}
-
-/* ══════════════════════════════════════════
-   LOGIN MODAL
-══════════════════════════════════════════ */
-#modal-overlay{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.88);backdrop-filter:blur(36px) saturate(1.2);align-items:center;justify-content:center;padding:2rem;}
-#modal-overlay.open{display:flex;}
-.modal-box{background:var(--dark2);border:1px solid var(--border3);border-radius:var(--r-2xl);padding:3rem 2.8rem;width:100%;max-width:440px;position:relative;animation:modalIn .32s ease both;}
-@keyframes modalIn{from{opacity:0;transform:scale(.94) translateY(16px);}to{opacity:1;transform:none;}}
-.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);border-radius:var(--r-2xl) var(--r-2xl) 0 0;}
-.modal-close{position:absolute;top:1.2rem;right:1.2rem;width:32px;height:32px;background:var(--dark4);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all .2s;}
-.modal-close:hover{background:var(--dark5);color:var(--text);}
-.modal-logo{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;letter-spacing:.1em;text-align:center;margin-bottom:.4rem;}
-.modal-sub{text-align:center;font-size:.83rem;color:var(--text2);margin-bottom:2.8rem;}
-.modal-tabs{display:flex;gap:0;background:var(--dark4);border:1px solid var(--border2);border-radius:var(--r-lg);padding:4px;margin-bottom:2rem;}
-.modal-tab{flex:1;text-align:center;padding:8px 0;border-radius:var(--r);font-size:.85rem;color:var(--text3);transition:all .2s;cursor:pointer;}
-.modal-tab.active{background:var(--dark6);color:var(--text);}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.forgot{display:block;text-align:right;font-size:.76rem;color:var(--blue2);margin-top:.4rem;cursor:pointer;}
-.divider-or{display:flex;align-items:center;gap:1rem;margin:1.4rem 0;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text3);}
-.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:var(--border);}
-.oauth-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1.5rem;}
-.oauth-btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:.65rem .5rem;background:var(--dark3);border:1px solid var(--border2);border-radius:var(--r-lg);color:var(--text2);font-size:.8rem;font-weight:500;transition:all .2s;cursor:pointer;}
-.oauth-btn:hover{background:var(--dark4);color:var(--text);border-color:var(--border3);}
-.oauth-btn:disabled{opacity:.4;cursor:not-allowed;}
-.modal-footer-txt{text-align:center;font-size:.78rem;color:var(--text3);margin-top:1.2rem;}
-.modal-footer-txt a{color:var(--blue2);}
-.form-panel{display:none;}
-.form-panel.active{display:block;}
-/* Reset panel */
-.reset-panel{display:none;}
-.reset-panel.open{display:block;}
-.back-link{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;color:var(--text2);cursor:pointer;margin-bottom:1.5rem;transition:color .2s;}
-.back-link:hover{color:var(--text);}
-/* Confirm box */
-.confirm-box{display:none;text-align:center;padding:1.5rem 0;}
-.confirm-icon{font-size:3rem;margin-bottom:1rem;}
-.confirm-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);margin-bottom:.5rem;}
-.confirm-text{font-size:.875rem;color:var(--text2);line-height:1.7;}
-/* Loading */
-.btn-loading{opacity:.7;pointer-events:none;}
-.btn-spinner{display:none!important;}
-.btn-loading .btn-spinner{display:inline-block!important;}
-.btn-loading .btn-label{display:none;}
-
-/* Toast */
-.toast-wrap{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
-.toast{display:flex;align-items:center;gap:10px;padding:.85rem 1.2rem;border-radius:var(--r-lg);backdrop-filter:blur(20px);font-size:.875rem;pointer-events:all;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .3s ease;}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
-@keyframes toastOut{to{opacity:0;transform:translateX(20px);}}
-
-/* ══════════════════════════════════════════
-   REVEAL + RESPONSIVE
-══════════════════════════════════════════ */
-.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
-.reveal.visible{opacity:1;transform:none;}
-.d1{transition-delay:.08s;}.d2{transition-delay:.16s;}.d3{transition-delay:.24s;}.d4{transition-delay:.32s;}
-
-@media(max-width:1024px){
-  #features,#demo,#how,#dashboard,#pricing-section,#download-section,#faq-section{padding:6rem 2rem;}
-  .features-layout,.values-grid{grid-template-columns:1fr;}
-  .feat-card.wide{grid-column:1;}
-  .feat-wide-inner{grid-template-columns:1fr;gap:1.5rem;}
-  .demo-container{grid-template-columns:1fr;}
-  .device-pane.source{border-right:none;border-bottom:1px solid var(--border);}
-  .device-pane.target{border-left:none;border-top:1px solid var(--border);}
-  .demo-pipe{flex-direction:row;padding:1.2rem 2rem;}
-  .pipe-track{width:36px;height:2px;}
-  .steps-wrap{grid-template-columns:repeat(2,1fr);}
-  .dash-body{grid-template-columns:1fr;}
-  .dash-sidebar{display:none;}
-  .pricing-grid,.download-grid,.about-grid,.contact-layout,.team-grid,.faq-grid{grid-template-columns:1fr;}
-  .footer-top{grid-template-columns:1fr 1fr;}
-  #nav{padding:0 1.5rem;}
-  .nav-pill{display:none;}
-}
-@media(max-width:640px){
-  .hero-stats{flex-direction:column;gap:1px;}
-  .dash-cards{grid-template-columns:1fr;}
-  .dash-table-header,.dash-row{grid-template-columns:1fr 1fr;}
-  .dash-table-header span:nth-child(3),.dash-row>*:nth-child(3){display:none;}
-  .modal-box{padding:2.2rem 1.6rem;}
-  footer{padding:3rem 1.5rem 2rem;}
-  .footer-top{grid-template-columns:1fr;}
-  .field-row{grid-template-columns:1fr;}
-  .oauth-grid{grid-template-columns:1fr;}
-}
-</style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Transfer Without Limits</title>
+  <meta name="description" content="Téléportez vos fichiers entre appareils. Ultra-rapide, chiffré, sans cloud.">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="orb orb-4"></div></div>
+<nav id="nav"></nav>
 
-<!-- BG -->
-<div class="bg-orbs">
-  <div class="orb orb-1"></div><div class="orb orb-2"></div>
-  <div class="orb orb-3"></div><div class="orb orb-4"></div>
-</div>
-<div class="toast-wrap" id="toast-wrap"></div>
-
-<!-- ════════ NAV ════════ -->
-<nav id="nav">
-  <div class="nav-logo" onclick="showPage('home')">
-    CR<span class="logo-e">E</span>O<div class="logo-dot"></div>
-  </div>
-  <nav class="nav-pill">
-    <a onclick="showPage('home')"         class="active" id="nav-home">Accueil</a>
-    <a onclick="showPage('features-page')"            id="nav-features">Fonctionnalités</a>
-    <a onclick="showPage('pricing-page')"             id="nav-pricing">Tarifs</a>
-    <a onclick="showPage('about')"                    id="nav-about">À propos</a>
-    <a onclick="showPage('contact')"                  id="nav-contact">Contact</a>
-  </nav>
-  <div class="nav-actions">
-    <button class="btn btn-ghost" onclick="openModal()">Connexion</button>
-    <button class="btn btn-primary" onclick="openModal()">
-      <span class="glow-dot"></span> Commencer
-    </button>
-  </div>
-</nav>
-
-<!-- ════════════════════════════════════════════
-     PAGE — HOME
-════════════════════════════════════════════ -->
-<div class="page active" id="page-home">
-
-<!-- HERO -->
 <section id="hero">
   <div class="grid-overlay"></div>
+  <div class="hero-badge"><span class="glow-dot"></span><span class="font-mono">v3.0 — Transfert P2P chiffré en temps réel</span></div>
   <h1 class="hero-h1"><span class="sub-line">Téléportez vos</span><span class="grad-text">FICHIERS.</span></h1>
   <p class="hero-desc">Envoyez n'importe quel fichier entre vos appareils en un instant. Sans cloud. Sans câble. Chiffré de bout en bout. Juste vous et la vitesse.</p>
   <div class="hero-ctas">
-    <button class="btn btn-primary btn-lg" onclick="openModal()">⚡ Créer un compte gratuit</button>
-    <button class="btn btn-ghost btn-lg" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">Voir la démo →</button>
-    <button class="btn btn-outline-blue btn-lg" onclick="showPage('download-page')">↓ Télécharger</button>
+    <a href="login.html" class="btn btn-primary btn-lg">⚡ Créer un compte gratuit</a>
+    <a href="#demo" class="btn btn-ghost btn-lg">Voir la démo →</a>
+    <a href="download.html" class="btn btn-outline-blue btn-lg">↓ Télécharger</a>
   </div>
   <div class="hero-stats">
     <div class="hero-stat"><span class="hero-stat-num" data-count="2.4" data-dec="1" data-suf=" GB/s">2.4 GB/s</span><span class="hero-stat-label">vitesse max</span></div>
@@ -497,75 +29,52 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:4r
   <div class="scroll-indicator"><div class="scroll-track"></div><span class="scroll-label">scroll</span></div>
 </section>
 
-<!-- MARQUEE -->
-<div class="marquee-strip">
-  <div class="marquee-track">
-    <div class="marquee-item"><span class="m-dot"></span> Chiffrement AES-256</div>
-    <div class="marquee-item"><span class="m-dot"></span> Transfert P2P</div>
-    <div class="marquee-item"><span class="m-dot"></span> Wi-Fi Direct</div>
-    <div class="marquee-item"><span class="m-dot"></span> LAN Ultra-rapide</div>
-    <div class="marquee-item"><span class="m-dot"></span> Multi-plateforme</div>
-    <div class="marquee-item"><span class="m-dot"></span> Sans cloud</div>
-    <div class="marquee-item"><span class="m-dot"></span> Zéro serveur</div>
-    <div class="marquee-item"><span class="m-dot"></span> Sync auto</div>
-    <div class="marquee-item"><span class="m-dot"></span> Taille illimitée</div>
-    <div class="marquee-item"><span class="m-dot"></span> Open Source</div>
-    <div class="marquee-item"><span class="m-dot"></span> API REST</div>
-    <div class="marquee-item"><span class="m-dot"></span> Réseau distant</div>
+<div class="marquee-strip"><div class="marquee-track">
+  <div class="marquee-item"><span class="m-dot"></span> Chiffrement AES-256</div>
+  <div class="marquee-item"><span class="m-dot"></span> Transfert P2P</div>
+  <div class="marquee-item"><span class="m-dot"></span> Wi-Fi Direct</div>
+  <div class="marquee-item"><span class="m-dot"></span> LAN Ultra-rapide</div>
+  <div class="marquee-item"><span class="m-dot"></span> Multi-plateforme</div>
+  <div class="marquee-item"><span class="m-dot"></span> Sans cloud</div>
+  <div class="marquee-item"><span class="m-dot"></span> Zéro serveur</div>
+  <div class="marquee-item"><span class="m-dot"></span> Sync auto</div>
+  <div class="marquee-item"><span class="m-dot"></span> Taille illimitée</div>
+  <div class="marquee-item"><span class="m-dot"></span> Open Source</div>
+  <div class="marquee-item"><span class="m-dot"></span> API REST</div>
+  <div class="marquee-item"><span class="m-dot"></span> Réseau distant</div>
+</div></div>
+
+<div class="section-wrap">
+  <div class="tag">Fonctionnalités</div>
+  <h2 class="section-h2">Tout ce dont<br>vous avez besoin.</h2>
+  <p class="section-desc">Architecture peer-to-peer, zéro intermédiaire, zéro compromis. <a href="features.html" style="color:var(--blue2);">En savoir plus →</a></p>
+  <div class="features-layout">
+    <div class="feat-card reveal"><div class="feat-header"><div class="feat-icon-wrap">⚡</div><span class="feat-num font-mono">01</span></div><h3>Ultra-Rapide</h3><p>Transfert direct P2P via LAN ou Wi-Fi Direct. Aucun serveur intermédiaire. Atteignez les limites physiques de votre réseau.</p><span class="feat-chip">jusqu'à 2.4 GB/s</span></div>
+    <div class="feat-card reveal d1"><div class="feat-header"><div class="feat-icon-wrap">🔐</div><span class="feat-num font-mono">02</span></div><h3>Chiffrement Total</h3><p>AES-256 de bout en bout. Vos fichiers ne passent jamais par nos serveurs. Clés générées localement, données invisibles.</p><span class="feat-chip">AES-256 + TLS 1.3</span></div>
+    <div class="feat-card reveal"><div class="feat-header"><div class="feat-icon-wrap">📱</div><span class="feat-num font-mono">03</span></div><h3>Multi-Plateforme</h3><p>Windows, macOS, Linux, iOS, Android. Un compte suffit pour unifier tous vos appareils dans une expérience fluide.</p><span class="feat-chip">5 plateformes</span></div>
+    <div class="feat-card reveal d1"><div class="feat-header"><div class="feat-icon-wrap">🌐</div><span class="feat-num font-mono">04</span></div><h3>Réseau Distant</h3><p>Tunnel chiffré pour connecter des appareils sur différents réseaux. Bureau, maison, mobile — la distance disparaît.</p><span class="feat-chip">Relay chiffré</span></div>
+    <div class="feat-card wide reveal"><div class="feat-wide-inner">
+      <div><div class="feat-header"><div class="feat-icon-wrap">🔄</div><span class="feat-num font-mono">05</span></div><h3>Sync Auto</h3><p>Synchronisation continue entre vos appareils. Vos fichiers toujours à jour, partout, en temps réel.</p><span class="feat-chip">Temps réel</span></div>
+      <div><div class="feat-header"><div class="feat-icon-wrap">📂</div><span class="feat-num font-mono">06</span></div><h3>Dossiers Complets</h3><p>Structure intacte, compression à la volée, reprise automatique sur coupure réseau. Des centaines de GB sans effort.</p><span class="feat-chip">Reprise auto</span></div>
+    </div></div>
   </div>
 </div>
 
-<!-- FEATURES -->
-<section id="features">
-  <div class="tag">Fonctionnalités</div>
-  <h2 class="section-h2">Tout ce dont<br>vous avez besoin.</h2>
-  <p class="section-desc">Architecture peer-to-peer, zéro intermédiaire, zéro compromis sur la vitesse ou la sécurité.</p>
-  <div class="features-layout">
-    <div class="feat-card reveal" onmousemove="trackMouse(this,event)">
-      <div class="feat-header"><div class="feat-icon-wrap">⚡</div><span class="feat-num font-mono">01</span></div>
-      <h3>Ultra-Rapide</h3><p>Transfert direct P2P via LAN ou Wi-Fi Direct. Aucun serveur intermédiaire. Atteignez les limites physiques de votre réseau.</p>
-      <span class="feat-chip">jusqu'à 2.4 GB/s</span>
-    </div>
-    <div class="feat-card reveal d1" onmousemove="trackMouse(this,event)">
-      <div class="feat-header"><div class="feat-icon-wrap">🔐</div><span class="feat-num font-mono">02</span></div>
-      <h3>Chiffrement Total</h3><p>AES-256 de bout en bout. Vos fichiers ne passent jamais par nos serveurs. Clés générées localement, données invisibles.</p>
-      <span class="feat-chip">AES-256 + TLS 1.3</span>
-    </div>
-    <div class="feat-card reveal" onmousemove="trackMouse(this,event)">
-      <div class="feat-header"><div class="feat-icon-wrap">📱</div><span class="feat-num font-mono">03</span></div>
-      <h3>Multi-Plateforme</h3><p>Windows, macOS, Linux, iOS, Android. Un compte suffit pour unifier tous vos appareils dans une expérience fluide.</p>
-      <span class="feat-chip">5 plateformes</span>
-    </div>
-    <div class="feat-card reveal d1" onmousemove="trackMouse(this,event)">
-      <div class="feat-header"><div class="feat-icon-wrap">🌐</div><span class="feat-num font-mono">04</span></div>
-      <h3>Réseau Distant</h3><p>Tunnel chiffré pour connecter des appareils sur différents réseaux. Bureau, maison, mobile — la distance disparaît.</p>
-      <span class="feat-chip">Relay chiffré</span>
-    </div>
-    <div class="feat-card wide reveal" onmousemove="trackMouse(this,event)">
-      <div class="feat-wide-inner">
-        <div><div class="feat-header"><div class="feat-icon-wrap">🔄</div><span class="feat-num font-mono">05</span></div><h3>Sync Auto</h3><p>Synchronisation continue entre vos appareils. Vos fichiers toujours à jour, partout, en temps réel.</p><span class="feat-chip">Temps réel</span></div>
-        <div><div class="feat-header"><div class="feat-icon-wrap">📂</div><span class="feat-num font-mono">06</span></div><h3>Dossiers Complets</h3><p>Structure intacte, compression à la volée, reprise automatique sur coupure réseau. Des centaines de GB sans effort.</p><span class="feat-chip">Reprise auto</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- DEMO -->
-<section id="demo">
+<div class="section-wrap" id="demo">
   <div class="tag">Démo live</div>
   <h2 class="section-h2">Le transfert<br>en action.</h2>
   <p class="section-desc">Regardez vos fichiers voyager en temps réel d'un appareil à l'autre. Chiffré. Instantané.</p>
   <div class="demo-container reveal">
     <div class="device-pane source">
-      <div class="pane-header"><span class="pane-device-name font-mono">💻 MacBook Pro</span><span class="pane-badge badge-green"><span class="glow-dot"></span> Source</span></div>
-      <div class="file-row"><span class="f-icon">🎬</span><div class="f-body"><div class="f-name">projet_final_v3.mp4</div><div class="f-meta">2.4 GB · Envoi en cours</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
+      <div class="pane-header"><span class="pane-device-name font-mono">💻 MacBook Pro</span><span class="badge badge-green"><span class="glow-dot"></span> Source</span></div>
+      <div class="file-row"><span class="f-icon">🎬</span><div class="f-body"><div class="f-name">projet_final_v3.mp4</div><div class="f-meta">2.4 GB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
       <div class="file-row"><span class="f-icon">🎨</span><div class="f-body"><div class="f-name">design_system_v4.fig</div><div class="f-meta">145 MB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
       <div class="file-row"><span class="f-icon">📦</span><div class="f-body"><div class="f-name">archives_2024.zip</div><div class="f-meta">8.3 GB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
       <div class="file-row"><span class="f-icon">📄</span><div class="f-body"><div class="f-name">rapport_annuel.pdf</div><div class="f-meta">8.2 MB</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
     </div>
     <div class="demo-pipe"><div class="pipe-track"></div><div class="pipe-speed">1.8<span class="pipe-unit">GB/s</span></div><div class="pipe-arrow">↓</div><div class="pipe-protocol font-mono">LAN<br>P2P</div><div class="pipe-track"></div></div>
     <div class="device-pane target">
-      <div class="pane-header"><span class="pane-device-name font-mono">🖥️ PC Bureau</span><span class="pane-badge badge-blue">● Réception</span></div>
+      <div class="pane-header"><span class="pane-device-name font-mono">🖥️ PC Bureau</span><span class="badge badge-blue">● Réception</span></div>
       <div class="file-row queued"><span class="f-icon">🎬</span><div class="f-body"><div class="f-name">projet_final_v3.mp4</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
       <div class="file-row queued"><span class="f-icon">🎨</span><div class="f-body"><div class="f-name">design_system_v4.fig</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
       <div class="file-row queued"><span class="f-icon">📦</span><div class="f-body"><div class="f-name">archives_2024.zip</div><div class="f-meta">En attente...</div><div class="prog-bar"><div class="prog-fill"></div></div></div><span class="f-check">✓</span></div>
@@ -575,35 +84,32 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:4r
       <div class="demo-bar-stat"><span class="dot"></span><span>Chiffrement</span><strong>AES-256</strong></div>
       <div class="demo-bar-stat"><span class="dot"></span><span>Protocole</span><strong>P2P Direct</strong></div>
       <div class="demo-bar-stat"><span class="dot"></span><span>Réseau</span><strong>LAN 10GbE</strong></div>
-      <div class="demo-bar-stat"><span class="dot"></span><span>Latence</span><strong>&lt; 1 ms</strong></div>
+      <div class="demo-bar-stat"><span class="dot"></span><span>Latence</span><strong>&lt;1 ms</strong></div>
       <div class="demo-bar-stat"><span class="glow-dot"></span><strong>Transfert actif</strong></div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- HOW -->
-<section id="how">
+<div class="section-wrap">
   <div class="tag">Comment ça marche</div>
   <h2 class="section-h2">Quatre étapes.<br>C'est tout.</h2>
   <p class="section-desc">Pas de configuration réseau. Pas de câble. Pas de connaissance technique requise.</p>
   <div class="steps-wrap">
-    <div class="step-card reveal"><div class="step-n">01</div><div class="step-icon">👤</div><h4>Créez un compte</h4><p>Email + mot de passe, ou OAuth avec Google ou GitHub. Votre compte relie tous vos appareils.</p></div>
-    <div class="step-card reveal d1"><div class="step-n">02</div><div class="step-icon">📲</div><h4>Installez l'app</h4><p>Disponible sur 5 plateformes. Connectez-vous une fois et l'appareil rejoint automatiquement votre réseau Creo.</p></div>
-    <div class="step-card reveal d2"><div class="step-n">03</div><div class="step-icon">🖱️</div><h4>Glissez & envoyez</h4><p>Drag & drop vers l'appareil cible, ou clic droit → "Envoyer via Creo" depuis l'explorateur.</p></div>
-    <div class="step-card reveal d3"><div class="step-n">✓</div><div class="step-icon">🎉</div><h4>Reçu instantanément</h4><p>Notification push sur l'appareil cible. Vos fichiers arrivent exactement là où vous voulez, intacts.</p></div>
+    <div class="step-card reveal"><div class="step-n">01</div><div class="step-icon">👤</div><h4>Créez un compte</h4><p>Email + mot de passe, ou OAuth Google / GitHub. Votre compte relie tous vos appareils.</p></div>
+    <div class="step-card reveal d1"><div class="step-n">02</div><div class="step-icon">📲</div><h4>Installez l'app</h4><p>Disponible sur 5 plateformes. Connectez-vous une fois et l'appareil rejoint votre réseau Creo automatiquement.</p></div>
+    <div class="step-card reveal d2"><div class="step-n">03</div><div class="step-icon">🖱️</div><h4>Glissez & envoyez</h4><p>Drag & drop vers l'appareil cible dans l'interface, ou clic droit → "Envoyer via Creo" depuis l'explorateur.</p></div>
+    <div class="step-card reveal d3"><div class="step-n">✓</div><div class="step-icon">🎉</div><h4>Reçu instantanément</h4><p>Notification push sur l'appareil cible. Vos fichiers arrivent exactement là où vous voulez, intacts et sécurisés.</p></div>
   </div>
-</section>
+</div>
 
-<!-- DASHBOARD PREVIEW -->
-<section id="dashboard">
+<div class="section-wrap">
   <div class="tag">Interface</div>
   <h2 class="section-h2">Un dashboard<br>pensé pour vous.</h2>
   <p class="section-desc">Gérez vos transferts, appareils et historique depuis une interface claire et rapide.</p>
   <div class="dash-frame reveal">
     <div class="dash-topbar"><span class="dash-dot r"></span><span class="dash-dot y"></span><span class="dash-dot g"></span><div class="dash-url-bar">app.creo.io / dashboard</div></div>
     <div class="dash-body">
-      <aside class="dash-sidebar">
-        <div class="dash-logo-sm">CR<span>E</span>O</div>
+      <aside class="dash-sidebar"><div class="dash-logo-sm">CR<span>E</span>O</div>
         <div class="sidebar-section"><div class="sidebar-label">Principal</div>
           <div class="sidebar-link active"><span class="s-icon">⚡</span> Transferts</div>
           <div class="sidebar-link"><span class="s-icon">📱</span> Appareils</div>
@@ -620,7 +126,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:4r
         <div class="dash-cards">
           <div class="dash-card"><div class="dash-card-label">Total transféré</div><div class="dash-card-val">142 <span class="up">GB</span></div><div class="dash-card-sub">Ce mois · +38%</div></div>
           <div class="dash-card"><div class="dash-card-label">Appareils actifs</div><div class="dash-card-val">6 <span class="up">↑</span></div><div class="dash-card-sub">Sur 3 réseaux</div></div>
-          <div class="dash-card"><div class="dash-card-label">Vitesse moy.</div><div class="dash-card-val">1.2 <span class="up">GB/s</span></div><div class="dash-card-sub">Réseau LAN local</div></div>
+          <div class="dash-card"><div class="dash-card-label">Vitesse moy.</div><div class="dash-card-val">1.2 <span class="up">GB/s</span></div><div class="dash-card-sub">Réseau LAN</div></div>
         </div>
         <div class="dash-table-header"><span>Fichier</span><span>Taille</span><span>Destination</span><span>Statut</span></div>
         <div class="dash-row"><div class="r-name"><span class="r-icon">🎬</span><span class="r-fname">montage_final.mp4</span></div><span>4.2 GB</span><span>PC Bureau</span><span class="dash-status st-done">✓ Envoyé</span></div>
@@ -630,737 +136,52 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:4r
       </main>
     </div>
   </div>
-</section>
+</div>
 
-<!-- PRICING -->
-<section id="pricing-section">
+<div class="section-wrap">
   <div class="tag">Tarification</div>
-  <h2 class="section-h2">Simple.<br>Transparent.</h2>
-  <p class="section-desc">Commencez gratuitement. Aucune carte de crédit. Évoluez quand vous êtes prêt.</p>
+  <h2 class="section-h2">Commencez<br>gratuitement.</h2>
+  <p class="section-desc">Aucune carte bancaire requise. <a href="pricing.html" style="color:var(--blue2);">Voir tous les plans →</a></p>
   <div class="pricing-grid">
-    <div class="plan reveal">
-      <div class="plan-name font-mono">Gratuit</div><div class="plan-price"><sup>€</sup>0</div><div class="plan-period font-mono">pour toujours</div><div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="li-ok">✓</span><span>2 appareils connectés</span></li><li><span class="li-ok">✓</span><span>Fichiers jusqu'à 5 GB</span></li>
-        <li><span class="li-ok">✓</span><span>Chiffrement AES-256</span></li><li><span class="li-ok">✓</span><span>Transfert LAN local</span></li>
-        <li><span class="li-no">—</span><span>Réseau à distance</span></li><li><span class="li-no">—</span><span>Synchronisation auto</span></li>
-      </ul>
-      <button class="btn btn-ghost btn-full" onclick="openModal()">Commencer gratuitement</button>
-    </div>
-    <div class="plan featured reveal d1">
-      <div class="plan-badge">⚡ PLUS POPULAIRE</div>
-      <div class="plan-name font-mono">Pro</div><div class="plan-price"><sup>€</sup>9</div><div class="plan-period font-mono">par mois · sans engagement</div><div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="li-ok">✓</span><span>Appareils illimités</span></li><li><span class="li-ok">✓</span><span>Taille de fichier illimitée</span></li>
-        <li><span class="li-ok">✓</span><span>LAN + réseau distant</span></li><li><span class="li-ok">✓</span><span>Synchronisation auto</span></li>
-        <li><span class="li-ok">✓</span><span>Historique illimité</span></li><li><span class="li-ok">✓</span><span>Support prioritaire</span></li>
-      </ul>
-      <button class="btn btn-primary btn-full" onclick="openModal()">Passer au Pro</button>
-    </div>
-    <div class="plan reveal d2">
-      <div class="plan-name font-mono">Équipe</div><div class="plan-price"><sup>€</sup>29</div><div class="plan-period font-mono">par mois · 10 utilisateurs</div><div class="plan-divider"></div>
-      <ul class="plan-features">
-        <li><span class="li-ok">✓</span><span>Tout du plan Pro</span></li><li><span class="li-ok">✓</span><span>Dashboard équipe centralisé</span></li>
-        <li><span class="li-ok">✓</span><span>Audit des transferts</span></li><li><span class="li-ok">✓</span><span>API REST complète</span></li>
-        <li><span class="li-ok">✓</span><span>SSO / SAML</span></li><li><span class="li-ok">✓</span><span>SLA 99.9%</span></li>
-      </ul>
-      <button class="btn btn-ghost btn-full" onclick="openModal()">Contacter l'équipe</button>
-    </div>
+    <div class="plan reveal"><div class="plan-name font-mono">Gratuit</div><div class="plan-price"><sup>€</sup>0</div><div class="plan-period font-mono">pour toujours</div><div class="plan-divider"></div><ul class="plan-features"><li><span class="li-ok">✓</span><span>2 appareils</span></li><li><span class="li-ok">✓</span><span>Fichiers jusqu'à 5 GB</span></li><li><span class="li-ok">✓</span><span>Chiffrement AES-256</span></li><li><span class="li-no">—</span><span>Réseau distant</span></li></ul><a href="login.html" class="btn btn-ghost btn-full">Commencer gratuitement</a></div>
+    <div class="plan featured reveal d1"><div class="plan-badge">⚡ POPULAIRE</div><div class="plan-name font-mono">Pro</div><div class="plan-price"><sup>€</sup>9</div><div class="plan-period font-mono">par mois</div><div class="plan-divider"></div><ul class="plan-features"><li><span class="li-ok">✓</span><span>Appareils illimités</span></li><li><span class="li-ok">✓</span><span>Taille illimitée</span></li><li><span class="li-ok">✓</span><span>LAN + réseau distant</span></li><li><span class="li-ok">✓</span><span>Synchronisation auto</span></li></ul><a href="login.html" class="btn btn-primary btn-full">Passer au Pro</a></div>
+    <div class="plan reveal d2"><div class="plan-name font-mono">Équipe</div><div class="plan-price"><sup>€</sup>29</div><div class="plan-period font-mono">par mois · 10 users</div><div class="plan-divider"></div><ul class="plan-features"><li><span class="li-ok">✓</span><span>Tout du Pro</span></li><li><span class="li-ok">✓</span><span>Dashboard équipe</span></li><li><span class="li-ok">✓</span><span>API REST + SSO</span></li><li><span class="li-ok">✓</span><span>SLA 99.9%</span></li></ul><a href="contact.html" class="btn btn-ghost btn-full">Contacter l'équipe</a></div>
   </div>
-</section>
+</div>
 
-<!-- DOWNLOAD -->
-<section id="download-section">
-  <div class="tag">Télécharger</div>
-  <h2 class="section-h2">Sur tous<br>vos appareils.</h2>
-  <p class="section-desc">Téléchargez Creo sur toutes vos plateformes. Installation en moins de 30 secondes.</p>
-  <div class="download-grid reveal">
-    <div class="dl-card primary" onclick="openModal()"><div class="dl-icon-wrap">🍎</div><div class="dl-body"><div class="dl-platform font-mono">macOS</div><div class="dl-name">Creo pour Mac</div><div class="dl-version">v3.2.1 · Apple Silicon + Intel · 48 MB</div></div><span class="dl-arrow">→</span></div>
-    <div class="dl-card primary" onclick="openModal()"><div class="dl-icon-wrap">🪟</div><div class="dl-body"><div class="dl-platform font-mono">Windows</div><div class="dl-name">Creo pour Windows</div><div class="dl-version">v3.2.1 · Windows 10/11 · 52 MB</div></div><span class="dl-arrow">→</span></div>
-    <div class="dl-card" onclick="openModal()"><div class="dl-icon-wrap">🐧</div><div class="dl-body"><div class="dl-platform font-mono">Linux</div><div class="dl-name">Creo pour Linux</div><div class="dl-version">AppImage / .deb / .rpm · 44 MB</div></div><span class="dl-arrow">→</span></div>
-    <div class="dl-card" onclick="openModal()"><div class="dl-icon-wrap">📱</div><div class="dl-body"><div class="dl-platform font-mono">iOS + Android</div><div class="dl-name">Creo Mobile</div><div class="dl-version">App Store · Google Play · Gratuit</div></div><span class="dl-arrow">→</span></div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section id="faq-section">
-  <div class="tag">FAQ</div>
-  <h2 class="section-h2">Questions<br>fréquentes.</h2>
-  <p class="section-desc">Vous avez une question ? Nous avons la réponse.</p>
-  <div class="faq-grid reveal">
-    <div class="faq-item"><div class="faq-q">Creo stocke-t-il mes fichiers sur ses serveurs ?<span class="faq-icon">+</span></div><div class="faq-a">Non. Creo est une solution peer-to-peer pure. Vos fichiers ne transitent jamais par nos serveurs — ils vont directement d'un appareil à l'autre, chiffrés avec votre clé locale.</div></div>
-    <div class="faq-item"><div class="faq-q">Quelle est la taille maximale des fichiers ?<span class="faq-icon">+</span></div><div class="faq-a">Aucune limite sur les plans Pro et Équipe. Le plan gratuit est limité à 5 GB par fichier. Creo supporte la reprise automatique en cas de coupure réseau.</div></div>
-    <div class="faq-item"><div class="faq-q">Comment fonctionne le chiffrement ?<span class="faq-icon">+</span></div><div class="faq-a">Chaque transfert est chiffré avec AES-256-GCM. Les clés sont générées localement sur vos appareils et ne quittent jamais votre réseau. Même Creo ne peut pas lire vos fichiers.</div></div>
-    <div class="faq-item"><div class="faq-q">Puis-je transférer entre réseaux différents ?<span class="faq-icon">+</span></div><div class="faq-a">Oui, avec les plans Pro et Équipe. Creo utilise un relay chiffré pour traverser les NAT et firewalls. La connexion reste chiffrée de bout en bout même via le relay.</div></div>
-    <div class="faq-item"><div class="faq-q">Y a-t-il une version open source ?<span class="faq-icon">+</span></div><div class="faq-a">Le client Creo est open source sur GitHub. Vous pouvez auditer le code, contribuer ou même héberger votre propre relay pour un contrôle total.</div></div>
-    <div class="faq-item"><div class="faq-q">Comment annuler mon abonnement ?<span class="faq-icon">+</span></div><div class="faq-a">En un clic depuis les paramètres de votre compte. Pas d'engagement, pas de frais cachés. Vous restez sur le plan actif jusqu'à la fin de la période payée.</div></div>
-  </div>
-</section>
-
-<!-- CTA BAND -->
-<div id="cta-band">
+<div class="cta-band">
   <div class="cta-label font-mono">// Prêt à commencer ?</div>
   <h2 class="cta-h2 font-display grad-text">COMMENCEZ<br>GRATUITEMENT.</h2>
   <p class="cta-sub">Aucune carte bancaire. Installation en 30 secondes. Transfert en 3 secondes.</p>
   <div class="cta-actions">
-    <button class="btn btn-primary btn-lg" onclick="openModal()">⚡ Créer un compte</button>
-    <button class="btn btn-ghost btn-lg" onclick="showPage('download-page')">↓ Télécharger l'app</button>
+    <a href="login.html" class="btn btn-primary btn-lg">⚡ Créer un compte</a>
+    <a href="download.html" class="btn btn-ghost btn-lg">↓ Télécharger l'app</a>
   </div>
 </div>
 
-</div><!-- end page-home -->
-
-<!-- ════════════════════════════════════════════
-     PAGE — FONCTIONNALITÉS
-════════════════════════════════════════════ -->
-<div class="page" id="page-features-page">
-  <div class="subpage">
-    <div class="subpage-hero reveal">
-      <div class="tag">Fonctionnalités complètes</div>
-      <h1 class="subpage-h1 grad-text">TOUT CE QUE<br>CREO PEUT FAIRE.</h1>
-      <p class="subpage-sub">Une plateforme pensée pour les professionnels qui ont besoin de vitesse, de sécurité et de fiabilité — sans compromis.</p>
-    </div>
-
-    <!-- Feature blocks -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border2);border-radius:var(--r-2xl);overflow:hidden;margin-bottom:3rem;">
-      <div style="background:var(--dark1);padding:3rem;">
-        <div style="font-size:2.5rem;margin-bottom:1.2rem;">⚡</div>
-        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;">Transfert Ultra-Rapide</h3>
-        <p style="font-size:.88rem;color:var(--text2);line-height:1.75;margin-bottom:1rem;">Creo utilise une architecture P2P pure pour atteindre les limites physiques de votre réseau. Sur LAN 10GbE, attendez-vous à dépasser 2 GB/s de débit soutenu.</p>
-        <ul style="font-size:.83rem;color:var(--text2);display:flex;flex-direction:column;gap:.5rem;">
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Wi-Fi Direct (sans routeur)</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> LAN câblé 1GbE / 10GbE</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Protocole UDP optimisé</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Multi-thread parallèle</li>
-        </ul>
-      </div>
-      <div style="background:var(--dark1);padding:3rem;border-left:1px solid var(--border);">
-        <div style="font-size:2.5rem;margin-bottom:1.2rem;">🔐</div>
-        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;">Sécurité Zero-Knowledge</h3>
-        <p style="font-size:.88rem;color:var(--text2);line-height:1.75;margin-bottom:1rem;">Vos données n'appartiennent qu'à vous. Creo n'a jamais accès à vos fichiers ni à vos clés de chiffrement. Tout est calculé localement sur vos appareils.</p>
-        <ul style="font-size:.83rem;color:var(--text2);display:flex;flex-direction:column;gap:.5rem;">
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> AES-256-GCM</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> TLS 1.3 en transit</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Clés générées localement</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Zéro log de contenu</li>
-        </ul>
-      </div>
-      <div style="background:var(--dark1);padding:3rem;border-top:1px solid var(--border);">
-        <div style="font-size:2.5rem;margin-bottom:1.2rem;">🌐</div>
-        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;">Réseau Distant (Pro)</h3>
-        <p style="font-size:.88rem;color:var(--text2);line-height:1.75;margin-bottom:1rem;">Transférez entre appareils sur des réseaux différents grâce à notre relay chiffré. Traversée NAT automatique, zero configuration requise de votre côté.</p>
-        <ul style="font-size:.83rem;color:var(--text2);display:flex;flex-direction:column;gap:.5rem;">
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Relay chiffré E2E</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> NAT traversal auto</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Tunnel QUIC</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Serveurs EU / US / Asia</li>
-        </ul>
-      </div>
-      <div style="background:var(--dark1);padding:3rem;border-top:1px solid var(--border);border-left:1px solid var(--border);">
-        <div style="font-size:2.5rem;margin-bottom:1.2rem;">🔄</div>
-        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;">Synchronisation (Pro)</h3>
-        <p style="font-size:.88rem;color:var(--text2);line-height:1.75;margin-bottom:1rem;">Définissez des dossiers synchronisés entre vos appareils. Les changements se propagent en temps réel, avec gestion des conflits et versioning intégré.</p>
-        <ul style="font-size:.83rem;color:var(--text2);display:flex;flex-direction:column;gap:.5rem;">
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Sync bidirectionnel</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Résolution de conflits</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Historique 30 jours</li>
-          <li style="display:flex;gap:8px;"><span style="color:var(--green)">✓</span> Filtres d'exclusion</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Platform support table -->
-    <div style="margin-top:4rem;">
-      <div class="tag">Compatibilité</div>
-      <h2 class="section-h2">Support des plateformes</h2>
-      <div style="border:1px solid var(--border2);border-radius:var(--r-xl);overflow:hidden;">
-        <table style="width:100%;border-collapse:collapse;">
-          <thead><tr style="background:var(--dark3);">
-            <th style="padding:1rem 1.5rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;">Plateforme</th>
-            <th style="padding:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;">Transfert</th>
-            <th style="padding:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;">Sync Auto</th>
-            <th style="padding:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;">Réseau distant</th>
-            <th style="padding:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;">CLI</th>
-          </tr></thead>
-          <tbody>
-            <tr style="border-top:1px solid var(--border);"><td style="padding:1rem 1.5rem;font-size:.88rem;color:var(--text);display:flex;align-items:center;gap:10px;">🍎 macOS</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--text3);">—</td></tr>
-            <tr style="border-top:1px solid var(--border);"><td style="padding:1rem 1.5rem;font-size:.88rem;color:var(--text);">🪟 Windows</td><td style="padding:1rem;text-align:center;color:var(--green);">✓</td><td style="padding:1rem;text-align:center;color:var(--green);">✓</td><td style="padding:1rem;text-align:center;color:var(--green);">✓</td><td style="padding:1rem;text-align:center;color:var(--text3);">—</td></tr>
-            <tr style="border-top:1px solid var(--border);"><td style="padding:1rem 1.5rem;font-size:.88rem;color:var(--text);">🐧 Linux</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--text3);">—</td></tr>
-            <tr style="border-top:1px solid var(--border);"><td style="padding:1rem 1.5rem;font-size:.88rem;color:var(--text);">📱 iOS</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientô</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--text3);">—</td></tr>
-            <tr style="border-top:1px solid var(--border);"><td style="padding:1rem 1.5rem;font-size:.88rem;color:var(--text);">🤖 Android</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--amber);">Bientôt</td><td style="padding:1rem;text-align:center;color:var(--text3);">—</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div style="text-align:center;margin-top:4rem;">
-      <button class="btn btn-primary btn-lg" onclick="openModal()">⚡ Essayer gratuitement</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     PAGE — TARIFS
-════════════════════════════════════════════ -->
-<div class="page" id="page-pricing-page">
-  <div class="subpage">
-    <div class="subpage-hero reveal">
-      <div class="tag">Tarification</div>
-      <h1 class="subpage-h1 grad-text">SIMPLE &<br>TRANSPARENT.</h1>
-      <p class="subpage-sub">Commencez gratuitement aujourd'hui. Aucune carte bancaire requise. Passez au Pro quand vous êtes prêt.</p>
-    </div>
-    <div class="pricing-grid" style="margin-bottom:4rem;">
-      <div class="plan reveal">
-        <div class="plan-name font-mono">Gratuit</div><div class="plan-price"><sup>€</sup>0</div><div class="plan-period font-mono">pour toujours</div><div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><span class="li-ok">✓</span><span>2 appareils connectés</span></li><li><span class="li-ok">✓</span><span>Fichiers jusqu'à 5 GB</span></li>
-          <li><span class="li-ok">✓</span><span>Chiffrement AES-256</span></li><li><span class="li-ok">✓</span><span>Transfert LAN local</span></li>
-          <li><span class="li-ok">✓</span><span>Historique 7 jours</span></li><li><span class="li-no">—</span><span>Réseau à distance</span></li>
-          <li><span class="li-no">—</span><span>Synchronisation auto</span></li><li><span class="li-no">—</span><span>API REST</span></li>
-        </ul>
-        <button class="btn btn-ghost btn-full" onclick="openModal()">Commencer gratuitement</button>
-      </div>
-      <div class="plan featured reveal d1">
-        <div class="plan-badge">⚡ PLUS POPULAIRE</div>
-        <div class="plan-name font-mono">Pro</div><div class="plan-price"><sup>€</sup>9</div><div class="plan-period font-mono">par mois · sans engagement</div><div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><span class="li-ok">✓</span><span>Appareils illimités</span></li><li><span class="li-ok">✓</span><span>Taille de fichier illimitée</span></li>
-          <li><span class="li-ok">✓</span><span>Chiffrement AES-256</span></li><li><span class="li-ok">✓</span><span>LAN + réseau distant</span></li>
-          <li><span class="li-ok">✓</span><span>Historique illimité</span></li><li><span class="li-ok">✓</span><span>Synchronisation auto</span></li>
-          <li><span class="li-ok">✓</span><span>Priorité de bande passante</span></li><li><span class="li-ok">✓</span><span>Support prioritaire</span></li>
-        </ul>
-        <button class="btn btn-primary btn-full" onclick="openModal()">Passer au Pro</button>
-      </div>
-      <div class="plan reveal d2">
-        <div class="plan-name font-mono">Équipe</div><div class="plan-price"><sup>€</sup>29</div><div class="plan-period font-mono">par mois · 10 utilisateurs</div><div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><span class="li-ok">✓</span><span>Tout du plan Pro</span></li><li><span class="li-ok">✓</span><span>Dashboard équipe centralisé</span></li>
-          <li><span class="li-ok">✓</span><span>Permissions granulaires</span></li><li><span class="li-ok">✓</span><span>Audit complet</span></li>
-          <li><span class="li-ok">✓</span><span>Support dédié 24/7</span></li><li><span class="li-ok">✓</span><span>API REST complète</span></li>
-          <li><span class="li-ok">✓</span><span>SSO / SAML</span></li><li><span class="li-ok">✓</span><span>SLA 99.9%</span></li>
-        </ul>
-        <button class="btn btn-ghost btn-full" onclick="showPage('contact')">Contacter l'équipe</button>
-      </div>
-    </div>
-    <!-- FAQ pricing -->
-    <div style="margin-top:3rem;"><div class="tag">Questions fréquentes</div><h2 class="section-h2" style="font-size:clamp(2rem,4vw,3.5rem)">Sur nos tarifs.</h2></div>
-    <div class="faq-grid" style="margin-top:2rem;">
-      <div class="faq-item"><div class="faq-q">Puis-je annuler à tout moment ?<span class="faq-icon">+</span></div><div class="faq-a">Oui, sans engagement ni frais. Annulez en un clic depuis votre compte. Vous gardez l'accès jusqu'à la fin de la période payée.</div></div>
-      <div class="faq-item"><div class="faq-q">Y a-t-il un essai gratuit du Pro ?<span class="faq-icon">+</span></div><div class="faq-a">Le plan gratuit est disponible à vie. Nous préparons une période d'essai Pro de 14 jours — restez à l'écoute.</div></div>
-      <div class="faq-item"><div class="faq-q">La facturation est-elle mensuelle ou annuelle ?<span class="faq-icon">+</span></div><div class="faq-a">Mensuelle par défaut. Les abonnements annuels sont disponibles avec 2 mois offerts — contactez-nous.</div></div>
-      <div class="faq-item"><div class="faq-q">Acceptez-vous les cartes et PayPal ?<span class="faq-icon">+</span></div><div class="faq-a">Nous acceptons toutes les cartes de crédit via Stripe, ainsi que PayPal et virements SEPA pour les comptes Équipe.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     PAGE — À PROPOS
-════════════════════════════════════════════ -->
-<div class="page" id="page-about">
-  <div class="subpage">
-    <div class="subpage-hero reveal">
-      <div class="tag">À propos de Creo</div>
-      <h1 class="subpage-h1 grad-text">CONSTRUIRE<br>L'AVENIR DU<br>TRANSFERT.</h1>
-      <p class="subpage-sub">Creo est né d'une frustration simple : pourquoi transférer un fichier entre deux ordinateurs est aussi compliquer ?</p>
-    </div>
-
-    <div class="about-grid reveal">
-      <div class="about-text">
-        <h2>Notre mission</h2>
-        <p>Chez Creo, nous croyons que le transfert de données doit être aussi naturel que de tendre un objet à quelqu'un. Rapide, direct, sans friction et toujours privé.</p>
-        <p>Depuis 2025, nous construisons une infrastructure peer-to-peer qui respecte vos données, votre temps et votre vie privée. Zéro compromis.</p>
-        <p>Creo est utilisé par des créatifs, des développeurs.</p>
-        <button class="btn btn-primary" style="margin-top:1rem;" onclick="openModal()">Rejoindre Creo</button>
-      </div>
-      <div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="about-visual"><div class="about-big-num grad-blue">1+</div><div class="about-big-label">Pays</div></div>
-          <div class="about-visual"><div class="about-big-num grad-blue">2</div><div class="about-big-label">Utilisateurs</div></div>
-          <div class="about-visual"><div class="about-big-num grad-blue">2PB</div><div class="about-big-label">Transférés</div></div>
-          <div class="about-visual"><div class="about-big-num grad-blue">99.9%</div><div class="about-big-label">Uptime</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Valeurs -->
-    <div style="margin-top:5rem;" class="reveal">
-      <div class="tag">Nos valeurs</div>
-      <h2 class="section-h2" style="font-size:clamp(2rem,4vw,3.5rem)">Ce en quoi nous croyons.</h2>
-    </div>
-    <div class="values-grid reveal">
-      <div class="value-card"><div class="value-icon">🔒</div><div class="value-title">Privacy First</div><div class="value-desc">Vos données ne nous appartiennent pas. Nous construisons Creo de façon à ne jamais avoir accès à vos fichiers, même si nous le voulions.</div></div>
-      <div class="value-card"><div class="value-icon">⚡</div><div class="value-title">Vitesse sans excuse</div><div class="value-desc">Chaque milliseconde compte. Nous optimisons sans cesse le protocole pour que Creo soit toujours le plus rapide sur votre réseau.</div></div>
-      <div class="value-card"><div class="value-icon">🌍</div><div class="value-title">Open & Transparent</div><div class="value-desc">Notre client est open source. Vous pouvez auditer chaque ligne de code, signaler des bugs et contribuer à l'amélioration de Creo.</div></div>
-      <div class="value-card"><div class="value-icon">🤝</div><div class="value-title">Simple pour tous</div><div class="value-desc">Creo s'installe en 30 secondes et fonctionne pour tout le monde.</div></div>
-    </div>
-
-    <!-- Équipe -->
-    <div style="margin-top:5rem;" class="reveal">
-      <div class="tag">L'équipe</div>
-      <h2 class="section-h2" style="font-size:clamp(2rem,4vw,3.5rem)">Ceux qui construisent Creo.</h2>
-    </div>
-    <div class="team-grid reveal">
-      <div class="team-card"><div class="team-avatar" style="background:linear-gradient(135deg,var(--blue),var(--cyan));">🧑‍💻​</div><div class="team-name">Ilan R.</div><div class="team-role">Fondateur & CEO</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     PAGE — CONTACT
-════════════════════════════════════════════ -->
-<div class="page" id="page-contact">
-  <div class="subpage">
-    <div class="subpage-hero reveal">
-      <div class="tag">Contact</div>
-      <h1 class="subpage-h1 grad-text">ON EST LÀ<br>POUR VOUS.</h1>
-      <p class="subpage-sub">Une question, un partenariat, un bug à signaler ? Écrivez-nous, nous répondons généralement en moins de 48h.</p>
-    </div>
-    <div class="contact-layout reveal">
-      <div class="contact-info">
-        <h3>Restons en contact</h3>
-        <p>Notre équipe est disponible du samedie au dimanche, de 10h à 18h (CET). Pour le support urgent des comptes Pro et Équipe, nous sommes disponibles 12/7.</p>
-        <div class="contact-item"><div class="contact-icon">📧</div><div><div class="contact-label">Email général</div><div class="contact-val">hello@creo.io</div></div></div>
-        <div class="contact-item"><div class="contact-icon">🐛</div><div><div class="contact-label">Support technique</div><div class="contact-val">support@creo.io</div></div></div>
-        <div class="contact-item"><div class="contact-icon">💼</div><div><div class="contact-label">Partenariats & Pro</div><div class="contact-val">pro@creo.io</div></div></div>
-        <div class="contact-item"><div class="contact-icon">🐙</div><div><div class="contact-label">GitHub (open source)</div><div class="contact-val">github.com/axo36</div></div></div>
-        <div style="margin-top:2rem;">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.8rem;">Nous suivre</div>
-          <div style="display:flex;gap:10px;">
-            <div class="social-btn" title="Twitter">𝕏</div>
-            <div class="social-btn" title="GitHub">⌥</div>
-            <div class="social-btn" title="Discord">◈</div>
-            <div class="social-btn" title="LinkedIn">in</div>
-          </div>
-        </div>
-      </div>
-      <div class="contact-form">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:1.8rem;">Envoyez-nous un message</div>
-        <div class="field-row">
-          <div class="field"><label>Prénom</label><input type="text" placeholder="Alex"></div>
-          <div class="field"><label>Nom</label><input type="text" placeholder="Martin"></div>
-        </div>
-        <div class="field"><label>Email</label><input type="email" placeholder="vous@exemple.com"></div>
-        <div class="field"><label>Sujet</label>
-          <select><option>Support technique</option><option>Partenariat</option><option>Signaler un bug</option><option>Autre</option></select>
-        </div>
-        <div class="field"><label>Message</label><textarea placeholder="Décrivez votre demande..."></textarea></div>
-        <button class="btn btn-primary btn-full" id="contact-send-btn" onclick="sendContact()">
-          <span class="btn-label">Envoyer le message →</span>
-          <span class="spinner btn-spinner"></span>
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     PAGE — TÉLÉCHARGER (standalone)
-════════════════════════════════════════════ -->
-<div class="page" id="page-download-page">
-  <div class="subpage">
-    <div class="subpage-hero reveal">
-      <div class="tag">Télécharger Creo</div>
-      <h1 class="subpage-h1 grad-text">SUR TOUS<br>VOS APPAREILS.</h1>
-      <p class="subpage-sub">Creo est disponible sur toutes vos plateformes. Installez-le partout, connectez-vous une fois.</p>
-    </div>
-    <div class="download-grid reveal" style="margin-bottom:3rem;">
-      <div class="dl-card primary" onclick="openModal()"><div class="dl-icon-wrap">🍎</div><div class="dl-body"><div class="dl-platform font-mono">macOS</div><div class="dl-name">Creo pour Mac</div><div class="dl-version">v3.2.1 · Apple Silicon + Intel · 48 MB</div></div><span class="dl-arrow">→</span></div>
-      <div class="dl-card primary" onclick="openModal()"><div class="dl-icon-wrap">🪟</div><div class="dl-body"><div class="dl-platform font-mono">Windows</div><div class="dl-name">Creo pour Windows</div><div class="dl-version">v3.2.1 · Windows 10/11 · 52 MB</div></div><span class="dl-arrow">→</span></div>
-      <div class="dl-card" onclick="openModal()"><div class="dl-icon-wrap">🐧</div><div class="dl-body"><div class="dl-platform font-mono">Linux</div><div class="dl-name">Creo pour Linux</div><div class="dl-version">AppImage / .deb / .rpm · 44 MB</div></div><span class="dl-arrow">→</span></div>
-      <div class="dl-card" onclick="openModal()"><div class="dl-icon-wrap">📱</div><div class="dl-body"><div class="dl-platform font-mono">iOS + Android</div><div class="dl-name">Creo Mobile</div><div class="dl-version">App Store · Google Play · Gratuit</div></div><span class="dl-arrow">→</span></div>
-    </div>
-    <div style="text-align:center;padding:2rem;background:var(--dark2);border:1px solid var(--border2);border-radius:var(--r-xl);" class="reveal">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text3);">Vous devez créer un compte gratuit pour télécharger et activer Creo.</p>
-      <button class="btn btn-primary btn-lg" style="margin-top:1.2rem;" onclick="openModal()">⚡ Créer un compte gratuit</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     FOOTER (shared)
-════════════════════════════════════════════ -->
-<footer id="site-footer">
+<footer>
   <div class="footer-top">
-    <div class="footer-brand">
-      <div class="footer-logo" onclick="showPage('home')">CR<span>E</span>O</div>
-      <p class="footer-tagline">Transfer Without Limits. Peer-to-peer, chiffré, ultra-rapide. Pour les pros qui ne veulent pas de compromis.</p>
-    </div>
-    <div class="footer-col"><h5>Produit</h5>
-      <a onclick="showPage('features-page')">Fonctionnalités</a>
-      <a onclick="showPage('download-page')">Télécharger</a>
-      <a onclick="showPage('pricing-page')">Tarifs</a>
-      <a onclick="showToast('Changelog bientôt disponible','info')">Changelog</a>
-    </div>
-    <div class="footer-col"><h5>Entreprise</h5>
-      <a onclick="showPage('about')">À propos</a>
-      <a onclick="showPage('contact')">Contact</a>
-      <a onclick="showToast('Blog bientôt disponible','info')">Blog</a>
-      <a onclick="showToast('Politique bientôt disponible','info')">Confidentialité</a>
-    </div>
-    <div class="footer-col"><h5>Compte</h5>
-      <a onclick="openModal()">Connexion</a>
-      <a onclick="openModal()">Créer un compte</a>
-      <a onclick="showToast('Documentation bientôt disponible','info')">Documentation</a>
-      <a onclick="showToast('API bientôt disponible','info')">API REST</a>
-    </div>
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits. Peer-to-peer, chiffré, ultra-rapide.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="login.html">Connexion</a><a href="login.html">S'inscrire</a></div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
-    <div class="footer-socials">
-      <div class="social-btn" title="Twitter">𝕏</div>
-      <div class="social-btn" title="GitHub">⌥</div>
-      <div class="social-btn" title="Discord">◈</div>
-      <div class="social-btn" title="LinkedIn">in</div>
-    </div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
   </div>
 </footer>
 
-<!-- ════════════════════════════════════════════
-     LOGIN MODAL — SUPABASE RÉEL
-════════════════════════════════════════════ -->
-<div id="modal-overlay">
-  <div class="modal-box">
-    <button class="modal-close" id="modal-close">×</button>
-    <div class="modal-logo font-display">CR<span class="grad-blue">E</span>O</div>
-    <p class="modal-sub">Votre hub de transfert intelligent</p>
-    <div class="modal-tabs">
-      <div class="modal-tab active" data-panel="panel-login">Connexion</div>
-      <div class="modal-tab" data-panel="panel-signup">Créer un compte</div>
-    </div>
-
-    <!-- LOGIN -->
-    <div class="form-panel active" id="panel-login">
-      <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="vous@exemple.com" autocomplete="email"></div>
-      <div class="field"><label>Mot de passe</label><input type="password" id="login-password" placeholder="••••••••"><span class="forgot" id="forgot-btn">Mot de passe oublié ?</span></div>
-      <button class="btn btn-primary btn-full" id="loginBtn" style="margin-top:6px;">
-        <span class="btn-label">Se connecter →</span><span class="spinner btn-spinner"></span>
-      </button>
-      <div class="divider-or font-mono">ou continuer avec</div>
-      <div class="oauth-grid">
-        <button class="oauth-btn" id="googleBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Google
-        </button>
-        <button class="oauth-btn" id="githubBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          GitHub
-        </button>
-      </div>
-    </div>
-
-    <!-- SIGNUP -->
-    <div class="form-panel" id="panel-signup">
-      <div class="field-row">
-        <div class="field"><label>Prénom</label><input type="text" id="signup-firstname" placeholder="Alex"></div>
-        <div class="field"><label>Nom</label><input type="text" id="signup-lastname" placeholder="Martin"></div>
-      </div>
-      <div class="field"><label>Email</label><input type="email" id="signup-email" placeholder="vous@exemple.com" autocomplete="email"></div>
-      <div class="field"><label>Mot de passe</label><input type="password" id="signup-password" placeholder="8 caractères minimum"></div>
-      <button class="btn btn-primary btn-full" id="signupBtn" style="margin-top:6px;">
-        <span class="btn-label">Créer mon compte →</span><span class="spinner btn-spinner"></span>
-      </button>
-      <div class="divider-or font-mono">ou continuer avec</div>
-      <div class="oauth-grid">
-        <button class="oauth-btn" id="googleSignupBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-          Google
-        </button>
-        <button class="oauth-btn" id="githubSignupBtn">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          GitHub
-        </button>
-      </div>
-    </div>
-
-    <!-- RESET -->
-    <div class="reset-panel" id="panel-reset">
-      <span class="back-link" id="back-reset">← Retour à la connexion</span>
-      <div class="field"><label>Votre email</label><input type="email" id="reset-email" placeholder="vous@exemple.com"></div>
-      <button class="btn btn-primary btn-full" id="resetBtn">
-        <span class="btn-label">Envoyer le lien →</span><span class="spinner btn-spinner"></span>
-      </button>
-    </div>
-
-    <!-- CONFIRM -->
-    <div class="confirm-box" id="confirm-box">
-      <div class="confirm-icon">📬</div>
-      <div class="confirm-title">Vérifiez votre email</div>
-      <p class="confirm-text">Un lien de confirmation a été envoyé à votre adresse. Cliquez dessus pour activer votre compte Creo.</p>
-      <button class="btn btn-ghost btn-full" style="margin-top:1.5rem;" onclick="resetModal()">← Retour</button>
-    </div>
-
-    <p class="modal-footer-txt">En continuant, vous acceptez nos <a href="#">CGU</a> et notre <a href="#">politique de confidentialité</a>.</p>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     SCRIPTS
-════════════════════════════════════════════ -->
 <script type="module">
-import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-/* ── SUPABASE ── */
-const supabase = createClient(
-  "https://mpnfvrizbluhhjcfzztc.supabase.co",
-  "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
-);
-
-const REDIRECT = window.location.href.split('?')[0].replace(/#.*$/,'');
-
-/* ════ PAGE ROUTING ════ */
-window.showPage = function(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const page = document.getElementById('page-' + id);
-  if (page) {
-    page.classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Re-trigger reveals on new page
-    setTimeout(() => {
-      page.querySelectorAll('.reveal:not(.visible)').forEach(el => {
-        revealObs.observe(el);
-      });
-    }, 50);
-  }
-  // Update nav active
-  const navMap = { home:'nav-home', 'features-page':'nav-features', 'pricing-page':'nav-pricing', about:'nav-about', contact:'nav-contact', 'download-page':null };
-  document.querySelectorAll('.nav-pill a').forEach(a => a.classList.remove('active'));
-  const navId = navMap[id];
-  if (navId) document.getElementById(navId)?.classList.add('active');
-};
-
-/* ════ TOAST ════ */
-window.showToast = function(msg, type = 'info') {
-  const wrap = document.getElementById('toast-wrap');
-  const colors = { info:'#1a6fff', success:'#00ff88', error:'#ff3b5c', warning:'#ffb800' };
-  const textc  = { success:'#000', warning:'#000' };
-  const icons  = { info:'ℹ', success:'✓', error:'✕', warning:'⚠' };
-  const c = colors[type]||colors.info;
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.style.cssText = `background:${c}14;border:1px solid ${c}55;color:${textc[type]||'#e2e2e2'};`;
-  t.innerHTML = `<span style="color:${c};font-size:1rem;">${icons[type]}</span> ${msg}`;
-  wrap.appendChild(t);
-  setTimeout(() => { t.style.animation='toastOut .3s ease forwards'; setTimeout(()=>t.remove(),300); }, 4000);
-};
-
-/* ════ MODAL ════ */
-window.openModal = function() {
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-};
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-window.resetModal = function() {
-  document.getElementById('confirm-box').style.display = 'none';
-  document.getElementById('panel-reset').classList.remove('open');
-  document.querySelector('.modal-tabs').style.display = '';
-  document.querySelector('.modal-footer-txt').style.display = '';
-  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-login').classList.add('active');
-  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
-  document.querySelector('[data-panel="panel-login"]').classList.add('active');
-};
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', e => { if(e.target===document.getElementById('modal-overlay')) closeModal(); });
-document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
-
-// Tabs
-document.querySelectorAll('.modal-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.panel).classList.add('active');
-    document.getElementById('panel-reset').classList.remove('open');
-    document.querySelector('.modal-tabs').style.display = '';
-  });
-});
-
-// Forgot
-document.getElementById('forgot-btn').addEventListener('click', () => {
-  document.querySelector('.modal-tabs').style.display = 'none';
-  document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel-reset').classList.add('open');
-});
-document.getElementById('back-reset').addEventListener('click', () => {
-  document.getElementById('panel-reset').classList.remove('open');
-  document.querySelector('.modal-tabs').style.display = '';
-  document.querySelector('[data-panel="panel-login"]').click();
-});
-
-/* ── LOADING HELPER ── */
-function setLoading(btn, on) {
-  if (on) { btn.classList.add('btn-loading'); btn.querySelector('.btn-spinner').style.display='inline-block'; btn.querySelector('.btn-label').style.display='none'; }
-  else    { btn.classList.remove('btn-loading'); btn.querySelector('.btn-spinner').style.display='none'; btn.querySelector('.btn-label').style.display=''; }
-}
-
-/* ── LOGIN ── */
-document.getElementById('loginBtn').addEventListener('click', async () => {
-  const btn   = document.getElementById('loginBtn');
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-password').value;
-  if (!email || !pass) { showToast('Remplissez tous les champs.','warning'); return; }
-  setLoading(btn, true);
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  setLoading(btn, false);
-  if (error) {
-    const m = error.message;
-    if (m.includes('Invalid login credentials')) showToast('Email ou mot de passe incorrect.','error');
-    else if (m.includes('Email not confirmed'))  showToast('Confirmez votre email avant de vous connecter.','warning');
-    else showToast('Connexion impossible. Réessayez.','error');
-    return;
-  }
-  showToast('Connexion réussie ! Bienvenue sur Creo.','success');
-  closeModal();
-});
-document.getElementById('login-password').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('loginBtn').click(); });
-
-/* ── SIGNUP ── */
-document.getElementById('signupBtn').addEventListener('click', async () => {
-  const btn   = document.getElementById('signupBtn');
-  const first = document.getElementById('signup-firstname').value.trim();
-  const last  = document.getElementById('signup-lastname').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const pass  = document.getElementById('signup-password').value;
-  if (!email || !pass) { showToast('Remplissez les champs obligatoires.','warning'); return; }
-  if (pass.length < 8) { showToast('Mot de passe trop court (8 min).','warning'); return; }
-  setLoading(btn, true);
-  const fullName = [first, last].filter(Boolean).join(' ') || email.split('@')[0];
-  const { data, error } = await supabase.auth.signUp({
-    email, password: pass,
-    options: { data:{ full_name: fullName }, emailRedirectTo: REDIRECT }
-  });
-  setLoading(btn, false);
-  if (error) { showToast(error.message,'error'); return; }
-  if (!data.session) {
-    document.querySelector('.modal-tabs').style.display = 'none';
-    document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
-    document.getElementById('panel-reset').classList.remove('open');
-    document.querySelector('.modal-footer-txt').style.display = 'none';
-    document.getElementById('confirm-box').style.display = 'block';
-  } else {
-    showToast('Compte créé ! Bienvenue sur Creo.','success');
-    closeModal();
-  }
-});
-
-/* ── RESET PASSWORD ── */
-document.getElementById('resetBtn').addEventListener('click', async () => {
-  const btn   = document.getElementById('resetBtn');
-  const email = document.getElementById('reset-email').value.trim();
-  if (!email) { showToast('Entrez votre email.','warning'); return; }
-  setLoading(btn, true);
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: REDIRECT });
-  setLoading(btn, false);
-  if (error) { showToast(error.message,'error'); return; }
-  showToast('Email envoyé ! Vérifiez votre boîte.','success');
-  document.getElementById('back-reset').click();
-});
-
-/* ── OAUTH ── */
-async function oauth(provider) {
-  const { error } = await supabase.auth.signInWithOAuth({ provider, options:{ redirectTo: REDIRECT } });
-  if (error) showToast(error.message,'error');
-}
-document.getElementById('googleBtn').addEventListener('click',       () => oauth('google'));
-document.getElementById('githubBtn').addEventListener('click',       () => oauth('github'));
-document.getElementById('googleSignupBtn').addEventListener('click', () => oauth('google'));
-document.getElementById('githubSignupBtn').addEventListener('click', () => oauth('github'));
-
-/* ── NAV SCROLL GLASS ── */
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.style.background = scrollY > 50 ? 'rgba(0,0,0,.95)' : 'rgba(0,0,0,.6)';
-}, { passive:true });
-
-/* ── SCROLL REVEAL ── */
-const revealObs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
-}, { threshold:.07 });
-document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
-
-/* ── COUNT-UP ── */
-function countUp(el, to, dec, suf, dur=1400) {
-  let t0; const step = ts => {
-    if(!t0) t0=ts;
-    const p = Math.min((ts-t0)/dur,1), ease = 1-Math.pow(1-p,3);
-    el.textContent = (to*ease).toFixed(dec)+suf;
-    if(p<1) requestAnimationFrame(step);
-  }; requestAnimationFrame(step);
-}
-const cObs = new IntersectionObserver(e => {
-  if(!e[0].isIntersecting) return; cObs.disconnect();
-  document.querySelectorAll('[data-count]').forEach(el => {
-    countUp(el, parseFloat(el.dataset.count), el.dataset.dec||0, el.dataset.suf||'');
-  });
-}, { threshold:.4 });
-const hs = document.querySelector('.hero-stats');
-if(hs) cObs.observe(hs);
-
-/* ── DEMO ANIMATION ── */
-const sRows = [...document.querySelectorAll('.device-pane.source .file-row')];
-const tRows = [...document.querySelectorAll('.device-pane.target .file-row')];
-const fills = [...document.querySelectorAll('.device-pane.source .prog-fill')];
-const speedEl = document.querySelector('.pipe-speed');
-const spds = ['1.8','2.1','0.9','2.4'];
-
-function resetDemo() {
-  sRows.forEach(r=>{ r.classList.remove('active','done'); });
-  tRows.forEach(r=>{ r.classList.remove('active','done'); r.classList.add('queued'); });
-  fills.forEach(f=>{ f.style.transition='none'; f.style.width='0%'; });
-}
-function runFile(i) {
-  if(i>=sRows.length){ setTimeout(()=>{ resetDemo(); setTimeout(()=>runFile(0),600); },2200); return; }
-  if(i>0){ sRows[i-1].classList.remove('active'); sRows[i-1].classList.add('done'); tRows[i-1].classList.remove('active'); tRows[i-1].classList.add('done'); }
-  sRows[i].classList.add('active');
-  tRows[i].classList.remove('queued'); tRows[i].classList.add('active');
-  if(speedEl) speedEl.innerHTML = spds[i%spds.length]+'<span class="pipe-unit">GB/s</span>';
-  const f = fills[i];
-  if(f){ f.style.transition='none'; f.style.width='0%'; requestAnimationFrame(()=>{ f.style.transition='width 2.8s cubic-bezier(.4,0,.2,1)'; f.style.width='100%'; }); }
-  setTimeout(()=>runFile(i+1),3100);
-}
-const demoSection = document.getElementById('demo');
-let demoGo=false;
-if(demoSection){ new IntersectionObserver(e=>{ if(e[0].isIntersecting&&!demoGo){ demoGo=true; setTimeout(()=>runFile(0),800); } },{threshold:.2}).observe(demoSection); }
-
-/* ── FAQ ── */
-document.querySelectorAll('.faq-item').forEach(item => {
-  item.addEventListener('click',()=>{ const was=item.classList.contains('open'); document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open')); if(!was) item.classList.add('open'); });
-});
-
-/* ── FEATURE GLOW ── */
-window.trackMouse = function(el, e) {
-  const r = el.getBoundingClientRect();
-  el.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
-  el.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
-};
-
-/* ── SIDEBAR LINKS ── */
-document.querySelectorAll('.sidebar-link').forEach(l=>{ l.addEventListener('click',()=>{ document.querySelectorAll('.sidebar-link').forEach(x=>x.classList.remove('active')); l.classList.add('active'); }); });
-
-/* ── MARQUEE CLONE ── */
-const track = document.querySelector('.marquee-track');
-if(track){ const clone=track.cloneNode(true); track.parentElement.appendChild(clone); }
-
-/* ── CONTACT SEND ── */
-window.sendContact = function() {
-  const btn = document.getElementById('contact-send-btn');
-  btn.classList.add('btn-loading');
-  btn.querySelector('.btn-spinner').style.display='inline-block';
-  btn.querySelector('.btn-label').style.display='none';
-  setTimeout(()=>{
-    btn.classList.remove('btn-loading');
-    btn.querySelector('.btn-spinner').style.display='none';
-    btn.querySelector('.btn-label').style.display='';
-    showToast('Message envoyé ! Nous vous répondrons sous 24h.','success');
-  }, 1400);
-};
-
-/* ── PAGE FADE ── */
-document.body.style.opacity='0'; document.body.style.transition='opacity .4s ease';
-window.addEventListener('load',()=>{ document.body.style.opacity='1'; });
+  import { buildNav, initReveal, initDemo, initFeatureGlow, initCountUp, initMarquee, initSidebar, pageFade } from './app.js';
+  pageFade();
+  buildNav('index');
+  initReveal();
+  initDemo();
+  initFeatureGlow();
+  initCountUp('.hero-stats');
+  initMarquee();
+  initSidebar();
 </script>
 </body>
 </html>
