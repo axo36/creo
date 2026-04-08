@@ -272,7 +272,7 @@
 </footer>
 
 <script type="module">
-  import { buildNav, initReveal, initDemo, initFeatureGlow, initCountUp, initMarquee, initSidebar, pageFade } from './app.js';
+  import { buildNav, initReveal, initDemo, initFeatureGlow, initCountUp, initMarquee, initSidebar, pageFade, downloadApp, initFAQ } from './app.js';
   pageFade();
   buildNav('index');
   initReveal();
@@ -281,6 +281,10 @@
   initCountUp('.hero-stats');
   initMarquee();
   initSidebar();
+  window.downloadApp = downloadApp;
+  window.addEventListener("DOMContentLoaded", () => {
+    initFAQ();
+  });
 </script>
 </body>
 </html>
