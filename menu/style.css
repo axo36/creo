@@ -195,7 +195,7 @@ img { display: block; max-width: 100%; }
 /* Subpage hero */
 .sub-hero {
   position:relative; z-index:1; text-align:center;
-  padding:calc(var(--nav-h) + 5rem) 2rem 5rem; overflow:hidden;
+  padding:calc(var(--nav-h) + 3rem) 1rem 1rem;
 }
 .sub-hero .grid-bg {
   position:absolute; inset:0; pointer-events:none;
@@ -561,7 +561,7 @@ footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4
    RESPONSIVE
 ══════════════════════════════════════ */
 @media(max-width:1024px){
-  .section-wrap { padding:6rem 2rem; }
+  .section-wrap { padding: 0.5rem 2rem 2rem 2rem; }
   .features-layout,.faq-grid { grid-template-columns:1fr; }
   .feat-card.wide { grid-column:1; }
   .feat-wide-inner { grid-template-columns:1fr; gap:1.5rem; }
