@@ -329,7 +329,7 @@ export function pageFade() {
   window.addEventListener('load', () => { document.body.style.opacity = '1'; });
 }
 
-function downloadApp(platform) {
+export function downloadApp(platform) {
   const links = {
     windows: "downloads/creo-win.exe",
     mac: "downloads/creo-mac.dmg",
