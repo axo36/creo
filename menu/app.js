@@ -328,3 +328,23 @@ export function pageFade() {
   document.body.style.transition = 'opacity .4s ease';
   window.addEventListener('load', () => { document.body.style.opacity = '1'; });
 }
+
+function downloadApp(platform) {
+  const links = {
+    windows: "downloads/creo-win.exe",
+    mac: "downloads/creo-mac.dmg",
+    linux: "downloads/creo-linux.AppImage",
+    android: "downloads/creo.apk"
+  };
+
+  const link = document.createElement("a");
+  link.href = links[platform];
+  link.download = "";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function toggleFAQ(el) {
+  el.classList.toggle("open");
+}
