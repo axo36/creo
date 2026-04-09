@@ -73,23 +73,64 @@
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("CUdTdjUKOXn_2PW2K");
+</script>
+
 <script type="module">
   import { buildNav, initReveal, pageFade, toast, setLoading } from './app.js';
+
   pageFade();
   buildNav('contact');
   initReveal();
 
+  // --- FORMULAIRE CONTACT AVEC EMAILJS ---
   document.getElementById('send-btn').addEventListener('click', async () => {
-    const btn   = document.getElementById('send-btn');
-    const email = document.getElementById('c-email').value.trim();
-    const msg   = document.getElementById('c-message').value.trim();
-    if (!email || !msg) { toast('Remplissez au moins l\'email et le message.', 'warning'); return; }
+
+    const btn     = document.getElementById('send-btn');
+    const first   = document.getElementById('c-first').value.trim();
+    const last    = document.getElementById('c-last').value.trim();
+    const email   = document.getElementById('c-email').value.trim();
+    const subject = document.getElementById('c-subject').value;
+    const msg     = document.getElementById('c-message').value.trim();
+
+    // Vérification
+    if (!email || !msg) {
+      toast("Remplissez au moins l'email et le message.", "warning");
+      return;
+    }
+
     setLoading(btn, true);
-    await new Promise(r => setTimeout(r, 1400));
+
+    // Paramètres envoyés à EmailJS
+    const params = {
+      first_name: first,
+      last_name: last,
+      email: email,
+      subject: subject,
+      message: msg
+    };
+
+    try {
+      // Envoi EmailJS
+      await emailjs.send(
+        "service_cyy74i2",     // ← Ton Service ID
+        "template_xxxxxx",     // ← Ton Template ID
+        params
+      );
+
+      toast("Message envoyé ! Nous vous répondrons sous 24h.", "success");
+      document.getElementById('c-message').value = "";
+
+    } catch (err) {
+      console.error(err);
+      toast("Erreur lors de l'envoi. Réessayez.", "error");
+    }
+
     setLoading(btn, false);
-    toast('Message envoyé ! Nous vous répondrons sous 24h.', 'success');
-    document.getElementById('c-message').value = '';
   });
 </script>
+
 </body>
 </html>
