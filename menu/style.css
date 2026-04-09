@@ -188,7 +188,7 @@ img { display: block; max-width: 100%; }
 ══════════════════════════════════════ */
 .section-wrap {
   position:relative; z-index:1;
-  padding:8rem 3.5rem; max-width:1200px; margin:0 auto;
+  padding: 3rem 3.5rem 8rem; max-width:1200px; margin:0 auto;
 }
 .section-wrap + .section-wrap { border-top:1px solid var(--b1); }
 
