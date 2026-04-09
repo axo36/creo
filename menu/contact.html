@@ -20,6 +20,7 @@
   </style>
 </head>
 <body>
+
 <div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 <nav id="nav"></nav>
 
@@ -42,21 +43,36 @@
         <div style="display:flex;gap:10px;"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
       </div>
     </div>
-    <div class="contact-form">
+
+    <!-- FORMULAIRE ADAPTÉ POUR EMAILJS -->
+    <form id="contact-form" class="contact-form">
       <div class="form-title">Envoyez-nous un message</div>
+
       <div class="field-row">
-        <div class="field"><label>Prénom</label><input type="text" id="c-first" placeholder="Alex"></div>
-        <div class="field"><label>Nom</label><input type="text" id="c-last" placeholder="Martin"></div>
+        <div class="field"><label>Prénom</label><input type="text" name="first_name" placeholder="Alex"></div>
+        <div class="field"><label>Nom</label><input type="text" name="last_name" placeholder="Martin"></div>
       </div>
-      <div class="field"><label>Email</label><input type="email" id="c-email" placeholder="vous@exemple.com"></div>
+
+      <div class="field"><label>Email</label><input type="email" name="email" placeholder="vous@exemple.com"></div>
+
       <div class="field"><label>Sujet</label>
-        <select id="c-subject"><option>Support technique</option><option>Partenariat</option><option>Signaler un bug</option><option>Demande Pro / Équipe</option><option>Autre</option></select>
+        <select name="subject">
+          <option>Support technique</option>
+          <option>Partenariat</option>
+          <option>Signaler un bug</option>
+          <option>Demande Pro / Équipe</option>
+          <option>Autre</option>
+        </select>
       </div>
-      <div class="field"><label>Message</label><textarea id="c-message" placeholder="Décrivez votre demande..."></textarea></div>
-      <button class="btn btn-primary btn-full" id="send-btn">
-        <span class="btn-label">Envoyer le message →</span><span class="spinner btn-spin"></span>
+
+      <div class="field"><label>Message</label><textarea name="message" placeholder="Décrivez votre demande..."></textarea></div>
+
+      <button type="submit" class="btn btn-primary btn-full" id="send-btn">
+        <span class="btn-label">Envoyer le message →</span>
+        <span class="spinner btn-spin"></span>
       </button>
-    </div>
+    </form>
+
   </div>
 </div>
 
@@ -85,43 +101,22 @@
   buildNav('contact');
   initReveal();
 
-  // --- FORMULAIRE CONTACT AVEC EMAILJS ---
-  document.getElementById('send-btn').addEventListener('click', async () => {
+  // --- FORMULAIRE CONTACT AVEC EMAILJS (sendForm) ---
+  document.getElementById('contact-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    const btn     = document.getElementById('send-btn');
-    const first   = document.getElementById('c-first').value.trim();
-    const last    = document.getElementById('c-last').value.trim();
-    const email   = document.getElementById('c-email').value.trim();
-    const subject = document.getElementById('c-subject').value;
-    const msg     = document.getElementById('c-message').value.trim();
-
-    // Vérification
-    if (!email || !msg) {
-      toast("Remplissez au moins l'email et le message.", "warning");
-      return;
-    }
-
+    const btn = document.getElementById('send-btn');
     setLoading(btn, true);
 
-    // Paramètres envoyés à EmailJS
-    const params = {
-      first_name: first,
-      last_name: last,
-      email: email,
-      subject: subject,
-      message: msg
-    };
-
     try {
-      // Envoi EmailJS
-      await emailjs.send(
-        "service_cyy74i2",     // ← Ton Service ID
-        "template_v7f12m6",     // ← Ton Template ID
-        params
+      await emailjs.sendForm(
+        "service_cyy74i2",
+        "template_v7f12m6",
+        "#contact-form"
       );
 
       toast("Message envoyé ! Nous vous répondrons sous 24h.", "success");
-      document.getElementById('c-message').value = "";
+      document.getElementById('contact-form').reset();
 
     } catch (err) {
       console.error(err);
