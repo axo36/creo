@@ -529,7 +529,7 @@ img { display: block; max-width: 100%; }
 .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,.2); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; display:inline-block; }
 @keyframes spin { to{transform:rotate(360deg);} }
 #toast-wrap { position:fixed; bottom:2rem; right:2rem; z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
-.toast { display:flex; align-items:center; gap:10px; padding:.85rem 1.2rem; border-radius:var(--r-lg); backdrop-filter:blur(20px); font-size:.875rem; pointer-events:all; max-width:340px; box-shadow:0 8px 32px rgba(0,0,0,.5); animation:toastIn .3s ease; }
+.toast { color: #FFFFFF ;display:flex; align-items:center; gap:10px; padding:.85rem 1.2rem; border-radius:var(--r-lg); backdrop-filter:blur(20px); font-size:.875rem; pointer-events:all; max-width:340px; box-shadow:0 8px 32px rgba(0,0,0,.5); animation:toastIn .3s ease; }
 @keyframes toastIn  { from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;} }
 @keyframes toastOut { to{opacity:0;transform:translateX(20px);} }
 
