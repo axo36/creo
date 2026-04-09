@@ -603,3 +603,7 @@ footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4
   border-radius: var(--r-2xl);
   overflow: hidden;
 }
+
+.contact-info {
+    margin-top: 4rem;
+}
