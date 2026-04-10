@@ -287,7 +287,7 @@ export function initFeatureGlow() {
 /* ── MARQUEE ───────────────────────────── */
 export function initMarquee() {
   const track = document.querySelector('.marquee-track');
-  if (track) track.parentElement.appendChild(track.cloneNode(true));
+  //if (track) track.parentElement.appendChild(track.cloneNode(true));
 }
 
 /* ── SIDEBAR ───────────────────────────── */
