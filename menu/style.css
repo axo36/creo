@@ -537,7 +537,7 @@ img { display: block; max-width: 100%; }
    FOOTER
 ══════════════════════════════════════ */
 footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4rem 3.5rem 2.5rem; }
-.footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:3rem; margin-bottom:4rem; }
+.footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:3rem; }
 .footer-logo { font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:.1em; color:var(--white); margin-bottom:1rem; }
 .footer-logo span { color:var(--blue); }
 .footer-tagline { font-size:.85rem; color:var(--t2); line-height:1.7; max-width:260px; }
