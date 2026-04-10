@@ -634,3 +634,16 @@ footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4
 #toast-wrap .toast.warning span {
   color: #ffb800 !important;   /* jaune/ambre */
 }
+
+/* Uniformiser la hauteur des cartes pricing */
+.pricing-grid .plan {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Pousser le bouton en bas */
+.pricing-grid .plan a.btn-full {
+  margin-top: auto;
+}
+
