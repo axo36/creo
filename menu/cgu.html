@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — CGU</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .cgu-container {
+      background: var(--d2);
+      border: 1px solid var(--b2);
+      border-radius: var(--r-2xl);
+      padding: 3rem 2.5rem;
+      line-height: 1.85;
+      font-size: .95rem;
+      color: var(--t1);
+    }
+    .cgu-container h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.4rem;
+      letter-spacing: .03em;
+      color: var(--white);
+      margin: 2.5rem 0 1rem;
+    }
+    .cgu-container p, .cgu-container li {
+      margin-bottom: 1.2rem;
+      color: var(--t2);
+    }
+    .cgu-container ul {
+      margin-left: 1.2rem;
+      list-style: disc;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<nav id="nav"></nav>
+
+<div class="sub-hero">
+  <div class="grid-bg"></div>
+  <div class="tag">Documentation</div>
+  <h1 class="sub-hero-h1 grad-text">Conditions Générales<br>d’Utilisation</h1>
+  <p class="sub-hero-desc">Les règles d’utilisation du service Creo. Merci de les lire attentivement.</p>
+</div>
+
+<div class="section-wrap">
+  <div class="cgu-container reveal">
+
+    <h2>1. Objet</h2>
+    <p>Les présentes Conditions Générales d'utilisation (CGU) ont pour objet de définir de manière détaillée les modalités, conditions et règles d'utilisation du site web Creo, accessible à l'adresse https://axo36.github.io/creo/.</p>
+    <p>Le Service permet le transfert de données numériques entre deux appareils distincts, via une interface web ou une application, en transitant par une infrastructure serveur intermédiaire.</p>
+    <p>L'utilisation du Service implique l'acceptation pleine, entière et sans réserve des présentes CGU par tout utilisateur.</p>
+
+    <h2>2. Description détaillée du fonctionnement</h2>
+    <p>Le Service permet à un utilisateur :</p>
+    <ul>
+      <li>de téléverser un fichier vers un serveur distant,</li>
+      <li>d’associer ce fichier à un code unique,</li>
+      <li>de récupérer ce fichier depuis un autre appareil via ce même code.</li>
+    </ul>
+    <p>Le système repose sur une correspondance stricte entre le code fourni lors de l’envoi et celui utilisé lors de la récupération.</p>
+
+    <h2>3. Comptes, appareils et contrôle du service</h2>
+    <p>La gestion des comptes utilisateurs, de l'authentification et des accès est assurée par Creo.</p>
+    <p>Creo peut collecter des données techniques liées aux appareils afin d’assurer la sécurité, prévenir les abus et optimiser les performances.</p>
+
+    <h2>4. Données et fonctionnement des transferts</h2>
+    <p>Les données transférées peuvent être temporairement stockées et ne sont accessibles qu’avec un code valide.</p>
+    <p>L’utilisateur reconnaît que la sécurité absolue ne peut être garantie.</p>
+
+    <h2>5. Limitation extrêmement étendue de responsabilité</h2>
+    <p>Le Service est fourni « tel quel », sans aucune garantie.</p>
+    <p>Creo ne pourra être tenu responsable d’aucun dommage direct ou indirect, y compris perte de données ou interruption de service.</p>
+
+    <h2>6. Durée de conservation des données</h2>
+    <p>Les fichiers peuvent être supprimés à tout moment, sans préavis.</p>
+
+    <h2>7. Évolution et disponibilité du service</h2>
+    <p>Creo peut modifier, suspendre ou interrompre le Service à tout moment, sans indemnisation.</p>
+
+    <h2>8. Modification des CGU</h2>
+    <p>Les CGU peuvent être modifiées à tout moment. La version applicable est celle en vigueur au moment de l’utilisation.</p>
+
+    <h2>9. Droit applicable</h2>
+    <p>Les CGU sont régies par le droit du pays de l’éditeur du service.</p>
+    <p>Dernière mise à jour : Avril 2026</p>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-logo">CR<span>E</span>O</div>
+      <p class="footer-tagline">Transfer simple et ultra-rapide.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Produit</h5>
+      <a href="features.html">Fonctionnalités</a>
+      <a href="download.html">Télécharger</a>
+      <a href="pricing.html">Tarifs</a>
+    </div>
+    <div class="footer-col">
+      <h5>Entreprise</h5>
+      <a href="about.html">À propos</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Compte</h5>
+      <a href="login.html">Connexion</a>
+      <a href="login.html">Créer un compte</a>
+      <a href="cgu.html">CGU</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
+    <div class="footer-socials">
+      <div class="social-btn">𝕏</div>
+      <div class="social-btn">⌥</div>
+      <div class="social-btn">◈</div>
+      <div class="social-btn">in</div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { buildNav, initReveal, pageFade } from './app.js';
+  pageFade();
+  buildNav();
+  initReveal();
+</script>
+
+</body>
+</html>
