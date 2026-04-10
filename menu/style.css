@@ -609,9 +609,9 @@ footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4
 }
 
 #toast-wrap .toast {
-  color: white !important;
+  color: #F5E6C8 !important;
 }
 
 #toast-wrap .toast span {
-  color: white !important;
+  color: #F5E6C8 !important;
 }
