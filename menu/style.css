@@ -608,10 +608,29 @@ footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4
     margin-top: 4rem;
 }
 
+/* Texte beige pour tous les toasts */
 #toast-wrap .toast {
-  color: #F5E6C8 !important;
+  color: #f5e6c8 !important;
 }
 
+/* Icône dans le toast */
 #toast-wrap .toast span {
-  color: #F5E6C8 !important;
+  font-weight: bold;
+}
+
+/* Couleurs par type */
+#toast-wrap .toast.info span {
+  color: #4da6ff !important;   /* bleu clair */
+}
+
+#toast-wrap .toast.success span {
+  color: #00ff88 !important;   /* vert */
+}
+
+#toast-wrap .toast.error span {
+  color: #ff3b5c !important;   /* rouge */
+}
+
+#toast-wrap .toast.warning span {
+  color: #ffb800 !important;   /* jaune/ambre */
 }
