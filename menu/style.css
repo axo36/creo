@@ -647,3 +647,15 @@ footer { position:relative; z-index:1; border-top:1px solid var(--b1); padding:4
   margin-top: auto;
 }
 
+td.no {
+  color: #9e9e9e; /* gris */
+}
+
+td.maybe {
+  color: #e6b800; /* jaune */
+}
+
+td.ok {
+  color: #2ecc71; /* vert */
+}
+
