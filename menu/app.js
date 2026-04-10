@@ -103,7 +103,7 @@ export function toast(msg, type = 'info') {
   const tx = { success:'#000', warning:'#000' }[type] || '#e2e2e2';
   const ic = { info:'ℹ', success:'✓', error:'✕', warning:'⚠' }[type];
   const el = document.createElement('div');
-  el.className = 'toast';
+  el.className = `toast ${type}`;
   el.style.cssText = `background:${c}14;border:1px solid ${c}55;color:${tx};`;
   el.innerHTML = `<span style="color:${c};font-size:1rem;">${ic}</span> ${msg}`;
   wrap.appendChild(el);
