@@ -3,191 +3,259 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Creo — Express</title>
-  <meta name="description" content="Envoyez un fichier instantanément à n’importe quel utilisateur Creo sans compte.">
   <link rel="stylesheet" href="style.css">
-
   <style>
-    /* ═══════════════════════════════════════
-       EXPRESS — ZONE DE DÉPÔT PREMIUM
-    ═══════════════════════════════════════ */
-    .express-wrap {
-      max-width: 620px;
+    .express-shell {
+      max-width: 880px;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    /* Zone de dépôt */
-    .drop-zone-adv {
-      border: 2px dashed var(--b3);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
       background: var(--d2);
       border-radius: var(--r-2xl);
-      padding: 3.8rem 2rem;
-      text-align: center;
-      transition: all .25s;
-      cursor: pointer;
-      position: relative;
+      border: 1px solid var(--b2);
+      padding: 2.2rem 2.2rem;
     }
-    .drop-zone-adv:hover {
+    .express-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+    .express-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+    .express-drop {
       background: var(--d3);
+      border-radius: var(--r-xl);
+      border: 1px dashed var(--b3);
+      padding: 2.4rem 1.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .express-drop:hover {
       border-color: var(--blue2);
+      background: var(--d4);
     }
-    .drop-zone-adv.dragover {
-      background: rgba(26,111,255,.08);
+    .express-drop.dragover {
       border-color: var(--blue);
+      background: rgba(26,111,255,.08);
     }
-    .dz-icon {
-      font-size: 3.8rem;
-      margin-bottom: 1rem;
-      animation: dzFloat 2.5s ease-in-out infinite;
+    .ed-icon {
+      font-size: 2.6rem;
+      margin-bottom: .6rem;
     }
-    @keyframes dzFloat {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-    .dz-title {
-      font-size: 1.3rem;
+    .ed-title {
+      font-size: 1.05rem;
       color: var(--t1);
-      margin-bottom: .4rem;
     }
-    .dz-sub {
-      font-size: .9rem;
+    .ed-sub {
+      font-size: .85rem;
       color: var(--t2);
+      margin-top: .2rem;
     }
-
-    /* Carte fichier */
-    .file-card {
+    .express-file {
       display: none;
       background: var(--d3);
-      border: 1px solid var(--b2);
       border-radius: var(--r-xl);
-      padding: 1.3rem 1.4rem;
+      border: 1px solid var(--b2);
+      padding: .9rem 1.1rem;
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
+      gap: 10px;
     }
-    .file-left {
+    .ef-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      min-width: 0;
     }
-    .file-icon {
-      font-size: 2rem;
+    .ef-icon {
+      font-size: 1.6rem;
       color: var(--blue2);
+      flex-shrink: 0;
     }
-    .file-name {
-      font-size: .95rem;
+    .ef-name {
+      font-size: .9rem;
       color: var(--t1);
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .file-meta {
+    .ef-meta {
       font-size: .75rem;
       color: var(--t3);
       margin-top: 2px;
     }
-
-    /* Barre de progression */
-    .file-progress {
-      width: 140px;
-      height: 6px;
-      background: var(--d5);
-      border-radius: 99px;
-      overflow: hidden;
+    .ef-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--blue2);
+      flex-shrink: 0;
     }
-    .file-progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--blue), var(--cyan));
-      transition: width .25s linear;
-      border-radius: 99px;
+    .input-field {
+      padding: .85rem 1rem;
+      border-radius: var(--r-lg);
+      border: 1px solid var(--b2);
+      background: var(--d3);
+      color: var(--t1);
+      font-size: .9rem;
+      transition: border .2s, background .2s;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--blue2);
+      background: var(--d4);
+    }
+    .express-note {
+      font-size: .8rem;
+      color: var(--t3);
+      line-height: 1.6;
+    }
+    .express-sec {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: .8rem;
+      color: var(--t3);
+    }
+    .express-sec-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      flex-shrink: 0;
+    }
+    .express-summary {
+      font-size: .8rem;
+      color: var(--t2);
+      background: var(--d3);
+      border-radius: var(--r-lg);
+      border: 1px solid var(--b2);
+      padding: .8rem 1rem;
+    }
+    @media (max-width: 900px) {
+      .express-shell {
+        grid-template-columns: 1fr;
+        padding: 1.8rem 1.6rem;
+      }
     }
   </style>
 </head>
-
 <body>
-<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<div class="bg-orbs">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div>
+</div>
 <nav id="nav"></nav>
 
-<!-- HERO -->
 <div class="sub-hero">
   <div class="grid-bg"></div>
   <div class="tag">Envoi rapide</div>
   <h1 class="sub-hero-h1 grad-text">EXPRESS.</h1>
   <p class="sub-hero-desc">
-    Envoyez un fichier à n’importe quel utilisateur Creo sans vous connecter.  
-    Idéal pour l’école, le travail ou un ordinateur public.
+    Dépose un fichier, choisis un pseudo, envoie.  
+    Pas de compte, pas de configuration, juste un transfert simple.
   </p>
 </div>
 
-<!-- FORMULAIRE EXPRESS -->
 <div class="section-wrap">
-  <h2 class="section-h2">Envoyer un fichier.</h2>
-  <p class="section-desc">Déposez votre fichier, choisissez le pseudo du destinataire, et envoyez instantanément.</p>
+  <div class="express-shell">
 
-  <div class="express-wrap">
+    <div class="express-col">
+      <div class="express-label">// Fichier</div>
 
-    <!-- Zone de dépôt -->
-    <div class="drop-zone-adv" id="drop-zone">
-      <div class="dz-icon">📦</div>
-      <div class="dz-title">Déposez votre fichier ici</div>
-      <div class="dz-sub">ou cliquez pour parcourir</div>
-      <input type="file" id="file-input" hidden>
-    </div>
-
-    <!-- Aperçu fichier -->
-    <div class="file-card" id="file-card">
-      <div class="file-left">
-        <div class="file-icon" id="file-icon">📄</div>
-        <div>
-          <div class="file-name" id="file-name"></div>
-          <div class="file-meta" id="file-meta"></div>
-        </div>
+      <div class="express-drop" id="drop-zone">
+        <div class="ed-icon">📁</div>
+        <div class="ed-title">Déposer un fichier</div>
+        <div class="ed-sub">ou cliquer pour parcourir</div>
+        <input type="file" id="file-input" hidden>
       </div>
-      <div class="file-right">
-        <div class="file-progress">
-          <div class="file-progress-fill" id="file-progress"></div>
+
+      <div class="express-file" id="file-card">
+        <div class="ef-left">
+          <div class="ef-icon" id="file-icon">📄</div>
+          <div>
+            <div class="ef-name" id="file-name"></div>
+            <div class="ef-meta" id="file-meta"></div>
+          </div>
         </div>
+        <div class="ef-status" id="file-status">Prêt</div>
+      </div>
+
+      <div class="express-summary" id="summary">
+        Aucun fichier sélectionné.
       </div>
     </div>
 
-    <!-- Pseudo -->
-    <div class="input-wrap">
-      <label class="input-label">Pseudo du destinataire</label>
-      <input type="text" id="pseudo" class="input-field" placeholder="ex : mathis_42">
-    </div>
+    <div class="express-col">
+      <div class="express-label">// Destinataire</div>
 
-    <!-- Bouton envoyer -->
-    <button class="btn btn-primary btn-lg" id="send-btn">
-      <span class="btn-label">🚀 Envoyer</span>
-      <span class="btn-spin">⏳</span>
-    </button>
+      <div class="input-wrap">
+        <label class="input-label">Pseudo</label>
+        <input type="text" id="pseudo" class="input-field" placeholder="ex : mathis_42">
+      </div>
+
+      <div class="input-wrap">
+        <label class="input-label">Message (optionnel)</label>
+        <input type="text" id="message" class="input-field" placeholder="ex : Voici ton fichier">
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-full" id="send-btn">
+        <span class="btn-label">Envoyer</span>
+        <span class="btn-spin">⏳</span>
+      </button>
+
+      <div class="express-sec">
+        <span class="express-sec-dot"></span>
+        Transfert chiffré. Le fichier est supprimé automatiquement après réception.
+      </div>
+
+      <div class="express-note">
+        Le mode Express est pensé pour les partages rapides :  
+        ordinateur public, ami, camarade de classe, collègue ponctuel.
+      </div>
+    </div>
 
   </div>
-</div>
-
-<!-- Infos -->
-<div class="section-wrap">
-  <div class="tag">// Sécurité</div>
-  <h2 class="section-h2">Comment ça marche ?</h2>
-  <p class="section-desc">
-    Le mode Express utilise un lien temporaire chiffré.  
-    Aucun compte requis. Aucun historique conservé.  
-    Le fichier est supprimé automatiquement après réception.
-  </p>
 </div>
 
 <footer>
   <div class="footer-top">
-    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits.</p></div>
-    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
-    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
-    <div class="footer-col"><h5>Compte</h5><a href="login.html">Connexion</a><a href="login.html">Créer un compte</a></div>
+    <div>
+      <div class="footer-logo">CR<span>E</span>O</div>
+      <p class="footer-tagline">Transfer Without Limits. Peer-to-peer, chiffré, ultra-rapide.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Produit</h5>
+      <a href="features.html">Fonctionnalités</a>
+      <a href="download.html">Télécharger</a>
+      <a href="pricing.html">Tarifs</a>
+    </div>
+    <div class="footer-col">
+      <h5>Entreprise</h5>
+      <a href="about.html">À propos</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Compte</h5>
+      <a href="login.html">Connexion</a>
+      <a href="login.html">Créer un compte</a>
+      <a href="cgu.html">CGU</a>
+    </div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
-    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+    <div class="footer-socials">
+      <div class="social-btn">𝕏</div><div class="social-btn">⌥</div>
+      <div class="social-btn">◈</div><div class="social-btn">in</div>
+    </div>
   </div>
 </footer>
 
@@ -196,14 +264,15 @@
   pageFade();
   buildNav('express');
 
-  const dropZone = document.getElementById('drop-zone');
-  const fileInput = document.getElementById('file-input');
-  const card = document.getElementById('file-card');
+  const dropZone   = document.getElementById('drop-zone');
+  const fileInput  = document.getElementById('file-input');
+  const card       = document.getElementById('file-card');
   const fileNameEl = document.getElementById('file-name');
   const fileMetaEl = document.getElementById('file-meta');
   const fileIconEl = document.getElementById('file-icon');
-  const progressEl = document.getElementById('file-progress');
-  const sendBtn = document.getElementById('send-btn');
+  const fileStatus = document.getElementById('file-status');
+  const summary    = document.getElementById('summary');
+  const sendBtn    = document.getElementById('send-btn');
 
   dropZone.addEventListener('click', () => fileInput.click());
 
@@ -224,21 +293,39 @@
 
   function handleFile(file) {
     if (!file) return;
-
     card.style.display = 'flex';
     fileNameEl.textContent = file.name;
     fileMetaEl.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+    fileStatus.textContent = 'Prêt';
 
     const ext = file.name.split('.').pop().toLowerCase();
     const icons = {
-      pdf: "📕", png: "🖼️", jpg: "🖼️", jpeg: "🖼️",
-      zip: "🗂️", rar: "🗂️", mp4: "🎬", mp3: "🎵"
+      pdf: '📕', png: '🖼️', jpg: '🖼️', jpeg: '🖼️',
+      zip: '🗂️', rar: '🗂️', mp4: '🎬', mp3: '🎵'
     };
-    fileIconEl.textContent = icons[ext] || "📄";
+    fileIconEl.textContent = icons[ext] || '📄';
 
-    progressEl.style.width = "0%";
+    summary.textContent = `Fichier sélectionné : ${file.name}`;
   }
 
   sendBtn.addEventListener('click', () => {
-    const pseudo = document.getElementById('pseudo').value.trim();
-    if (!pseudo) return toast
+    const pseudo  = document.getElementById('pseudo').value.trim();
+    const message = document.getElementById('message').value.trim();
+    if (!fileInput.files[0]) return toast('Choisissez un fichier.', 'error');
+    if (!pseudo) return toast('Entrez un pseudo.', 'error');
+
+    fileStatus.textContent = 'Envoi...';
+    setLoading(sendBtn, true);
+
+    setTimeout(() => {
+      fileStatus.textContent = 'Envoyé ✔';
+      summary.textContent = message
+        ? `Fichier envoyé à ${pseudo} avec un message.`
+        : `Fichier envoyé à ${pseudo}.`;
+      setLoading(sendBtn, false);
+      toast('Fichier envoyé à ' + pseudo + ' ✔', 'success');
+    }, 1200);
+  });
+</script>
+</body>
+</html>
