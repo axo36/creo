@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Compléter le profil — Creo</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-wrap">
+    <a class="auth-logo">CR<span class="logo-e-login">E</span>O</a>
+
+    <div class="auth-box">
+      <h2 class="confirm-title">Compléter votre profil</h2>
+
+      <div class="field-row">
+        <div class="field"><label>Prénom</label><input id="first"></div>
+        <div class="field"><label>Nom</label><input id="last"></div>
+      </div>
+
+      <div class="field"><label>Pseudo</label><input id="username"></div>
+      <div class="field"><label>Avatar (URL)</label><input id="avatar"></div>
+
+      <button class="btn btn-primary btn-full" id="saveBtn">
+        <span class="btn-label">Enregistrer →</span>
+      </button>
+    </div>
+  </div>
+
+<script type="module">
+import { supabase } from "./app.js";
+
+function genCode() {
+  return "CR-" + Math.floor(100000 + Math.random() * 900000);
+}
+
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return alert("Session expirée.");
+
+  const first = document.getElementById("first").value.trim();
+  const last  = document.getElementById("last").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const avatar = document.getElementById("avatar").value.trim() || null;
+
+  if (!username) return alert("Le pseudo est obligatoire.");
+
+  await supabase.from("profiles").update({
+    first_name: first,
+    last_name: last,
+    username,
+    avatar_url: avatar,
+    client_code: genCode()
+  }).eq("id", user.id);
+
+  window.location.href = "index.html";
+});
+</script>
+</body>
+</html>
