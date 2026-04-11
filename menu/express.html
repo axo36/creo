@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Express</title>
+  <meta name="description" content="Envoyez un fichier instantanément à n’importe quel utilisateur Creo sans vous connecter.">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* Zone de dépôt */
+    .drop-zone {
+      border: 2px dashed var(--b3);
+      background: var(--d2);
+      border-radius: var(--r-xl);
+      padding: 3rem;
+      text-align: center;
+      transition: all .25s;
+      cursor: pointer;
+    }
+    .drop-zone:hover {
+      background: var(--d3);
+      border-color: var(--blue2);
+    }
+    .drop-zone.dragover {
+      background: rgba(26,111,255,.08);
+      border-color: var(--blue);
+    }
+    .drop-zone-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--blue2);
+    }
+    .drop-zone-text {
+      font-size: .95rem;
+      color: var(--t2);
+    }
+
+    /* Formulaire express */
+    .express-form {
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+    .input-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+    .input-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--t3);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .input-field {
+      padding: .9rem 1.2rem;
+      background: var(--d3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r-lg);
+      color: var(--t1);
+      font-size: .9rem;
+      transition: border .2s;
+    }
+    .input-field:focus {
+      border-color: var(--blue2);
+      outline: none;
+    }
+
+    /* Résumé fichier */
+    .file-preview {
+      background: var(--d3);
+      border: 1px solid var(--b2);
+      padding: 1rem 1.2rem;
+      border-radius: var(--r-lg);
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+    .file-preview-icon {
+      font-size: 1.4rem;
+      color: var(--blue2);
+    }
+    .file-preview-name {
+      font-size: .9rem;
+      color: var(--t1);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<nav id="nav"></nav>
+
+<!-- HERO -->
+<div class="sub-hero">
+  <div class="grid-bg"></div>
+  <div class="tag">Envoi rapide</div>
+  <h1 class="sub-hero-h1 grad-text">EXPRESS.</h1>
+  <p class="sub-hero-desc">
+    Envoyez un fichier à n’importe quel utilisateur Creo sans vous connecter.  
+    Parfait pour l’école, le travail ou un partage rapide sur un ordinateur public.
+  </p>
+</div>
+
+<!-- FORMULAIRE EXPRESS -->
+<div class="section-wrap">
+  <h2 class="section-h2">Envoyer un fichier.</h2>
+  <p class="section-desc">Déposez votre fichier, choisissez le pseudo du destinataire, et envoyez instantanément.</p>
+
+  <div class="express-form">
+
+    <!-- Zone de dépôt -->
+    <div class="drop-zone" id="drop-zone">
+      <div class="drop-zone-icon">📁</div>
+      <div class="drop-zone-text">Déposez votre fichier ici ou cliquez pour choisir</div>
+      <input type="file" id="file-input" hidden>
+    </div>
+
+    <!-- Résumé fichier -->
+    <div class="file-preview" id="file-preview">
+      <div class="file-preview-icon">📄</div>
+      <div class="file-preview-name" id="file-name"></div>
+    </div>
+
+    <!-- Pseudo -->
+    <div class="input-wrap">
+      <label class="input-label">Pseudo du destinataire</label>
+      <input type="text" id="pseudo" class="input-field" placeholder="ex : mathis_42">
+    </div>
+
+    <!-- Bouton envoyer -->
+    <button class="btn btn-primary btn-lg" id="send-btn">
+      <span class="btn-label">🚀 Envoyer</span>
+      <span class="btn-spin">⏳</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- Infos -->
+<div class="section-wrap">
+  <div class="tag">// Sécurité</div>
+  <h2 class="section-h2">Comment ça marche ?</h2>
+  <p class="section-desc">
+    Le mode Express utilise un lien temporaire chiffré.  
+    Aucun compte requis. Aucun historique conservé.  
+    Le fichier est supprimé automatiquement après réception.
+  </p>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="login.html">Connexion</a><a href="login.html">Créer un compte</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { buildNav, pageFade, setLoading, toast } from './app.js';
+  pageFade();
+  buildNav('express');
+
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const preview = document.getElementById('file-preview');
+  const fileName = document.getElementById('file-name');
+  const sendBtn = document.getElementById('send-btn');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    handleFile(file);
+  });
+
+  fileInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    handleFile(file);
+  });
+
+  function handleFile(file) {
+    if (!file) return;
+    preview.style.display = 'flex';
+    fileName.textContent = file.name;
+  }
+
+  sendBtn.addEventListener('click', () => {
+    const pseudo = document.getElementById('pseudo').value.trim();
+    if (!pseudo) return toast("Entrez un pseudo.", "error");
+    if (!fileInput.files[0]) return toast("Choisissez un fichier.", "error");
+
+    setLoading(sendBtn, true);
+
+    setTimeout(() => {
+      setLoading(sendBtn, false);
+      toast("Fichier envoyé à " + pseudo + " ✔", "success");
+    }, 1500);
+  });
+</script>
+
+</body>
+</html>
