@@ -111,7 +111,7 @@ export async function emailSignup(email, password, fullName) {
 
   const token = uuidv4();
 
-  await supabase.from('email_verification').insert({
+  await supabase.from('email_verification').upsert({
     user_id: userId,
     token
   });
