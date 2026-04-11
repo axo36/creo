@@ -1,54 +1,39 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Vérification — Creo</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Vérification...</title>
 </head>
-<body class="auth-page">
-  <div class="auth-wrap">
-    <a class="auth-logo">CR<span class="logo-e-login">E</span>O</a>
-    <div class="auth-box">
-      <div id="verify-box" class="confirm-box">
-        <div class="confirm-icon">⏳</div>
-        <div class="confirm-title">Vérification...</div>
-        <p class="confirm-text">Merci de patienter.</p>
-      </div>
-    </div>
-  </div>
+<body>
+  <h2>Vérification de votre email...</h2>
 
-<script type="module">
-import { supabase } from "./app.js";
+  <script type="module">
+    import { supabase } from "./app.js";
 
-async function verify() {
-  const box = document.getElementById("verify-box");
-  const token = new URLSearchParams(window.location.search).get("token");
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
 
-  if (!token) {
-    box.innerHTML = "<div class='confirm-icon'>⚠️</div><div class='confirm-title'>Lien invalide</div>";
-    return;
-  }
+    if (!token) {
+      document.body.innerHTML = "<h3>Lien invalide.</h3>";
+    } else {
+      const { data, error } = await supabase
+        .from("email_verification")
+        .select("*")
+        .eq("token", token)
+        .single();
 
-  const { data } = await supabase
-    .from("email_verification")
-    .select("*")
-    .eq("token", token)
-    .single();
+      if (error || !data) {
+        document.body.innerHTML = "<h3>Lien invalide ou expiré.</h3>";
+      } else {
+        await supabase
+          .from("profiles")
+          .update({ email_verified: true })
+          .eq("id", data.user_id);
 
-  if (!data) {
-    box.innerHTML = "<div class='confirm-icon'>⚠️</div><div class='confirm-title'>Lien expiré</div>";
-    return;
-  }
-
-  await supabase.from("profiles").update({ email_verified: true }).eq("id", data.user_id);
-  await supabase.from("email_verification").delete().eq("token", token);
-
-  box.innerHTML = "<div class='confirm-icon'>✅</div><div class='confirm-title'>Email confirmé</div>";
-
-  setTimeout(() => window.location.href = "complete-profile.html", 1200);
-}
-
-verify();
-</script>
+        document.body.innerHTML = "<h3>Email confirmé ! Redirection...</h3>";
+        setTimeout(() => window.location.href = "login.html", 1500);
+      }
+    }
+  </script>
 </body>
 </html>
