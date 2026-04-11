@@ -1,7 +1,12 @@
 /* ══════════════════════════════════════════
    app.js — Creo · JS global
-   Importer dans chaque page avec type="module"
+   Version finale avec :
+   - Supabase
+   - EmailJS vérification + formulaire
+   - OAuth Google
+   - Gestion profil + token
 ══════════════════════════════════════════ */
+
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { v4 as uuidv4 } from "https://cdn.jsdelivr.net/npm/uuid@9.0.0/dist/esm-browser/index.js";
 
@@ -18,7 +23,10 @@ function getBase() {
   return window.location.origin + dir;
 }
 
-/* ── AUTH ──────────────────────────────── */
+/* ══════════════════════════════════════════
+   AUTH — SESSION
+══════════════════════════════════════════ */
+
 export async function getSession() {
   const { data } = await supabase.auth.getSession();
   return data.session ?? null;
@@ -40,19 +48,28 @@ export async function signOut() {
   window.location.href = 'login.html';
 }
 
+/* ══════════════════════════════════════════
+   AUTH — DISPLAY
+══════════════════════════════════════════ */
+
 export function getDisplayName(session) {
   if (!session) return 'Invité';
   const m = session.user.user_metadata;
   return m?.full_name || m?.name || session.user.email?.split('@')[0] || 'Utilisateur';
 }
+
 export function getInitials(session) {
   return getDisplayName(session).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
+
 export function getAvatar(session) {
   return session?.user?.user_metadata?.avatar_url ?? null;
 }
 
-/* ── OAUTH ─────────────────────────────── */
+/* ══════════════════════════════════════════
+   AUTH — OAUTH GOOGLE
+══════════════════════════════════════════ */
+
 export async function oauthLogin(provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
@@ -61,78 +78,91 @@ export async function oauthLogin(provider) {
   if (error) toast(error.message, 'error');
 }
 
-/* ── EMAIL / PASSWORD (NOUVEAU FLOW COMPLET) ──────────────────── */
+/* ══════════════════════════════════════════
+   AUTH — LOGIN EMAIL
+══════════════════════════════════════════ */
+
 export async function emailLogin(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
   if (error) {
-    const m = error.message;
-    if (m.includes('Invalid login credentials')) return 'Email ou mot de passe incorrect.';
-    return 'Connexion impossible.';
+    if (error.message.includes("Invalid login credentials"))
+      return "Email ou mot de passe incorrect.";
+    return "Connexion impossible.";
   }
 
   const user = data.user;
-  if (!user) return 'Erreur de connexion.';
+  if (!user) return "Erreur de connexion.";
 
   const { data: profile } = await supabase
-    .from('profiles')
-    .select('email_verified')
-    .eq('id', user.id)
+    .from("profiles")
+    .select("email_verified")
+    .eq("id", user.id)
     .single();
 
   if (!profile || !profile.email_verified) {
     await supabase.auth.signOut();
-    return 'Veuillez confirmer votre email avant de vous connecter.';
+    return "Veuillez confirmer votre email avant de vous connecter.";
   }
 
   return null;
 }
 
+/* ══════════════════════════════════════════
+   AUTH — SIGNUP + EMAILJS VÉRIFICATION
+══════════════════════════════════════════ */
+
 export async function emailSignup(email, password, fullName) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  });
+
+  // 1. Création du compte Supabase
+  const { data, error } = await supabase.auth.signUp({ email, password });
 
   if (error) return { error: error.message, needsConfirm: false };
-  if (!data.user) return { error: 'Erreur lors de la création du compte.', needsConfirm: false };
+  if (!data.user) return { error: "Erreur lors de la création du compte.", needsConfirm: false };
 
   const userId = data.user.id;
 
-  await supabase.from('profiles').upsert({
+  // 2. Profil minimal
+  await supabase.from("profiles").upsert({
     id: userId,
     email,
-    email_verified: false,
-    first_name: null,
-    last_name: null,
-    username: null,
-    client_code: null,
-    avatar_url: null
+    email_verified: false
   });
 
+  // 3. Token unique
   const token = uuidv4();
 
-  await supabase.from('email_verification').upsert({
+  await supabase.from("email_verification").upsert({
     user_id: userId,
     token
   });
 
-  // ⚠️ remplace service_id / template_id par tes valeurs EmailJS
-  emailjs.send('service_cyy74i2', 'template_v7f12m6', {
-    to_email: email,
+  // 4. EmailJS — modèle de vérification
+  emailjs.send("service_cyy74i2", "template_yxhlnzs", {
+    email: email,
+    name: fullName,
     confirm_link: `${window.location.origin}/verify.html?token=${token}`
   });
 
   return { error: null, needsConfirm: true };
 }
 
-export async function resetPassword(email) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: getBase() + 'login.html?reset=1'
+/* ══════════════════════════════════════════
+   FORMULAIRE CONTACT — EmailJS
+══════════════════════════════════════════ */
+
+export async function sendContactForm(name, email, message) {
+  return emailjs.send("service_cyy74i2", "template_v7f12m6", {
+    from_name: name,
+    reply_to: email,
+    message: message
   });
-  return error ? error.message : null;
 }
 
-/* ── TOAST ─────────────────────────────── */
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+
 export function toast(msg, type = 'info') {
   let wrap = document.getElementById('toast-wrap');
   if (!wrap) {
@@ -154,7 +184,10 @@ export function toast(msg, type = 'info') {
   }, 4200);
 }
 
-/* ── LOADING BTN ───────────────────────── */
+/* ══════════════════════════════════════════
+   LOADING BUTTON
+══════════════════════════════════════════ */
+
 export function setLoading(btn, on) {
   const label = btn.querySelector('.btn-label');
   const spin  = btn.querySelector('.btn-spin');
@@ -169,7 +202,10 @@ export function setLoading(btn, on) {
   }
 }
 
-/* ── NAV ───────────────────────────────── */
+/* ══════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════ */
+
 export async function buildNav(activePage) {
   const nav = document.getElementById('nav');
   if (!nav) return;
@@ -242,7 +278,10 @@ export async function buildNav(activePage) {
   }, { passive: true });
 }
 
-/* ── SCROLL REVEAL ─────────────────────── */
+/* ══════════════════════════════════════════
+   ANIMATIONS + UI (inchangé)
+══════════════════════════════════════════ */
+
 export function initReveal() {
   const io = new IntersectionObserver(entries =>
     entries.forEach(e => {
@@ -253,7 +292,6 @@ export function initReveal() {
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
-/* ── FAQ ───────────────────────────────── */
 export function initFAQ() {
   document.querySelectorAll('.faq-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -264,7 +302,6 @@ export function initFAQ() {
   });
 }
 
-/* ── DEMO ANIMATION ────────────────────── */
 export function initDemo() {
   const sRows  = [...document.querySelectorAll('.device-pane.source .file-row')];
   const tRows  = [...document.querySelectorAll('.device-pane.target .file-row')];
@@ -313,7 +350,6 @@ export function initDemo() {
   }
 }
 
-/* ── FEATURE CARD GLOW ─────────────────── */
 export function initFeatureGlow() {
   document.querySelectorAll('.feat-card').forEach(card => {
     card.addEventListener('mousemove', e => {
@@ -324,13 +360,10 @@ export function initFeatureGlow() {
   });
 }
 
-/* ── MARQUEE ───────────────────────────── */
 export function initMarquee() {
   const track = document.querySelector('.marquee-track');
-  //if (track) track.parentElement.appendChild(track.cloneNode(true));
 }
 
-/* ── SIDEBAR ───────────────────────────── */
 export function initSidebar() {
   document.querySelectorAll('.sidebar-link').forEach(l => {
     l.addEventListener('click', () => {
@@ -340,7 +373,6 @@ export function initSidebar() {
   });
 }
 
-/* ── COUNT-UP ──────────────────────────── */
 export function initCountUp(selector = '.hero-stats') {
   const container = document.querySelector(selector);
   if (!container) return;
@@ -362,7 +394,6 @@ export function initCountUp(selector = '.hero-stats') {
   }, { threshold: .4 }).observe(container);
 }
 
-/* ── PAGE FADE ─────────────────────────── */
 export function pageFade() {
   document.body.style.opacity = '0';
   document.body.style.transition = 'opacity .4s ease';
@@ -383,8 +414,4 @@ export function downloadApp(platform) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-}
-
-function toggleFAQ(el) {
-  el.classList.toggle("open");
 }
