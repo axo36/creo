@@ -117,7 +117,7 @@ export async function emailSignup(email, password, fullName) {
   });
 
   // ⚠️ remplace service_id / template_id par tes valeurs EmailJS
-  emailjs.send('service_id', 'template_id', {
+  emailjs.send('service_cyy74i2', 'template_v7f12m6', {
     to_email: email,
     confirm_link: `${window.location.origin}/verify.html?token=${token}`
   });
