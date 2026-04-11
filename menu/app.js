@@ -346,3 +346,42 @@ export function downloadApp(platform) {
 function toggleFAQ(el) {
   el.classList.toggle("open");
 }
+
+/* ── EMAILJS INIT ───────────────────────── */
+import emailjs from "https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js";
+emailjs.init("CUdTdjUKOXn_2PW2K");
+
+/* ── SIGNUP AVEC EMAILJS ────────────────── */
+export async function emailSignup(email, password, fullName) {
+  // 1. Création du compte Supabase
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: fullName } }
+  });
+
+  if (error) return { error: error.message };
+
+  const user = data.user;
+  if (!user) return { error: "Erreur lors de la création du compte." };
+
+  // 2. Génération du token
+  const token = crypto.randomUUID();
+
+  // 3. Stockage du token dans Supabase
+  await supabase.from("email_verification").upsert({
+    user_id: user.id,
+    token
+  });
+
+  // 4. Envoi EmailJS
+  const confirm_link = `${window.location.origin}/verify.html?token=${token}`;
+
+  await emailjs.send("service_cyy74i2", "template_yxhlnzs", {
+    email: email,
+    name: fullName,
+    confirm_link: confirm_link
+  });
+
+  return { needsConfirm: true };
+}
