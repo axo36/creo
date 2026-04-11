@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>CREO – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-dot"></div>
+        <span class="logo-text">CREO</span>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Principal</div>
+        <button class="nav-item active" data-view="transferts">
+          <span>Transferts</span>
+        </button>
+        <button class="nav-item" data-view="appareils">
+          <span>Appareils</span>
+        </button>
+        <button class="nav-item" data-view="fichiers">
+          <span>Fichiers</span>
+        </button>
+        <button class="nav-item" data-view="sync">
+          <span>Sync</span>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Compte</div>
+        <button class="nav-item" data-view="parametres">
+          <span>Paramètres</span>
+        </button>
+        <button class="nav-item" data-view="analytiques">
+          <span>Analytiques</span>
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="user-block">
+          <div class="user-avatar">S</div>
+          <div class="user-meta">
+            <div class="user-name">Salam</div>
+            <div class="user-email">salem@creo.app</div>
+          </div>
+        </div>
+        <button class="logout-btn">Déconnexion</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="topbar">
+        <h1 class="topbar-title" id="view-title">Transferts récents</h1>
+        <div class="topbar-right">
+          <input type="text" class="search-input" placeholder="Rechercher…" />
+        </div>
+      </header>
+
+      <section class="main-content">
+        <!-- PAGE: TRANSFERTS -->
+        <div class="view view-active" id="view-transferts">
+          <div class="cards-row">
+            <div class="stat-card">
+              <div class="stat-label">Total transféré</div>
+              <div class="stat-value">142 GB</div>
+              <div class="stat-sub">Ce mois : +38%</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Appareils actifs</div>
+              <div class="stat-value">6</div>
+              <div class="stat-sub">Sur 3 réseaux</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Vitesse moy.</div>
+              <div class="stat-value">1.2 GB/s</div>
+              <div class="stat-sub">Réseau LAN</div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <div class="table-header">
+              <span>Fichier</span>
+              <span>Taille</span>
+              <span>Destination</span>
+              <span>Statut</span>
+            </div>
+            <div class="table-row">
+              <span>montage_final.mp4</span>
+              <span>4.2 GB</span>
+              <span>PC Bureau</span>
+              <span class="status status-ok">Envoyé</span>
+            </div>
+            <div class="table-row">
+              <span>maquettes_v8.fig</span>
+              <span>210 MB</span>
+              <span>MacBook Air</span>
+              <span class="status status-upload">Envoi</span>
+            </div>
+            <div class="table-row">
+              <span>backup_janvier.zip</span>
+              <span>12.8 GB</span>
+              <span>NAS Home</span>
+              <span class="status status-ok">Envoyé</span>
+            </div>
+            <div class="table-row">
+              <span>rapport_annuel.pdf</span>
+              <span>1.4 MB</span>
+              <span>PC Bureau</span>
+              <span class="status status-pending">File</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: APPAREILS -->
+        <div class="view" id="view-appareils">
+          <div class="section-header">
+            <h2>Appareils connectés</h2>
+            <button class="primary-btn">Ajouter un appareil</button>
+          </div>
+          <div class="cards-grid">
+            <div class="device-card">
+              <div class="device-name">PC Bureau</div>
+              <div class="device-meta">LAN • Online</div>
+            </div>
+            <div class="device-card">
+              <div class="device-name">MacBook Air</div>
+              <div class="device-meta">Wi‑Fi • Online</div>
+            </div>
+            <div class="device-card">
+              <div class="device-name">NAS Home</div>
+              <div class="device-meta">LAN • Online</div>
+            </div>
+            <div class="device-card offline">
+              <div class="device-name">iPhone 15</div>
+              <div class="device-meta">Offline</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: FICHIERS -->
+        <div class="view" id="view-fichiers">
+          <div class="section-header">
+            <h2>Bibliothèque de fichiers</h2>
+            <button class="primary-btn">Importer</button>
+          </div>
+          <div class="table-wrapper">
+            <div class="table-header">
+              <span>Nom</span>
+              <span>Taille</span>
+              <span>Dernier transfert</span>
+              <span>Appareil</span>
+            </div>
+            <div class="table-row">
+              <span>presentation_creo.key</span>
+              <span>32 MB</span>
+              <span>Hier</span>
+              <span>MacBook Air</span>
+            </div>
+            <div class="table-row">
+              <span>assets_site.zip</span>
+              <span>1.2 GB</span>
+              <span>Il y a 3 jours</span>
+              <span>PC Bureau</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: SYNC -->
+        <div class="view" id="view-sync">
+          <div class="section-header">
+            <h2>Sync & règles</h2>
+            <button class="primary-btn">Nouvelle règle</button>
+          </div>
+          <div class="cards-column">
+            <div class="rule-card">
+              <div class="rule-title">Sync Projets → NAS Home</div>
+              <div class="rule-meta">Dossier: /Users/Salam/Projets • Toutes les 2h</div>
+              <div class="rule-status rule-on">Actif</div>
+            </div>
+            <div class="rule-card">
+              <div class="rule-title">Backup Documents → Cloud</div>
+              <div class="rule-meta">Dossier: /Users/Salam/Documents • Quotidien</div>
+              <div class="rule-status rule-off">Pause</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: PARAMÈTRES -->
+        <div class="view" id="view-parametres">
+          <div class="section-header">
+            <h2>Paramètres du compte</h2>
+          </div>
+          <div class="settings-grid">
+            <div class="settings-block">
+              <h3>Profil</h3>
+              <label>
+                Nom
+                <input type="text" value="Salam" />
+              </label>
+              <label>
+                Email
+                <input type="email" value="salem@creo.app" />
+              </label>
+            </div>
+            <div class="settings-block">
+              <h3>Sécurité</h3>
+              <button class="secondary-btn">Changer le mot de passe</button>
+              <button class="secondary-btn">Activer 2FA</button>
+            </div>
+            <div class="settings-block">
+              <h3>Préférences</h3>
+              <label class="toggle-row">
+                <span>Thème sombre</span>
+                <input type="checkbox" checked />
+              </label>
+              <label class="toggle-row">
+                <span>Notifications transferts</span>
+                <input type="checkbox" checked />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- PAGE: ANALYTIQUES -->
+        <div class="view" id="view-analytiques">
+          <div class="section-header">
+            <h2>Analytiques</h2>
+          </div>
+          <div class="cards-row">
+            <div class="stat-card">
+              <div class="stat-label">Transferts ce mois</div>
+              <div class="stat-value">328</div>
+              <div class="stat-sub">+22% vs dernier mois</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Volume total</div>
+              <div class="stat-value">2.4 TB</div>
+              <div class="stat-sub">Depuis la création du compte</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Appareil le plus actif</div>
+              <div class="stat-value">PC Bureau</div>
+              <div class="stat-sub">58% des transferts</div>
+            </div>
+          </div>
+
+          <div class="analytics-placeholder">
+            <p>Zone graphique (courbes, barres, etc.)</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
