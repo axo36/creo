@@ -141,6 +141,7 @@ export async function buildNav(activePage) {
     { id: 'pricing',  label: 'Tarifs',          href: 'pricing.html' },
     { id: 'about',    label: 'À propos',        href: 'about.html' },
     { id: 'contact',  label: 'Contact',         href: 'contact.html' },
+    { id: 'express',  label: 'Express',         href: 'express.html' },
   ];
 
   const pill = links.map(l =>
