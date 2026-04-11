@@ -94,27 +94,26 @@
   </div>
 </div>
 <!-- EmailJS -->
+<!-- EmailJS -->
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  emailjs.init("CUdTdjUKOXn_2PW2K"); 
+  emailjs.init("CUdTdjUKOXn_2PW2K");
 </script>
 
-<!-- Ton app.js -->
+<!-- Auth.js -->
 <script type="module">
-  import { emailLogin, emailSignup, oauthLogin, toast } from "./app.js";
+  import { emailLogin, emailSignup, oauthLogin } from "./auth.js";
 
-  // LOGIN
   document.getElementById("login-btn").addEventListener("click", async () => {
     const email = document.getElementById("login-email").value.trim();
     const pass  = document.getElementById("login-pass").value.trim();
 
     const err = await emailLogin(email, pass);
-    if (err) return toast(err, "error");
+    if (err) return alert(err);
 
     window.location.href = "index.html";
   });
 
-  // SIGNUP
   document.getElementById("signup-btn").addEventListener("click", async () => {
     const email = document.getElementById("signup-email").value.trim();
     const pass  = document.getElementById("signup-pass").value.trim();
@@ -122,14 +121,12 @@
 
     const res = await emailSignup(email, pass, name);
 
-    if (res.error) return toast(res.error, "error");
-    if (res.needsConfirm) {
-      toast("Un email de confirmation vous a été envoyé.", "success");
-    }
+    if (res.error) return alert(res.error);
+    if (res.needsConfirm) alert("Un email de confirmation vous a été envoyé.");
   });
 
-  // GOOGLE LOGIN
   document.getElementById("google-btn").addEventListener("click", () => {
     oauthLogin("google");
   });
 </script>
+
