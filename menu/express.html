@@ -3,93 +3,105 @@
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Creo — Express</title>
-  <meta name="description" content="Envoyez un fichier instantanément à n’importe quel utilisateur Creo sans vous connecter.">
+  <meta name="description" content="Envoyez un fichier instantanément à n’importe quel utilisateur Creo sans compte.">
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* Zone de dépôt */
-    .drop-zone {
-      border: 2px dashed var(--b3);
-      background: var(--d2);
-      border-radius: var(--r-xl);
-      padding: 3rem;
-      text-align: center;
-      transition: all .25s;
-      cursor: pointer;
-    }
-    .drop-zone:hover {
-      background: var(--d3);
-      border-color: var(--blue2);
-    }
-    .drop-zone.dragover {
-      background: rgba(26,111,255,.08);
-      border-color: var(--blue);
-    }
-    .drop-zone-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: var(--blue2);
-    }
-    .drop-zone-text {
-      font-size: .95rem;
-      color: var(--t2);
-    }
-
-    /* Formulaire express */
-    .express-form {
-      max-width: 520px;
+    /* ═══════════════════════════════════════
+       EXPRESS — ZONE DE DÉPÔT PREMIUM
+    ═══════════════════════════════════════ */
+    .express-wrap {
+      max-width: 620px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 1.4rem;
-    }
-    .input-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: .4rem;
-    }
-    .input-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .7rem;
-      color: var(--t3);
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-    .input-field {
-      padding: .9rem 1.2rem;
-      background: var(--d3);
-      border: 1px solid var(--b2);
-      border-radius: var(--r-lg);
-      color: var(--t1);
-      font-size: .9rem;
-      transition: border .2s;
-    }
-    .input-field:focus {
-      border-color: var(--blue2);
-      outline: none;
+      gap: 2rem;
     }
 
-    /* Résumé fichier */
-    .file-preview {
+    /* Zone de dépôt */
+    .drop-zone-adv {
+      border: 2px dashed var(--b3);
+      background: var(--d2);
+      border-radius: var(--r-2xl);
+      padding: 3.8rem 2rem;
+      text-align: center;
+      transition: all .25s;
+      cursor: pointer;
+      position: relative;
+    }
+    .drop-zone-adv:hover {
+      background: var(--d3);
+      border-color: var(--blue2);
+    }
+    .drop-zone-adv.dragover {
+      background: rgba(26,111,255,.08);
+      border-color: var(--blue);
+    }
+    .dz-icon {
+      font-size: 3.8rem;
+      margin-bottom: 1rem;
+      animation: dzFloat 2.5s ease-in-out infinite;
+    }
+    @keyframes dzFloat {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .dz-title {
+      font-size: 1.3rem;
+      color: var(--t1);
+      margin-bottom: .4rem;
+    }
+    .dz-sub {
+      font-size: .9rem;
+      color: var(--t2);
+    }
+
+    /* Carte fichier */
+    .file-card {
+      display: none;
       background: var(--d3);
       border: 1px solid var(--b2);
-      padding: 1rem 1.2rem;
-      border-radius: var(--r-lg);
-      display: none;
+      border-radius: var(--r-xl);
+      padding: 1.3rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .file-left {
+      display: flex;
       align-items: center;
       gap: 12px;
     }
-    .file-preview-icon {
-      font-size: 1.4rem;
+    .file-icon {
+      font-size: 2rem;
       color: var(--blue2);
     }
-    .file-preview-name {
-      font-size: .9rem;
+    .file-name {
+      font-size: .95rem;
       color: var(--t1);
-      flex: 1;
-      white-space: nowrap;
+      font-weight: 500;
+    }
+    .file-meta {
+      font-size: .75rem;
+      color: var(--t3);
+      margin-top: 2px;
+    }
+
+    /* Barre de progression */
+    .file-progress {
+      width: 140px;
+      height: 6px;
+      background: var(--d5);
+      border-radius: 99px;
       overflow: hidden;
-      text-overflow: ellipsis;
+    }
+    .file-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      transition: width .25s linear;
+      border-radius: 99px;
     }
   </style>
 </head>
@@ -105,7 +117,7 @@
   <h1 class="sub-hero-h1 grad-text">EXPRESS.</h1>
   <p class="sub-hero-desc">
     Envoyez un fichier à n’importe quel utilisateur Creo sans vous connecter.  
-    Parfait pour l’école, le travail ou un partage rapide sur un ordinateur public.
+    Idéal pour l’école, le travail ou un ordinateur public.
   </p>
 </div>
 
@@ -114,19 +126,30 @@
   <h2 class="section-h2">Envoyer un fichier.</h2>
   <p class="section-desc">Déposez votre fichier, choisissez le pseudo du destinataire, et envoyez instantanément.</p>
 
-  <div class="express-form">
+  <div class="express-wrap">
 
     <!-- Zone de dépôt -->
-    <div class="drop-zone" id="drop-zone">
-      <div class="drop-zone-icon">📁</div>
-      <div class="drop-zone-text">Déposez votre fichier ici ou cliquez pour choisir</div>
+    <div class="drop-zone-adv" id="drop-zone">
+      <div class="dz-icon">📦</div>
+      <div class="dz-title">Déposez votre fichier ici</div>
+      <div class="dz-sub">ou cliquez pour parcourir</div>
       <input type="file" id="file-input" hidden>
     </div>
 
-    <!-- Résumé fichier -->
-    <div class="file-preview" id="file-preview">
-      <div class="file-preview-icon">📄</div>
-      <div class="file-preview-name" id="file-name"></div>
+    <!-- Aperçu fichier -->
+    <div class="file-card" id="file-card">
+      <div class="file-left">
+        <div class="file-icon" id="file-icon">📄</div>
+        <div>
+          <div class="file-name" id="file-name"></div>
+          <div class="file-meta" id="file-meta"></div>
+        </div>
+      </div>
+      <div class="file-right">
+        <div class="file-progress">
+          <div class="file-progress-fill" id="file-progress"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Pseudo -->
@@ -175,8 +198,11 @@
 
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
-  const preview = document.getElementById('file-preview');
-  const fileName = document.getElementById('file-name');
+  const card = document.getElementById('file-card');
+  const fileNameEl = document.getElementById('file-name');
+  const fileMetaEl = document.getElementById('file-meta');
+  const fileIconEl = document.getElementById('file-icon');
+  const progressEl = document.getElementById('file-progress');
   const sendBtn = document.getElementById('send-btn');
 
   dropZone.addEventListener('click', () => fileInput.click());
@@ -189,34 +215,30 @@
   dropZone.addEventListener('drop', e => {
     e.preventDefault();
     dropZone.classList.remove('dragover');
-    const file = e.dataTransfer.files[0];
-    handleFile(file);
+    handleFile(e.dataTransfer.files[0]);
   });
 
   fileInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    handleFile(file);
+    handleFile(e.target.files[0]);
   });
 
   function handleFile(file) {
     if (!file) return;
-    preview.style.display = 'flex';
-    fileName.textContent = file.name;
+
+    card.style.display = 'flex';
+    fileNameEl.textContent = file.name;
+    fileMetaEl.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const icons = {
+      pdf: "📕", png: "🖼️", jpg: "🖼️", jpeg: "🖼️",
+      zip: "🗂️", rar: "🗂️", mp4: "🎬", mp3: "🎵"
+    };
+    fileIconEl.textContent = icons[ext] || "📄";
+
+    progressEl.style.width = "0%";
   }
 
   sendBtn.addEventListener('click', () => {
     const pseudo = document.getElementById('pseudo').value.trim();
-    if (!pseudo) return toast("Entrez un pseudo.", "error");
-    if (!fileInput.files[0]) return toast("Choisissez un fichier.", "error");
-
-    setLoading(sendBtn, true);
-
-    setTimeout(() => {
-      setLoading(sendBtn, false);
-      toast("Fichier envoyé à " + pseudo + " ✔", "success");
-    }, 1500);
-  });
-</script>
-
-</body>
-</html>
+    if (!pseudo) return toast
