@@ -104,9 +104,10 @@
 <script type="module">
   import { emailLogin, emailSignup, oauthLogin } from "./auth.js";
 
-  document.getElementById("login-btn").addEventListener("click", async () => {
+  // LOGIN
+  document.getElementById("loginBtn").addEventListener("click", async () => {
     const email = document.getElementById("login-email").value.trim();
-    const pass  = document.getElementById("login-pass").value.trim();
+    const pass  = document.getElementById("login-password").value.trim();
 
     const err = await emailLogin(email, pass);
     if (err) return alert(err);
@@ -114,19 +115,32 @@
     window.location.href = "index.html";
   });
 
-  document.getElementById("signup-btn").addEventListener("click", async () => {
-    const email = document.getElementById("signup-email").value.trim();
-    const pass  = document.getElementById("signup-pass").value.trim();
-    const name  = document.getElementById("signup-name").value.trim();
+  // SIGNUP
+  document.getElementById("signupBtn").addEventListener("click", async () => {
+    const firstname = document.getElementById("signup-firstname").value.trim();
+    const lastname  = document.getElementById("signup-lastname").value.trim();
+    const email     = document.getElementById("signup-email").value.trim();
+    const pass      = document.getElementById("signup-password").value.trim();
 
-    const res = await emailSignup(email, pass, name);
+    const fullName = firstname + " " + lastname;
+
+    const res = await emailSignup(email, pass, fullName);
 
     if (res.error) return alert(res.error);
-    if (res.needsConfirm) alert("Un email de confirmation vous a été envoyé.");
+    if (res.needsConfirm) {
+      document.getElementById("confirm-box").style.display = "block";
+    }
   });
 
-  document.getElementById("google-btn").addEventListener("click", () => {
+  // GOOGLE LOGIN (connexion)
+  document.getElementById("googleBtn").addEventListener("click", () => {
+    oauthLogin("google");
+  });
+
+  // GOOGLE SIGNUP (création)
+  document.getElementById("googleSignupBtn").addEventListener("click", () => {
     oauthLogin("google");
   });
 </script>
+
 
