@@ -72,23 +72,58 @@ export async function emailLogin(email, password) {
   return null;
 }
 
+/* ── SIGNUP AVEC EMAILJS (VÉRIFICATION) ── */
 export async function emailSignup(email, password, fullName) {
+  // 1. Création du compte Supabase
   const { data, error } = await supabase.auth.signUp({
-    email, password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: getBase() + 'login.html'
-    }
+    email,
+    password,
+    options: { data: { full_name: fullName } }
   });
+
   if (error) return { error: error.message };
-  return { needsConfirm: !data.session };
+
+  const user = data.user;
+  if (!user) return { error: "Erreur lors de la création du compte." };
+
+  // 2. Génération du token
+  const token = crypto.randomUUID();
+
+  // 3. Stockage du token (upsert pour éviter les 409)
+  await supabase.from("email_verification").upsert({
+    user_id: user.id,
+    token
+  });
+
+  // 4. Envoi EmailJS (email de vérification)
+  const confirm_link = `${window.location.origin}/verify.html?token=${token}`;
+
+  await emailjs.send("service_cyy74i2", "template_yxhlnzs", {
+    email: email,
+    name: fullName,
+    confirm_link: confirm_link
+  });
+
+  return { needsConfirm: true };
 }
 
+/* ── RESET PASSWORD ─────────────────────── */
 export async function resetPassword(email) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: getBase() + 'login.html?reset=1'
   });
   return error ? error.message : null;
+}
+
+/* ── FORMULAIRE DE CONTACT (EMAILJS) ───── */
+export async function sendContactForm(first_name, last_name, email, subject, message) {
+  return await emailjs.send("service_cyy74i2", "template_v7f12m6", {
+    first_name,
+    last_name,
+    email,
+    subject,
+    message
+  });
 }
 
 /* ── TOAST ─────────────────────────────── */
@@ -217,7 +252,7 @@ export function initFAQ() {
   document.querySelectorAll('.faq-item').forEach(item => {
     item.addEventListener('click', () => {
       const was = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      document.querySelectorAll('.faq-item').forEach    i => i.classList.remove('open'));
       if (!was) item.classList.add('open');
     });
   });
@@ -345,43 +380,4 @@ export function downloadApp(platform) {
 
 function toggleFAQ(el) {
   el.classList.toggle("open");
-}
-
-/* ── EMAILJS INIT ───────────────────────── */
-import emailjs from "https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js";
-emailjs.init("CUdTdjUKOXn_2PW2K");
-
-export async function emailSignup(email, password, fullName) {
-
-  // 1. Création du compte Supabase
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { data: { full_name: fullName } }
-  });
-
-  if (error) return { error: error.message };
-
-  const user = data.user;
-  if (!user) return { error: "Erreur lors de la création du compte." };
-
-  // 2. Génération du token
-  const token = crypto.randomUUID();
-
-  // 3. Stockage du token (UP SERT = jamais de 409)
-  await supabase.from("email_verification").upsert({
-    user_id: user.id,
-    token
-  });
-
-  // 4. Envoi EmailJS (appelé depuis login.html)
-  const confirm_link = `${window.location.origin}/verify.html?token=${token}`;
-
-  await emailjs.send("service_cyy74i2", "template_yxhlnzs", {
-    email: email,
-    name: fullName,
-    confirm_link: confirm_link
-  });
-
-  return { needsConfirm: true };
 }
