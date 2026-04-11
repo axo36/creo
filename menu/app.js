@@ -1,14 +1,8 @@
 /* ══════════════════════════════════════════
    app.js — Creo · JS global
-   Version finale avec :
-   - Supabase
-   - EmailJS vérification + formulaire
-   - OAuth Google
-   - Gestion profil + token
+   Importer dans chaque page avec type="module"
 ══════════════════════════════════════════ */
-
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { v4 as uuidv4 } from "https://cdn.jsdelivr.net/npm/uuid@9.0.0/dist/esm-browser/index.js";
 
 /* ── SUPABASE ──────────────────────────── */
 export const supabase = createClient(
@@ -23,10 +17,7 @@ function getBase() {
   return window.location.origin + dir;
 }
 
-/* ══════════════════════════════════════════
-   AUTH — SESSION
-══════════════════════════════════════════ */
-
+/* ── AUTH ──────────────────────────────── */
 export async function getSession() {
   const { data } = await supabase.auth.getSession();
   return data.session ?? null;
@@ -48,28 +39,19 @@ export async function signOut() {
   window.location.href = 'login.html';
 }
 
-/* ══════════════════════════════════════════
-   AUTH — DISPLAY
-══════════════════════════════════════════ */
-
 export function getDisplayName(session) {
   if (!session) return 'Invité';
   const m = session.user.user_metadata;
   return m?.full_name || m?.name || session.user.email?.split('@')[0] || 'Utilisateur';
 }
-
 export function getInitials(session) {
   return getDisplayName(session).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
-
 export function getAvatar(session) {
   return session?.user?.user_metadata?.avatar_url ?? null;
 }
 
-/* ══════════════════════════════════════════
-   AUTH — OAUTH GOOGLE
-══════════════════════════════════════════ */
-
+/* ── OAUTH ─────────────────────────────── */
 export async function oauthLogin(provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
@@ -78,91 +60,38 @@ export async function oauthLogin(provider) {
   if (error) toast(error.message, 'error');
 }
 
-/* ══════════════════════════════════════════
-   AUTH — LOGIN EMAIL
-══════════════════════════════════════════ */
-
+/* ── EMAIL / PASSWORD ──────────────────── */
 export async function emailLogin(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    if (error.message.includes("Invalid login credentials"))
-      return "Email ou mot de passe incorrect.";
-    return "Connexion impossible.";
+    const m = error.message;
+    if (m.includes('Invalid login credentials')) return 'Email ou mot de passe incorrect.';
+    if (m.includes('Email not confirmed'))       return 'Confirmez votre email avant de vous connecter.';
+    return 'Connexion impossible. Réessayez.';
   }
-
-  const user = data.user;
-  if (!user) return "Erreur de connexion.";
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("email_verified")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || !profile.email_verified) {
-    await supabase.auth.signOut();
-    return "Veuillez confirmer votre email avant de vous connecter.";
-  }
-
   return null;
 }
 
-/* ══════════════════════════════════════════
-   AUTH — SIGNUP + EMAILJS VÉRIFICATION
-══════════════════════════════════════════ */
-
 export async function emailSignup(email, password, fullName) {
-
-  // 1. Création du compte Supabase
-  const { data, error } = await supabase.auth.signUp({ email, password });
-
-  if (error) return { error: error.message, needsConfirm: false };
-  if (!data.user) return { error: "Erreur lors de la création du compte.", needsConfirm: false };
-
-  const userId = data.user.id;
-
-  // 2. Profil minimal
-  await supabase.from("profiles").upsert({
-    id: userId,
-    email,
-    email_verified: false
+  const { data, error } = await supabase.auth.signUp({
+    email, password,
+    options: {
+      data: { full_name: fullName },
+      emailRedirectTo: getBase() + 'login.html'
+    }
   });
-
-  // 3. Token unique
-  const token = uuidv4();
-
-  await supabase.from("email_verification").upsert({
-    user_id: userId,
-    token
-  });
-
-  // 4. EmailJS — modèle de vérification
-  emailjs.send("service_cyy74i2", "template_yxhlnzs", {
-    email: email,
-    name: fullName,
-    confirm_link: `${window.location.origin}/verify.html?token=${token}`
-  });
-
-  return { error: null, needsConfirm: true };
+  if (error) return { error: error.message };
+  return { needsConfirm: !data.session };
 }
 
-/* ══════════════════════════════════════════
-   FORMULAIRE CONTACT — EmailJS
-══════════════════════════════════════════ */
-
-export async function sendContactForm(name, email, message) {
-  return emailjs.send("service_cyy74i2", "template_v7f12m6", {
-    from_name: name,
-    reply_to: email,
-    message: message
+export async function resetPassword(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: getBase() + 'login.html?reset=1'
   });
+  return error ? error.message : null;
 }
 
-/* ══════════════════════════════════════════
-   TOAST
-══════════════════════════════════════════ */
-
+/* ── TOAST ─────────────────────────────── */
 export function toast(msg, type = 'info') {
   let wrap = document.getElementById('toast-wrap');
   if (!wrap) {
@@ -184,10 +113,7 @@ export function toast(msg, type = 'info') {
   }, 4200);
 }
 
-/* ══════════════════════════════════════════
-   LOADING BUTTON
-══════════════════════════════════════════ */
-
+/* ── LOADING BTN ───────────────────────── */
 export function setLoading(btn, on) {
   const label = btn.querySelector('.btn-label');
   const spin  = btn.querySelector('.btn-spin');
@@ -202,10 +128,7 @@ export function setLoading(btn, on) {
   }
 }
 
-/* ══════════════════════════════════════════
-   NAVIGATION
-══════════════════════════════════════════ */
-
+/* ── NAV ───────────────────────────────── */
 export async function buildNav(activePage) {
   const nav = document.getElementById('nav');
   if (!nav) return;
@@ -278,10 +201,7 @@ export async function buildNav(activePage) {
   }, { passive: true });
 }
 
-/* ══════════════════════════════════════════
-   ANIMATIONS + UI (inchangé)
-══════════════════════════════════════════ */
-
+/* ── SCROLL REVEAL ─────────────────────── */
 export function initReveal() {
   const io = new IntersectionObserver(entries =>
     entries.forEach(e => {
@@ -292,6 +212,7 @@ export function initReveal() {
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
+/* ── FAQ ───────────────────────────────── */
 export function initFAQ() {
   document.querySelectorAll('.faq-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -302,6 +223,7 @@ export function initFAQ() {
   });
 }
 
+/* ── DEMO ANIMATION ────────────────────── */
 export function initDemo() {
   const sRows  = [...document.querySelectorAll('.device-pane.source .file-row')];
   const tRows  = [...document.querySelectorAll('.device-pane.target .file-row')];
@@ -350,6 +272,7 @@ export function initDemo() {
   }
 }
 
+/* ── FEATURE CARD GLOW ─────────────────── */
 export function initFeatureGlow() {
   document.querySelectorAll('.feat-card').forEach(card => {
     card.addEventListener('mousemove', e => {
@@ -360,10 +283,12 @@ export function initFeatureGlow() {
   });
 }
 
+/* ── MARQUEE ───────────────────────────── */
 export function initMarquee() {
   const track = document.querySelector('.marquee-track');
 }
 
+/* ── SIDEBAR ───────────────────────────── */
 export function initSidebar() {
   document.querySelectorAll('.sidebar-link').forEach(l => {
     l.addEventListener('click', () => {
@@ -373,6 +298,7 @@ export function initSidebar() {
   });
 }
 
+/* ── COUNT-UP ──────────────────────────── */
 export function initCountUp(selector = '.hero-stats') {
   const container = document.querySelector(selector);
   if (!container) return;
@@ -394,6 +320,7 @@ export function initCountUp(selector = '.hero-stats') {
   }, { threshold: .4 }).observe(container);
 }
 
+/* ── PAGE FADE ─────────────────────────── */
 export function pageFade() {
   document.body.style.opacity = '0';
   document.body.style.transition = 'opacity .4s ease';
@@ -414,4 +341,8 @@ export function downloadApp(platform) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+function toggleFAQ(el) {
+  el.classList.toggle("open");
 }
