@@ -105,48 +105,50 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM chargé");
 });
 </script>
-
-<!-- Auth.js -->
 <script type="module">
   import { emailLogin, emailSignup, oauthLogin } from "./auth.js";
 
-  // LOGIN
-  document.getElementById("loginBtn").addEventListener("click", async () => {
-    const email = document.getElementById("login-email").value.trim();
-    const pass  = document.getElementById("login-password").value.trim();
+  document.addEventListener("DOMContentLoaded", () => {
 
-    const err = await emailLogin(email, pass);
-    if (err) return alert(err);
+    // LOGIN
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("login-email").value.trim();
+      const pass  = document.getElementById("login-password").value.trim();
 
-    window.location.href = "index.html";
-  });
+      const err = await emailLogin(email, pass);
+      if (err) return alert(err);
 
-  // SIGNUP
-  document.getElementById("signupBtn").addEventListener("click", async () => {
-    const firstname = document.getElementById("signup-firstname").value.trim();
-    const lastname  = document.getElementById("signup-lastname").value.trim();
-    const email     = document.getElementById("signup-email").value.trim();
-    const pass      = document.getElementById("signup-password").value.trim();
+      window.location.href = "index.html";
+    });
 
-    const fullName = firstname + " " + lastname;
+    // SIGNUP
+    document.getElementById("signupBtn").addEventListener("click", async () => {
+      const firstname = document.getElementById("signup-firstname").value.trim();
+      const lastname  = document.getElementById("signup-lastname").value.trim();
+      const email     = document.getElementById("signup-email").value.trim();
+      const pass      = document.getElementById("signup-password").value.trim();
 
-    const res = await emailSignup(email, pass, fullName);
+      const fullName = firstname + " " + lastname;
 
-    if (res.error) return alert(res.error);
-    if (res.needsConfirm) {
-      document.getElementById("confirm-box").style.display = "block";
-    }
-  });
+      const res = await emailSignup(email, pass, fullName);
 
-  // GOOGLE LOGIN (connexion)
-  document.getElementById("googleBtn").addEventListener("click", () => {
-    oauthLogin("google");
-  });
+      if (res.error) return alert(res.error);
+      if (res.needsConfirm) {
+        document.getElementById("confirm-box").style.display = "block";
+      }
+    });
 
-  // GOOGLE SIGNUP (création)
-  document.getElementById("googleSignupBtn").addEventListener("click", () => {
-    oauthLogin("google");
+    // GOOGLE LOGIN
+    document.getElementById("googleBtn").addEventListener("click", () => {
+      oauthLogin("google");
+    });
+
+    // GOOGLE SIGNUP
+    document.getElementById("googleSignupBtn").addEventListener("click", () => {
+      oauthLogin("google");
+    });
+
   });
 </script>
-
-
+</body>
+</html>
