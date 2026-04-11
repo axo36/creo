@@ -35,7 +35,39 @@
       color: var(--t2);
     }
 
-    /* Formulaire express */
+    /* Aperçu fichiers */
+    .file-preview {
+      background: var(--d3);
+      border: 1px solid var(--b2);
+      padding: 1rem 1.2rem;
+      border-radius: var(--r-lg);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .file-item-icon {
+      font-size: 1.4rem;
+      color: var(--blue2);
+    }
+    .file-item-name {
+      font-size: .9rem;
+      color: var(--t1);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .file-item-meta {
+      font-size: .75rem;
+      color: var(--t3);
+    }
+
+    /* Formulaire */
     .express-form {
       max-width: 520px;
       margin: 0 auto;
@@ -68,117 +100,6 @@
       border-color: var(--blue2);
       outline: none;
     }
-
-    /* Résumé fichier */
-    .file-preview {
-      background: var(--d3);
-      border: 1px solid var(--b2);
-      padding: 1rem 1.2rem;
-      border-radius: var(--r-lg);
-      display: none;
-      align-items: center;
-      gap: 12px;
-    }
-    .file-preview-icon {
-      font-size: 1.4rem;
-      color: var(--blue2);
-    }
-    .file-preview-name {
-      font-size: .9rem;
-      color: var(--t1);
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .express-box {
-      max-width: 520px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 1.6rem;
-    }
-    
-    /* Zone de dépôt */
-    .express-drop {
-      background: var(--d2);
-      border: 1px dashed var(--b3);
-      border-radius: var(--r-xl);
-      padding: 2.6rem 2rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all .2s;
-    }
-    .express-drop:hover {
-      background: var(--d3);
-      border-color: var(--blue2);
-    }
-    .express-drop.dragover {
-      background: rgba(26,111,255,.08);
-      border-color: var(--blue);
-    }
-    .ed-icon {
-      font-size: 2.6rem;
-      margin-bottom: .6rem;
-    }
-    .ed-title {
-      font-size: 1.1rem;
-      color: var(--t1);
-    }
-    .ed-sub {
-      font-size: .85rem;
-      color: var(--t2);
-    }
-    
-    /* Aperçu fichiers */
-    .file-preview {
-      display: none;
-      background: var(--d3);
-      border: 1px solid var(--b2);
-      border-radius: var(--r-xl);
-      padding: 1rem 1.2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .file-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .file-item-icon {
-      font-size: 1.4rem;
-      color: var(--blue2);
-    }
-    .file-item-name {
-      font-size: .9rem;
-      color: var(--t1);
-      font-weight: 500;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .file-item-meta {
-      font-size: .75rem;
-      color: var(--t3);
-    }
-    
-    /* Info */
-    .express-info {
-      font-size: .8rem;
-      color: var(--t3);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .info-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--green);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--green);
-    }
-
   </style>
 </head>
 
@@ -199,17 +120,15 @@
 
 <!-- FORMULAIRE EXPRESS -->
 <div class="section-wrap">
-  <div class="tag">Mode Express</div>
-  <h1 class="section-h2">Envoyer un fichier.</h1>
-  <p class="section-desc">Partage instantané, sans compte, sans configuration.</p>
+  <h2 class="section-h2">Envoyer un fichier.</h2>
+  <p class="section-desc">Déposez vos fichiers, choisissez le pseudo du destinataire, et envoyez instantanément.</p>
 
-  <div class="express-box">
+  <div class="express-form">
 
     <!-- Zone de dépôt -->
-    <div class="express-drop" id="drop-zone">
-      <div class="ed-icon">📁</div>
-      <div class="ed-title">Déposez vos fichiers</div>
-      <div class="ed-sub">ou cliquez pour parcourir</div>
+    <div class="drop-zone" id="drop-zone">
+      <div class="drop-zone-icon">📁</div>
+      <div class="drop-zone-text">Déposez vos fichiers ici ou cliquez pour choisir</div>
       <input type="file" id="file-input" multiple hidden>
     </div>
 
@@ -222,17 +141,11 @@
       <input type="text" id="pseudo" class="input-field" placeholder="ex : mathis_42">
     </div>
 
-    <!-- Bouton -->
-    <button class="btn btn-primary btn-lg btn-full" id="send-btn">
-      <span class="btn-label">Envoyer</span>
+    <!-- Bouton envoyer -->
+    <button class="btn btn-primary btn-lg" id="send-btn">
+      <span class="btn-label">🚀 Envoyer</span>
       <span class="btn-spin">⏳</span>
     </button>
-
-    <!-- Info -->
-    <div class="express-info">
-      <span class="info-dot"></span>
-      Transfert chiffré. Suppression automatique après réception.
-    </div>
 
   </div>
 </div>
@@ -270,9 +183,9 @@
   const fileInput = document.getElementById('file-input');
   const preview = document.getElementById('file-preview');
   const sendBtn = document.getElementById('send-btn');
-  
+
   dropZone.addEventListener('click', () => fileInput.click());
-  
+
   dropZone.addEventListener('dragover', e => {
     e.preventDefault();
     dropZone.classList.add('dragover');
@@ -283,20 +196,20 @@
     dropZone.classList.remove('dragover');
     handleFiles(e.dataTransfer.files);
   });
-  
+
   fileInput.addEventListener('change', e => {
     handleFiles(e.target.files);
   });
-  
+
   function handleFiles(files) {
     if (!files.length) {
       preview.style.display = "none";
       return;
     }
-  
+
     preview.innerHTML = "";
     preview.style.display = "flex";
-  
+
     [...files].forEach(file => {
       const ext = file.name.split('.').pop().toLowerCase();
       const icons = {
@@ -304,7 +217,7 @@
         zip: "🗂️", rar: "🗂️", mp4: "🎬", mp3: "🎵"
       };
       const icon = icons[ext] || "📄";
-  
+
       const item = document.createElement("div");
       item.className = "file-item";
       item.innerHTML = `
@@ -317,20 +230,19 @@
       preview.appendChild(item);
     });
   }
-  
+
   sendBtn.addEventListener('click', () => {
     const pseudo = document.getElementById('pseudo').value.trim();
     if (!pseudo) return toast("Entrez un pseudo.", "error");
     if (!fileInput.files.length) return toast("Choisissez au moins un fichier.", "error");
-  
+
     setLoading(sendBtn, true);
-  
+
     setTimeout(() => {
       setLoading(sendBtn, false);
       toast("Fichiers envoyés à " + pseudo + " ✔", "success");
     }, 1200);
   });
-
 </script>
 
 </body>
