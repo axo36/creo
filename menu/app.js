@@ -3,6 +3,7 @@
    Importer dans chaque page avec type="module"
 ══════════════════════════════════════════ */
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import { v4 as uuidv4 } from "https://cdn.jsdelivr.net/npm/uuid@9.0.0/dist/esm-browser/index.js";
 
 /* ── SUPABASE ──────────────────────────── */
 export const supabase = createClient(
@@ -60,28 +61,68 @@ export async function oauthLogin(provider) {
   if (error) toast(error.message, 'error');
 }
 
-/* ── EMAIL / PASSWORD ──────────────────── */
+/* ── EMAIL / PASSWORD (NOUVEAU FLOW COMPLET) ──────────────────── */
 export async function emailLogin(email, password) {
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     const m = error.message;
     if (m.includes('Invalid login credentials')) return 'Email ou mot de passe incorrect.';
-    if (m.includes('Email not confirmed'))       return 'Confirmez votre email avant de vous connecter.';
-    return 'Connexion impossible. Réessayez.';
+    return 'Connexion impossible.';
   }
+
+  const user = data.user;
+  if (!user) return 'Erreur de connexion.';
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('email_verified')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile || !profile.email_verified) {
+    await supabase.auth.signOut();
+    return 'Veuillez confirmer votre email avant de vous connecter.';
+  }
+
   return null;
 }
 
 export async function emailSignup(email, password, fullName) {
   const { data, error } = await supabase.auth.signUp({
-    email, password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: getBase() + 'login.html'
-    }
+    email,
+    password
   });
-  if (error) return { error: error.message };
-  return { needsConfirm: !data.session };
+
+  if (error) return { error: error.message, needsConfirm: false };
+  if (!data.user) return { error: 'Erreur lors de la création du compte.', needsConfirm: false };
+
+  const userId = data.user.id;
+
+  await supabase.from('profiles').upsert({
+    id: userId,
+    email,
+    email_verified: false,
+    first_name: null,
+    last_name: null,
+    username: null,
+    client_code: null,
+    avatar_url: null
+  });
+
+  const token = uuidv4();
+
+  await supabase.from('email_verification').insert({
+    user_id: userId,
+    token
+  });
+
+  // ⚠️ remplace service_id / template_id par tes valeurs EmailJS
+  emailjs.send('service_id', 'template_id', {
+    to_email: email,
+    confirm_link: `${window.location.origin}/verify.html?token=${token}`
+  });
+
+  return { error: null, needsConfirm: true };
 }
 
 export async function resetPassword(email) {
@@ -171,7 +212,6 @@ export async function buildNav(activePage) {
     <div class="nav-actions">${right}</div>
   `;
 
-  /* Avatar dropdown */
   const avBtn = document.getElementById('nav-av');
   if (avBtn) {
     avBtn.addEventListener('click', e => {
@@ -197,7 +237,6 @@ export async function buildNav(activePage) {
     });
   }
 
-  /* Scroll glass effect */
   window.addEventListener('scroll', () => {
     nav.style.background = scrollY > 40 ? 'rgba(0,0,0,.95)' : 'rgba(0,0,0,.6)';
   }, { passive: true });
