@@ -7,9 +7,7 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* ------------------------------
-       BLOC FICHIER (STYLE PHOTO)
-    ------------------------------ */
+    /* BLOC FICHIER (style type maquette) */
     .file-block {
       background: var(--d3);
       border: 1px solid var(--b2);
@@ -62,16 +60,9 @@
       border: 1px solid var(--b2);
       padding: .8rem 1rem;
       border-radius: var(--r-lg);
-      display: flex;
-      justify-content: space-between;
       font-size: .85rem;
-    }
-    .file-status-label {
       color: var(--green);
       font-weight: 600;
-    }
-    .file-status-info {
-      color: var(--t3);
     }
 
     .file-list {
@@ -102,9 +93,7 @@
       color: var(--t3);
     }
 
-    /* ------------------------------
-       FORMULAIRE EXPRESS
-    ------------------------------ */
+    /* Formulaire express */
     .express-form {
       max-width: 520px;
       margin: 0 auto;
@@ -139,7 +128,7 @@
       outline: none;
     }
 
-    .btn-primary {
+    .btn.btn-primary.btn-lg {
       padding: 1rem 1.2rem;
       background: var(--blue);
       border-radius: var(--r-lg);
@@ -147,10 +136,16 @@
       color: white;
       font-size: 1rem;
       cursor: pointer;
-      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      justify-content: center;
     }
-    .btn-primary:hover {
+    .btn.btn-primary.btn-lg:hover {
       background: var(--blue2);
+    }
+    .btn-spin {
+      display: none;
     }
   </style>
 </head>
@@ -177,9 +172,8 @@
 
   <div class="express-form">
 
-    <!-- BLOC FICHIER (NOUVELLE VERSION) -->
+    <!-- BLOC FICHIER -->
     <div class="file-block">
-
       <div class="file-block-title">// FICHIER</div>
 
       <div class="file-drop" id="file-drop">
@@ -188,13 +182,11 @@
         <input type="file" id="file-input" multiple hidden>
       </div>
 
-      <div class="file-status" id="file-status">
-        <span class="file-status-label">Prêt</span>
-        <span class="file-status-info">Aucun fichier sélectionné</span>
-      </div>
+      <!-- Texte dynamique : "X fichier(s) sélectionné(s)" -->
+      <div class="file-status" id="file-status"></div>
 
+      <!-- Liste des fichiers -->
       <div class="file-list" id="file-list"></div>
-
     </div>
 
     <!-- DESTINATAIRE -->
@@ -210,7 +202,7 @@
     </div>
 
     <!-- BOUTON ENVOYER -->
-    <button class="btn-primary" id="send-btn">
+    <button class="btn btn-primary btn-lg" id="send-btn">
       <span class="btn-label">🚀 Envoyer</span>
       <span class="btn-spin">⏳</span>
     </button>
@@ -231,14 +223,35 @@
 
 <footer>
   <div class="footer-top">
-    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits.</p></div>
-    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
-    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
-    <div class="footer-col"><h5>Compte</h5><a href="login.html">Connexion</a><a href="login.html">Créer un compte</a></div>
+    <div>
+      <div class="footer-logo">CR<span>E</span>O</div>
+      <p class="footer-tagline">Transfer Without Limits.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Produit</h5>
+      <a href="features.html">Fonctionnalités</a>
+      <a href="download.html">Télécharger</a>
+      <a href="pricing.html">Tarifs</a>
+    </div>
+    <div class="footer-col">
+      <h5>Entreprise</h5>
+      <a href="about.html">À propos</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Compte</h5>
+      <a href="login.html">Connexion</a>
+      <a href="login.html">Créer un compte</a>
+    </div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
-    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+    <div class="footer-socials">
+      <div class="social-btn">𝕏</div>
+      <div class="social-btn">⌥</div>
+      <div class="social-btn">◈</div>
+      <div class="social-btn">in</div>
+    </div>
   </div>
 </footer>
 
@@ -253,8 +266,10 @@
   const fileList = document.getElementById('file-list');
   const sendBtn = document.getElementById('send-btn');
 
+  // Click -> ouvrir le sélecteur (multi)
   fileDrop.addEventListener('click', () => fileInput.click());
 
+  // Drag & drop
   fileDrop.addEventListener('dragover', e => {
     e.preventDefault();
     fileDrop.classList.add('dragover');
@@ -266,6 +281,7 @@
     handleFiles(e.dataTransfer.files);
   });
 
+  // Sélection via input
   fileInput.addEventListener('change', e => {
     handleFiles(e.target.files);
   });
@@ -277,12 +293,13 @@
       return;
     }
 
-    fileStatus.style.display = "flex";
-    fileStatus.querySelector('.file-status-info').textContent =
-      files.length === 1
-        ? files[0].name
-        : `${files.length} fichiers sélectionnés`;
+    // Texte "X fichier(s) sélectionné(s)"
+    const count = files.length;
+    const label = count === 1 ? "1 fichier sélectionné" : `${count} fichiers sélectionnés`;
+    fileStatus.textContent = label;
+    fileStatus.style.display = "block";
 
+    // Liste des fichiers
     fileList.innerHTML = "";
     fileList.style.display = "flex";
 
