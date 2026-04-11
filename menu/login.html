@@ -93,73 +93,98 @@
     </div>
   </div>
 </div>
-<!-- EmailJS -->
-<!-- EmailJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>
-  emailjs.init("CUdTdjUKOXn_2PW2K");
-</script>
-
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM chargé");
-});
-</script>
+<!-- Scripts -->
 <script type="module">
-  import { emailLogin, emailSignup, oauthLogin } from "./auth.js";
+  import { emailLogin, emailSignup, oauthLogin, resetPassword, toast } from "./app.js";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  // Tabs
+  const tabs = document.querySelectorAll(".auth-tab");
+  const panels = document.querySelectorAll(".auth-panel");
+  const resetPanel = document.getElementById("panel-reset");
+  const confirmBox = document.getElementById("confirm-box");
 
-    // LOGIN
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-      const email = document.getElementById("login-email").value.trim();
-      const pass  = document.getElementById("login-password").value.trim();
-
-      const err = await emailLogin(email, pass);
-      if (err) return alert(err);
-
-      window.location.href = "index.html";
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.panel;
+      tabs.forEach(t => t.classList.remove("active"));
+      panels.forEach(p => p.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(target).classList.add("active");
+      resetPanel.classList.remove("active");
+      confirmBox.style.display = "none";
     });
+  });
 
-    // SIGNUP
-    document.getElementById("signupBtn").addEventListener("click", async () => {
-      const firstname = document.getElementById("signup-firstname").value.trim();
-      const lastname  = document.getElementById("signup-lastname").value.trim();
-      const email     = document.getElementById("signup-email").value.trim();
-      const pass      = document.getElementById("signup-password").value.trim();
+  // LOGIN
+  document.getElementById("loginBtn").addEventListener("click", async () => {
+    const email = document.getElementById("login-email").value.trim();
+    const pass  = document.getElementById("login-password").value.trim();
 
-      const fullName = firstname + " " + lastname;
+    if (!email || !pass) return toast("Remplissez tous les champs.", "warning");
 
-      const res = await emailSignup(email, pass, fullName);
+    const err = await emailLogin(email, pass);
+    if (err) return toast(err, "error");
 
-      if (res.error) return alert(res.error);
-      if (res.needsConfirm) {
-        document.getElementById("confirm-box").style.display = "block";
-      }
-    });
+    window.location.href = "index.html";
+  });
 
-    // GOOGLE LOGIN
-    document.getElementById("googleBtn").addEventListener("click", () => {
-      oauthLogin("google");
-    });
+  // SIGNUP
+  document.getElementById("signupBtn").addEventListener("click", async () => {
+    const firstname = document.getElementById("signup-firstname").value.trim();
+    const lastname  = document.getElementById("signup-lastname").value.trim();
+    const email     = document.getElementById("signup-email").value.trim();
+    const pass      = document.getElementById("signup-password").value.trim();
 
-    // GOOGLE SIGNUP
-    document.getElementById("googleSignupBtn").addEventListener("click", () => {
-      oauthLogin("google");
-    });
+    if (!firstname || !lastname || !email || !pass)
+      return toast("Remplissez tous les champs.", "warning");
 
-    // GITHUB LOGIN
-    document.getElementById("githubBtn").addEventListener("click", () => {
-      oauthLogin("github");
-    });
+    const fullName = firstname + " " + lastname;
 
-    // GITHUB SIGNUP
-    document.getElementById("githubSignupBtn").addEventListener("click", () => {
-      oauthLogin("github");
-    });
+    const res = await emailSignup(email, pass, fullName);
 
+    if (res.error) return toast(res.error, "error");
+    if (res.needsConfirm) {
+      document.getElementById("panel-login").classList.remove("active");
+      document.getElementById("panel-signup").classList.remove("active");
+      confirmBox.style.display = "block";
+    }
+  });
+
+  // RESET
+  document.getElementById("forgot-btn").addEventListener("click", () => {
+    panels.forEach(p => p.classList.remove("active"));
+    resetPanel.classList.add("active");
+  });
+
+  document.getElementById("back-reset").addEventListener("click", () => {
+    resetPanel.classList.remove("active");
+    document.getElementById("panel-login").classList.add("active");
+  });
+
+  document.getElementById("resetBtn").addEventListener("click", async () => {
+    const email = document.getElementById("reset-email").value.trim();
+    if (!email) return toast("Entrez votre email.", "warning");
+    const err = await resetPassword(email);
+    if (err) return toast(err, "error");
+    toast("Email de réinitialisation envoyé.", "success");
+  });
+
+  // OAUTH
+  document.getElementById("googleBtn").addEventListener("click", () => {
+    oauthLogin("google");
+  });
+
+  document.getElementById("googleSignupBtn").addEventListener("click", () => {
+    oauthLogin("google");
+  });
+
+  document.getElementById("githubBtn").addEventListener("click", () => {
+    oauthLogin("github");
+  });
+
+  document.getElementById("githubSignupBtn").addEventListener("click", () => {
+    oauthLogin("github");
   });
 </script>
-
 </body>
 </html>
