@@ -7,7 +7,9 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* BLOC FICHIER (style type maquette) */
+    /* ------------------------------
+       BLOC FICHIER (STYLE PREMIUM)
+    ------------------------------ */
     .file-block {
       background: var(--d3);
       border: 1px solid var(--b2);
@@ -92,8 +94,21 @@
       font-size: .75rem;
       color: var(--t3);
     }
+    .remove-file {
+      background: none;
+      border: none;
+      color: var(--t3);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .remove-file:hover {
+      color: var(--red);
+    }
 
-    /* Formulaire express */
+    /* ------------------------------
+       FORMULAIRE EXPRESS
+    ------------------------------ */
     .express-form {
       max-width: 520px;
       margin: 0 auto;
@@ -128,7 +143,7 @@
       outline: none;
     }
 
-    .btn.btn-primary.btn-lg {
+    .btn-primary {
       padding: 1rem 1.2rem;
       background: var(--blue);
       border-radius: var(--r-lg);
@@ -136,12 +151,13 @@
       color: white;
       font-size: 1rem;
       cursor: pointer;
-      display: inline-flex;
+      transition: .2s;
+      display: flex;
       align-items: center;
-      gap: .5rem;
       justify-content: center;
+      gap: .5rem;
     }
-    .btn.btn-primary.btn-lg:hover {
+    .btn-primary:hover {
       background: var(--blue2);
     }
     .btn-spin {
@@ -182,10 +198,8 @@
         <input type="file" id="file-input" multiple hidden>
       </div>
 
-      <!-- Texte dynamique : "X fichier(s) sélectionné(s)" -->
       <div class="file-status" id="file-status"></div>
 
-      <!-- Liste des fichiers -->
       <div class="file-list" id="file-list"></div>
     </div>
 
@@ -202,7 +216,7 @@
     </div>
 
     <!-- BOUTON ENVOYER -->
-    <button class="btn btn-primary btn-lg" id="send-btn">
+    <button class="btn-primary" id="send-btn">
       <span class="btn-label">🚀 Envoyer</span>
       <span class="btn-spin">⏳</span>
     </button>
@@ -223,35 +237,14 @@
 
 <footer>
   <div class="footer-top">
-    <div>
-      <div class="footer-logo">CR<span>E</span>O</div>
-      <p class="footer-tagline">Transfer Without Limits.</p>
-    </div>
-    <div class="footer-col">
-      <h5>Produit</h5>
-      <a href="features.html">Fonctionnalités</a>
-      <a href="download.html">Télécharger</a>
-      <a href="pricing.html">Tarifs</a>
-    </div>
-    <div class="footer-col">
-      <h5>Entreprise</h5>
-      <a href="about.html">À propos</a>
-      <a href="contact.html">Contact</a>
-    </div>
-    <div class="footer-col">
-      <h5>Compte</h5>
-      <a href="login.html">Connexion</a>
-      <a href="login.html">Créer un compte</a>
-    </div>
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="login.html">Connexion</a><a href="login.html">Créer un compte</a></div>
   </div>
   <div class="footer-bottom">
     <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
-    <div class="footer-socials">
-      <div class="social-btn">𝕏</div>
-      <div class="social-btn">⌥</div>
-      <div class="social-btn">◈</div>
-      <div class="social-btn">in</div>
-    </div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
   </div>
 </footer>
 
@@ -266,7 +259,10 @@
   const fileList = document.getElementById('file-list');
   const sendBtn = document.getElementById('send-btn');
 
-  // Click -> ouvrir le sélecteur (multi)
+  // Liste interne des fichiers
+  let selectedFiles = [];
+
+  // Click -> ouvrir le sélecteur
   fileDrop.addEventListener('click', () => fileInput.click());
 
   // Drag & drop
@@ -278,23 +274,30 @@
   fileDrop.addEventListener('drop', e => {
     e.preventDefault();
     fileDrop.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
+    addFiles(e.dataTransfer.files);
   });
 
   // Sélection via input
   fileInput.addEventListener('change', e => {
-    handleFiles(e.target.files);
+    addFiles(e.target.files);
   });
 
-  function handleFiles(files) {
-    if (!files.length) {
+  // Ajouter des fichiers sans remplacer les anciens
+  function addFiles(files) {
+    selectedFiles = [...selectedFiles, ...files];
+    updateDisplay();
+  }
+
+  // Mettre à jour l'affichage
+  function updateDisplay() {
+    if (selectedFiles.length === 0) {
       fileStatus.style.display = "none";
       fileList.style.display = "none";
       return;
     }
 
-    // Texte "X fichier(s) sélectionné(s)"
-    const count = files.length;
+    // Texte "X fichiers sélectionnés"
+    const count = selectedFiles.length;
     const label = count === 1 ? "1 fichier sélectionné" : `${count} fichiers sélectionnés`;
     fileStatus.textContent = label;
     fileStatus.style.display = "block";
@@ -303,7 +306,7 @@
     fileList.innerHTML = "";
     fileList.style.display = "flex";
 
-    [...files].forEach(file => {
+    selectedFiles.forEach((file, index) => {
       const ext = file.name.split('.').pop().toLowerCase();
       const icons = {
         pdf: "📕", png: "🖼️", jpg: "🖼️", jpeg: "🖼️",
@@ -315,19 +318,30 @@
       item.className = "file-item";
       item.innerHTML = `
         <div class="file-item-icon">${icon}</div>
-        <div>
+        <div style="flex:1">
           <div class="file-item-name">${file.name}</div>
           <div class="file-item-meta">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
         </div>
+        <button class="remove-file" data-index="${index}">❌</button>
       `;
+
       fileList.appendChild(item);
+    });
+
+    // Boutons supprimer
+    document.querySelectorAll('.remove-file').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const index = e.target.getAttribute('data-index');
+        selectedFiles.splice(index, 1);
+        updateDisplay();
+      });
     });
   }
 
   sendBtn.addEventListener('click', () => {
     const pseudo = document.getElementById('pseudo').value.trim();
     if (!pseudo) return toast("Entrez un pseudo.", "error");
-    if (!fileInput.files.length) return toast("Choisissez au moins un fichier.", "error");
+    if (selectedFiles.length === 0) return toast("Choisissez au moins un fichier.", "error");
 
     setLoading(sendBtn, true);
 
