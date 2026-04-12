@@ -97,7 +97,7 @@
 
 <!-- Scripts -->
 <script type="module">
-  import { supabase, emailLogin, emailSignup, oauthLogin, resetPassword, toast } from "./app.js";
+  import { supabase, emailLogin, emailSignup, oauthLogin, resetPassword, toast, generateTempCode } from "./app.js";
 
   // Message après vérification email
   if (new URLSearchParams(window.location.search).get("verified") === "1") {
@@ -133,18 +133,19 @@
     const err = await emailLogin(email, pass);
     if (err) return toast(err, "error");
 
-    // Vérifier si le profil est complet
     const { data: { session } } = await supabase.auth.getSession();
     const { data: profile } = await supabase
       .from("profiles")
-      .select("username, client_code")
+      .select("username, client_code, type")
       .eq("id", session.user.id)
       .single();
 
-    if (!profile?.username || !profile?.client_code) {
-      window.location.href = "complete-profile.html";
+    if (!profile?.username || !profile?.client_code || !profile?.type) {
+      // Générer code temp 4 chars et rediriger
+      const code = await generateTempCode(session.user.id);
+      window.location.href = "complete-profile.html?code=" + code;
     } else {
-      window.location.href = "index.html";
+      window.location.href = "/client/client.html";
     }
   });
 
