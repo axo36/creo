@@ -24,10 +24,15 @@
         <div class="confirm-icon">✅</div>
         <div class="confirm-title">Email confirmé !</div>
         <p class="confirm-text" style="margin-top:.75rem;">
-          Votre email est bien vérifié.<br><br>
-          <strong style="color:var(--t1);">Retournez sur l'appareil où vous avez créé votre compte</strong> — la page va avancer automatiquement.
+          Votre adresse email est bien vérifiée.
         </p>
-        <p style="color:var(--t3);font-size:.78rem;margin-top:1.5rem;font-family:'JetBrains Mono',monospace;">
+        <div style="margin-top:1.5rem;padding:1rem;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r-lg);">
+          <p style="color:var(--t2);font-size:.82rem;line-height:1.7;">
+            📱 Vous avez confirmé depuis un autre appareil ?<br>
+            <strong style="color:var(--t1);">Retournez sur l'appareil de départ</strong> — il va avancer automatiquement.
+          </p>
+        </div>
+        <p style="color:var(--t3);font-size:.75rem;margin-top:1.2rem;font-family:'JetBrains Mono',monospace;">
           Cette page peut être fermée.
         </p>
       </div>
@@ -59,27 +64,27 @@ function show(state) {
 async function confirm() {
   if (!tokenHash) { show("error"); return; }
 
-  const { error } = await supabase.auth.verifyOtp({
-    token_hash: tokenHash,
-    type
-  });
+  // Valider le token Supabase
+  const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
 
   if (error) { show("error"); return; }
 
-  // Marquer email_verified dans profiles
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
+  const userId = data.session?.user?.id || data.user?.id;
+
+  if (userId) {
+    // Marquer email_verified = true → le polling sur l'ordi va le détecter
     await supabase.from("profiles")
       .update({ email_verified: true })
-      .eq("id", session.user.id);
+      .eq("id", userId);
+
+    // Se déconnecter de cet appareil pour ne pas interférer avec l'ordi
+    await supabase.auth.signOut();
   }
 
   show("success");
-  // Se déconnecter pour ne pas "voler" la session de l'autre appareil
-  await supabase.auth.signOut();
 }
 
 confirm();
 </script>
 </body>
-</html>v
+</html>
