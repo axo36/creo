@@ -150,20 +150,51 @@
   });
 
   // SIGNUP
-  let authListener = null;
+  let pollInterval = null;
+
+  function stopPolling() {
+    if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+  }
+
+  async function startPolling(userId) {
+    stopPolling();
+    pollInterval = setInterval(async () => {
+      // Vérifier si email_verified est passé à true dans profiles
+      const { data } = await supabase
+        .from("profiles")
+        .select("email_verified")
+        .eq("id", userId)
+        .single();
+
+      if (data?.email_verified) {
+        stopPolling();
+        // Connecter l'user (il a validé son email)
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          // L'user n'est pas connecté sur cet appareil, on recharge pour qu'il se connecte
+          toast("Email confirmé ! Connectez-vous pour continuer.", "success");
+          setTimeout(() => location.reload(), 1000);
+          return;
+        }
+        const code = await generateTempCode(userId);
+        toast("Email confirmé ! Finalisation du profil…", "success");
+        setTimeout(() => { window.location.href = "complete-profile.html?code=" + code; }, 800);
+      }
+    }, 3000);
+  }
 
   document.getElementById("signupBtn").addEventListener("click", async () => {
     const firstname = document.getElementById("signup-firstname").value.trim();
     const lastname  = document.getElementById("signup-lastname").value.trim();
     const email     = document.getElementById("signup-email").value.trim();
     const pass      = document.getElementById("signup-password").value.trim();
-    const pass2     = document.getElementById("signup-password2")?.value.trim();
+    const pass2     = document.getElementById("signup-password2").value.trim();
 
-    if (!firstname || !lastname || !email || !pass)
+    if (!firstname || !lastname || !email || !pass || !pass2)
       return toast("Remplissez tous les champs.", "warning");
     if (pass.length < 8)
       return toast("Mot de passe trop court (8 caractères minimum).", "warning");
-    if (pass2 !== undefined && pass !== pass2)
+    if (pass !== pass2)
       return toast("Les mots de passe ne correspondent pas.", "error");
 
     const fullName = firstname + " " + lastname;
@@ -172,38 +203,11 @@
     if (res.error) return toast(res.error, "error");
 
     if (res.needsConfirm) {
-      // Afficher la boîte de confirmation
       document.getElementById("panel-login").classList.remove("active");
       document.getElementById("panel-signup").classList.remove("active");
       confirmBox.style.display = "block";
-
-      // ══ ÉCOUTE EN TEMPS RÉEL ══
-      // Dès que l'user confirme son email (sur n'importe quel appareil),
-      // cette page détecte le changement et redirige automatiquement
-      if (authListener) authListener.data?.subscription?.unsubscribe();
-
-      authListener = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === "SIGNED_IN" && session?.user?.email_confirmed_at) {
-          authListener.data?.subscription?.unsubscribe();
-
-          // Vérifier si profil complet
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("username, client_code, type")
-            .eq("id", session.user.id)
-            .single();
-
-          if (!profile?.username || !profile?.client_code || !profile?.type) {
-            const code = await generateTempCode(session.user.id);
-            toast("Email confirmé ! Finalisez votre profil.", "success");
-            setTimeout(() => {
-              window.location.href = "complete-profile.html?code=" + code;
-            }, 800);
-          } else {
-            window.location.href = "/client/client.html";
-          }
-        }
-      });
+      // Démarrer le polling — toutes les 3s on vérifie si email confirmé
+      startPolling(res.userId);
     }
   });
 
