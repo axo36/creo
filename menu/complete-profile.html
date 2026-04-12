@@ -6,43 +6,33 @@
   <title>Creo — Complétez votre profil</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .profile-step {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 2rem;
-    }
     .step-badge {
       width: 28px; height: 28px; border-radius: 50%;
       background: var(--blue); color: #fff;
       font-size: .75rem; font-weight: 600;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 0 14px var(--blue-glow);
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0; box-shadow: 0 0 14px var(--blue-glow);
     }
-    .step-label { font-size: .82rem; color: var(--t2); font-family: 'JetBrains Mono', monospace; letter-spacing: .04em; }
     .divider { height: 1px; background: var(--b2); margin: 1.5rem 0; }
-    .readonly-field input {
-      opacity: .45; cursor: default; pointer-events: none;
-    }
+    .readonly-field input { opacity: .4; cursor: default; pointer-events: none; }
     .code-wrap { position: relative; }
-    .code-wrap input { text-transform: uppercase; padding-right: 3rem; letter-spacing: .08em; font-family: 'JetBrains Mono', monospace; font-size: .82rem; }
+    .code-wrap input { text-transform: uppercase; padding-right: 6rem; letter-spacing: .08em; font-family: 'JetBrains Mono', monospace; font-size: .82rem; }
     .gen-btn {
-      position: absolute; right: .6rem; top: 50%; transform: translateY(-50%);
+      position: absolute; right: .5rem; top: 50%; transform: translateY(-50%);
       background: var(--d5); border: 1px solid var(--b2); border-radius: var(--r);
-      color: var(--t2); font-size: .75rem; padding: .25rem .55rem;
+      color: var(--t2); font-size: .72rem; padding: .28rem .65rem;
       transition: all .2s; cursor: pointer; font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
     }
     .gen-btn:hover { background: var(--d6); color: var(--blue2); border-color: var(--blue); }
+    .username-wrap { position: relative; }
     .username-prefix {
       position: absolute; left: .85rem; top: 50%; transform: translateY(-50%);
       color: var(--t3); font-family: 'JetBrains Mono', monospace; font-size: .82rem;
       pointer-events: none;
     }
-    .username-wrap { position: relative; }
-    .username-wrap input { padding-left: 1.7rem; font-family: 'JetBrains Mono', monospace; font-size: .82rem; }
-    .field-status {
-      display: flex; align-items: center; gap: 5px;
-      font-size: .72rem; margin-top: .3rem; height: 14px;
-    }
+    .username-wrap input { padding-left: 1.6rem; font-family: 'JetBrains Mono', monospace; font-size: .82rem; }
+    .field-status { display: flex; align-items: center; gap: 5px; font-size: .72rem; margin-top: .35rem; min-height: 16px; }
     .field-status.ok    { color: var(--green); }
     .field-status.error { color: var(--red); }
     .field-status.checking { color: var(--t2); }
@@ -62,18 +52,19 @@
       <!-- CHARGEMENT -->
       <div id="state-loading" style="text-align:center;padding:2rem 0;">
         <div class="spinner" style="width:2.2rem;height:2.2rem;margin:0 auto;border-width:3px;"></div>
-        <p style="color:var(--t2);margin-top:1.2rem;font-size:.85rem;">Chargement de votre profil…</p>
+        <p style="color:var(--t2);margin-top:1.2rem;font-size:.85rem;">Vérification du lien…</p>
       </div>
 
       <!-- FORMULAIRE -->
       <div id="state-form" style="display:none;">
-
-        <div class="profile-step">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.75rem;">
           <div class="step-badge">✓</div>
-          <span class="step-label">Email vérifié — plus qu'une étape</span>
+          <span style="font-size:.82rem;color:var(--t2);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;">
+            Email vérifié — plus qu'une étape
+          </span>
         </div>
 
-        <!-- Infos pré-remplies -->
+        <!-- Infos pré-remplies (lecture seule) -->
         <div class="field-row readonly-field">
           <div class="field">
             <label>Prénom</label>
@@ -99,7 +90,7 @@
             <input type="text" id="username" placeholder="votre_pseudo" autocomplete="off" maxlength="32">
           </div>
           <div class="field-status" id="username-status"></div>
-          <span class="field-hint" style="margin-top:0;">Lettres, chiffres et _ uniquement. Min. 3 caractères.</span>
+          <span class="field-hint">Lettres, chiffres et _ uniquement. Min. 3 caractères.</span>
         </div>
 
         <!-- Code client -->
@@ -110,21 +101,20 @@
             <button class="gen-btn" id="generate-code" type="button">⟳ générer</button>
           </div>
           <div class="field-status" id="code-status"></div>
-          <span class="field-hint" style="margin-top:0;">Identifiant unique pour vos transferts.</span>
+          <span class="field-hint">Identifiant unique pour vos transferts.</span>
         </div>
 
         <button class="btn btn-primary btn-full" id="saveBtn" style="margin-top:1.5rem;">
           <span class="btn-label">Accéder à mon compte →</span>
           <span class="spinner btn-spin"></span>
         </button>
-
       </div>
 
-      <!-- ACCÈS REFUSÉ -->
+      <!-- LIEN INVALIDE / EXPIRÉ -->
       <div id="state-error" style="display:none;text-align:center;padding:1.5rem 0;">
-        <div class="confirm-icon">🔒</div>
-        <div class="confirm-title">Accès refusé</div>
-        <p class="confirm-text">Vous devez être connecté et avoir confirmé votre email.</p>
+        <div class="confirm-icon">❌</div>
+        <div class="confirm-title">Lien invalide</div>
+        <p class="confirm-text" id="error-msg">Ce lien est invalide ou a expiré. Recréez un compte pour recevoir un nouveau lien.</p>
         <a href="login.html" class="btn btn-ghost btn-full" style="margin-top:1.5rem;">← Retour à la connexion</a>
       </div>
 
@@ -140,7 +130,9 @@
 <script type="module">
   import { supabase, toast, setLoading } from "./app.js";
 
-  /* ── helpers ── */
+  const params = new URLSearchParams(window.location.search);
+  const token  = params.get("token");
+
   function show(state) {
     ["loading","form","error"].forEach(s => {
       document.getElementById("state-"+s).style.display = s === state ? "block" : "none";
@@ -153,54 +145,48 @@
 
   function setStatus(id, type, msg) {
     const el = document.getElementById(id);
-    el.className = "field-status " + type;
+    el.className = "field-status" + (type ? " "+type : "");
     const icons = { ok:"✓", error:"✕", checking:"…" };
     el.innerHTML = msg ? `<span>${icons[type]||""}</span> ${msg}` : "";
   }
 
-  /* ── init ── */
+  /* ── init : vérifier le token ── */
   async function init() {
-    const { data: { session } } = await supabase.auth.getSession();
+    if (!token) { show("error"); return; }
 
-    if (!session) {
-      // Tentative de récupération via token_hash (lien email Supabase)
-      const params    = new URLSearchParams(window.location.search);
-      const tokenHash = params.get("token_hash");
-      const type      = params.get("type");
+    // Chercher le token dans email_verification
+    const { data: row, error } = await supabase
+      .from("email_verification")
+      .select("user_id, email, first_name, last_name, created_at")
+      .eq("token", token)
+      .single();
 
-      if (tokenHash && type === "signup") {
-        const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: "signup" });
-        if (error) { show("error"); return; }
-        // Recharger proprement sans les params
-        window.history.replaceState({}, "", "complete-profile.html");
-        window.location.reload();
-        return;
-      }
+    if (error || !row) {
+      document.getElementById("error-msg").textContent =
+        "Ce lien est invalide ou a déjà été utilisé.";
       show("error");
       return;
     }
 
-    const user = session.user;
-    const meta = user.user_metadata;
-
-    // Vérifier si profil déjà complet → redirect
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("username, client_code")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.username && profile?.client_code) {
-      window.location.href = "index.html";
+    // Vérifier expiration 24h
+    const diffH = (Date.now() - new Date(row.created_at)) / 3600000;
+    if (diffH > 24) {
+      await supabase.from("email_verification").delete().eq("token", token);
+      document.getElementById("error-msg").textContent =
+        "Ce lien a expiré (valable 24h). Recréez un compte pour en recevoir un nouveau.";
+      show("error");
       return;
     }
 
+    // Connecter l'utilisateur automatiquement
+    // (le compte existe déjà dans Supabase Auth, on le connecte via OTP admin n'est pas possible
+    // côté client — on stocke juste le user_id pour la sauvegarde)
+    window._pendingUserId = row.user_id;
+
     // Pré-remplir
-    document.getElementById("display-firstname").value =
-      meta?.first_name || meta?.full_name?.split(" ")[0] || "";
-    document.getElementById("display-lastname").value  =
-      meta?.last_name  || meta?.full_name?.split(" ").slice(1).join(" ") || "";
-    document.getElementById("display-email").value     = user.email || "";
+    document.getElementById("display-firstname").value = row.first_name || "";
+    document.getElementById("display-lastname").value  = row.last_name  || "";
+    document.getElementById("display-email").value     = row.email      || "";
     document.getElementById("client-code").value       = generateCode();
 
     show("form");
@@ -209,7 +195,7 @@
   /* ── génération code ── */
   document.getElementById("generate-code").addEventListener("click", () => {
     document.getElementById("client-code").value = generateCode();
-    setStatus("code-status", "", "");
+    setStatus("code-status","","");
   });
 
   /* ── validation pseudo en temps réel ── */
@@ -225,7 +211,7 @@
       const { data } = await supabase
         .from("profiles").select("id").eq("username", val).maybeSingle();
       if (data) setStatus("username-status","error","Ce pseudo est déjà pris");
-      else       setStatus("username-status","ok","Disponible !");
+      else      setStatus("username-status","ok","Disponible !");
     }, 500);
   });
 
@@ -236,51 +222,53 @@
     const clientCode = document.getElementById("client-code").value.trim().toUpperCase();
     const statusEl   = document.getElementById("username-status");
 
-    if (!username)         return toast("Choisissez un pseudo.", "warning");
-    if (username.length<3) return toast("Le pseudo doit faire au moins 3 caractères.", "warning");
+    if (!username)          return toast("Choisissez un pseudo.", "warning");
+    if (username.length < 3) return toast("Le pseudo doit faire au moins 3 caractères.", "warning");
     if (statusEl.classList.contains("error")) return toast("Ce pseudo est déjà pris.", "error");
-    if (!clientCode)       return toast("Générez ou entrez un code client.", "warning");
+    if (!clientCode)        return toast("Générez ou entrez un code client.", "warning");
 
     setLoading(btn, true);
 
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session.user;
-    const meta = user.user_metadata;
-    const firstName = meta?.first_name || meta?.full_name?.split(" ")[0] || "";
-    const lastName  = meta?.last_name  || meta?.full_name?.split(" ").slice(1).join(" ") || "";
+    const userId    = window._pendingUserId;
+    const firstName = document.getElementById("display-firstname").value;
+    const lastName  = document.getElementById("display-lastname").value;
+    const email     = document.getElementById("display-email").value;
 
-    const { error } = await supabase.from("profiles").upsert({
-      id:             user.id,
-      email:          user.email,
+    // Créer le profil
+    const { error: profileErr } = await supabase.from("profiles").upsert({
+      id:             userId,
+      email,
       email_verified: true,
       first_name:     firstName,
       last_name:      lastName,
-      username:       username,
+      username,
       client_code:    clientCode
     }, { onConflict: "id" });
 
-    setLoading(btn, false);
-
-    if (error) {
-      if (error.message.includes("username")) {
+    if (profileErr) {
+      setLoading(btn, false);
+      if (profileErr.message.includes("username")) {
         setStatus("username-status","error","Ce pseudo est déjà pris");
         return toast("Ce pseudo est déjà pris.", "error");
       }
-      if (error.message.includes("client_code")) {
+      if (profileErr.message.includes("client_code")) {
         document.getElementById("client-code").value = generateCode();
         return toast("Code déjà utilisé — un nouveau a été généré.", "warning");
       }
-      return toast("Erreur : " + error.message, "error");
+      return toast("Erreur : " + profileErr.message, "error");
     }
 
+    // Supprimer le token (usage unique)
+    await supabase.from("email_verification").delete().eq("token", token);
+
+    setLoading(btn, false);
     toast("Bienvenue sur Creo ! 🚀", "success");
-    setTimeout(() => { window.location.href = "index.html"; }, 1100);
+
+    // Rediriger vers login pour se connecter
+    setTimeout(() => { window.location.href = "login.html?verified=1"; }, 1200);
   });
 
   init();
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
