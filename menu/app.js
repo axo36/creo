@@ -74,25 +74,38 @@ export async function emailLogin(email, password) {
 
 /* ── SIGNUP AVEC EMAILJS ────────────────── */
 export async function emailSignup(email, password, fullName) {
-  // 1. Création du compte Supabase (avec email de vérification natif)
+  const firstName = fullName.trim().split(" ")[0] || "";
+  const lastName  = fullName.trim().split(" ").slice(1).join(" ") || "";
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: getBase() + "index.html",
+      emailRedirectTo: getBase() + "complete-profile.html?verified=1",
       data: {
-        full_name:  fullName,
-        first_name: fullName.trim().split(" ")[0] || "",
-        last_name:  fullName.trim().split(" ").slice(1).join(" ") || ""
+        full_name: fullName,
+        first_name: firstName,
+        last_name: lastName
       }
     }
   });
 
   if (error) return { error: error.message };
+  const user = data.user;
+  if (!user) return { error: "Erreur lors de la création du compte." };
 
-  // 2. Supabase envoie automatiquement l’email de vérification
+  // CRÉER LA LIGNE DANS PROFILES
+  await supabase.from("profiles").insert({
+    id: user.id,
+    email,
+    email_verified: false,
+    first_name: firstName,
+    last_name: lastName
+  });
+
   return { needsConfirm: true };
 }
+
 
 
 export async function resetPassword(email) {
