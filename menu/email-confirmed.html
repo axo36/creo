@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Email confirmé</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<div class="grid-bg"></div>
+<div class="auth-page">
+  <div class="auth-wrap">
+    <a href="index.html" class="auth-logo">CR<span class="logo-e-login">E</span>O</a>
+    <p class="auth-tagline">// Transfer Without Limits</p>
+    <div class="auth-box" style="text-align:center;padding:2.5rem 2rem;">
+
+      <div id="state-loading">
+        <div class="spinner" style="width:2.2rem;height:2.2rem;margin:0 auto;border-width:3px;"></div>
+        <p style="color:var(--t2);margin-top:1.2rem;font-size:.85rem;">Confirmation en cours…</p>
+      </div>
+
+      <div id="state-success" style="display:none;">
+        <div class="confirm-icon">✅</div>
+        <div class="confirm-title">Email confirmé !</div>
+        <p class="confirm-text" style="margin-top:.75rem;">
+          Votre email est bien vérifié.<br><br>
+          <strong style="color:var(--t1);">Retournez sur l'appareil où vous avez créé votre compte</strong> — la page va avancer automatiquement.
+        </p>
+        <p style="color:var(--t3);font-size:.78rem;margin-top:1.5rem;font-family:'JetBrains Mono',monospace;">
+          Cette page peut être fermée.
+        </p>
+      </div>
+
+      <div id="state-error" style="display:none;">
+        <div class="confirm-icon">❌</div>
+        <div class="confirm-title">Lien invalide</div>
+        <p class="confirm-text">Ce lien est invalide ou a déjà été utilisé.</p>
+        <a href="login.html" class="btn btn-ghost btn-full" style="margin-top:1.5rem;">← Retour à la connexion</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase } from "./app.js";
+
+const params    = new URLSearchParams(window.location.search);
+const tokenHash = params.get("token_hash");
+const type      = params.get("type") || "signup";
+
+function show(state) {
+  ["loading","success","error"].forEach(s => {
+    document.getElementById("state-"+s).style.display = s === state ? "block" : "none";
+  });
+}
+
+async function confirm() {
+  if (!tokenHash) { show("error"); return; }
+
+  const { error } = await supabase.auth.verifyOtp({
+    token_hash: tokenHash,
+    type
+  });
+
+  if (error) { show("error"); return; }
+
+  // Marquer email_verified dans profiles
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    await supabase.from("profiles")
+      .update({ email_verified: true })
+      .eq("id", session.user.id);
+  }
+
+  show("success");
+  // Se déconnecter pour ne pas "voler" la session de l'autre appareil
+  await supabase.auth.signOut();
+}
+
+confirm();
+</script>
+</body>
+</html>v
