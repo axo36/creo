@@ -222,41 +222,46 @@
   /* ─────────────────────────────────────────────
      7. Sauvegarde du profil
   ───────────────────────────────────────────── */
-  document.getElementById("saveBtn").addEventListener("click", async () => {
-    const btn        = document.getElementById("saveBtn");
-    const username   = document.getElementById("username").value.trim();
-    const clientCode = document.getElementById("client-code").value.trim().toUpperCase();
-    const statusEl   = document.getElementById("username-status");
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const btn        = document.getElementById("saveBtn");
+  const username   = document.getElementById("username").value.trim();
+  const clientCode = document.getElementById("client-code").value.trim().toUpperCase();
+  const statusEl   = document.getElementById("username-status");
 
-    if (!username)          return toast("Choisissez un pseudo.", "warning");
-    if (username.length < 3) return toast("Le pseudo doit faire au moins 3 caractères.", "warning");
-    if (statusEl.classList.contains("error")) return toast("Ce pseudo est déjà pris.", "error");
-    if (!clientCode)        return toast("Générez ou entrez un code client.", "warning");
+  if (!username)          return toast("Choisissez un pseudo.", "warning");
+  if (username.length < 3) return toast("Le pseudo doit faire au moins 3 caractères.", "warning");
+  if (statusEl.classList.contains("error")) return toast("Ce pseudo est déjà pris.", "error");
+  if (!clientCode)        return toast("Générez ou entrez un code client.", "warning");
 
-    setLoading(btn, true);
+  setLoading(btn, true);
 
-    const { error: profileErr } = await supabase.from("profiles").update({
+  const { error: profileErr } = await supabase
+    .from("profiles")
+    .update({
       username,
-      client_code: clientCode
-    }).eq("id", user.id);
+      client_code: clientCode,
+      email_verified: true
+    })
+    .eq("id", user.id);
 
-    setLoading(btn, false);
+  setLoading(btn, false);
 
-    if (profileErr) {
-      if (profileErr.message.includes("username")) {
-        setStatus("username-status","error","Ce pseudo est déjà pris");
-        return toast("Ce pseudo est déjà pris.", "error");
-      }
-      if (profileErr.message.includes("client_code")) {
-        document.getElementById("client-code").value = generateCode();
-        return toast("Code déjà utilisé — un nouveau a été généré.", "warning");
-      }
-      return toast("Erreur : " + profileErr.message, "error");
+  if (profileErr) {
+    if (profileErr.message.includes("username")) {
+      setStatus("username-status","error","Ce pseudo est déjà pris");
+      return toast("Ce pseudo est déjà pris.", "error");
     }
+    if (profileErr.message.includes("client_code")) {
+      document.getElementById("client-code").value = generateCode();
+      return toast("Code déjà utilisé — un nouveau a été généré.", "warning");
+    }
+    return toast("Erreur : " + profileErr.message, "error");
+  }
 
-    toast("Bienvenue sur Creo ! 🚀", "success");
-    window.location.href = "/client/client.html";
-  });
+  toast("Bienvenue sur Creo ! 🚀", "success");
+  window.location.href = "/client/client.html";
+});
+
 
   /* ─────────────────────────────────────────────
      8. Afficher le formulaire
