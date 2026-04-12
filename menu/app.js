@@ -74,35 +74,51 @@ export async function emailLogin(email, password) {
 
 /* ── SIGNUP AVEC EMAILJS ────────────────── */
 export async function emailSignup(email, password, fullName) {
-  // 1. Création du compte Supabase
+  // 1. Création du compte Supabase (sans confirmation email native)
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName } }
+    options: {
+      data: {
+        full_name:  fullName,
+        first_name: fullName.trim().split(' ')[0] || '',
+        last_name:  fullName.trim().split(' ').slice(1).join(' ') || ''
+      }
+    }
   });
   if (error) return { error: error.message };
   const user = data.user;
   if (!user) return { error: "Erreur lors de la création du compte." };
+
   // 2. Génération du token
   const token = crypto.randomUUID();
-  // 3. Stockage du token + infos profil (UPSERT = jamais de 409)
+
+  // 3. Stockage du token + infos dans email_verification
   const nameParts = fullName.trim().split(' ');
   const firstName = nameParts[0] || '';
   const lastName  = nameParts.slice(1).join(' ') || '';
-  await supabase.from("email_verification").upsert({
+  const { error: upsertErr } = await supabase.from("email_verification").upsert({
     user_id:    user.id,
     token,
-    email:      email,
+    email,
     first_name: firstName,
     last_name:  lastName
   });
-  // 4. Envoi EmailJS (appelé depuis login.html)
-  const confirm_link = `${window.location.origin}/verify.html?token=${token}`;
-  await emailjs.send("service_cyy74i2", "template_yxhlnzs", {
-    email: email,
-    name: fullName,
-    confirm_link: confirm_link
-  });
+  if (upsertErr) return { error: "Erreur lors de la création du token." };
+
+  // 4. Envoi EmailJS → lien vers complete-profile.html
+  const base = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+  const confirm_link = base + 'complete-profile.html?token=' + token;
+  try {
+    await emailjs.send("service_cyy74i2", "template_yxhlnzs", {
+      email,
+      name: fullName,
+      confirm_link
+    });
+  } catch(e) {
+    return { error: "Compte créé mais l'email n'a pas pu être envoyé. Contactez le support." };
+  }
+
   return { needsConfirm: true };
 }
 
