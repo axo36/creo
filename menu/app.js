@@ -74,53 +74,26 @@ export async function emailLogin(email, password) {
 
 /* ── SIGNUP AVEC EMAILJS ────────────────── */
 export async function emailSignup(email, password, fullName) {
-  // 1. Création du compte Supabase (sans confirmation email native)
+  // 1. Création du compte Supabase (avec email de vérification natif)
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: getBase() + "index.html",
       data: {
         full_name:  fullName,
-        first_name: fullName.trim().split(' ')[0] || '',
-        last_name:  fullName.trim().split(' ').slice(1).join(' ') || ''
+        first_name: fullName.trim().split(" ")[0] || "",
+        last_name:  fullName.trim().split(" ").slice(1).join(" ") || ""
       }
     }
   });
+
   if (error) return { error: error.message };
-  const user = data.user;
-  if (!user) return { error: "Erreur lors de la création du compte." };
 
-  // 2. Génération du token
-  const token = crypto.randomUUID();
-
-  // 3. Stockage du token + infos dans email_verification
-  const nameParts = fullName.trim().split(' ');
-  const firstName = nameParts[0] || '';
-  const lastName  = nameParts.slice(1).join(' ') || '';
-  const { error: upsertErr } = await supabase.from("email_verification").upsert({
-    user_id:    user.id,
-    token,
-    email,
-    first_name: firstName,
-    last_name:  lastName
-  });
-  if (upsertErr) return { error: "Erreur lors de la création du token." };
-
-  // 4. Envoi EmailJS → lien vers complete-profile.html
-  const base = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-  const confirm_link = base + 'complete-profile.html?token=' + token;
-  try {
-    await emailjs.send("service_cyy74i2", "template_yxhlnzs", {
-      email,
-      name: fullName,
-      confirm_link
-    });
-  } catch(e) {
-    return { error: "Compte créé mais l'email n'a pas pu être envoyé. Contactez le support." };
-  }
-
+  // 2. Supabase envoie automatiquement l’email de vérification
   return { needsConfirm: true };
 }
+
 
 export async function resetPassword(email) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
