@@ -85,10 +85,16 @@ export async function emailSignup(email, password, fullName) {
   if (!user) return { error: "Erreur lors de la création du compte." };
   // 2. Génération du token
   const token = crypto.randomUUID();
-  // 3. Stockage du token (UPSERT = jamais de 409)
+  // 3. Stockage du token + infos profil (UPSERT = jamais de 409)
+  const nameParts = fullName.trim().split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName  = nameParts.slice(1).join(' ') || '';
   await supabase.from("email_verification").upsert({
-    user_id: user.id,
-    token
+    user_id:    user.id,
+    token,
+    email:      email,
+    first_name: firstName,
+    last_name:  lastName
   });
   // 4. Envoi EmailJS (appelé depuis login.html)
   const confirm_link = `${window.location.origin}/verify.html?token=${token}`;
