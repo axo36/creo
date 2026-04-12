@@ -102,6 +102,12 @@
 <script type="module">
   import { supabase, emailLogin, emailSignup, oauthLogin, resetPassword, toast } from "./app.js";
 
+  // Message après vérification email
+  if (new URLSearchParams(window.location.search).get("verified") === "1") {
+    toast("Email vérifié ! Connectez-vous pour accéder à votre compte.", "success");
+    window.history.replaceState({}, "", "login.html");
+  }
+
   // Tabs
   const tabs = document.querySelectorAll(".auth-tab");
   const panels = document.querySelectorAll(".auth-panel");
