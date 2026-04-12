@@ -55,7 +55,7 @@ export function getAvatar(session) {
 export async function oauthLogin(provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: getBase() + 'oauth-callback.html' }
+    options: { redirectTo: getBase() + 'index.html' }
   });
   if (error) toast(error.message, 'error');
 }
@@ -72,7 +72,7 @@ export async function emailLogin(email, password) {
   return null;
 }
 
-/* ── SIGNUP AVEC EMAILJS ────────────────── */
+/* ── SIGNUP ────────────────────────────── */
 export async function emailSignup(email, password, fullName) {
   const firstName = fullName.trim().split(" ")[0] || "";
   const lastName  = fullName.trim().split(" ").slice(1).join(" ") || "";
@@ -81,11 +81,11 @@ export async function emailSignup(email, password, fullName) {
     email,
     password,
     options: {
-      emailRedirectTo: getBase() + "complete-profile.html?verified=1",
+      emailRedirectTo: getBase() + "email-confirmed.html",
       data: {
-        full_name: fullName,
+        full_name:  fullName,
         first_name: firstName,
-        last_name: lastName
+        last_name:  lastName
       }
     }
   });
@@ -94,20 +94,30 @@ export async function emailSignup(email, password, fullName) {
   const user = data.user;
   if (!user) return { error: "Erreur lors de la création du compte." };
 
-  // CRÉER LA LIGNE DANS PROFILES
-  await supabase.from("profiles").insert({
-    id: user.id,
+  await supabase.from("profiles").upsert({
+    id:             user.id,
     email,
     email_verified: false,
-    first_name: firstName,
-    last_name: lastName
-  });
+    first_name:     firstName,
+    last_name:      lastName
+  }, { onConflict: "id" });
 
-  return { needsConfirm: true };
+  return { needsConfirm: true, userId: user.id };
 }
 
-
-
+/* ── GÉNÉRER CODE TEMP 4 CHARS ─────────── */
+export async function generateTempCode(userId) {
+  await supabase.from("temp_codes").delete().eq("user_id", userId);
+  let code, exists = true;
+  while (exists) {
+    code = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const { data } = await supabase
+      .from("temp_codes").select("code").eq("code", code).maybeSingle();
+    exists = !!data;
+  }
+  await supabase.from("temp_codes").insert({ code, user_id: userId });
+  return code;
+}
 export async function resetPassword(email) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: getBase() + 'login.html?reset=1'
