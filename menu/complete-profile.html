@@ -6,37 +6,22 @@
   <title>Creo — Complétez votre profil</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    .step-badge {
-      width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;
-      font-size:.75rem;font-weight:600;display:inline-flex;align-items:center;
-      justify-content:center;flex-shrink:0;box-shadow:0 0 14px var(--blue-glow);
-    }
+    .step-badge{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-size:.75rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 14px var(--blue-glow);}
     .divider{height:1px;background:var(--b2);margin:1.5rem 0;}
     .readonly-field input{opacity:.4;cursor:default;pointer-events:none;}
     .code-wrap{position:relative;}
     .code-wrap input{text-transform:uppercase;padding-right:6rem;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
-    .gen-btn{
-      position:absolute;right:.5rem;top:50%;transform:translateY(-50%);
-      background:var(--d5);border:1px solid var(--b2);border-radius:var(--r);
-      color:var(--t2);font-size:.72rem;padding:.28rem .65rem;
-      transition:all .2s;cursor:pointer;font-family:'JetBrains Mono',monospace;white-space:nowrap;
-    }
+    .gen-btn{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:var(--d5);border:1px solid var(--b2);border-radius:var(--r);color:var(--t2);font-size:.72rem;padding:.28rem .65rem;transition:all .2s;cursor:pointer;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
     .gen-btn:hover{background:var(--d6);color:var(--blue2);border-color:var(--blue);}
     .username-wrap{position:relative;}
-    .username-prefix{
-      position:absolute;left:.85rem;top:50%;transform:translateY(-50%);
-      color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.82rem;pointer-events:none;
-    }
+    .username-prefix{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.82rem;pointer-events:none;}
     .username-wrap input{padding-left:1.6rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
     .field-status{display:flex;align-items:center;gap:5px;font-size:.72rem;margin-top:.35rem;min-height:16px;}
     .field-status.ok{color:var(--green);}
     .field-status.error{color:var(--red);}
     .field-status.checking{color:var(--t2);}
     .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.5rem;}
-    .plan-card{
-      border:1px solid var(--b2);border-radius:var(--r-lg);padding:.9rem .75rem;
-      text-align:center;cursor:pointer;transition:all .22s;background:var(--d3);
-    }
+    .plan-card{border:1px solid var(--b2);border-radius:var(--r-lg);padding:.9rem .75rem;text-align:center;cursor:pointer;transition:all .22s;background:var(--d3);}
     .plan-card:hover{border-color:var(--b3);background:var(--d4);}
     .plan-card.selected{border-color:var(--blue);background:rgba(26,111,255,.1);box-shadow:0 0 0 1px var(--blue);}
     .plan-card .plan-name{font-size:.82rem;font-weight:600;color:var(--t1);margin-bottom:.2rem;}
@@ -65,12 +50,10 @@
       <div id="state-form" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.75rem;">
           <div class="step-badge">✓</div>
-          <span style="font-size:.82rem;color:var(--t2);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;">
-            Email vérifié — finalisez votre profil
-          </span>
+          <span style="font-size:.82rem;color:var(--t2);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;">Email vérifié — finalisez votre profil</span>
         </div>
 
-        <!-- Prénom / Nom -->
+        <!-- Prénom / Nom modifiables -->
         <div class="field-row">
           <div class="field">
             <label>Prénom</label>
@@ -135,19 +118,6 @@
           <div class="field-status" id="plan-status"></div>
         </div>
 
-        <div class="divider"></div>
-
-        <!-- Confirmation mot de passe -->
-        <div class="field">
-          <label>Confirmer le mot de passe <span style="color:var(--t3);font-size:.75rem;">(optionnel)</span></label>
-          <input type="password" id="f-password" placeholder="Nouveau mot de passe">
-        </div>
-        <div class="field">
-          <label>Confirmer</label>
-          <input type="password" id="f-password2" placeholder="Répétez le mot de passe">
-          <div class="field-status" id="pass-status"></div>
-        </div>
-
         <button class="btn btn-primary btn-full" id="saveBtn" style="margin-top:1.5rem;">
           <span class="btn-label">Accéder à mon compte →</span>
           <span class="spinner btn-spin"></span>
@@ -156,7 +126,7 @@
 
       <!-- ERREUR -->
       <div id="state-error" style="display:none;text-align:center;padding:1.5rem 0;">
-        <div class="confirm-icon">❌</div>
+        <div class="confirm-icon">🔒</div>
         <div class="confirm-title">Accès refusé</div>
         <p class="confirm-text" id="error-msg">Lien invalide ou expiré.</p>
         <a href="login.html" class="btn btn-ghost btn-full" style="margin-top:1.5rem;">← Retour à la connexion</a>
@@ -172,15 +142,13 @@
 </div>
 
 <script type="module">
-import { supabase, toast, setLoading } from "./app.js";
+import { supabase, toast, setLoading, generateTempCode } from "./app.js";
 
-const params     = new URLSearchParams(window.location.search);
-const tokenHash  = params.get("token_hash"); // depuis email Supabase
-const tempCode   = params.get("code");        // depuis login
-
+const params    = new URLSearchParams(window.location.search);
+const tokenHash = params.get("token_hash");
+const tempCode  = params.get("code");
 let currentUser = null;
 
-/* ── helpers ── */
 function show(state) {
   ["loading","form","error"].forEach(s => {
     document.getElementById("state-"+s).style.display = s === state ? "block" : "none";
@@ -195,11 +163,25 @@ function setStatus(id, type, msg) {
 function generateCode() {
   return "CRE-" + Math.random().toString(36).substring(2,8).toUpperCase();
 }
+function selectPlan(plan) {
+  document.querySelectorAll(".plan-card").forEach(c => c.classList.remove("selected"));
+  const card = document.querySelector(`.plan-card[data-plan="${plan}"]`);
+  if (card) card.classList.add("selected");
+  document.getElementById("f-plan").value = plan;
+  setStatus("plan-status","","");
+}
 
-/* ── INIT ── */
 async function init() {
 
-  // ── CAS 1 : vient du lien email Supabase (token_hash)
+  // ══ BLOQUER si pas de token_hash ni de code dans l'URL ══
+  if (!tokenHash && !tempCode) {
+    document.getElementById("error-msg").textContent =
+      "Accès non autorisé. Passez par le lien de confirmation email ou connectez-vous.";
+    show("error");
+    return;
+  }
+
+  // ── CAS 1 : vient du lien email Supabase (token_hash) ──
   if (tokenHash) {
     const { data, error } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
@@ -211,11 +193,10 @@ async function init() {
       show("error"); return;
     }
     currentUser = data.session?.user;
-    // Nettoyer l'URL
     window.history.replaceState({}, "", "complete-profile.html");
   }
 
-  // ── CAS 2 : vient du login avec code temp 4 chars
+  // ── CAS 2 : vient du login avec code temp 4 chars ──
   else if (tempCode) {
     const { data: row, error } = await supabase
       .from("temp_codes")
@@ -238,7 +219,6 @@ async function init() {
       show("error"); return;
     }
 
-    // Récupérer la session active
     const { data: { session } } = await supabase.auth.getSession();
     if (!session || session.user.id !== row.user_id) {
       document.getElementById("error-msg").textContent =
@@ -249,23 +229,11 @@ async function init() {
     window.history.replaceState({}, "", "complete-profile.html");
   }
 
-  // ── CAS 3 : session active directe (rechargement page)
-  else {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      window.location.href = "login.html"; return;
-    }
-    currentUser = session.user;
-  }
-
   if (!currentUser) { show("error"); return; }
 
-  // Vérifier si profil déjà complet → rediriger
+  // Vérifier si profil déjà complet
   const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", currentUser.id)
-    .single();
+    .from("profiles").select("*").eq("id", currentUser.id).single();
 
   if (profile?.username && profile?.client_code && profile?.type) {
     window.location.href = "/client/client.html"; return;
@@ -274,38 +242,27 @@ async function init() {
   // Pré-remplir
   document.getElementById("f-firstname").value =
     profile?.first_name || currentUser.user_metadata?.first_name || "";
-  document.getElementById("f-lastname").value  =
+  document.getElementById("f-lastname").value =
     profile?.last_name  || currentUser.user_metadata?.last_name  || "";
-  document.getElementById("f-email").value     = currentUser.email;
-  document.getElementById("f-clientcode").value =
-    profile?.client_code || generateCode();
-
-  // Marquer le plan existant si déjà choisi
+  document.getElementById("f-email").value = currentUser.email;
+  document.getElementById("f-clientcode").value = profile?.client_code || generateCode();
   if (profile?.type) selectPlan(profile.type);
 
   show("form");
 }
 
-/* ── Sélection plan ── */
-function selectPlan(plan) {
-  document.querySelectorAll(".plan-card").forEach(c => c.classList.remove("selected"));
-  const card = document.querySelector(`.plan-card[data-plan="${plan}"]`);
-  if (card) card.classList.add("selected");
-  document.getElementById("f-plan").value = plan;
-  setStatus("plan-status","","");
-}
-
+// Plan
 document.querySelectorAll(".plan-card").forEach(card => {
   card.addEventListener("click", () => selectPlan(card.dataset.plan));
 });
 
-/* ── Génération code ── */
+// Génération code
 document.getElementById("generate-code").addEventListener("click", () => {
   document.getElementById("f-clientcode").value = generateCode();
   setStatus("code-status","","");
 });
 
-/* ── Validation pseudo temps réel ── */
+// Validation pseudo temps réel
 let usernameTimer;
 document.getElementById("f-username").addEventListener("input", function() {
   this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
@@ -322,15 +279,7 @@ document.getElementById("f-username").addEventListener("input", function() {
   }, 500);
 });
 
-/* ── Validation confirmation mdp ── */
-document.getElementById("f-password2").addEventListener("input", function() {
-  const p1 = document.getElementById("f-password").value;
-  if (!p1 && !this.value) { setStatus("pass-status","",""); return; }
-  if (p1 === this.value) setStatus("pass-status","ok","Mots de passe identiques");
-  else setStatus("pass-status","error","Ne correspondent pas");
-});
-
-/* ── Sauvegarde ── */
+// Sauvegarde
 document.getElementById("saveBtn").addEventListener("click", async () => {
   const btn        = document.getElementById("saveBtn");
   const firstName  = document.getElementById("f-firstname").value.trim();
@@ -338,28 +287,17 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
   const username   = document.getElementById("f-username").value.trim();
   const clientCode = document.getElementById("f-clientcode").value.trim().toUpperCase();
   const plan       = document.getElementById("f-plan").value;
-  const pass1      = document.getElementById("f-password").value;
-  const pass2      = document.getElementById("f-password2").value;
 
   if (!firstName || !lastName) return toast("Entrez votre prénom et nom.", "warning");
   if (!username)               return toast("Choisissez un pseudo.", "warning");
-  if (username.length < 3)     return toast("Pseudo trop court.", "warning");
+  if (username.length < 3)     return toast("Pseudo trop court (3 car. min).", "warning");
   if (document.getElementById("username-status").classList.contains("error"))
                                return toast("Ce pseudo est déjà pris.", "error");
   if (!clientCode)             return toast("Générez un code client.", "warning");
   if (!plan)                   return toast("Choisissez un forfait.", "warning");
-  if (pass1 && pass1 !== pass2) return toast("Les mots de passe ne correspondent pas.", "error");
-  if (pass1 && pass1.length < 8) return toast("Mot de passe trop court (8 car. min).", "warning");
 
   setLoading(btn, true);
 
-  // Mettre à jour le mot de passe si fourni
-  if (pass1) {
-    const { error: passErr } = await supabase.auth.updateUser({ password: pass1 });
-    if (passErr) { setLoading(btn, false); return toast("Erreur mdp : " + passErr.message, "error"); }
-  }
-
-  // Sauvegarder le profil
   const { error } = await supabase.from("profiles").upsert({
     id:             currentUser.id,
     email:          currentUser.email,
@@ -382,9 +320,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
   }
 
   // Supprimer le code temp si utilisé
-  if (tempCode) {
-    await supabase.from("temp_codes").delete().eq("code", tempCode);
-  }
+  if (tempCode) await supabase.from("temp_codes").delete().eq("code", tempCode);
 
   setLoading(btn, false);
   toast("Bienvenue sur Creo ! 🚀", "success");
