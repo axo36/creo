@@ -28,8 +28,8 @@
         </p>
         <div style="margin-top:1.5rem;padding:1rem;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r-lg);">
           <p style="color:var(--t2);font-size:.82rem;line-height:1.7;">
-            📱 Vous avez confirmé depuis un autre appareil ?<br>
-            <strong style="color:var(--t1);">Retournez sur l'appareil de départ</strong> — il va avancer automatiquement.
+            📱 Retournez sur l'appareil où vous avez créé votre compte —<br>
+            <strong style="color:var(--t1);">la page avance automatiquement.</strong>
           </p>
         </div>
         <p style="color:var(--t3);font-size:.75rem;margin-top:1.2rem;font-family:'JetBrains Mono',monospace;">
@@ -67,19 +67,17 @@ async function confirm() {
   // Valider le token Supabase
   const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
 
-  if (error) { show("error"); return; }
+  if (error || !data.session) { show("error"); return; }
 
-  const userId = data.session?.user?.id || data.user?.id;
+  const userId = data.session.user.id;
 
-  if (userId) {
-    // Marquer email_verified = true → le polling sur l'ordi va le détecter
-    await supabase.from("profiles")
-      .update({ email_verified: true })
-      .eq("id", userId);
+  // Mettre email_verified = true → le polling sur l'ORDI le détecte et avance
+  await supabase.from("profiles")
+    .update({ email_verified: true })
+    .eq("id", userId);
 
-    // Se déconnecter de cet appareil pour ne pas interférer avec l'ordi
-    await supabase.auth.signOut();
-  }
+  // Se déconnecter de ce téléphone (ne pas voler la session de l'ordi)
+  await supabase.auth.signOut();
 
   show("success");
 }
