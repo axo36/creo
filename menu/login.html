@@ -100,7 +100,7 @@
 
 <!-- Scripts -->
 <script type="module">
-  import { emailLogin, emailSignup, oauthLogin, resetPassword, toast } from "./app.js";
+  import { supabase, emailLogin, emailSignup, oauthLogin, resetPassword, toast } from "./app.js";
 
   // Tabs
   const tabs = document.querySelectorAll(".auth-tab");
@@ -130,7 +130,19 @@
     const err = await emailLogin(email, pass);
     if (err) return toast(err, "error");
 
-    window.location.href = "index.html";
+    // Vérifier si le profil est complet
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username, client_code")
+      .eq("id", session.user.id)
+      .single();
+
+    if (!profile?.username || !profile?.client_code) {
+      window.location.href = "complete-profile.html";
+    } else {
+      window.location.href = "index.html";
+    }
   });
 
   // SIGNUP
