@@ -63,7 +63,6 @@
         </div>
         <div class="field"><label>Email</label><input type="email" id="signup-email" placeholder="vous@exemple.com" autocomplete="email"></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="signup-password" placeholder="8 caractères minimum"><span class="field-hint">Minimum 8 caractères</span></div>
-        <div class="field"><label>Confirmer le mot de passe</label><input type="password" id="signup-password2" placeholder="Répétez votre mot de passe"></div>
         <button class="btn btn-primary btn-full" id="signupBtn" style="margin-top:6px;">
           <span class="btn-label">Créer mon compte →</span><span class="spinner btn-spin"></span>
         </button>
@@ -149,7 +148,7 @@
     }
   });
 
-  // SIGNUP
+  // SIGNUP — polling toutes les 3s pour détecter la validation email
   let pollInterval = null;
 
   function stopPolling() {
@@ -159,7 +158,6 @@
   async function startPolling(userId) {
     stopPolling();
     pollInterval = setInterval(async () => {
-      // Vérifier si email_verified est passé à true dans profiles
       const { data } = await supabase
         .from("profiles")
         .select("email_verified")
@@ -168,12 +166,17 @@
 
       if (data?.email_verified) {
         stopPolling();
-        // Connecter l'user (il a validé son email)
+        // S'assurer qu'on a une session active
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          // L'user n'est pas connecté sur cet appareil, on recharge pour qu'il se connecte
+          // Pas de session sur cet appareil (validé sur téléphone) → demander connexion
           toast("Email confirmé ! Connectez-vous pour continuer.", "success");
-          setTimeout(() => location.reload(), 1000);
+          confirmBox.innerHTML = `
+            <div class="confirm-icon">✅</div>
+            <div class="confirm-title">Email confirmé !</div>
+            <p class="confirm-text">Connectez-vous pour finaliser votre profil.</p>
+            <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="location.reload()">Se connecter →</button>
+          `;
           return;
         }
         const code = await generateTempCode(userId);
@@ -206,7 +209,7 @@
       document.getElementById("panel-login").classList.remove("active");
       document.getElementById("panel-signup").classList.remove("active");
       confirmBox.style.display = "block";
-      // Démarrer le polling — toutes les 3s on vérifie si email confirmé
+      // Démarrer le polling — dès que email_verified = true dans profiles → redirect
       startPolling(res.userId);
     }
   });
