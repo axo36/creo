@@ -130,75 +130,72 @@
 <script type="module">
   import { supabase, toast, setLoading } from "./app.js";
 
+  /* ─────────────────────────────────────────────
+     1. Vérifier que le lien contient verified=1
+  ───────────────────────────────────────────── */
   const params = new URLSearchParams(window.location.search);
-  const token  = params.get("token");
+  const verified = params.get("verified");
 
-  function show(state) {
-    ["loading","form","error"].forEach(s => {
-      document.getElementById("state-"+s).style.display = s === state ? "block" : "none";
-    });
+  if (verified !== "1") {
+    document.getElementById("error-msg").textContent =
+      "Lien invalide ou expiré.";
+    document.getElementById("state-loading").style.display = "none";
+    document.getElementById("state-error").style.display = "block";
+    throw new Error("Invalid link");
   }
 
+  /* ─────────────────────────────────────────────
+     2. Vérifier que l'utilisateur est connecté
+  ───────────────────────────────────────────── */
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    toast("Veuillez vous connecter pour finaliser votre profil.", "warning");
+    window.location.href = "login.html";
+    throw new Error("Not logged in");
+  }
+
+  const user = session.user;
+
+  /* ─────────────────────────────────────────────
+     3. Vérifier si le profil est déjà complété
+  ───────────────────────────────────────────── */
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("username, client_code")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.username && profile?.client_code) {
+    window.location.href = "/client/client.html";
+    throw new Error("Profile already completed");
+  }
+
+  /* ─────────────────────────────────────────────
+     4. Pré-remplir les champs
+  ───────────────────────────────────────────── */
+  document.getElementById("display-firstname").value =
+    user.user_metadata?.first_name || "";
+  document.getElementById("display-lastname").value =
+    user.user_metadata?.last_name || "";
+  document.getElementById("display-email").value = user.email;
+
+  /* ─────────────────────────────────────────────
+     5. Génération du code client
+  ───────────────────────────────────────────── */
   function generateCode() {
-    return "CRE-" + Math.random().toString(36).substring(2,8).toUpperCase();
+    return "CRE-" + Math.random().toString(36).substring(2, 8).toUpperCase();
   }
 
-  function setStatus(id, type, msg) {
-    const el = document.getElementById(id);
-    el.className = "field-status" + (type ? " "+type : "");
-    const icons = { ok:"✓", error:"✕", checking:"…" };
-    el.innerHTML = msg ? `<span>${icons[type]||""}</span> ${msg}` : "";
-  }
+  document.getElementById("client-code").value = generateCode();
 
-  /* ── init : vérifier le token ── */
-  async function init() {
-    if (!token) { show("error"); return; }
-
-    // Chercher le token dans email_verification
-    const { data: row, error } = await supabase
-      .from("email_verification")
-      .select("user_id, email, first_name, last_name, created_at")
-      .eq("token", token)
-      .single();
-
-    if (error || !row) {
-      document.getElementById("error-msg").textContent =
-        "Ce lien est invalide ou a déjà été utilisé.";
-      show("error");
-      return;
-    }
-
-    // Vérifier expiration 24h
-    const diffH = (Date.now() - new Date(row.created_at)) / 3600000;
-    if (diffH > 24) {
-      await supabase.from("email_verification").delete().eq("token", token);
-      document.getElementById("error-msg").textContent =
-        "Ce lien a expiré (valable 24h). Recréez un compte pour en recevoir un nouveau.";
-      show("error");
-      return;
-    }
-
-    // Connecter l'utilisateur automatiquement
-    // (le compte existe déjà dans Supabase Auth, on le connecte via OTP admin n'est pas possible
-    // côté client — on stocke juste le user_id pour la sauvegarde)
-    window._pendingUserId = row.user_id;
-
-    // Pré-remplir
-    document.getElementById("display-firstname").value = row.first_name || "";
-    document.getElementById("display-lastname").value  = row.last_name  || "";
-    document.getElementById("display-email").value     = row.email      || "";
-    document.getElementById("client-code").value       = generateCode();
-
-    show("form");
-  }
-
-  /* ── génération code ── */
   document.getElementById("generate-code").addEventListener("click", () => {
     document.getElementById("client-code").value = generateCode();
-    setStatus("code-status","","");
   });
 
-  /* ── validation pseudo en temps réel ── */
+  /* ─────────────────────────────────────────────
+     6. Validation pseudo en temps réel
+  ───────────────────────────────────────────── */
   let usernameTimer;
   document.getElementById("username").addEventListener("input", function() {
     this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
@@ -215,7 +212,16 @@
     }, 500);
   });
 
-  /* ── sauvegarde ── */
+  function setStatus(id, type, msg) {
+    const el = document.getElementById(id);
+    el.className = "field-status" + (type ? " "+type : "");
+    const icons = { ok:"✓", error:"✕", checking:"…" };
+    el.innerHTML = msg ? `<span>${icons[type]||""}</span> ${msg}` : "";
+  }
+
+  /* ─────────────────────────────────────────────
+     7. Sauvegarde du profil
+  ───────────────────────────────────────────── */
   document.getElementById("saveBtn").addEventListener("click", async () => {
     const btn        = document.getElementById("saveBtn");
     const username   = document.getElementById("username").value.trim();
@@ -229,24 +235,14 @@
 
     setLoading(btn, true);
 
-    const userId    = window._pendingUserId;
-    const firstName = document.getElementById("display-firstname").value;
-    const lastName  = document.getElementById("display-lastname").value;
-    const email     = document.getElementById("display-email").value;
-
-    // Créer le profil
-    const { error: profileErr } = await supabase.from("profiles").upsert({
-      id:             userId,
-      email,
-      email_verified: true,
-      first_name:     firstName,
-      last_name:      lastName,
+    const { error: profileErr } = await supabase.from("profiles").update({
       username,
-      client_code:    clientCode
-    }, { onConflict: "id" });
+      client_code: clientCode
+    }).eq("id", user.id);
+
+    setLoading(btn, false);
 
     if (profileErr) {
-      setLoading(btn, false);
       if (profileErr.message.includes("username")) {
         setStatus("username-status","error","Ce pseudo est déjà pris");
         return toast("Ce pseudo est déjà pris.", "error");
@@ -258,17 +254,15 @@
       return toast("Erreur : " + profileErr.message, "error");
     }
 
-    // Supprimer le token (usage unique)
-    await supabase.from("email_verification").delete().eq("token", token);
-
-    setLoading(btn, false);
     toast("Bienvenue sur Creo ! 🚀", "success");
-
-    // Rediriger vers login pour se connecter
-    setTimeout(() => { window.location.href = "login.html?verified=1"; }, 1200);
+    window.location.href = "/client/client.html";
   });
 
-  init();
+  /* ─────────────────────────────────────────────
+     8. Afficher le formulaire
+  ───────────────────────────────────────────── */
+  document.getElementById("state-loading").style.display = "none";
+  document.getElementById("state-form").style.display = "block";
 </script>
 </body>
 </html>
