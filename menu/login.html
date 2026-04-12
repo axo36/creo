@@ -63,6 +63,7 @@
         </div>
         <div class="field"><label>Email</label><input type="email" id="signup-email" placeholder="vous@exemple.com" autocomplete="email"></div>
         <div class="field"><label>Mot de passe</label><input type="password" id="signup-password" placeholder="8 caractères minimum"><span class="field-hint">Minimum 8 caractères</span></div>
+        <div class="field"><label>Confirmer le mot de passe</label><input type="password" id="signup-password2" placeholder="Répétez votre mot de passe"></div>
         <button class="btn btn-primary btn-full" id="signupBtn" style="margin-top:6px;">
           <span class="btn-label">Créer mon compte →</span><span class="spinner btn-spin"></span>
         </button>
@@ -166,11 +167,8 @@
 
       if (data?.email_verified) {
         stopPolling();
-        // S'assurer qu'on a une session active
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-          // Pas de session sur cet appareil (validé sur téléphone) → demander connexion
-          toast("Email confirmé ! Connectez-vous pour continuer.", "success");
           confirmBox.innerHTML = `
             <div class="confirm-icon">✅</div>
             <div class="confirm-title">Email confirmé !</div>
@@ -209,7 +207,6 @@
       document.getElementById("panel-login").classList.remove("active");
       document.getElementById("panel-signup").classList.remove("active");
       confirmBox.style.display = "block";
-      // Démarrer le polling — dès que email_verified = true dans profiles → redirect
       startPolling(res.userId);
     }
   });
