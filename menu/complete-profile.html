@@ -128,146 +128,158 @@
 </div>
 
 <script type="module">
-  import { supabase, toast, setLoading } from "./app.js";
+import { supabase, toast, setLoading } from "./app.js";
 
-  /* ─────────────────────────────────────────────
-     1. Vérifier que le lien contient verified=1
-  ───────────────────────────────────────────── */
-  const params = new URLSearchParams(window.location.search);
-  const verified = params.get("verified");
+/* ─────────────────────────────────────────────
+   1. Vérifier la session
+───────────────────────────────────────────── */
+const { data: { session } } = await supabase.auth.getSession();
 
-  if (verified !== "1") {
-    document.getElementById("error-msg").textContent =
-      "Lien invalide ou expiré.";
-    document.getElementById("state-loading").style.display = "none";
-    document.getElementById("state-error").style.display = "block";
-    throw new Error("Invalid link");
-  }
+if (!session) {
+  toast("Veuillez vous connecter.", "warning");
+  window.location.href = "login.html";
+  throw new Error("No session");
+}
 
-  /* ─────────────────────────────────────────────
-     2. Vérifier que l'utilisateur est connecté
-  ───────────────────────────────────────────── */
-  const { data: { session } } = await supabase.auth.getSession();
+const user = session.user;
 
-  if (!session) {
-    toast("Veuillez vous connecter pour finaliser votre profil.", "warning");
-    window.location.href = "login.html";
-    throw new Error("Not logged in");
-  }
+/* ─────────────────────────────────────────────
+   2. Vérifier si email confirmé
+───────────────────────────────────────────── */
+if (!user.email_confirmed_at) {
+  document.getElementById("state-loading").style.display = "none";
+  document.getElementById("state-error").style.display = "block";
+  document.getElementById("error-msg").textContent =
+    "Votre email n'est pas encore confirmé.";
+  throw new Error("Email not confirmed");
+}
 
-  const user = session.user;
+/* ─────────────────────────────────────────────
+   3. Vérifier si profil déjà complété
+───────────────────────────────────────────── */
+const { data: profile } = await supabase
+  .from("profiles")
+  .select("*")
+  .eq("id", user.id)
+  .single();
 
-  /* ─────────────────────────────────────────────
-     3. Vérifier si le profil est déjà complété
-  ───────────────────────────────────────────── */
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username, client_code")
-    .eq("id", user.id)
-    .single();
+if (profile?.username && profile?.client_code && profile?.type) {
+  window.location.href = "/client/client.html";
+  throw new Error("Profile already completed");
+}
 
-  if (profile?.username && profile?.client_code) {
-    window.location.href = "/client/client.html";
-    throw new Error("Profile already completed");
-  }
+/* ─────────────────────────────────────────────
+   4. Pré-remplir les champs
+───────────────────────────────────────────── */
+document.getElementById("display-firstname").value =
+  profile?.first_name || user.user_metadata?.first_name || "";
 
-  /* ─────────────────────────────────────────────
-     4. Pré-remplir les champs
-  ───────────────────────────────────────────── */
-  document.getElementById("display-firstname").value =
-    user.user_metadata?.first_name || "";
-  document.getElementById("display-lastname").value =
-    user.user_metadata?.last_name || "";
-  document.getElementById("display-email").value = user.email;
+document.getElementById("display-lastname").value =
+  profile?.last_name || user.user_metadata?.last_name || "";
 
-  /* ─────────────────────────────────────────────
-     5. Génération du code client
-  ───────────────────────────────────────────── */
-  function generateCode() {
-    return "CRE-" + Math.random().toString(36).substring(2, 8).toUpperCase();
-  }
+document.getElementById("display-email").value = user.email;
 
+/* ─────────────────────────────────────────────
+   5. Génération code client
+───────────────────────────────────────────── */
+function generateCode() {
+  return "CRE-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+document.getElementById("client-code").value =
+  profile?.client_code || generateCode();
+
+document.getElementById("generate-code").addEventListener("click", () => {
   document.getElementById("client-code").value = generateCode();
+});
 
-  document.getElementById("generate-code").addEventListener("click", () => {
-    document.getElementById("client-code").value = generateCode();
-  });
+/* ─────────────────────────────────────────────
+   6. Validation pseudo en temps réel
+───────────────────────────────────────────── */
+let usernameTimer;
+document.getElementById("username").addEventListener("input", function () {
+  this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  clearTimeout(usernameTimer);
 
-  /* ─────────────────────────────────────────────
-     6. Validation pseudo en temps réel
-  ───────────────────────────────────────────── */
-  let usernameTimer;
-  document.getElementById("username").addEventListener("input", function() {
-    this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
-    clearTimeout(usernameTimer);
-    const val = this.value.trim();
-    if (!val) { setStatus("username-status","",""); return; }
-    if (val.length < 3) { setStatus("username-status","error","Trop court (min. 3 caractères)"); return; }
-    setStatus("username-status","checking","Vérification…");
-    usernameTimer = setTimeout(async () => {
-      const { data } = await supabase
-        .from("profiles").select("id").eq("username", val).maybeSingle();
-      if (data) setStatus("username-status","error","Ce pseudo est déjà pris");
-      else      setStatus("username-status","ok","Disponible !");
-    }, 500);
-  });
+  const val = this.value.trim();
+  if (!val) return setStatus("username-status", "", "");
+  if (val.length < 3)
+    return setStatus("username-status", "error", "Trop court (min. 3 caractères)");
 
-  function setStatus(id, type, msg) {
-    const el = document.getElementById(id);
-    el.className = "field-status" + (type ? " "+type : "");
-    const icons = { ok:"✓", error:"✕", checking:"…" };
-    el.innerHTML = msg ? `<span>${icons[type]||""}</span> ${msg}` : "";
-  }
+  setStatus("username-status", "checking", "Vérification…");
 
-  /* ─────────────────────────────────────────────
-     7. Sauvegarde du profil
-  ───────────────────────────────────────────── */
+  usernameTimer = setTimeout(async () => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("username", val)
+      .maybeSingle();
+
+    if (data) setStatus("username-status", "error", "Ce pseudo est déjà pris");
+    else setStatus("username-status", "ok", "Disponible !");
+  }, 500);
+});
+
+function setStatus(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = "field-status" + (type ? " " + type : "");
+  const icons = { ok: "✓", error: "✕", checking: "…" };
+  el.innerHTML = msg ? `<span>${icons[type] || ""}</span> ${msg}` : "";
+}
+
+/* ─────────────────────────────────────────────
+   7. Sauvegarde complète du profil
+───────────────────────────────────────────── */
 document.getElementById("saveBtn").addEventListener("click", async () => {
-  const btn        = document.getElementById("saveBtn");
-  const username   = document.getElementById("username").value.trim();
-  const clientCode = document.getElementById("client-code").value.trim().toUpperCase();
-  const statusEl   = document.getElementById("username-status");
+  const btn = document.getElementById("saveBtn");
 
-  if (!username)          return toast("Choisissez un pseudo.", "warning");
-  if (username.length < 3) return toast("Le pseudo doit faire au moins 3 caractères.", "warning");
-  if (statusEl.classList.contains("error")) return toast("Ce pseudo est déjà pris.", "error");
-  if (!clientCode)        return toast("Générez ou entrez un code client.", "warning");
+  const firstName = document.getElementById("display-firstname").value.trim();
+  const lastName = document.getElementById("display-lastname").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const clientCode = document.getElementById("client-code").value.trim().toUpperCase();
+  const planType = document.getElementById("plan-type").value.trim();
+  const newPass = document.getElementById("new-password").value.trim();
+  const confirmPass = document.getElementById("confirm-password").value.trim();
+
+  if (!username) return toast("Choisissez un pseudo.", "warning");
+  if (!clientCode) return toast("Générez un code client.", "warning");
+  if (!planType) return toast("Choisissez un type de forfait.", "warning");
+
+  if (newPass || confirmPass) {
+    if (newPass !== confirmPass)
+      return toast("Les mots de passe ne correspondent pas.", "error");
+
+    await supabase.auth.updateUser({ password: newPass });
+  }
 
   setLoading(btn, true);
 
-  const { error: profileErr } = await supabase
+  const { error } = await supabase
     .from("profiles")
     .update({
+      first_name: firstName,
+      last_name: lastName,
       username,
       client_code: clientCode,
+      type: planType,
       email_verified: true
     })
     .eq("id", user.id);
 
   setLoading(btn, false);
 
-  if (profileErr) {
-    if (profileErr.message.includes("username")) {
-      setStatus("username-status","error","Ce pseudo est déjà pris");
-      return toast("Ce pseudo est déjà pris.", "error");
-    }
-    if (profileErr.message.includes("client_code")) {
-      document.getElementById("client-code").value = generateCode();
-      return toast("Code déjà utilisé — un nouveau a été généré.", "warning");
-    }
-    return toast("Erreur : " + profileErr.message, "error");
-  }
+  if (error) return toast("Erreur : " + error.message, "error");
 
-  toast("Bienvenue sur Creo ! 🚀", "success");
+  toast("Profil complété ! 🚀", "success");
   window.location.href = "/client/client.html";
 });
 
-
-  /* ─────────────────────────────────────────────
-     8. Afficher le formulaire
-  ───────────────────────────────────────────── */
-  document.getElementById("state-loading").style.display = "none";
-  document.getElementById("state-form").style.display = "block";
+/* ─────────────────────────────────────────────
+   8. Afficher le formulaire
+───────────────────────────────────────────── */
+document.getElementById("state-loading").style.display = "none";
+document.getElementById("state-form").style.display = "block";
 </script>
+
 </body>
 </html>
