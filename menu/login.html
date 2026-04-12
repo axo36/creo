@@ -150,30 +150,60 @@
   });
 
   // SIGNUP
+  let authListener = null;
+
   document.getElementById("signupBtn").addEventListener("click", async () => {
     const firstname = document.getElementById("signup-firstname").value.trim();
     const lastname  = document.getElementById("signup-lastname").value.trim();
     const email     = document.getElementById("signup-email").value.trim();
     const pass      = document.getElementById("signup-password").value.trim();
+    const pass2     = document.getElementById("signup-password2")?.value.trim();
 
-    const pass2 = document.getElementById("signup-password2").value.trim();
-
-    if (!firstname || !lastname || !email || !pass || !pass2)
+    if (!firstname || !lastname || !email || !pass)
       return toast("Remplissez tous les champs.", "warning");
     if (pass.length < 8)
       return toast("Mot de passe trop court (8 caractères minimum).", "warning");
-    if (pass !== pass2)
+    if (pass2 !== undefined && pass !== pass2)
       return toast("Les mots de passe ne correspondent pas.", "error");
 
     const fullName = firstname + " " + lastname;
-
     const res = await emailSignup(email, pass, fullName);
 
     if (res.error) return toast(res.error, "error");
+
     if (res.needsConfirm) {
+      // Afficher la boîte de confirmation
       document.getElementById("panel-login").classList.remove("active");
       document.getElementById("panel-signup").classList.remove("active");
       confirmBox.style.display = "block";
+
+      // ══ ÉCOUTE EN TEMPS RÉEL ══
+      // Dès que l'user confirme son email (sur n'importe quel appareil),
+      // cette page détecte le changement et redirige automatiquement
+      if (authListener) authListener.data?.subscription?.unsubscribe();
+
+      authListener = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === "SIGNED_IN" && session?.user?.email_confirmed_at) {
+          authListener.data?.subscription?.unsubscribe();
+
+          // Vérifier si profil complet
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("username, client_code, type")
+            .eq("id", session.user.id)
+            .single();
+
+          if (!profile?.username || !profile?.client_code || !profile?.type) {
+            const code = await generateTempCode(session.user.id);
+            toast("Email confirmé ! Finalisez votre profil.", "success");
+            setTimeout(() => {
+              window.location.href = "complete-profile.html?code=" + code;
+            }, 800);
+          } else {
+            window.location.href = "/client/client.html";
+          }
+        }
+      });
     }
   });
 
