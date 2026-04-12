@@ -72,7 +72,7 @@ export async function emailLogin(email, password) {
   return null;
 }
 
-/* ── SIGNUP AVEC EMAILJS ────────────────── */
+/* ── SIGNUP VIA SUPABASE EMAIL NATIF ──── */
 export async function emailSignup(email, password, fullName) {
   const firstName = fullName.trim().split(" ")[0] || "";
   const lastName  = fullName.trim().split(" ").slice(1).join(" ") || "";
@@ -81,11 +81,11 @@ export async function emailSignup(email, password, fullName) {
     email,
     password,
     options: {
-      emailRedirectTo: getBase() + "complete-profile.html?verified=1",
+      emailRedirectTo: getBase() + "complete-profile.html",
       data: {
-        full_name: fullName,
+        full_name:  fullName,
         first_name: firstName,
-        last_name: lastName
+        last_name:  lastName
       }
     }
   });
@@ -94,16 +94,34 @@ export async function emailSignup(email, password, fullName) {
   const user = data.user;
   if (!user) return { error: "Erreur lors de la création du compte." };
 
-  // CRÉER LA LIGNE DANS PROFILES
-  await supabase.from("profiles").insert({
-    id: user.id,
+  // Pré-créer la ligne profiles (sans username/code encore)
+  await supabase.from("profiles").upsert({
+    id:             user.id,
     email,
     email_verified: false,
-    first_name: firstName,
-    last_name: lastName
-  });
+    first_name:     firstName,
+    last_name:      lastName
+  }, { onConflict: "id" });
 
   return { needsConfirm: true };
+}
+
+/* ── GÉNÉRER CODE TEMP 4 CHARS (LOGIN) ── */
+export async function generateTempCode(userId) {
+  // Supprimer les anciens codes de cet user
+  await supabase.from("temp_codes").delete().eq("user_id", userId);
+
+  // Générer un code unique 4 chars alphanum majuscules
+  let code, exists = true;
+  while (exists) {
+    code = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const { data } = await supabase
+      .from("temp_codes").select("code").eq("code", code).maybeSingle();
+    exists = !!data;
+  }
+
+  await supabase.from("temp_codes").insert({ code, user_id: userId });
+  return code;
 }
 
 
