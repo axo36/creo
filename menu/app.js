@@ -194,7 +194,7 @@ export async function buildNav(activePage) {
   } else {
     right = `
       <a href="login.html" class="btn btn-ghost">Connexion</a>
-      <a href="login.html" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
+      <a href="login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
   }
 
   nav.innerHTML = `
