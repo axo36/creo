@@ -55,7 +55,7 @@ export function getAvatar(session) {
 export async function oauthLogin(provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: getBase() + 'index.html' }
+    options: { redirectTo: getBase() + 'oauth-callback.html' }
   });
   if (error) toast(error.message, 'error');
 }
@@ -72,7 +72,7 @@ export async function emailLogin(email, password) {
   return null;
 }
 
-/* ── SIGNUP VIA SUPABASE EMAIL NATIF ──── */
+/* ── SIGNUP AVEC EMAILJS ────────────────── */
 export async function emailSignup(email, password, fullName) {
   const firstName = fullName.trim().split(" ")[0] || "";
   const lastName  = fullName.trim().split(" ").slice(1).join(" ") || "";
@@ -81,11 +81,11 @@ export async function emailSignup(email, password, fullName) {
     email,
     password,
     options: {
-      emailRedirectTo: getBase() + "complete-profile.html",
+      emailRedirectTo: getBase() + "complete-profile.html?verified=1",
       data: {
-        full_name:  fullName,
+        full_name: fullName,
         first_name: firstName,
-        last_name:  lastName
+        last_name: lastName
       }
     }
   });
@@ -94,34 +94,16 @@ export async function emailSignup(email, password, fullName) {
   const user = data.user;
   if (!user) return { error: "Erreur lors de la création du compte." };
 
-  // Pré-créer la ligne profiles (sans username/code encore)
-  await supabase.from("profiles").upsert({
-    id:             user.id,
+  // CRÉER LA LIGNE DANS PROFILES
+  await supabase.from("profiles").insert({
+    id: user.id,
     email,
     email_verified: false,
-    first_name:     firstName,
-    last_name:      lastName
-  }, { onConflict: "id" });
+    first_name: firstName,
+    last_name: lastName
+  });
 
   return { needsConfirm: true };
-}
-
-/* ── GÉNÉRER CODE TEMP 4 CHARS (LOGIN) ── */
-export async function generateTempCode(userId) {
-  // Supprimer les anciens codes de cet user
-  await supabase.from("temp_codes").delete().eq("user_id", userId);
-
-  // Générer un code unique 4 chars alphanum majuscules
-  let code, exists = true;
-  while (exists) {
-    code = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const { data } = await supabase
-      .from("temp_codes").select("code").eq("code", code).maybeSingle();
-    exists = !!data;
-  }
-
-  await supabase.from("temp_codes").insert({ code, user_id: userId });
-  return code;
 }
 
 
