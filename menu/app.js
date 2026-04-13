@@ -55,17 +55,30 @@ export function getAvatar(session) {
 export async function oauthLogin(provider) {
   const { error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: { redirectTo: getBase() + 'index.html' }
+    options: { redirectTo: getBase() + 'oauth-callback.html' }
   });
   if (error) toast(error.message, 'error');
 }
 
 /* ── EMAIL / PASSWORD ──────────────────── */
-export async function emailLogin(email, password) {
+export async function emailLogin(emailOrUsername, password) {
+  let email = emailOrUsername.trim();
+
+  // Si ce n'est pas un email → chercher le pseudo dans profiles
+  if (!email.includes('@')) {
+    const { data: profile, error: profileErr } = await supabase
+      .from('profiles')
+      .select('email')
+      .eq('username', email.toLowerCase())
+      .single();
+    if (profileErr || !profile) return 'Pseudo ou mot de passe incorrect.';
+    email = profile.email;
+  }
+
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
     const m = error.message;
-    if (m.includes('Invalid login credentials')) return 'Email ou mot de passe incorrect.';
+    if (m.includes('Invalid login credentials')) return 'Email/pseudo ou mot de passe incorrect.';
     if (m.includes('Email not confirmed'))       return 'Confirmez votre email avant de vous connecter.';
     return 'Connexion impossible. Réessayez.';
   }
@@ -194,7 +207,7 @@ export async function buildNav(activePage) {
   } else {
     right = `
       <a href="login.html" class="btn btn-ghost">Connexion</a>
-      <a href="login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
+      <a href="login.html" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
   }
 
   nav.innerHTML = `
