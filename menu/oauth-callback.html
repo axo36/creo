@@ -18,15 +18,13 @@
     </div>
   </div>
 </div>
-
 <script type="module">
 import { supabase, generateTempCode } from "./app.js";
 
 async function handleOAuth() {
-  // Attendre que Supabase récupère la session depuis l'URL
-  const { data: { session }, error } = await supabase.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
 
-  if (error || !session) {
+  if (!session) {
     window.location.href = "login.html";
     return;
   }
@@ -34,11 +32,11 @@ async function handleOAuth() {
   const user = session.user;
   const meta = user.user_metadata;
 
-  // Upsert profil avec les infos OAuth
   const fullName  = meta?.full_name || meta?.name || "";
   const firstName = meta?.given_name  || fullName.split(" ")[0] || "";
   const lastName  = meta?.family_name || fullName.split(" ").slice(1).join(" ") || "";
 
+  // Upsert profil avec les infos OAuth
   await supabase.from("profiles").upsert({
     id:             user.id,
     email:          user.email,
