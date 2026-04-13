@@ -160,6 +160,7 @@
 
   // SIGNUP — polling toutes les 3s pour détecter la validation email
   let pollInterval = null;
+  let savedEmail = "", savedPass = "";
 
   function stopPolling() {
     if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
@@ -176,8 +177,15 @@
 
       if (data?.email_verified) {
         stopPolling();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
+
+        // Connecter automatiquement avec les identifiants gardés en mémoire
+        const { error: loginErr } = await supabase.auth.signInWithPassword({
+          email: savedEmail,
+          password: savedPass
+        });
+
+        if (loginErr) {
+          // Fallback : demander de se connecter manuellement
           confirmBox.innerHTML = `
             <div class="confirm-icon">✅</div>
             <div class="confirm-title">Email confirmé !</div>
@@ -186,9 +194,10 @@
           `;
           return;
         }
+
         const code = await generateTempCode(userId);
-        toast("Email confirmé ! Finalisation du profil…", "success");
-        setTimeout(() => { window.location.href = "complete-profile.html?code=" + code; }, 800);
+        toast("Email confirmé ! Redirection…", "success");
+        setTimeout(() => { window.location.href = "complete-profile.html?code=" + code; }, 600);
       }
     }, 3000);
   }
@@ -213,6 +222,9 @@
     if (res.error) return toast(res.error, "error");
 
     if (res.needsConfirm) {
+      // Garder email+pass en mémoire pour auto-connexion après validation
+      savedEmail = email;
+      savedPass  = pass;
       document.getElementById("panel-login").classList.remove("active");
       document.getElementById("panel-signup").classList.remove("active");
       confirmBox.style.display = "block";
