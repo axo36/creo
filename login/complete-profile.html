@@ -135,7 +135,7 @@
     </div>
 
     <div style="text-align:center;margin-top:1.5rem;">
-      <a href="index.html" style="font-size:.78rem;color:var(--t3);transition:color .2s;"
+      <a href="../menu/index.html" style="font-size:.78rem;color:var(--t3);transition:color .2s;"
          onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">← Retour à l'accueil</a>
     </div>
   </div>
@@ -236,7 +236,7 @@ async function init() {
     .from("profiles").select("*").eq("id", currentUser.id).single();
 
   if (profile?.username && profile?.client_code && profile?.type) {
-    window.location.href = "/client/client.html"; return;
+    window.location.href = "creo//client/client.html"; return;
   }
 
   // Pré-remplir
@@ -324,7 +324,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
 
   setLoading(btn, false);
   toast("Bienvenue sur Creo ! 🚀", "success");
-  setTimeout(() => { window.location.href = "/client/client.html"; }, 1100);
+  setTimeout(() => { window.location.href = "creo//client/client.html"; }, 1100);
 });
 
 init();
