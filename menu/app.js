@@ -21,16 +21,16 @@ export async function getSession() {
 }
 export async function requireAuth() {
   const s = await getSession();
-  if (!s) { window.location.href = 'login.html'; return null; }
+  if (!s) { window.location.href = '../login/login.html'; return null; }
   return s;
 }
 export async function redirectIfAuth() {
   const s = await getSession();
-  if (s) window.location.href = 'index.html';
+  if (s) window.location.href = '../menu/index.html';
 }
 export async function signOut() {
   await supabase.auth.signOut();
-  window.location.href = 'login.html';
+  window.location.href = '../login/login.html';
 }
 export function getDisplayName(s) {
   if (!s) return 'Invité';
@@ -180,8 +180,8 @@ export async function buildNav(activePage) {
       </div>`;
   } else {
     right = `
-      <a href="login.html" class="btn btn-ghost">Connexion</a>
-      <a href="login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
+      <a href="../login/login.html" class="btn btn-ghost">Connexion</a>
+      <a href="../login/login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
   }
   nav.innerHTML = `
     <a href="index.html" class="nav-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></a>
