@@ -11,7 +11,7 @@
 <div class="grid-bg"></div>
 <div class="auth-page">
   <div class="auth-wrap">
-    <a href="index.html" class="auth-logo">CR<span class="logo-e-login">E</span>O</a>
+    <a href="../menu/index.html" class="auth-logo">CR<span class="logo-e-login">E</span>O</a>
     <div class="auth-box" style="text-align:center;padding:2.5rem 2rem;">
       <div class="spinner" style="width:2.2rem;height:2.2rem;margin:0 auto;border-width:3px;"></div>
       <p style="color:var(--t2);margin-top:1.2rem;font-size:.85rem;">Connexion en cours…</p>
@@ -57,7 +57,7 @@ async function handleOAuth() {
     const code = await generateTempCode(user.id);
     window.location.href = "complete-profile.html?code=" + code;
   } else {
-    window.location.href = "/client/client.html";
+    window.location.href = "creo/client/client.html";
   }
 }
 
