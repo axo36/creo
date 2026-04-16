@@ -4,11 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CREO — Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
-
+/* ── Reprend exactement les variables de login/style.css ── */
 :root {
   --black:#000; --d1:#040404; --d2:#080808; --d3:#0e0e0e;
   --d4:#141414; --d5:#1c1c1c; --d6:#242424; --d7:#2e2e2e;
@@ -32,7 +30,20 @@ img{display:block;max-width:100%;}
 .font-mono{font-family:'JetBrains Mono',monospace;}
 .font-display{font-family:'Bebas Neue',sans-serif;letter-spacing:.03em;}
 
+/* ── LOADING ── */
+#loading-screen{
+  position:fixed;inset:0;background:var(--black);display:flex;align-items:center;
+  justify-content:center;z-index:9999;flex-direction:column;gap:1.2rem;
+}
+.loading-logo{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--white);letter-spacing:.1em;}
+.loading-logo span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.loading-bar{width:180px;height:2px;background:var(--d5);border-radius:99px;overflow:hidden;}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;animation:loadAnim 1.2s ease infinite;}
+@keyframes loadAnim{0%{width:0;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0;margin-left:100%;}}
+.loading-txt{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);}
+
 /* ── LAYOUT ── */
+#app-shell{display:none;}
 .app-shell{display:flex;min-height:100vh;}
 .sidebar{
   width:230px;flex-shrink:0;background:var(--d2);border-right:1px solid var(--b1);
@@ -52,7 +63,7 @@ img{display:block;max-width:100%;}
   font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);
   letter-spacing:.1em;padding:0 .5rem;margin-bottom:2.5rem;display:flex;align-items:center;gap:2px;
 }
-.sidebar-logo span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sidebar-logo .logo-e{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .sidebar-logo .logo-dot{width:5px;height:5px;background:var(--blue);border-radius:50%;margin-left:3px;box-shadow:0 0 8px var(--blue);align-self:flex-end;margin-bottom:8px;}
 .sidebar-section{margin-bottom:2rem;}
 .sidebar-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;padding:0 .5rem;margin-bottom:.6rem;}
@@ -67,10 +78,20 @@ img{display:block;max-width:100%;}
 .sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--b1);}
 .user-card{display:flex;align-items:center;gap:10px;padding:.6rem .5rem;border-radius:var(--r-lg);cursor:pointer;transition:background .2s;}
 .user-card:hover{background:var(--d4);}
-.user-avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#fff;flex-shrink:0;}
+.user-avatar{
+  width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:600;color:#fff;flex-shrink:0;overflow:hidden;
+}
+.user-avatar img{width:100%;height:100%;object-fit:cover;}
 .user-info{flex:1;min-width:0;}
 .user-name{font-size:.82rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .user-email{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.logout-link{
+  display:flex;align-items:center;gap:8px;padding:.48rem .7rem;margin-top:4px;
+  border-radius:var(--r);font-size:.8rem;color:var(--t3);cursor:pointer;transition:all .2s;
+}
+.logout-link:hover{background:rgba(255,59,92,.08);color:var(--red);}
 
 /* ── TOPBAR ── */
 .topbar-left{display:flex;align-items:center;gap:1rem;}
@@ -79,30 +100,30 @@ img{display:block;max-width:100%;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
 .topbar-search{
   display:flex;align-items:center;gap:8px;background:var(--d3);border:1px solid var(--b2);
-  border-radius:var(--r-lg);padding:.45rem 1rem;font-family:'JetBrains Mono',monospace;
-  font-size:.72rem;color:var(--t3);width:220px;
+  border-radius:var(--r-lg);padding:.45rem 1rem;width:220px;
 }
 .topbar-search input{background:none;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t1);width:100%;}
 .topbar-search input::placeholder{color:var(--t3);}
 .notif-btn{
   width:36px;height:36px;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);
-  display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--t2);cursor:pointer;
-  transition:all .2s;position:relative;
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--t2);
+  cursor:pointer;transition:all .2s;position:relative;
 }
 .notif-btn:hover{background:var(--d5);color:var(--t1);}
 .notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--blue);border-radius:50%;border:1.5px solid var(--d4);box-shadow:0 0 6px var(--blue);}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:.6rem 1.4rem;border-radius:var(--r-lg);font-size:.84rem;font-weight:500;transition:all .22s;position:relative;overflow:hidden;white-space:nowrap;cursor:pointer;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:.6rem 1.4rem;border-radius:var(--r-lg);font-size:.84rem;font-weight:500;transition:all .22s;white-space:nowrap;cursor:pointer;}
 .btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 24px var(--blue-glow),inset 0 1px 0 rgba(255,255,255,.12);}
 .btn-primary:hover{background:#2a7aff;box-shadow:0 0 44px rgba(26,111,255,.5);transform:translateY(-1px);}
 .btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--b3);}
 .btn-ghost:hover{border-color:var(--b4);color:var(--t1);background:var(--d4);}
 .btn-sm{padding:.4rem .9rem;font-size:.78rem;border-radius:var(--r);}
+.btn-loading{opacity:.6;pointer-events:none;}
 
 /* ── PAGES ── */
 .page{display:none;}
 .page.active{display:block;}
 
-/* ── CARDS STATS ── */
+/* ── STAT CARDS ── */
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2rem;}
 .stat-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem 1.6rem;position:relative;overflow:hidden;transition:border-color .2s;}
 .stat-card:hover{border-color:var(--b3);}
@@ -139,31 +160,27 @@ img{display:block;max-width:100%;}
 .st-wait{background:var(--b1);border:1px solid var(--b2);color:var(--t3);}
 .st-err{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.2);color:var(--red);}
 .st-pause{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);color:var(--amber);}
-.progress-mini{width:80px;height:3px;background:var(--d5);border-radius:99px;overflow:hidden;margin-top:4px;}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;}
 
-/* ── GRID 2 COL ── */
+/* ── GRID ── */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:2rem;}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:2rem;}
 
-/* ── ACTIVITY FEED ── */
+/* ── FEED ── */
 .feed-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;}
 .feed-item{display:flex;align-items:flex-start;gap:12px;padding:.9rem 0;border-bottom:1px solid var(--b1);}
 .feed-item:last-child{border:none;}
 .feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
 .feed-dot.blue{background:var(--blue);box-shadow:0 0 8px rgba(26,111,255,.4);}
 .feed-dot.green{background:var(--green);box-shadow:0 0 8px rgba(0,255,136,.3);}
-.feed-dot.amber{background:var(--amber);box-shadow:0 0 8px rgba(255,184,0,.3);}
-.feed-dot.red{background:var(--red);}
+.feed-dot.amber{background:var(--amber);}
 .feed-text{font-size:.82rem;color:var(--t2);line-height:1.5;}
 .feed-text strong{color:var(--t1);font-weight:500;}
-.feed-time{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);flex-shrink:0;margin-top:3px;}
+.feed-time{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);margin-top:3px;}
 
-/* ── CHART BAR SIMPLE ── */
+/* ── CHART ── */
 .chart-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;}
 .chart-bar-group{display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:1.2rem;}
 .chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.chart-bar{width:100%;background:rgba(26,111,255,.15);border-radius:4px 4px 0 0;transition:background .2s;border:1px solid rgba(26,111,255,.2);position:relative;overflow:hidden;}
+.chart-bar{width:100%;background:rgba(26,111,255,.15);border-radius:4px 4px 0 0;border:1px solid rgba(26,111,255,.2);position:relative;overflow:hidden;transition:background .2s;}
 .chart-bar:hover{background:rgba(26,111,255,.28);}
 .chart-bar-inner{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--blue),rgba(26,111,255,.4));border-radius:4px 4px 0 0;}
 .chart-bar-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;}
@@ -198,10 +215,7 @@ img{display:block;max-width:100%;}
 .filter-chip:hover{border-color:var(--b3);color:var(--t2);}
 .filter-chip.active{background:rgba(26,111,255,.1);border-color:rgba(26,111,255,.3);color:var(--blue2);}
 .files-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem;}
-.file-card{
-  background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;
-  cursor:pointer;transition:all .2s;
-}
+.file-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;cursor:pointer;transition:all .2s;}
 .file-card:hover{background:var(--d3);border-color:var(--b3);transform:translateY(-2px);}
 .file-card-icon{width:44px;height:44px;border-radius:var(--r-lg);background:var(--d4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem;}
 .file-card-name{font-size:.84rem;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
@@ -227,12 +241,14 @@ img{display:block;max-width:100%;}
 .toggle.on::after{transform:translateX(18px);}
 .field{margin-bottom:1rem;}
 .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem;}
-.field input,.field select,.field textarea{width:100%;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.72rem 1rem;color:var(--t1);font-size:.88rem;outline:none;transition:border-color .2s,box-shadow .2s;font-family:'Outfit',sans-serif;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
+.field input,.field select{width:100%;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.72rem 1rem;color:var(--t1);font-size:.88rem;outline:none;transition:border-color .2s,box-shadow .2s;font-family:'Outfit',sans-serif;}
+.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
 .field input::placeholder{color:var(--t3);}
+.field input:disabled{opacity:.5;cursor:not-allowed;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .avatar-upload{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;}
-.avatar-lg{width:64px;height:64px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:600;color:#fff;border:2px solid var(--b3);}
+.avatar-lg{width:64px;height:64px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:600;color:#fff;border:2px solid var(--b3);overflow:hidden;flex-shrink:0;}
+.avatar-lg img{width:100%;height:100%;object-fit:cover;}
 
 /* ── ANALYTICS ── */
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2rem;}
@@ -251,20 +267,34 @@ img{display:block;max-width:100%;}
 .badge-amber{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);color:var(--amber);}
 .badge-red{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.25);color:var(--red);}
 
-/* ── EMPTY STATE ── */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center;}
-.empty-icon{font-size:3rem;margin-bottom:1.2rem;opacity:.4;}
-.empty-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--t2);margin-bottom:.5rem;}
-.empty-desc{font-size:.84rem;color:var(--t3);max-width:300px;line-height:1.7;}
+/* ── TRANSFER PROGRESS ── */
+.active-transfer{background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:.8rem;}
+.active-transfer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
+.at-name{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--t1);}
+.at-speed{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--blue2);}
+.prog-bar{height:4px;background:var(--d5);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .5s ease;}
+.at-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);}
+
+/* ── SYNC ── */
+.sync-status{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:2rem;margin-bottom:1.5rem;}
+.sync-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.sync-circle{position:relative;width:120px;height:120px;margin:0 auto 1.5rem;}
+.sync-circle svg{transform:rotate(-90deg);}
+.sync-circle .circle-bg{fill:none;stroke:var(--d5);stroke-width:8;}
+.sync-circle .circle-prog{fill:none;stroke:url(#grad-stroke);stroke-width:8;stroke-linecap:round;stroke-dasharray:339.29;stroke-dashoffset:84.82;}
+.sync-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.sync-val-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);line-height:1;}
+.sync-val-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
 
 /* ── NOTIFICATION PANEL ── */
 .notif-panel{
   position:fixed;top:calc(var(--nav-h) + 8px);right:1.5rem;z-index:500;
   background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);
   padding:.6rem;min-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.8);
-  animation:dropIn .2s ease both;display:none;
+  display:none;
 }
-.notif-panel.open{display:block;}
+.notif-panel.open{display:block;animation:dropIn .2s ease both;}
 @keyframes dropIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
 .notif-head{padding:.6rem .8rem .4rem;border-bottom:1px solid var(--b1);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
 .notif-head-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;}
@@ -275,24 +305,20 @@ img{display:block;max-width:100%;}
 .notif-item-text strong{color:var(--t1);}
 .notif-item-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:2px;}
 
+/* ── PLAN BADGE ── */
+.plan-badge-wrap{display:inline-flex;align-items:center;gap:6px;padding:.4rem 1rem;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-lg);margin-bottom:1.2rem;}
+.plan-badge-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
+.plan-badge-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--blue2);font-weight:500;}
+
 /* ── TOAST ── */
 #toast-wrap{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
-.toast{color:#fff;display:flex;align-items:center;gap:10px;padding:.85rem 1.2rem;border-radius:var(--r-lg);backdrop-filter:blur(20px);font-size:.875rem;pointer-events:all;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .3s ease;}
+.toast{color:#f5e6c8;display:flex;align-items:center;gap:10px;padding:.85rem 1.2rem;border-radius:var(--r-lg);backdrop-filter:blur(20px);font-size:.875rem;pointer-events:all;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .3s ease;}
 @keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
 @keyframes toastOut{to{opacity:0;transform:translateX(20px);}}
-
-/* ── CHART LINE ── */
-.chart-line-wrap{position:relative;height:160px;margin-top:1.2rem;}
-canvas.chart-canvas{width:100%;height:100%;}
-
-/* ── TRANSFER PROGRESS ── */
-.active-transfer{background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:.8rem;}
-.active-transfer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
-.at-name{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--t1);}
-.at-speed{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--blue2);}
-.prog-bar{height:4px;background:var(--d5);border-radius:99px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .5s ease;}
-.at-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);}
+.toast.success span:first-child{color:var(--green);}
+.toast.error span:first-child{color:var(--red);}
+.toast.info span:first-child{color:var(--blue2);}
+.toast.warning span:first-child{color:var(--amber);}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;}
@@ -300,67 +326,69 @@ canvas.chart-canvas{width:100%;height:100%;}
 ::-webkit-scrollbar-thumb{background:var(--d6);border-radius:99px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--d7);}
 
-/* SYNC PAGE */
-.sync-status{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:2rem;margin-bottom:1.5rem;}
-.sync-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
-.sync-circle{position:relative;width:120px;height:120px;margin:0 auto 1.5rem;}
-.sync-circle svg{transform:rotate(-90deg);}
-.sync-circle .circle-bg{fill:none;stroke:var(--d5);stroke-width:8;}
-.sync-circle .circle-prog{fill:none;stroke:url(#grad-stroke);stroke-width:8;stroke-linecap:round;stroke-dasharray:339.29;stroke-dashoffset:84.82;transition:stroke-dashoffset 1s ease;}
-.sync-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.sync-val-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);line-height:1;}
-.sync-val-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
+/* ── SPINNER ── */
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
+
+<!-- ── LOADING ── -->
+<div id="loading-screen">
+  <div class="loading-logo">CR<span>E</span>O</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-txt">Vérification de la session…</div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app-shell">
 <div class="app-shell">
 
   <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="sidebar-logo">CR<span>E</span>O<div class="logo-dot"></div></div>
+    <div class="sidebar-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></div>
 
     <div class="sidebar-section">
       <div class="sidebar-label">Principal</div>
-      <div class="nav-link active" onclick="showPage('transferts', this)"><span class="n-icon">⚡</span> Transferts</div>
-      <div class="nav-link" onclick="showPage('appareils', this)"><span class="n-icon">📱</span> Appareils</div>
-      <div class="nav-link" onclick="showPage('fichiers', this)"><span class="n-icon">📂</span> Fichiers</div>
-      <div class="nav-link" onclick="showPage('sync', this)"><span class="n-icon">🔄</span> Sync</div>
+      <div class="nav-link active" onclick="showPage('transferts',this)"><span class="n-icon">⚡</span> Transferts</div>
+      <div class="nav-link" onclick="showPage('appareils',this)"><span class="n-icon">📱</span> Appareils</div>
+      <div class="nav-link" onclick="showPage('fichiers',this)"><span class="n-icon">📂</span> Fichiers</div>
+      <div class="nav-link" onclick="showPage('sync',this)"><span class="n-icon">🔄</span> Sync</div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-label">Compte</div>
-      <div class="nav-link" onclick="showPage('parametres', this)"><span class="n-icon">⚙️</span> Paramètres</div>
-      <div class="nav-link" onclick="showPage('analytiques', this)"><span class="n-icon">📊</span> Analytiques</div>
+      <div class="nav-link" onclick="showPage('parametres',this)"><span class="n-icon">⚙️</span> Paramètres</div>
+      <div class="nav-link" onclick="showPage('analytiques',this)"><span class="n-icon">📊</span> Analytiques</div>
     </div>
 
     <div class="sidebar-footer">
-      <div class="user-card" onclick="showPage('parametres', document.querySelector('[onclick*=parametres]'))">
-        <div class="user-avatar">JM</div>
+      <div class="user-card" onclick="showPage('parametres',document.querySelector('[onclick*=parametres]'))">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
         <div class="user-info">
-          <div class="user-name">Jean Moreau</div>
-          <div class="user-email">j.moreau@creo.io</div>
+          <div class="user-name" id="sidebar-name">…</div>
+          <div class="user-email" id="sidebar-email">…</div>
         </div>
         <span style="color:var(--t3);font-size:.7rem;flex-shrink:0;">›</span>
       </div>
+      <div class="logout-link" id="logout-btn">⎋ &nbsp;Déconnexion</div>
     </div>
   </aside>
 
   <!-- MAIN -->
   <div class="main-area">
-    <!-- TOPBAR -->
     <header class="topbar">
       <div class="topbar-left">
         <span class="page-title" id="topbar-title">TRANSFERTS</span>
-        <span class="breadcrumb font-mono">// récents</span>
+        <span class="breadcrumb font-mono" id="topbar-breadcrumb">// récents</span>
       </div>
       <div class="topbar-right">
         <div class="topbar-search">
-          <span>🔍</span>
-          <input type="text" placeholder="Rechercher...">
+          <span style="color:var(--t3);">🔍</span>
+          <input type="text" placeholder="Rechercher…">
         </div>
         <div class="notif-btn" onclick="toggleNotif()" id="notif-btn">
-          🔔
-          <span class="notif-dot"></span>
+          🔔<span class="notif-dot"></span>
         </div>
         <button class="btn btn-primary btn-sm" id="action-btn" onclick="primaryAction()">
           <span>＋</span> Nouveau transfert
@@ -372,66 +400,27 @@ canvas.chart-canvas{width:100%;height:100%;}
     <div class="notif-panel" id="notif-panel">
       <div class="notif-head">
         <span class="notif-head-title">Notifications</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--blue2);cursor:pointer;">Tout lire</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--blue2);cursor:pointer;" onclick="document.getElementById('notif-panel').classList.remove('open');document.querySelector('.notif-dot')?.remove()">Tout lire</span>
       </div>
-      <div class="notif-item">
-        <div class="notif-item-dot" style="background:var(--green);box-shadow:0 0 8px rgba(0,255,136,.4);"></div>
-        <div>
-          <div class="notif-item-text"><strong>montage_final.mp4</strong> transféré avec succès vers PC Bureau</div>
-          <div class="notif-item-time">Il y a 3 min</div>
-        </div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-item-dot" style="background:var(--blue);"></div>
-        <div>
-          <div class="notif-item-text">MacBook Air <strong>connecté</strong> sur réseau LAN</div>
-          <div class="notif-item-time">Il y a 12 min</div>
-        </div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-item-dot" style="background:var(--amber);"></div>
-        <div>
-          <div class="notif-item-text">Espace disque <strong>NAS Home</strong> à 78% — pensez à nettoyer</div>
-          <div class="notif-item-time">Il y a 1h</div>
-        </div>
-      </div>
-      <div class="notif-item">
-        <div class="notif-item-dot" style="background:var(--blue2);"></div>
-        <div>
-          <div class="notif-item-text">Synchronisation terminée — <strong>1 247 fichiers</strong> mis à jour</div>
-          <div class="notif-item-time">Il y a 2h</div>
-        </div>
+      <div id="notif-list">
+        <div class="notif-item"><div class="notif-item-dot" style="background:var(--green);box-shadow:0 0 8px rgba(0,255,136,.4);"></div><div><div class="notif-item-text"><strong>montage_final.mp4</strong> transféré avec succès</div><div class="notif-item-time">Il y a 3 min</div></div></div>
+        <div class="notif-item"><div class="notif-item-dot" style="background:var(--blue);"></div><div><div class="notif-item-text">MacBook Air <strong>connecté</strong> sur réseau LAN</div><div class="notif-item-time">Il y a 12 min</div></div></div>
+        <div class="notif-item"><div class="notif-item-dot" style="background:var(--amber);"></div><div><div class="notif-item-text">Espace NAS Home à <strong>78%</strong> — pensez à nettoyer</div><div class="notif-item-time">Il y a 1h</div></div></div>
+        <div class="notif-item"><div class="notif-item-dot" style="background:var(--blue2);"></div><div><div class="notif-item-text">Sync terminée — <strong>1 247 fichiers</strong> mis à jour</div><div class="notif-item-time">Il y a 2h</div></div></div>
       </div>
     </div>
 
     <div class="page-content">
 
-      <!-- ══ PAGE : TRANSFERTS ══ -->
+      <!-- ══ TRANSFERTS ══ -->
       <div class="page active" id="page-transferts">
         <div class="stat-grid">
-          <div class="stat-card">
-            <div class="stat-label">Total transféré</div>
-            <div class="stat-val">142 <span class="unit">GB</span></div>
-            <div class="stat-sub"><span class="stat-delta up">↑ +38%</span> ce mois</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Appareils actifs</div>
-            <div class="stat-val">6 <span class="unit" style="color:var(--green);">●</span></div>
-            <div class="stat-sub">Sur 3 réseaux</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Vitesse moy.</div>
-            <div class="stat-val">1.2 <span class="unit">GB/s</span></div>
-            <div class="stat-sub">Réseau LAN</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Taux de succès</div>
-            <div class="stat-val">99.4 <span class="unit">%</span></div>
-            <div class="stat-sub"><span class="stat-delta up">↑ +0.2%</span> vs semaine dernière</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Total transféré</div><div class="stat-val">142 <span class="unit">GB</span></div><div class="stat-sub"><span class="stat-delta up">↑ +38%</span> ce mois</div></div>
+          <div class="stat-card"><div class="stat-label">Appareils actifs</div><div class="stat-val">4 <span class="unit" style="color:var(--green);">●</span></div><div class="stat-sub">Sur 3 réseaux</div></div>
+          <div class="stat-card"><div class="stat-label">Vitesse moy.</div><div class="stat-val">1.2 <span class="unit">GB/s</span></div><div class="stat-sub">Réseau LAN</div></div>
+          <div class="stat-card"><div class="stat-label">Taux de succès</div><div class="stat-val">99.4 <span class="unit">%</span></div><div class="stat-sub"><span class="stat-delta up">↑ +0.2%</span> vs semaine dernière</div></div>
         </div>
 
-        <!-- TRANSFERTS ACTIFS -->
         <div class="section-header" style="margin-bottom:1rem;">
           <div class="section-title">Transferts actifs <small>2 en cours</small></div>
         </div>
@@ -454,7 +443,6 @@ canvas.chart-canvas{width:100%;height:100%;}
           </div>
         </div>
 
-        <!-- HISTORIQUE -->
         <div class="section-header">
           <div class="section-title">Historique <small>Aujourd'hui</small></div>
           <div style="display:flex;gap:8px;">
@@ -464,312 +452,50 @@ canvas.chart-canvas{width:100%;height:100%;}
             <div class="filter-chip">Erreurs</div>
           </div>
         </div>
-
         <div class="data-table-wrap">
           <table class="data-table">
-            <thead>
-              <tr>
-                <th>Fichier</th>
-                <th>Taille</th>
-                <th>Destination</th>
-                <th>Vitesse</th>
-                <th>Statut</th>
-                <th>Heure</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Fichier</th><th>Taille</th><th>Destination</th><th>Vitesse</th><th>Statut</th><th>Heure</th></tr></thead>
             <tbody>
-              <tr>
-                <td><div class="td-name"><span class="td-icon">🎬</span><div><div class="td-fname">montage_final.mp4</div><div class="td-fmeta">H.264 · 4K UHD</div></div></div></td>
-                <td class="font-mono" style="font-size:.78rem;">4.2 GB</td>
-                <td style="color:var(--t2);">PC Bureau</td>
-                <td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.4 GB/s</td>
-                <td><span class="dash-status st-done">✓ Envoyé</span></td>
-                <td class="font-mono" style="font-size:.68rem;color:var(--t3);">14:32</td>
-              </tr>
-              <tr>
-                <td><div class="td-name"><span class="td-icon">📦</span><div><div class="td-fname">backup_janvier.zip</div><div class="td-fmeta">Archive compressée</div></div></div></td>
-                <td class="font-mono" style="font-size:.78rem;">12.8 GB</td>
-                <td style="color:var(--t2);">NAS Home</td>
-                <td class="font-mono" style="font-size:.72rem;color:var(--t3);">980 MB/s</td>
-                <td><span class="dash-status st-done">✓ Envoyé</span></td>
-                <td class="font-mono" style="font-size:.68rem;color:var(--t3);">13:14</td>
-              </tr>
-              <tr>
-                <td><div class="td-name"><span class="td-icon">📄</span><div><div class="td-fname">rapport_annuel.pdf</div><div class="td-fmeta">PDF · 142 pages</div></div></div></td>
-                <td class="font-mono" style="font-size:.78rem;">1.4 MB</td>
-                <td style="color:var(--t2);">PC Bureau</td>
-                <td class="font-mono" style="font-size:.72rem;color:var(--t3);">—</td>
-                <td><span class="dash-status st-wait">⏳ File d'attente</span></td>
-                <td class="font-mono" style="font-size:.68rem;color:var(--t3);">—</td>
-              </tr>
-              <tr>
-                <td><div class="td-name"><span class="td-icon">🖼️</span><div><div class="td-fname">photos_vacances.tar</div><div class="td-fmeta">RAW · 487 fichiers</div></div></div></td>
-                <td class="font-mono" style="font-size:.78rem;">23.1 GB</td>
-                <td style="color:var(--t2);">NAS Home</td>
-                <td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.2 GB/s</td>
-                <td><span class="dash-status st-done">✓ Envoyé</span></td>
-                <td class="font-mono" style="font-size:.68rem;color:var(--t3);">11:08</td>
-              </tr>
-              <tr>
-                <td><div class="td-name"><span class="td-icon">🎵</span><div><div class="td-fname">studio_session_03.aiff</div><div class="td-fmeta">Audio 24-bit · 96kHz</div></div></div></td>
-                <td class="font-mono" style="font-size:.78rem;">2.7 GB</td>
-                <td style="color:var(--t2);">MacBook Pro</td>
-                <td class="font-mono" style="font-size:.72rem;color:var(--t3);">—</td>
-                <td><span class="dash-status st-err">✕ Erreur réseau</span></td>
-                <td class="font-mono" style="font-size:.68rem;color:var(--t3);">09:51</td>
-              </tr>
-              <tr>
-                <td><div class="td-name"><span class="td-icon">📐</span><div><div class="td-fname">plans_architecture_v3.dwg</div><div class="td-fmeta">AutoCAD · 2024</div></div></div></td>
-                <td class="font-mono" style="font-size:.78rem;">890 MB</td>
-                <td style="color:var(--t2);">PC Bureau</td>
-                <td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.1 GB/s</td>
-                <td><span class="dash-status st-done">✓ Envoyé</span></td>
-                <td class="font-mono" style="font-size:.68rem;color:var(--t3);">09:22</td>
-              </tr>
+              <tr><td><div class="td-name"><span class="td-icon">🎬</span><div><div class="td-fname">montage_final.mp4</div><div class="td-fmeta">H.264 · 4K UHD</div></div></div></td><td class="font-mono" style="font-size:.78rem;">4.2 GB</td><td style="color:var(--t2);">PC Bureau</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.4 GB/s</td><td><span class="dash-status st-done">✓ Envoyé</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">14:32</td></tr>
+              <tr><td><div class="td-name"><span class="td-icon">📦</span><div><div class="td-fname">backup_janvier.zip</div><div class="td-fmeta">Archive compressée</div></div></div></td><td class="font-mono" style="font-size:.78rem;">12.8 GB</td><td style="color:var(--t2);">NAS Home</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">980 MB/s</td><td><span class="dash-status st-done">✓ Envoyé</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">13:14</td></tr>
+              <tr><td><div class="td-name"><span class="td-icon">📄</span><div><div class="td-fname">rapport_annuel.pdf</div><div class="td-fmeta">PDF · 142 pages</div></div></div></td><td class="font-mono" style="font-size:.78rem;">1.4 MB</td><td style="color:var(--t2);">PC Bureau</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">—</td><td><span class="dash-status st-wait">⏳ File d'attente</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">—</td></tr>
+              <tr><td><div class="td-name"><span class="td-icon">🖼️</span><div><div class="td-fname">photos_vacances.tar</div><div class="td-fmeta">RAW · 487 fichiers</div></div></div></td><td class="font-mono" style="font-size:.78rem;">23.1 GB</td><td style="color:var(--t2);">NAS Home</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.2 GB/s</td><td><span class="dash-status st-done">✓ Envoyé</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">11:08</td></tr>
+              <tr><td><div class="td-name"><span class="td-icon">🎵</span><div><div class="td-fname">studio_session_03.aiff</div><div class="td-fmeta">Audio 24-bit · 96kHz</div></div></div></td><td class="font-mono" style="font-size:.78rem;">2.7 GB</td><td style="color:var(--t2);">MacBook Pro</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">—</td><td><span class="dash-status st-err">✕ Erreur réseau</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">09:51</td></tr>
+              <tr><td><div class="td-name"><span class="td-icon">📐</span><div><div class="td-fname">plans_architecture_v3.dwg</div><div class="td-fmeta">AutoCAD · 2024</div></div></div></td><td class="font-mono" style="font-size:.78rem;">890 MB</td><td style="color:var(--t2);">PC Bureau</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.1 GB/s</td><td><span class="dash-status st-done">✓ Envoyé</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">09:22</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- ══ PAGE : APPAREILS ══ -->
+      <!-- ══ APPAREILS ══ -->
       <div class="page" id="page-appareils">
         <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
-          <div class="stat-card">
-            <div class="stat-label">Appareils connectés</div>
-            <div class="stat-val">4 <span class="unit" style="color:var(--green);">en ligne</span></div>
-            <div class="stat-sub">6 appareils au total</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Bande passante totale</div>
-            <div class="stat-val">3.4 <span class="unit">GB/s</span></div>
-            <div class="stat-sub">Agrégée · 3 réseaux</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Dernière sync</div>
-            <div class="stat-val" style="font-size:1.6rem;">14:32</div>
-            <div class="stat-sub"><span class="stat-delta up">✓</span> Tous synchronisés</div>
-          </div>
+          <div class="stat-card"><div class="stat-label">Appareils connectés</div><div class="stat-val">4 <span class="unit" style="color:var(--green);">en ligne</span></div><div class="stat-sub">6 appareils au total</div></div>
+          <div class="stat-card"><div class="stat-label">Bande passante totale</div><div class="stat-val">3.4 <span class="unit">GB/s</span></div><div class="stat-sub">Agrégée · 3 réseaux</div></div>
+          <div class="stat-card"><div class="stat-label">Dernière sync</div><div class="stat-val" style="font-size:1.6rem;">14:32</div><div class="stat-sub"><span class="stat-delta up">✓</span> Tous synchronisés</div></div>
         </div>
-
         <div class="section-header">
           <div class="section-title">Mes appareils</div>
-          <button class="btn btn-ghost btn-sm">＋ Ajouter un appareil</button>
+          <button class="btn btn-ghost btn-sm" onclick="toast('info','Bientôt disponible')">＋ Ajouter un appareil</button>
         </div>
-
         <div class="device-grid">
-          <div class="device-card online">
-            <div class="device-header">
-              <div class="device-icon-wrap">🖥️</div>
-              <div class="device-status-dot on"></div>
-            </div>
-            <div class="device-name">PC Bureau</div>
-            <div class="device-type">Windows 11 · x86_64</div>
-            <div class="device-stats">
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">1.4 GB/s</div>
-                <div class="device-stat-key">Vitesse max</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">LAN</div>
-                <div class="device-stat-key">Réseau</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">2.1 TB</div>
-                <div class="device-stat-key">Espace libre</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">v4.2.1</div>
-                <div class="device-stat-key">Version CREO</div>
-              </div>
-            </div>
-            <div class="device-actions">
-              <button class="btn btn-primary btn-sm">Transférer</button>
-              <button class="btn btn-ghost btn-sm">Détails</button>
-            </div>
-          </div>
-
-          <div class="device-card online">
-            <div class="device-header">
-              <div class="device-icon-wrap">💻</div>
-              <div class="device-status-dot on"></div>
-            </div>
-            <div class="device-name">MacBook Air M3</div>
-            <div class="device-type">macOS 15.2 · ARM64</div>
-            <div class="device-stats">
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">1.1 GB/s</div>
-                <div class="device-stat-key">Vitesse max</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">LAN</div>
-                <div class="device-stat-key">Réseau</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">412 GB</div>
-                <div class="device-stat-key">Espace libre</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">v4.2.1</div>
-                <div class="device-stat-key">Version CREO</div>
-              </div>
-            </div>
-            <div class="device-actions">
-              <button class="btn btn-primary btn-sm">Transférer</button>
-              <button class="btn btn-ghost btn-sm">Détails</button>
-            </div>
-          </div>
-
-          <div class="device-card online">
-            <div class="device-header">
-              <div class="device-icon-wrap">📦</div>
-              <div class="device-status-dot on"></div>
-            </div>
-            <div class="device-name">NAS Home</div>
-            <div class="device-type">Synology DS923+ · NAS</div>
-            <div class="device-stats">
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">980 MB/s</div>
-                <div class="device-stat-key">Vitesse max</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">LAN</div>
-                <div class="device-stat-key">Réseau</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--amber);">8.2 TB</div>
-                <div class="device-stat-key">Espace libre</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">v4.1.8</div>
-                <div class="device-stat-key">Version CREO</div>
-              </div>
-            </div>
-            <div class="device-actions">
-              <button class="btn btn-primary btn-sm">Transférer</button>
-              <button class="btn btn-ghost btn-sm">Détails</button>
-            </div>
-          </div>
-
-          <div class="device-card online">
-            <div class="device-header">
-              <div class="device-icon-wrap">📱</div>
-              <div class="device-status-dot on"></div>
-            </div>
-            <div class="device-name">iPhone 16 Pro</div>
-            <div class="device-type">iOS 18.3 · ARM64</div>
-            <div class="device-stats">
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">340 MB/s</div>
-                <div class="device-stat-key">Vitesse max</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">Wi-Fi</div>
-                <div class="device-stat-key">Réseau</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">156 GB</div>
-                <div class="device-stat-key">Espace libre</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono">v4.2.0</div>
-                <div class="device-stat-key">Version CREO</div>
-              </div>
-            </div>
-            <div class="device-actions">
-              <button class="btn btn-primary btn-sm">Transférer</button>
-              <button class="btn btn-ghost btn-sm">Détails</button>
-            </div>
-          </div>
-
-          <div class="device-card offline">
-            <div class="device-header">
-              <div class="device-icon-wrap" style="opacity:.5;">💻</div>
-              <div class="device-status-dot off"></div>
-            </div>
-            <div class="device-name" style="color:var(--t2);">MacBook Pro 16"</div>
-            <div class="device-type">macOS 14.6 · ARM64</div>
-            <div class="device-stats">
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">—</div>
-                <div class="device-stat-key">Hors ligne</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">—</div>
-                <div class="device-stat-key">Réseau</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">1.1 TB</div>
-                <div class="device-stat-key">Espace libre</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">v4.1.9</div>
-                <div class="device-stat-key">Version CREO</div>
-              </div>
-            </div>
-            <div class="device-actions">
-              <button class="btn btn-ghost btn-sm" style="opacity:.5;" disabled>Hors ligne</button>
-              <button class="btn btn-ghost btn-sm">Infos</button>
-            </div>
-          </div>
-
-          <div class="device-card offline">
-            <div class="device-header">
-              <div class="device-icon-wrap" style="opacity:.5;">🖥️</div>
-              <div class="device-status-dot off"></div>
-            </div>
-            <div class="device-name" style="color:var(--t2);">PC Travail</div>
-            <div class="device-type">Windows 10 · x86_64</div>
-            <div class="device-stats">
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">—</div>
-                <div class="device-stat-key">Hors ligne</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">—</div>
-                <div class="device-stat-key">Réseau</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--t3);">780 GB</div>
-                <div class="device-stat-key">Espace libre</div>
-              </div>
-              <div class="device-stat">
-                <div class="device-stat-val font-mono" style="color:var(--amber);">v4.0.2</div>
-                <div class="device-stat-key">Mise à jour dispo</div>
-              </div>
-            </div>
-            <div class="device-actions">
-              <button class="btn btn-ghost btn-sm" style="opacity:.5;" disabled>Hors ligne</button>
-              <button class="btn btn-ghost btn-sm">Infos</button>
-            </div>
-          </div>
+          <div class="device-card online"><div class="device-header"><div class="device-icon-wrap">🖥️</div><div class="device-status-dot on"></div></div><div class="device-name">PC Bureau</div><div class="device-type">Windows 11 · x86_64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono">1.4 GB/s</div><div class="device-stat-key">Vitesse max</div></div><div class="device-stat"><div class="device-stat-val font-mono">LAN</div><div class="device-stat-key">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono">2.1 TB</div><div class="device-stat-key">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono">v4.2.1</div><div class="device-stat-key">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-primary btn-sm" onclick="toast('info','Transfert lancé')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button></div></div>
+          <div class="device-card online"><div class="device-header"><div class="device-icon-wrap">💻</div><div class="device-status-dot on"></div></div><div class="device-name">MacBook Air M3</div><div class="device-type">macOS 15.2 · ARM64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono">1.1 GB/s</div><div class="device-stat-key">Vitesse max</div></div><div class="device-stat"><div class="device-stat-val font-mono">LAN</div><div class="device-stat-key">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono">412 GB</div><div class="device-stat-key">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono">v4.2.1</div><div class="device-stat-key">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-primary btn-sm" onclick="toast('info','Transfert lancé')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button></div></div>
+          <div class="device-card online"><div class="device-header"><div class="device-icon-wrap">📦</div><div class="device-status-dot on"></div></div><div class="device-name">NAS Home</div><div class="device-type">Synology DS923+ · NAS</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono">980 MB/s</div><div class="device-stat-key">Vitesse max</div></div><div class="device-stat"><div class="device-stat-val font-mono">LAN</div><div class="device-stat-key">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--amber);">8.2 TB</div><div class="device-stat-key">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono">v4.1.8</div><div class="device-stat-key">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-primary btn-sm" onclick="toast('info','Transfert lancé')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button></div></div>
+          <div class="device-card online"><div class="device-header"><div class="device-icon-wrap">📱</div><div class="device-status-dot on"></div></div><div class="device-name">iPhone 16 Pro</div><div class="device-type">iOS 18.3 · ARM64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono">340 MB/s</div><div class="device-stat-key">Vitesse max</div></div><div class="device-stat"><div class="device-stat-val font-mono">Wi-Fi</div><div class="device-stat-key">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono">156 GB</div><div class="device-stat-key">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono">v4.2.0</div><div class="device-stat-key">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-primary btn-sm" onclick="toast('info','Transfert lancé')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button></div></div>
+          <div class="device-card offline"><div class="device-header"><div class="device-icon-wrap" style="opacity:.5;">💻</div><div class="device-status-dot off"></div></div><div class="device-name" style="color:var(--t2);">MacBook Pro 16"</div><div class="device-type">macOS 14.6 · ARM64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">—</div><div class="device-stat-key">Hors ligne</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">—</div><div class="device-stat-key">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">1.1 TB</div><div class="device-stat-key">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">v4.1.9</div><div class="device-stat-key">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-ghost btn-sm" disabled style="opacity:.4;">Hors ligne</button><button class="btn btn-ghost btn-sm">Infos</button></div></div>
+          <div class="device-card offline"><div class="device-header"><div class="device-icon-wrap" style="opacity:.5;">🖥️</div><div class="device-status-dot off"></div></div><div class="device-name" style="color:var(--t2);">PC Travail</div><div class="device-type">Windows 10 · x86_64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">—</div><div class="device-stat-key">Hors ligne</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">—</div><div class="device-stat-key">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">780 GB</div><div class="device-stat-key">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--amber);">v4.0.2</div><div class="device-stat-key">Mise à jour dispo</div></div></div><div class="device-actions"><button class="btn btn-ghost btn-sm" disabled style="opacity:.4;">Hors ligne</button><button class="btn btn-ghost btn-sm">Infos</button></div></div>
         </div>
       </div>
 
-      <!-- ══ PAGE : FICHIERS ══ -->
+      <!-- ══ FICHIERS ══ -->
       <div class="page" id="page-fichiers">
-        <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
-          <div class="stat-card">
-            <div class="stat-label">Total fichiers</div>
-            <div class="stat-val">14 826</div>
-            <div class="stat-sub"><span class="stat-delta up">↑ +127</span> cette semaine</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Espace utilisé</div>
-            <div class="stat-val">2.8 <span class="unit">TB</span></div>
-            <div class="stat-sub">Sur 12 TB total</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Partagés</div>
-            <div class="stat-val">43</div>
-            <div class="stat-sub">Avec 3 appareils</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Dernière modif.</div>
-            <div class="stat-val" style="font-size:1.6rem;">14:32</div>
-            <div class="stat-sub">maquettes_v8.fig</div>
-          </div>
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-label">Total fichiers</div><div class="stat-val">14 826</div><div class="stat-sub"><span class="stat-delta up">↑ +127</span> cette semaine</div></div>
+          <div class="stat-card"><div class="stat-label">Espace utilisé</div><div class="stat-val">2.8 <span class="unit">TB</span></div><div class="stat-sub">Sur 12 TB total</div></div>
+          <div class="stat-card"><div class="stat-label">Partagés</div><div class="stat-val">43</div><div class="stat-sub">Avec 3 appareils</div></div>
+          <div class="stat-card"><div class="stat-label">Dernière modif.</div><div class="stat-val" style="font-size:1.6rem;">14:32</div><div class="stat-sub">maquettes_v8.fig</div></div>
         </div>
-
         <div class="files-toolbar">
           <div class="filter-chip active">Tous</div>
           <div class="filter-chip">📹 Vidéos</div>
@@ -781,176 +507,66 @@ canvas.chart-canvas{width:100%;height:100%;}
           <button class="btn btn-ghost btn-sm">☰ Liste</button>
           <button class="btn btn-ghost btn-sm">⊞ Grille</button>
         </div>
-
-        <div class="section-header">
-          <div class="section-title">Récents</div>
-        </div>
-
+        <div class="section-header"><div class="section-title">Récents</div></div>
         <div class="files-grid">
-          <div class="file-card">
-            <div class="file-card-icon">🎬</div>
-            <div class="file-card-name">montage_final.mp4</div>
-            <div class="file-card-meta">4.2 GB · Envoyé</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">🎨</div>
-            <div class="file-card-name">maquettes_v8.fig</div>
-            <div class="file-card-meta">210 MB · En cours</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">📦</div>
-            <div class="file-card-name">backup_janvier.zip</div>
-            <div class="file-card-meta">12.8 GB · Envoyé</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">📄</div>
-            <div class="file-card-name">rapport_annuel.pdf</div>
-            <div class="file-card-meta">1.4 MB · En attente</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">🖼️</div>
-            <div class="file-card-name">photos_vacances.tar</div>
-            <div class="file-card-meta">23.1 GB · Envoyé</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">🎵</div>
-            <div class="file-card-name">studio_session_03.aiff</div>
-            <div class="file-card-meta">2.7 GB · Erreur</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">📐</div>
-            <div class="file-card-name">plans_architecture_v3.dwg</div>
-            <div class="file-card-meta">890 MB · Envoyé</div>
-          </div>
-          <div class="file-card">
-            <div class="file-card-icon">🗂️</div>
-            <div class="file-card-name">assets_brand_2025.zip</div>
-            <div class="file-card-meta">5.4 GB · Envoyé</div>
-          </div>
+          <div class="file-card"><div class="file-card-icon">🎬</div><div class="file-card-name">montage_final.mp4</div><div class="file-card-meta">4.2 GB · Envoyé</div></div>
+          <div class="file-card"><div class="file-card-icon">🎨</div><div class="file-card-name">maquettes_v8.fig</div><div class="file-card-meta">210 MB · En cours</div></div>
+          <div class="file-card"><div class="file-card-icon">📦</div><div class="file-card-name">backup_janvier.zip</div><div class="file-card-meta">12.8 GB · Envoyé</div></div>
+          <div class="file-card"><div class="file-card-icon">📄</div><div class="file-card-name">rapport_annuel.pdf</div><div class="file-card-meta">1.4 MB · En attente</div></div>
+          <div class="file-card"><div class="file-card-icon">🖼️</div><div class="file-card-name">photos_vacances.tar</div><div class="file-card-meta">23.1 GB · Envoyé</div></div>
+          <div class="file-card"><div class="file-card-icon">🎵</div><div class="file-card-name">studio_session_03.aiff</div><div class="file-card-meta">2.7 GB · Erreur</div></div>
+          <div class="file-card"><div class="file-card-icon">📐</div><div class="file-card-name">plans_architecture_v3.dwg</div><div class="file-card-meta">890 MB · Envoyé</div></div>
+          <div class="file-card"><div class="file-card-icon">🗂️</div><div class="file-card-name">assets_brand_2025.zip</div><div class="file-card-meta">5.4 GB · Envoyé</div></div>
         </div>
-
-        <div class="section-header">
-          <div class="section-title">Tous les fichiers</div>
-        </div>
+        <div class="section-header"><div class="section-title">Tous les fichiers</div></div>
         <div class="data-table-wrap">
           <table class="data-table">
-            <thead>
-              <tr>
-                <th>Nom</th><th>Type</th><th>Taille</th><th>Modifié</th><th>Statut</th><th></th>
-              </tr>
-            </thead>
+            <thead><tr><th>Nom</th><th>Type</th><th>Taille</th><th>Modifié</th><th>Statut</th><th></th></tr></thead>
             <tbody>
               <tr><td><div class="td-name"><span class="td-icon">🎬</span><div><div class="td-fname">montage_final.mp4</div></div></div></td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">VIDEO</td><td class="font-mono" style="font-size:.78rem;">4.2 GB</td><td style="font-size:.78rem;color:var(--t3);">14 avr. 14:32</td><td><span class="dash-status st-done">✓ Sync</span></td><td><button class="btn btn-ghost btn-sm">···</button></td></tr>
               <tr><td><div class="td-name"><span class="td-icon">🎨</span><div><div class="td-fname">maquettes_v8.fig</div></div></div></td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">FIGMA</td><td class="font-mono" style="font-size:.78rem;">210 MB</td><td style="font-size:.78rem;color:var(--t3);">14 avr. 13:55</td><td><span class="dash-status st-send">↑ Envoi</span></td><td><button class="btn btn-ghost btn-sm">···</button></td></tr>
               <tr><td><div class="td-name"><span class="td-icon">📦</span><div><div class="td-fname">backup_janvier.zip</div></div></div></td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">ARCHIVE</td><td class="font-mono" style="font-size:.78rem;">12.8 GB</td><td style="font-size:.78rem;color:var(--t3);">14 avr. 13:14</td><td><span class="dash-status st-done">✓ Sync</span></td><td><button class="btn btn-ghost btn-sm">···</button></td></tr>
-              <tr><td><div class="td-name"><span class="td-icon">📄</span><div><div class="td-fname">rapport_annuel.pdf</div></div></div></td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">PDF</td><td class="font-mono" style="font-size:.78rem;">1.4 MB</td><td style="font-size:.78rem;color:var(--t3);">14 avr. 12:00</td><td><span class="dash-status st-wait">⏳ File</span></td><td><button class="btn btn-ghost btn-sm">···</button></td></tr>
               <tr><td><div class="td-name"><span class="td-icon">🎵</span><div><div class="td-fname">studio_session_03.aiff</div></div></div></td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">AUDIO</td><td class="font-mono" style="font-size:.78rem;">2.7 GB</td><td style="font-size:.78rem;color:var(--t3);">14 avr. 09:51</td><td><span class="dash-status st-err">✕ Erreur</span></td><td><button class="btn btn-ghost btn-sm">···</button></td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- ══ PAGE : SYNC ══ -->
+      <!-- ══ SYNC ══ -->
       <div class="page" id="page-sync">
         <div class="two-col">
           <div class="sync-status">
             <div class="sync-header">
-              <div>
-                <div class="section-title">État de synchronisation</div>
-                <div style="font-size:.8rem;color:var(--t3);margin-top:4px;">Dernière mise à jour il y a 3 min</div>
-              </div>
-              <span class="badge badge-green">● ACTIF</span>
+              <div><div class="section-title">État de synchronisation</div><div style="font-size:.8rem;color:var(--t3);margin-top:4px;">Dernière mise à jour il y a 3 min</div></div>
+              <button class="btn btn-primary btn-sm" onclick="toast('success','Synchronisation lancée')">▶ Lancer sync</button>
             </div>
             <div class="sync-circle">
-              <svg width="120" height="120" viewBox="0 0 120 120">
-                <defs>
-                  <linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#1a6fff"/>
-                    <stop offset="100%" style="stop-color:#00d4ff"/>
-                  </linearGradient>
-                </defs>
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <defs><linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#1a6fff"/><stop offset="100%" style="stop-color:#00d4ff"/></linearGradient></defs>
                 <circle class="circle-bg" cx="60" cy="60" r="54"/>
                 <circle class="circle-prog" cx="60" cy="60" r="54"/>
               </svg>
-              <div class="sync-val">
-                <span class="sync-val-num">75%</span>
-                <span class="sync-val-label">Synced</span>
-              </div>
+              <div class="sync-val"><div class="sync-val-num">75%</div><div class="sync-val-label">Sync</div></div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-              <div class="stat-card" style="text-align:center;padding:1rem;">
-                <div class="stat-val" style="font-size:1.4rem;">1 247</div>
-                <div class="stat-label">Fichiers sync</div>
-              </div>
-              <div class="stat-card" style="text-align:center;padding:1rem;">
-                <div class="stat-val" style="font-size:1.4rem;color:var(--amber);">312</div>
-                <div class="stat-label">En attente</div>
-              </div>
-              <div class="stat-card" style="text-align:center;padding:1rem;">
-                <div class="stat-val" style="font-size:1.4rem;color:var(--red);">4</div>
-                <div class="stat-label">Conflits</div>
-              </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--green);">1 247</div><div style="font-size:.75rem;color:var(--t3);">Fichiers sync</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--amber);">312</div><div style="font-size:.75rem;color:var(--t3);">En attente</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--red);">4</div><div style="font-size:.75rem;color:var(--t3);">Conflits</div></div>
             </div>
           </div>
-
           <div class="feed-card">
-            <div class="section-header" style="margin-bottom:0;">
-              <div class="section-title">Journal de sync</div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot green"></div>
-              <div style="flex:1;">
-                <div class="feed-text"><strong>backup_janvier.zip</strong> synchronisé sur NAS Home</div>
-                <div class="feed-time">14:32</div>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot blue"></div>
-              <div style="flex:1;">
-                <div class="feed-text">Démarrage de la sync <strong>maquettes_v8.fig</strong></div>
-                <div class="feed-time">14:28</div>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot green"></div>
-              <div style="flex:1;">
-                <div class="feed-text"><strong>rapport_annuel.pdf</strong> ajouté à la file</div>
-                <div class="feed-time">14:20</div>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot" style="background:var(--red);"></div>
-              <div style="flex:1;">
-                <div class="feed-text">Conflit détecté — <strong>studio_session_03.aiff</strong></div>
-                <div class="feed-time">13:51</div>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot amber"></div>
-              <div style="flex:1;">
-                <div class="feed-text">NAS Home — espace disque à <strong>78%</strong></div>
-                <div class="feed-time">12:10</div>
-              </div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot green"></div>
-              <div style="flex:1;">
-                <div class="feed-text"><strong>1 247 fichiers</strong> synchronisés avec succès</div>
-                <div class="feed-time">11:02</div>
-              </div>
-            </div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Journal de sync</div></div>
+            <div class="feed-item"><div class="feed-dot green"></div><div style="flex:1;"><div class="feed-text"><strong>backup_janvier.zip</strong> synchronisé sur NAS Home</div><div class="feed-time">14:32</div></div></div>
+            <div class="feed-item"><div class="feed-dot blue"></div><div style="flex:1;"><div class="feed-text">Démarrage sync <strong>maquettes_v8.fig</strong></div><div class="feed-time">14:28</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--red);"></div><div style="flex:1;"><div class="feed-text">Conflit détecté — <strong>studio_session_03.aiff</strong></div><div class="feed-time">13:51</div></div></div>
+            <div class="feed-item"><div class="feed-dot amber"></div><div style="flex:1;"><div class="feed-text">NAS Home — espace disque à <strong>78%</strong></div><div class="feed-time">12:10</div></div></div>
+            <div class="feed-item"><div class="feed-dot green"></div><div style="flex:1;"><div class="feed-text"><strong>1 247 fichiers</strong> synchronisés avec succès</div><div class="feed-time">11:02</div></div></div>
           </div>
         </div>
-
-        <div class="section-header">
-          <div class="section-title">Règles de synchronisation</div>
-          <button class="btn btn-ghost btn-sm">＋ Ajouter une règle</button>
-        </div>
+        <div class="section-header"><div class="section-title">Règles de synchronisation</div><button class="btn btn-ghost btn-sm" onclick="toast('info','Nouvelle règle')">＋ Ajouter</button></div>
         <div class="data-table-wrap">
           <table class="data-table">
-            <thead>
-              <tr><th>Nom de la règle</th><th>Source</th><th>Destination</th><th>Fréquence</th><th>État</th><th></th></tr>
-            </thead>
+            <thead><tr><th>Nom de la règle</th><th>Source</th><th>Destination</th><th>Fréquence</th><th>État</th><th></th></tr></thead>
             <tbody>
               <tr><td style="color:var(--t1);font-weight:500;">Sync Photos</td><td style="color:var(--t2);">iPhone 16 Pro</td><td style="color:var(--t2);">NAS Home</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">Temps réel</td><td><span class="dash-status st-done">● Actif</span></td><td><button class="btn btn-ghost btn-sm">Éditer</button></td></tr>
               <tr><td style="color:var(--t1);font-weight:500;">Backup Docs</td><td style="color:var(--t2);">PC Bureau</td><td style="color:var(--t2);">NAS Home</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">Toutes les heures</td><td><span class="dash-status st-done">● Actif</span></td><td><button class="btn btn-ghost btn-sm">Éditer</button></td></tr>
@@ -961,92 +577,74 @@ canvas.chart-canvas{width:100%;height:100%;}
         </div>
       </div>
 
-      <!-- ══ PAGE : PARAMETRES ══ -->
+      <!-- ══ PARAMÈTRES ══ -->
       <div class="page" id="page-parametres">
         <div class="settings-layout">
           <div class="settings-nav">
-            <div class="settings-nav-item active" onclick="switchSettingsTab(this, 'st-profil')"><span>👤</span> Profil</div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this, 'st-securite')"><span>🔐</span> Sécurité</div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this, 'st-reseau')"><span>📡</span> Réseau</div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this, 'st-notifications')"><span>🔔</span> Notifications</div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this, 'st-stockage')"><span>💾</span> Stockage</div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this, 'st-avance')"><span>⚙️</span> Avancé</div>
+            <div class="settings-nav-item active" onclick="switchSettingsTab(this,'st-profil')"><span>👤</span> Profil</div>
+            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-securite')"><span>🔐</span> Sécurité</div>
+            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-reseau')"><span>📡</span> Réseau</div>
+            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-notifications')"><span>🔔</span> Notifications</div>
+            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-stockage')"><span>💾</span> Stockage</div>
+            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-avance')"><span>⚙️</span> Avancé</div>
           </div>
-
           <div>
+
             <!-- PROFIL -->
             <div class="settings-panel" id="st-profil">
               <div class="settings-group">
                 <div class="settings-group-title">Informations personnelles</div>
                 <div class="avatar-upload">
-                  <div class="avatar-lg">JM</div>
+                  <div class="avatar-lg" id="settings-avatar">?</div>
                   <div>
-                    <button class="btn btn-ghost btn-sm">Changer l'avatar</button>
+                    <button class="btn btn-ghost btn-sm" onclick="toast('info','Bientôt disponible')">Changer l'avatar</button>
                     <div style="font-size:.75rem;color:var(--t3);margin-top:5px;">PNG, JPG · max 2 MB</div>
                   </div>
                 </div>
-                <div class="field-row">
-                  <div class="field"><label>Prénom</label><input type="text" value="Jean"></div>
-                  <div class="field"><label>Nom</label><input type="text" value="Moreau"></div>
+
+                <!-- Code client + forfait en lecture seule -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem;">
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.75rem 1rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Code client</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--blue2);" id="settings-client-code">—</div>
+                  </div>
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.75rem 1rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">Forfait</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--green);" id="settings-plan">—</div>
+                  </div>
                 </div>
-                <div class="field"><label>Email</label><input type="email" value="j.moreau@creo.io"></div>
-                <div class="field"><label>Nom d'affichage</label><input type="text" value="jmoreau"></div>
+
+                <div class="field-row">
+                  <div class="field"><label>Prénom</label><input type="text" id="settings-firstname" placeholder="Prénom"></div>
+                  <div class="field"><label>Nom</label><input type="text" id="settings-lastname" placeholder="Nom"></div>
+                </div>
+                <div class="field"><label>Email</label><input type="email" id="settings-email" disabled></div>
+                <div class="field"><label>Nom d'utilisateur</label><input type="text" id="settings-username" placeholder="@pseudo"></div>
               </div>
               <div class="settings-group">
                 <div class="settings-group-title">Préférences</div>
-                <div class="field"><label>Langue</label>
-                  <select><option>Français</option><option>English</option><option>Español</option></select>
-                </div>
-                <div class="field"><label>Fuseau horaire</label>
-                  <select><option>Europe/Paris (UTC+1)</option><option>UTC</option></select>
-                </div>
+                <div class="field"><label>Langue</label><select><option>Français</option><option>English</option><option>Español</option></select></div>
+                <div class="field"><label>Fuseau horaire</label><select><option>Europe/Paris (UTC+1)</option><option>UTC</option></select></div>
               </div>
-              <button class="btn btn-primary" onclick="showToast('success','Profil sauvegardé avec succès')">Enregistrer les modifications</button>
+              <button class="btn btn-primary" id="save-profile-btn" onclick="saveProfile()">Enregistrer les modifications</button>
             </div>
 
             <!-- SECURITE -->
             <div class="settings-panel" id="st-securite" style="display:none;">
               <div class="settings-group">
-                <div class="settings-group-title">Mot de passe</div>
-                <div class="field"><label>Mot de passe actuel</label><input type="password" placeholder="••••••••••"></div>
-                <div class="field-row">
-                  <div class="field"><label>Nouveau mot de passe</label><input type="password" placeholder="••••••••••"></div>
-                  <div class="field"><label>Confirmer</label><input type="password" placeholder="••••••••••"></div>
-                </div>
-                <button class="btn btn-primary" onclick="showToast('success','Mot de passe modifié')">Changer le mot de passe</button>
+                <div class="settings-group-title">Changer le mot de passe</div>
+                <div class="field"><label>Nouveau mot de passe</label><input type="password" id="new-password" placeholder="••••••••"></div>
+                <div class="field"><label>Confirmer</label><input type="password" id="confirm-password" placeholder="••••••••"></div>
+                <button class="btn btn-primary" onclick="changePassword()">Changer le mot de passe</button>
               </div>
               <div class="settings-group">
                 <div class="settings-group-title">Authentification à deux facteurs</div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Activer la 2FA</div>
-                    <div class="settings-row-desc">Protégez votre compte avec une app d'authentification</div>
-                  </div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Codes de récupération</div>
-                    <div class="settings-row-desc">8 codes générés · utilisés : 0</div>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" onclick="showToast('info','Codes régénérés')">Régénérer</button>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Activer la 2FA</div><div class="settings-row-desc">Protégez votre compte avec une app d'authentification</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Codes de récupération</div><div class="settings-row-desc">8 codes générés · utilisés : 0</div></div><button class="btn btn-ghost btn-sm" onclick="toast('info','Codes régénérés')">Régénérer</button></div>
               </div>
               <div class="settings-group">
-                <div class="settings-group-title">Sessions actives</div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">PC Bureau · Windows 11 <span class="badge badge-green" style="margin-left:8px;">Actuel</span></div>
-                    <div class="settings-row-desc">Paris · il y a 3 min</div>
-                  </div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">MacBook Air M3 · macOS</div>
-                    <div class="settings-row-desc">Paris · il y a 2h</div>
-                  </div>
-                  <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,59,92,.2);" onclick="showToast('info','Session révoquée')">Révoquer</button>
-                </div>
+                <div class="settings-group-title">Session actuelle</div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" id="session-label">Session active <span class="badge badge-green" style="margin-left:8px;">Actuel</span></div><div class="settings-row-desc" id="session-email">—</div></div></div>
               </div>
             </div>
 
@@ -1054,44 +652,14 @@ canvas.chart-canvas{width:100%;height:100%;}
             <div class="settings-panel" id="st-reseau" style="display:none;">
               <div class="settings-group">
                 <div class="settings-group-title">Réseau local (LAN)</div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Découverte automatique</div>
-                    <div class="settings-row-desc">Détecter les appareils CREO sur le même réseau</div>
-                  </div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Port d'écoute</div>
-                    <div class="settings-row-desc">Port utilisé pour les connexions entrantes</div>
-                  </div>
-                  <input type="text" value="42000" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.4rem .8rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;width:90px;text-align:center;">
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Chiffrement des transferts</div>
-                    <div class="settings-row-desc">AES-256 pour tous les transferts réseau</div>
-                  </div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Découverte automatique</div><div class="settings-row-desc">Détecter les appareils CREO sur le même réseau</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Port d'écoute</div><div class="settings-row-desc">Port utilisé pour les connexions entrantes</div></div><input type="text" value="42000" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.4rem .8rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;width:90px;text-align:center;"></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Chiffrement AES-256</div><div class="settings-row-desc">Pour tous les transferts réseau</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
               </div>
               <div class="settings-group">
                 <div class="settings-group-title">Limitations de bande passante</div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Limiter la vitesse d'envoi</div>
-                    <div class="settings-row-desc">Illimité actuellement</div>
-                  </div>
-                  <div class="toggle" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label">Limiter la vitesse de réception</div>
-                    <div class="settings-row-desc">Illimité actuellement</div>
-                  </div>
-                  <div class="toggle" onclick="this.classList.toggle('on')"></div>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Limiter la vitesse d'envoi</div><div class="settings-row-desc">Illimité actuellement</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Limiter la vitesse de réception</div><div class="settings-row-desc">Illimité actuellement</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
               </div>
             </div>
 
@@ -1099,29 +667,14 @@ canvas.chart-canvas{width:100%;height:100%;}
             <div class="settings-panel" id="st-notifications" style="display:none;">
               <div class="settings-group">
                 <div class="settings-group-title">Transferts</div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Transfert terminé</div><div class="settings-row-desc">Notifier à la fin de chaque transfert</div></div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Erreur de transfert</div><div class="settings-row-desc">Notifier en cas d'échec</div></div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Transfert démarré</div><div class="settings-row-desc">Notifier au début d'un transfert</div></div>
-                  <div class="toggle" onclick="this.classList.toggle('on')"></div>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Transfert terminé</div><div class="settings-row-desc">Notifier à la fin de chaque transfert</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Erreur de transfert</div><div class="settings-row-desc">Notifier en cas d'échec</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Transfert démarré</div><div class="settings-row-desc">Notifier au début d'un transfert</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
               </div>
               <div class="settings-group">
                 <div class="settings-group-title">Appareils & Réseau</div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Appareil connecté</div><div class="settings-row-desc">Quand un nouvel appareil rejoint le réseau</div></div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Alerte espace disque</div><div class="settings-row-desc">Quand l'espace disponible est inférieur à 10%</div></div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Appareil connecté</div><div class="settings-row-desc">Quand un nouvel appareil rejoint le réseau</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Alerte espace disque</div><div class="settings-row-desc">Quand l'espace disponible est inférieur à 10%</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
               </div>
             </div>
 
@@ -1129,23 +682,9 @@ canvas.chart-canvas{width:100%;height:100%;}
             <div class="settings-panel" id="st-stockage" style="display:none;">
               <div class="settings-group">
                 <div class="settings-group-title">Utilisation du stockage</div>
-                <div style="margin-bottom:1.5rem;">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:.5rem;">
-                    <span style="font-size:.84rem;color:var(--t2);">2.8 TB utilisés</span>
-                    <span class="font-mono" style="font-size:.72rem;color:var(--t3);">sur 12 TB</span>
-                  </div>
-                  <div style="height:6px;background:var(--d5);border-radius:99px;overflow:hidden;">
-                    <div style="width:23%;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;"></div>
-                  </div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Nettoyage automatique</div><div class="settings-row-desc">Supprimer les transferts de plus de 30 jours</div></div>
-                  <div class="toggle" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Cache local</div><div class="settings-row-desc">284 MB utilisés</div></div>
-                  <button class="btn btn-ghost btn-sm" onclick="showToast('success','Cache vidé')">Vider</button>
-                </div>
+                <div style="margin-bottom:1.5rem;"><div style="display:flex;justify-content:space-between;margin-bottom:.5rem;"><span style="font-size:.84rem;color:var(--t2);">2.8 TB utilisés</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">sur 12 TB</span></div><div style="height:6px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:23%;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;"></div></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Nettoyage automatique</div><div class="settings-row-desc">Supprimer les transferts de plus de 30 jours</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Cache local</div><div class="settings-row-desc">284 MB utilisés</div></div><button class="btn btn-ghost btn-sm" onclick="toast('success','Cache vidé')">Vider</button></div>
               </div>
             </div>
 
@@ -1153,115 +692,46 @@ canvas.chart-canvas{width:100%;height:100%;}
             <div class="settings-panel" id="st-avance" style="display:none;">
               <div class="settings-group">
                 <div class="settings-group-title">Performances</div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Transferts parallèles</div><div class="settings-row-desc">Nombre de transferts simultanés (actuellement : 4)</div></div>
-                  <input type="number" value="4" min="1" max="16" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.4rem .8rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;width:70px;text-align:center;">
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Compression à la volée</div><div class="settings-row-desc">Compresser les données avant transfert</div></div>
-                  <div class="toggle on" onclick="this.classList.toggle('on')"></div>
-                </div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label">Mode debug</div><div class="settings-row-desc">Activer les logs détaillés</div></div>
-                  <div class="toggle" onclick="this.classList.toggle('on')"></div>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Transferts parallèles</div><div class="settings-row-desc">Nombre de transferts simultanés (actuellement : 4)</div></div><input type="number" value="4" min="1" max="16" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.4rem .8rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;width:70px;text-align:center;"></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Compression à la volée</div><div class="settings-row-desc">Compresser les données avant transfert</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label">Mode debug</div><div class="settings-row-desc">Activer les logs détaillés</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
               </div>
               <div class="settings-group">
                 <div class="settings-group-title">Zone de danger</div>
-                <div class="settings-row">
-                  <div class="settings-row-info"><div class="settings-row-label" style="color:var(--red);">Réinitialiser l'application</div><div class="settings-row-desc">Effacer toutes les données et paramètres locaux</div></div>
-                  <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,59,92,.2);" onclick="showToast('error','Action annulée — confirmation requise')">Réinitialiser</button>
-                </div>
+                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" style="color:var(--red);">Se déconnecter de partout</div><div class="settings-row-desc">Révoquer toutes les sessions actives</div></div><button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,59,92,.2);" onclick="doSignOut()">Déconnecter</button></div>
               </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      <!-- ══ PAGE : ANALYTIQUES ══ -->
+      <!-- ══ ANALYTIQUES ══ -->
       <div class="page" id="page-analytiques">
         <div class="kpi-row">
-          <div class="kpi-card">
-            <div class="kpi-label">Données transférées</div>
-            <div class="kpi-val">2.8 <span style="font-size:1.2rem;color:var(--blue2);">TB</span></div>
-            <div class="kpi-trend up">↑ +18% vs mois dernier</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Transferts réussis</div>
-            <div class="kpi-val">1 847</div>
-            <div class="kpi-trend up">↑ +127 ce mois</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Vitesse pic</div>
-            <div class="kpi-val">1.9 <span style="font-size:1.2rem;color:var(--blue2);">GB/s</span></div>
-            <div class="kpi-trend up">↑ Nouveau record</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Taux d'erreur</div>
-            <div class="kpi-val">0.6 <span style="font-size:1.2rem;color:var(--blue2);">%</span></div>
-            <div class="kpi-trend down">↓ -0.2% vs semaine dernière</div>
-          </div>
+          <div class="kpi-card"><div class="kpi-label">Données transférées</div><div class="kpi-val">2.8 <span style="font-size:1.2rem;color:var(--blue2);">TB</span></div><div class="kpi-trend up">↑ +18% vs mois dernier</div></div>
+          <div class="kpi-card"><div class="kpi-label">Transferts réussis</div><div class="kpi-val">1 847</div><div class="kpi-trend up">↑ +127 ce mois</div></div>
+          <div class="kpi-card"><div class="kpi-label">Vitesse pic</div><div class="kpi-val">1.9 <span style="font-size:1.2rem;color:var(--blue2);">GB/s</span></div><div class="kpi-trend up">↑ Nouveau record</div></div>
+          <div class="kpi-card"><div class="kpi-label">Taux d'erreur</div><div class="kpi-val">0.6 <span style="font-size:1.2rem;color:var(--blue2);">%</span></div><div class="kpi-trend down">↓ -0.2% vs semaine dernière</div></div>
         </div>
-
         <div class="two-col">
           <div class="chart-card">
-            <div class="section-header" style="margin-bottom:0;">
-              <div class="section-title">Transferts par jour <small>7 derniers jours</small></div>
-            </div>
-            <div class="chart-bar-group" id="chart-daily">
-              <!-- injected by JS -->
-            </div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Transferts par jour <small>7 derniers jours</small></div></div>
+            <div class="chart-bar-group" id="chart-daily"></div>
           </div>
-
           <div class="chart-card">
-            <div class="section-header" style="margin-bottom:0;">
-              <div class="section-title">Répartition par type</div>
-            </div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Répartition par type</div></div>
             <div style="margin-top:1.2rem;display:flex;flex-direction:column;gap:10px;">
-              <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;">
-                  <span style="color:var(--t2);">🎬 Vidéos</span>
-                  <span class="font-mono" style="font-size:.72rem;color:var(--t3);">1.2 TB · 43%</span>
-                </div>
-                <div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:43%;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;"></div></div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;">
-                  <span style="color:var(--t2);">📦 Archives</span>
-                  <span class="font-mono" style="font-size:.72rem;color:var(--t3);">840 GB · 30%</span>
-                </div>
-                <div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:30%;height:100%;background:linear-gradient(90deg,var(--purple),var(--blue2));border-radius:99px;"></div></div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;">
-                  <span style="color:var(--t2);">🖼️ Images</span>
-                  <span class="font-mono" style="font-size:.72rem;color:var(--t3);">448 GB · 16%</span>
-                </div>
-                <div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:16%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:99px;"></div></div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;">
-                  <span style="color:var(--t2);">🎨 Design</span>
-                  <span class="font-mono" style="font-size:.72rem;color:var(--t3);">224 GB · 8%</span>
-                </div>
-                <div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:8%;height:100%;background:linear-gradient(90deg,var(--amber),var(--red));border-radius:99px;"></div></div>
-              </div>
-              <div>
-                <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;">
-                  <span style="color:var(--t2);">📄 Autres</span>
-                  <span class="font-mono" style="font-size:.72rem;color:var(--t3);">84 GB · 3%</span>
-                </div>
-                <div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:3%;height:100%;background:var(--t3);border-radius:99px;"></div></div>
-              </div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">🎬 Vidéos</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">1.2 TB · 43%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:43%;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">📦 Archives</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">840 GB · 30%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:30%;height:100%;background:linear-gradient(90deg,var(--purple),var(--blue2));border-radius:99px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">🖼️ Images</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">448 GB · 16%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:16%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:99px;"></div></div></div>
+              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">🎨 Design</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">224 GB · 8%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:8%;height:100%;background:linear-gradient(90deg,var(--amber),var(--red));border-radius:99px;"></div></div></div>
             </div>
           </div>
         </div>
-
         <div class="two-col">
           <div class="chart-card">
-            <div class="section-header" style="margin-bottom:0;">
-              <div class="section-title">Appareils les plus actifs</div>
-            </div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Appareils les plus actifs</div></div>
             <div style="margin-top:1.2rem;">
               <table class="data-table">
                 <thead><tr><th>Appareil</th><th>Envoyé</th><th>Reçu</th><th>Total</th></tr></thead>
@@ -1274,27 +744,12 @@ canvas.chart-canvas{width:100%;height:100%;}
               </table>
             </div>
           </div>
-
           <div class="feed-card">
-            <div class="section-header" style="margin-bottom:0;">
-              <div class="section-title">Activité récente</div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot green"></div>
-              <div style="flex:1;"><div class="feed-text"><strong>montage_final.mp4</strong> → PC Bureau · 4.2 GB</div><div class="feed-time">Aujourd'hui 14:32</div></div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot blue"></div>
-              <div style="flex:1;"><div class="feed-text"><strong>maquettes_v8.fig</strong> → MacBook Air · En cours</div><div class="feed-time">Aujourd'hui 14:28</div></div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot green"></div>
-              <div style="flex:1;"><div class="feed-text"><strong>backup_janvier.zip</strong> → NAS Home · 12.8 GB</div><div class="feed-time">Aujourd'hui 13:14</div></div>
-            </div>
-            <div class="feed-item">
-              <div class="feed-dot" style="background:var(--red);"></div>
-              <div style="flex:1;"><div class="feed-text"><strong>studio_session_03.aiff</strong> · Erreur réseau</div><div class="feed-time">Aujourd'hui 09:51</div></div>
-            </div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Activité récente</div></div>
+            <div class="feed-item"><div class="feed-dot green"></div><div style="flex:1;"><div class="feed-text"><strong>montage_final.mp4</strong> → PC Bureau · 4.2 GB</div><div class="feed-time">Aujourd'hui 14:32</div></div></div>
+            <div class="feed-item"><div class="feed-dot blue"></div><div style="flex:1;"><div class="feed-text"><strong>maquettes_v8.fig</strong> → MacBook Air · En cours</div><div class="feed-time">Aujourd'hui 14:28</div></div></div>
+            <div class="feed-item"><div class="feed-dot green"></div><div style="flex:1;"><div class="feed-text"><strong>backup_janvier.zip</strong> → NAS Home · 12.8 GB</div><div class="feed-time">Aujourd'hui 13:14</div></div></div>
+            <div class="feed-item"><div class="feed-dot" style="background:var(--red);"></div><div style="flex:1;"><div class="feed-text"><strong>studio_session_03.aiff</strong> · Erreur réseau</div><div class="feed-time">Aujourd'hui 09:51</div></div></div>
           </div>
         </div>
       </div>
@@ -1302,90 +757,241 @@ canvas.chart-canvas{width:100%;height:100%;}
     </div><!-- end page-content -->
   </div><!-- end main-area -->
 </div><!-- end app-shell -->
+</div><!-- end #app-shell -->
 
-<!-- TOAST -->
 <div id="toast-wrap"></div>
 
-<script>
-// ── NAV ──
-const pages = {
-  transferts: { title: 'TRANSFERTS', breadcrumb: '// récents', btn: '＋ Nouveau transfert' },
-  appareils:  { title: 'APPAREILS',  breadcrumb: '// mes appareils', btn: '＋ Ajouter' },
-  fichiers:   { title: 'FICHIERS',   breadcrumb: '// tous', btn: '＋ Importer' },
-  sync:       { title: 'SYNC',       breadcrumb: '// état', btn: '▶ Lancer sync' },
-  parametres: { title: 'PARAMÈTRES', breadcrumb: '// compte', btn: '✓ Sauvegarder' },
-  analytiques:{ title: 'ANALYTIQUES', breadcrumb: '// ce mois', btn: '↓ Exporter' },
+<!-- ── Utilise le même app.js que tout le reste du projet ── -->
+<script type="module">
+import { supabase, getSession, signOut, getDisplayName, getInitials, getAvatar } from '../login/app.js';
+
+let currentSession = null;
+let currentProfile = null;
+
+/* ═══════════════════════════════════════
+   INIT — Protection de route
+═══════════════════════════════════════ */
+async function init() {
+  const session = await getSession();
+  if (!session) {
+    window.location.href = '../login/login.html';
+    return;
+  }
+  currentSession = session;
+
+  // Charger le profil Supabase
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', session.user.id)
+    .single();
+
+  // Si profil incomplet → compléter d'abord
+  if (!profile?.username || !profile?.client_code || !profile?.type) {
+    const { generateTempCode } = await import('../login/app.js');
+    const code = await generateTempCode(session.user.id);
+    window.location.href = '../login/complete-profile.html?code=' + code;
+    return;
+  }
+
+  currentProfile = profile;
+  renderUI();
+  hideLoading();
+  startProgressAnims();
+  buildCharts();
+}
+
+/* ═══════════════════════════════════════
+   RENDER UI avec les vraies données
+═══════════════════════════════════════ */
+function renderUI() {
+  const s = currentSession;
+  const p = currentProfile;
+
+  // ── SIDEBAR ──
+  const avatarEl = document.getElementById('sidebar-avatar');
+  const av = getAvatar(s);
+  if (av) {
+    avatarEl.innerHTML = `<img src="${av}" alt="">`;
+  } else if (p.avatar_url) {
+    avatarEl.innerHTML = `<img src="${p.avatar_url}" alt="">`;
+  } else {
+    avatarEl.textContent = getInitials(s);
+  }
+
+  const displayName = p.first_name && p.last_name
+    ? `${p.first_name} ${p.last_name}`
+    : (p.username ? `@${p.username}` : getDisplayName(s));
+
+  document.getElementById('sidebar-name').textContent = displayName;
+  document.getElementById('sidebar-email').textContent = p.email || s.user.email;
+
+  // ── SETTINGS PROFIL ──
+  const settingsAv = document.getElementById('settings-avatar');
+  if (av) settingsAv.innerHTML = `<img src="${av}" alt="">`;
+  else if (p.avatar_url) settingsAv.innerHTML = `<img src="${p.avatar_url}" alt="">`;
+  else settingsAv.textContent = getInitials(s);
+
+  document.getElementById('settings-firstname').value = p.first_name || '';
+  document.getElementById('settings-lastname').value  = p.last_name  || '';
+  document.getElementById('settings-email').value     = p.email || s.user.email;
+  document.getElementById('settings-username').value  = p.username   || '';
+  document.getElementById('settings-client-code').textContent = p.client_code || '—';
+  document.getElementById('settings-plan').textContent = p.type
+    ? p.type.charAt(0).toUpperCase() + p.type.slice(1)
+    : '—';
+
+  // ── SESSION INFO ──
+  document.getElementById('session-email').textContent = s.user.email;
+}
+
+/* ═══════════════════════════════════════
+   SAVE PROFILE
+═══════════════════════════════════════ */
+window.saveProfile = async function() {
+  const btn = document.getElementById('save-profile-btn');
+  const first_name = document.getElementById('settings-firstname').value.trim();
+  const last_name  = document.getElementById('settings-lastname').value.trim();
+  const username   = document.getElementById('settings-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+
+  if (!first_name || !last_name) return toast('warning','Prénom et nom requis.');
+  if (username && username.length < 3) return toast('warning','Pseudo trop court (min 3 car.)');
+
+  btn.classList.add('btn-loading');
+
+  const { error } = await supabase.from('profiles').upsert({
+    id: currentSession.user.id,
+    email: currentSession.user.email,
+    first_name,
+    last_name,
+    username: username || currentProfile.username
+  }, { onConflict: 'id' });
+
+  btn.classList.remove('btn-loading');
+
+  if (error) {
+    if (error.message.includes('username')) return toast('error','Pseudo déjà pris.');
+    return toast('error', error.message);
+  }
+
+  currentProfile = { ...currentProfile, first_name, last_name, username: username || currentProfile.username };
+  renderUI();
+  toast('success','Profil sauvegardé !');
 };
 
-function showPage(id, el) {
+/* ═══════════════════════════════════════
+   CHANGE PASSWORD
+═══════════════════════════════════════ */
+window.changePassword = async function() {
+  const np = document.getElementById('new-password').value;
+  const cp = document.getElementById('confirm-password').value;
+  if (!np || np.length < 6) return toast('warning','Mot de passe trop court (min 6 car.)');
+  if (np !== cp) return toast('error','Les mots de passe ne correspondent pas.');
+  const { error } = await supabase.auth.updateUser({ password: np });
+  if (error) return toast('error', error.message);
+  toast('success','Mot de passe modifié !');
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
+};
+
+/* ═══════════════════════════════════════
+   SIGN OUT
+═══════════════════════════════════════ */
+window.doSignOut = async function() {
+  await signOut(); // redirige vers login/login.html via app.js
+};
+document.getElementById('logout-btn').addEventListener('click', window.doSignOut);
+
+/* ═══════════════════════════════════════
+   NAV
+═══════════════════════════════════════ */
+const PAGE_CONFIG = {
+  transferts: { title:'TRANSFERTS', breadcrumb:'// récents',      btn:'＋ Nouveau transfert' },
+  appareils:  { title:'APPAREILS',  breadcrumb:'// mes appareils', btn:'＋ Ajouter' },
+  fichiers:   { title:'FICHIERS',   breadcrumb:'// tous',          btn:'＋ Importer' },
+  sync:       { title:'SYNC',       breadcrumb:'// état',          btn:'▶ Lancer sync' },
+  parametres: { title:'PARAMÈTRES', breadcrumb:'// compte',        btn:'✓ Sauvegarder' },
+  analytiques:{ title:'ANALYTIQUES',breadcrumb:'// ce mois',       btn:'↓ Exporter' },
+};
+
+window.showPage = function(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   el.classList.add('active');
-  const cfg = pages[id];
-  document.getElementById('topbar-title').textContent = cfg.title;
-  document.querySelector('.breadcrumb').textContent = cfg.breadcrumb;
-  document.getElementById('action-btn').innerHTML = '<span></span>' + cfg.btn;
-  // close notif
+  const cfg = PAGE_CONFIG[id];
+  document.getElementById('topbar-title').textContent      = cfg.title;
+  document.getElementById('topbar-breadcrumb').textContent = cfg.breadcrumb;
+  document.getElementById('action-btn').innerHTML          = `<span></span>${cfg.btn}`;
   document.getElementById('notif-panel').classList.remove('open');
-}
+  if (id === 'parametres') renderUI();
+};
 
-function primaryAction() {
-  const titles = { TRANSFERTS:'Nouveau transfert ouvert', APPAREILS:'Ajout d\'appareil', FICHIERS:'Import de fichier', SYNC:'Synchronisation lancée', 'PARAMÈTRES':'Modifications sauvegardées', ANALYTIQUES:'Export téléchargé' };
+window.primaryAction = function() {
   const t = document.getElementById('topbar-title').textContent;
-  showToast('success', titles[t] || 'Action effectuée');
-}
+  if (t === 'PARAMÈTRES') { saveProfile(); return; }
+  if (t === 'SYNC') { toast('success','Synchronisation lancée'); return; }
+  const msgs = { TRANSFERTS:'Nouveau transfert ouvert', APPAREILS:'Ajout d\'appareil', FICHIERS:'Import de fichier', ANALYTIQUES:'Export téléchargé' };
+  toast('success', msgs[t] || 'Action effectuée');
+};
 
-// ── NOTIF ──
-function toggleNotif() {
-  const p = document.getElementById('notif-panel');
-  p.classList.toggle('open');
-  document.getElementById('notif-btn').querySelector('.notif-dot')?.remove();
-}
+/* ═══════════════════════════════════════
+   NOTIF
+═══════════════════════════════════════ */
+window.toggleNotif = function() {
+  document.getElementById('notif-panel').classList.toggle('open');
+  document.querySelector('.notif-dot')?.remove();
+};
 document.addEventListener('click', e => {
   const p = document.getElementById('notif-panel');
-  if (!p.contains(e.target) && e.target.id !== 'notif-btn' && !e.target.closest('#notif-btn')) {
-    p.classList.remove('open');
-  }
+  if (p && !p.contains(e.target) && !e.target.closest('#notif-btn')) p.classList.remove('open');
 });
 
-// ── SETTINGS TABS ──
-function switchSettingsTab(el, panelId) {
+/* ═══════════════════════════════════════
+   SETTINGS TABS
+═══════════════════════════════════════ */
+window.switchSettingsTab = function(el, panelId) {
   document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
   document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
   el.classList.add('active');
   document.getElementById(panelId).style.display = 'block';
-}
+};
 
-// ── FILTER CHIPS ──
+/* ═══════════════════════════════════════
+   FILTER CHIPS
+═══════════════════════════════════════ */
 document.querySelectorAll('.filter-chip').forEach(chip => {
   chip.addEventListener('click', function() {
-    this.closest('.files-toolbar, .section-header > div')?.querySelectorAll('.filter-chip')
-      .forEach(c => c.classList.remove('active'));
+    this.parentElement?.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     this.classList.add('active');
   });
 });
 
-// ── TOAST ──
-function showToast(type, msg) {
+/* ═══════════════════════════════════════
+   TOAST (réutilise le même design que login/style.css)
+═══════════════════════════════════════ */
+window.toast = function(type, msg) {
   const wrap = document.getElementById('toast-wrap');
-  const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
-  const colors = { success: 'rgba(0,255,136,.15)', error: 'rgba(255,59,92,.15)', info: 'rgba(26,111,255,.15)', warning: 'rgba(255,184,0,.15)' };
-  const borders = { success: '1px solid rgba(0,255,136,.25)', error: '1px solid rgba(255,59,92,.25)', info: '1px solid rgba(26,111,255,.25)', warning: '1px solid rgba(255,184,0,.25)' };
-  const t = document.createElement('div');
-  t.className = 'toast ' + type;
-  t.style.cssText = `background:${colors[type]};border:${borders[type]};`;
-  t.innerHTML = `<span style="font-size:1rem;">${icons[type]}</span><span>${msg}</span>`;
-  wrap.appendChild(t);
-  setTimeout(() => { t.style.animation = 'toastOut .3s ease forwards'; setTimeout(() => t.remove(), 300); }, 3500);
-}
+  const c  = { info:'#1a6fff', success:'#00ff88', error:'#ff3b5c', warning:'#ffb800' }[type] || '#1a6fff';
+  const ic = { info:'ℹ', success:'✓', error:'✕', warning:'⚠' }[type];
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.style.cssText = `background:${c}14;border:1px solid ${c}55;`;
+  el.innerHTML = `<span style="color:${c};font-size:1rem;">${ic}</span> ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.animation = 'toastOut .3s ease forwards'; setTimeout(() => el.remove(), 300); }, 4200);
+};
 
-// ── CHART BARS ──
-const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
-const vals = [62, 85, 44, 91, 73, 38, 55];
-const max = Math.max(...vals);
-const container = document.getElementById('chart-daily');
-if (container) {
+/* ═══════════════════════════════════════
+   CHARTS
+═══════════════════════════════════════ */
+function buildCharts() {
+  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+  const vals = [62, 85, 44, 91, 73, 38, 55];
+  const max  = Math.max(...vals);
+  const container = document.getElementById('chart-daily');
+  if (!container) return;
+  container.innerHTML = '';
   days.forEach((d, i) => {
     const pct = (vals[i] / max) * 100;
     container.innerHTML += `
@@ -1398,25 +1004,48 @@ if (container) {
   });
 }
 
-// ── LIVE PROGRESS ──
-let p1 = 63, p2 = 28;
-setInterval(() => {
-  p1 = Math.min(100, p1 + Math.random() * 1.8);
-  p2 = Math.min(100, p2 + Math.random() * 1.2);
-  const prog1 = document.getElementById('prog-1');
-  const prog2 = document.getElementById('prog-2');
-  if (prog1) prog1.style.width = p1 + '%';
-  if (prog2) prog2.style.width = p2 + '%';
-  const pct1 = document.getElementById('pct-1');
-  const pct2 = document.getElementById('pct-2');
-  if (pct1) pct1.textContent = Math.round(p1) + '% · ' + (210 * p1/100).toFixed(0) + ' MB / 210 MB';
-  if (pct2) pct2.textContent = Math.round(p2) + '% · ' + (12.8 * p2/100).toFixed(1) + ' GB / 12.8 GB';
-  const spd1 = document.getElementById('speed-1');
-  const spd2 = document.getElementById('speed-2');
-  if (spd1) spd1.textContent = '↑ ' + (700 + Math.random()*400).toFixed(0) + ' MB/s';
-  if (spd2) spd2.textContent = '↑ ' + (0.9 + Math.random()*.4).toFixed(2) + ' GB/s';
-  if (p1 >= 100) { const at = document.getElementById('prog-1')?.closest('.active-transfer'); if (at) { at.querySelector('.badge').className='badge badge-green'; at.querySelector('.badge').textContent='TERMINÉ'; at.style.background='rgba(0,255,136,.04)'; at.style.borderColor='rgba(0,255,136,.15)'; } }
-}, 800);
+/* ═══════════════════════════════════════
+   LIVE TRANSFER PROGRESS
+═══════════════════════════════════════ */
+function startProgressAnims() {
+  let p1 = 63, p2 = 28;
+  setInterval(() => {
+    p1 = Math.min(100, p1 + Math.random() * 1.8);
+    p2 = Math.min(100, p2 + Math.random() * 1.2);
+    const el1 = document.getElementById('prog-1');
+    const el2 = document.getElementById('prog-2');
+    if (el1) el1.style.width = p1 + '%';
+    if (el2) el2.style.width = p2 + '%';
+    const pct1 = document.getElementById('pct-1');
+    const pct2 = document.getElementById('pct-2');
+    if (pct1) pct1.textContent = Math.round(p1) + '% · ' + (210 * p1/100).toFixed(0) + ' MB / 210 MB';
+    if (pct2) pct2.textContent = Math.round(p2) + '% · ' + (12.8 * p2/100).toFixed(1) + ' GB / 12.8 GB';
+    const spd1 = document.getElementById('speed-1');
+    const spd2 = document.getElementById('speed-2');
+    if (spd1) spd1.textContent = '↑ ' + (700 + Math.random()*400).toFixed(0) + ' MB/s';
+    if (spd2) spd2.textContent = '↑ ' + (0.9 + Math.random()*.4).toFixed(2) + ' GB/s';
+    if (p1 >= 100) {
+      const at = el1?.closest('.active-transfer');
+      if (at?.querySelector('.badge')) {
+        at.querySelector('.badge').className = 'badge badge-green';
+        at.querySelector('.badge').textContent = 'TERMINÉ';
+        at.style.background = 'rgba(0,255,136,.04)';
+        at.style.borderColor = 'rgba(0,255,136,.15)';
+      }
+    }
+  }, 800);
+}
+
+/* ═══════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════ */
+function hideLoading() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
+}
+
+// ── START ──
+init();
 </script>
 </body>
 </html>
