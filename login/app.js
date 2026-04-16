@@ -26,7 +26,7 @@ export async function requireAuth() {
 }
 export async function redirectIfAuth() {
   const s = await getSession();
-  if (s) window.location.href = '../menu/index.html';
+  if (s) window.location.href = '../client/client.html';
 }
 export async function signOut() {
   await supabase.auth.signOut();
