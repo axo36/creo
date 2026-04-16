@@ -73,15 +73,16 @@
 </footer>
 
 <script type="module">
-  import { buildNav, initReveal, pageFade, toast } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, pageFade, toast } from './app.js';
   pageFade();
+  redirectIfAuth();
   buildNav('download');
   initReveal();
 
   ['dl-mac','dl-win','dl-linux','dl-mobile'].forEach(id => {
     document.getElementById(id)?.addEventListener('click', () => {
       toast('Créez un compte pour télécharger Creo.', 'info');
-      setTimeout(() => window.location.href = 'login.html', 1200);
+      setTimeout(() => window.location.href = '../login/login.html', 1200);
     });
   });
 </script>
