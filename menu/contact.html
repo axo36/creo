@@ -95,9 +95,10 @@
 </script>
 
 <script type="module">
-  import { buildNav, initReveal, pageFade, toast, setLoading } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, pageFade, toast, setLoading } from './app.js';
 
   pageFade();
+  redirectIfAuth();
   buildNav('contact');
   initReveal();
 
