@@ -157,7 +157,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
     const code = await generateTempCode(session.user.id);
     window.location.href = 'complete-profile.html?code=' + code;
   } else {
-    window.location.href = '/client/client.html';
+    window.location.href = '../client/client.html';
   }
 });
 
