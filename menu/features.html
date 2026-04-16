@@ -100,8 +100,9 @@
 </footer>
 
 <script type="module">
-  import { buildNav, initReveal, initFeatureGlow, pageFade } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, initFeatureGlow, pageFade } from './app.js';
   pageFade();
+  redirectIfAuth();
   buildNav('features');
   initReveal();
   initFeatureGlow();
