@@ -30,7 +30,7 @@ export async function redirectIfAuth() {
 }
 export async function signOut() {
   await supabase.auth.signOut();
-  window.location.href = '../login/login.html';
+  window.location.href = '/creo/login/login.html';
 }
 export function getDisplayName(s) {
   if (!s) return 'Invité';
