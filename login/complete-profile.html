@@ -236,7 +236,7 @@ async function init() {
     .from("profiles").select("*").eq("id", currentUser.id).single();
 
   if (profile?.username && profile?.client_code && profile?.type) {
-    window.location.href = "/client/client.html"; return;
+    window.location.href = "../client/client.html"; return;
   }
 
   // Pré-remplir
@@ -324,7 +324,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
 
   setLoading(btn, false);
   toast("Bienvenue sur Creo ! 🚀", "success");
-  setTimeout(() => { window.location.href = "/creo/client/client.html"; }, 1100);
+  setTimeout(() => { window.location.href = "../client/client.html"; }, 1100);
 });
 
 init();
