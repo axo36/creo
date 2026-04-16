@@ -6,17 +6,17 @@
 <title>CREO — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --black:#000; --d1:#040404; --d2:#080808; --d3:#0e0e0e;
-  --d4:#141414; --d5:#1c1c1c; --d6:#242424; --d7:#2e2e2e;
-  --b1:rgba(255,255,255,.04); --b2:rgba(255,255,255,.08);
-  --b3:rgba(255,255,255,.14); --b4:rgba(255,255,255,.22);
-  --white:#fff; --t1:#e2e2e2; --t2:#7a7a7a; --t3:#3a3a3a;
-  --blue:#1a6fff; --blue2:#4d8fff; --blue3:#80b3ff;
-  --cyan:#00d4ff; --green:#00ff88; --red:#ff3b5c;
-  --amber:#ffb800; --purple:#8b5cf6;
+:root{
+  --black:#000;--d1:#040404;--d2:#080808;--d3:#0e0e0e;
+  --d4:#141414;--d5:#1c1c1c;--d6:#242424;--d7:#2e2e2e;
+  --b1:rgba(255,255,255,.04);--b2:rgba(255,255,255,.08);
+  --b3:rgba(255,255,255,.14);--b4:rgba(255,255,255,.22);
+  --white:#fff;--t1:#e2e2e2;--t2:#7a7a7a;--t3:#3a3a3a;
+  --blue:#1a6fff;--blue2:#4d8fff;--blue3:#80b3ff;
+  --cyan:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --amber:#ffb800;--purple:#8b5cf6;
   --blue-glow:rgba(26,111,255,.22);
-  --r:8px; --r-lg:14px; --r-xl:20px; --r-2xl:28px; --nav-h:66px;
+  --r:8px;--r-lg:14px;--r-xl:20px;--r-2xl:28px;--nav-h:66px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -27,9 +27,8 @@ button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;background:non
 input,textarea,select{font-family:'Outfit',sans-serif;}
 img{display:block;max-width:100%;}
 .font-mono{font-family:'JetBrains Mono',monospace;}
-.font-display{font-family:'Bebas Neue',sans-serif;letter-spacing:.03em;}
 
-/* ── LOADING ── */
+/* LOADING */
 #loading-screen{position:fixed;inset:0;background:var(--black);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:1.2rem;}
 .loading-logo{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--white);letter-spacing:.1em;}
 .loading-logo span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
@@ -38,21 +37,21 @@ img{display:block;max-width:100%;}
 @keyframes loadAnim{0%{width:0;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0;margin-left:100%;}}
 .loading-txt{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 #app-shell{display:none;}
 .app-shell{display:flex;min-height:100vh;}
 .sidebar{width:230px;flex-shrink:0;background:var(--d2);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;padding:1.6rem 1rem 2rem;}
 .main-area{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
-.topbar{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;background:rgba(4,4,4,.8);backdrop-filter:blur(30px);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:90;}
+.topbar{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(4,4,4,.9);backdrop-filter:blur(30px);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:90;}
 .page-content{flex:1;padding:2.5rem;overflow-y:auto;}
 
-/* ── SIDEBAR ── */
+/* SIDEBAR */
 .sidebar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);letter-spacing:.1em;padding:0 .5rem;margin-bottom:2.5rem;display:flex;align-items:center;gap:2px;}
 .sidebar-logo .logo-e{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .sidebar-logo .logo-dot{width:5px;height:5px;background:var(--blue);border-radius:50%;margin-left:3px;box-shadow:0 0 8px var(--blue);align-self:flex-end;margin-bottom:8px;}
 .sidebar-section{margin-bottom:2rem;}
 .sidebar-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;padding:0 .5rem;margin-bottom:.6rem;}
-.nav-link{display:flex;align-items:center;gap:10px;padding:.58rem .7rem;border-radius:var(--r);font-size:.84rem;color:var(--t2);margin-bottom:2px;cursor:pointer;transition:all .2s;border:1px solid transparent;}
+.nav-link{display:flex;align-items:center;gap:10px;padding:.58rem .7rem;border-radius:var(--r);font-size:.84rem;color:var(--t2);margin-bottom:2px;cursor:pointer;transition:all .2s;border:1px solid transparent;user-select:none;}
 .nav-link:hover{background:var(--d4);color:var(--t1);}
 .nav-link.active{background:rgba(26,111,255,.1);color:var(--blue2);border-color:rgba(26,111,255,.2);}
 .nav-link .n-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center;}
@@ -63,40 +62,48 @@ img{display:block;max-width:100%;}
 .user-avatar img{width:100%;height:100%;object-fit:cover;}
 .user-info{flex:1;min-width:0;}
 .user-name{font-size:.82rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.user-email{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .logout-link{display:flex;align-items:center;gap:8px;padding:.48rem .7rem;margin-top:4px;border-radius:var(--r);font-size:.8rem;color:var(--t3);cursor:pointer;transition:all .2s;}
 .logout-link:hover{background:rgba(255,59,92,.08);color:var(--red);}
 
-/* ── TOPBAR ── */
+/* TOPBAR */
 .topbar-left{display:flex;align-items:center;gap:1rem;}
 .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--white);}
 .breadcrumb{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t3);}
-.topbar-right{display:flex;align-items:center;gap:12px;}
-.topbar-search{display:flex;align-items:center;gap:8px;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.45rem 1rem;width:220px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-search{display:flex;align-items:center;gap:8px;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.42rem .9rem;width:200px;transition:all .2s;}
+.topbar-search:focus-within{border-color:rgba(26,111,255,.4);width:260px;box-shadow:0 0 0 3px rgba(26,111,255,.07);}
 .topbar-search input{background:none;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t1);width:100%;}
 .topbar-search input::placeholder{color:var(--t3);}
-.notif-btn{width:36px;height:36px;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--t2);cursor:pointer;transition:all .2s;position:relative;}
-.notif-btn:hover{background:var(--d5);color:var(--t1);}
-.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;background:var(--blue);border-radius:50%;border:1.5px solid var(--d4);box-shadow:0 0 6px var(--blue);}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:.6rem 1.4rem;border-radius:var(--r-lg);font-size:.84rem;font-weight:500;transition:all .22s;white-space:nowrap;cursor:pointer;}
-.btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 24px var(--blue-glow),inset 0 1px 0 rgba(255,255,255,.12);}
-.btn-primary:hover{background:#2a7aff;box-shadow:0 0 44px rgba(26,111,255,.5);transform:translateY(-1px);}
+.icon-btn{width:34px;height:34px;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--t2);cursor:pointer;transition:all .2s;position:relative;flex-shrink:0;}
+.icon-btn:hover{background:var(--d5);color:var(--t1);}
+.icon-btn .badge-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--blue);border-radius:50%;border:1.5px solid var(--d4);box-shadow:0 0 6px var(--blue);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:.55rem 1.2rem;border-radius:var(--r-lg);font-size:.82rem;font-weight:500;transition:all .22s;white-space:nowrap;cursor:pointer;}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 20px var(--blue-glow),inset 0 1px 0 rgba(255,255,255,.12);}
+.btn-primary:hover{background:#2a7aff;box-shadow:0 0 40px rgba(26,111,255,.5);transform:translateY(-1px);}
 .btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--b3);}
 .btn-ghost:hover{border-color:var(--b4);color:var(--t1);background:var(--d4);}
-.btn-sm{padding:.4rem .9rem;font-size:.78rem;border-radius:var(--r);}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(255,59,92,.25);}
+.btn-danger:hover{background:rgba(255,59,92,.1);}
+.btn-sm{padding:.36rem .8rem;font-size:.76rem;border-radius:var(--r);}
+.btn-xs{padding:.25rem .6rem;font-size:.7rem;border-radius:6px;}
 .btn-loading{opacity:.6;pointer-events:none;}
+.btn-loading::after{content:'';width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-left:6px;}
 
-/* ── PAGES ── */
-.page{display:none;}
+/* PAGES */
+.page{display:none;animation:fadeIn .2s ease;}
 .page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 
-/* ── STAT CARDS ── */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2rem;}
+/* STAT CARDS */
+.stat-grid{display:grid;gap:14px;margin-bottom:2rem;}
+.stat-grid-4{grid-template-columns:repeat(4,1fr);}
+.stat-grid-3{grid-template-columns:repeat(3,1fr);}
 .stat-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem 1.6rem;position:relative;overflow:hidden;transition:border-color .2s;}
 .stat-card:hover{border-color:var(--b3);}
 .stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity .3s;}
 .stat-card:hover::after{opacity:1;}
-.stat-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;}
 .stat-val{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--white);line-height:1;}
 .stat-val .unit{font-size:1rem;color:var(--blue2);font-family:'Outfit',sans-serif;font-weight:500;}
 .stat-sub{font-size:.72rem;color:var(--t3);margin-top:4px;}
@@ -104,215 +111,232 @@ img{display:block;max-width:100%;}
 .stat-delta.up{color:var(--green);}
 .stat-delta.down{color:var(--red);}
 
-/* ── SECTION HEADER ── */
+/* SECTION HEADER */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.05em;color:var(--white);}
-.section-title small{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);font-weight:300;letter-spacing:.1em;text-transform:uppercase;margin-left:.5rem;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;color:var(--white);}
+.section-title small{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);font-weight:300;letter-spacing:.1em;text-transform:uppercase;margin-left:.5rem;}
 
-/* ── TABLE ── */
-.data-table{width:100%;border-collapse:collapse;}
+/* TABLE */
 .data-table-wrap{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);overflow:hidden;}
-.data-table thead th{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:.7rem 1.2rem;text-align:left;border-bottom:1px solid var(--b1);background:var(--d3);}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table thead th{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:.65rem 1.1rem;text-align:left;border-bottom:1px solid var(--b1);background:var(--d3);cursor:pointer;user-select:none;transition:color .15s;}
+.data-table thead th:hover{color:var(--t2);}
+.data-table thead th.sort-asc::after{content:' ↑';}
+.data-table thead th.sort-desc::after{content:' ↓';}
 .data-table tbody tr{border-bottom:1px solid var(--b1);transition:background .15s;cursor:pointer;}
 .data-table tbody tr:last-child{border:none;}
 .data-table tbody tr:hover{background:var(--d3);}
-.data-table td{padding:.85rem 1.2rem;font-size:.83rem;color:var(--t2);vertical-align:middle;}
+.data-table td{padding:.8rem 1.1rem;font-size:.82rem;color:var(--t2);vertical-align:middle;}
 .td-name{display:flex;align-items:center;gap:10px;}
-.td-icon{font-size:1.1rem;flex-shrink:0;}
+.td-icon{font-size:1.05rem;flex-shrink:0;}
 .td-fname{color:var(--t1);font-weight:400;}
-.td-fmeta{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);margin-top:1px;}
-.dash-status{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.62rem;padding:3px 10px;border-radius:99px;}
+.td-fmeta{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);margin-top:1px;}
+.table-empty{text-align:center;padding:3rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+
+/* STATUS BADGES */
+.status{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:3px 9px;border-radius:99px;}
 .st-done{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);}
 .st-send{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
 .st-wait{background:var(--b1);border:1px solid var(--b2);color:var(--t3);}
 .st-err{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.2);color:var(--red);}
 .st-pause{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);color:var(--amber);}
 
-/* ── GRID ── */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:2rem;}
-
-/* ── FEED ── */
-.feed-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;}
-.feed-item{display:flex;align-items:flex-start;gap:12px;padding:.9rem 0;border-bottom:1px solid var(--b1);}
-.feed-item:last-child{border:none;}
-.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-.feed-dot.blue{background:var(--blue);box-shadow:0 0 8px rgba(26,111,255,.4);}
-.feed-dot.green{background:var(--green);box-shadow:0 0 8px rgba(0,255,136,.3);}
-.feed-dot.amber{background:var(--amber);}
-.feed-text{font-size:.82rem;color:var(--t2);line-height:1.5;}
-.feed-text strong{color:var(--t1);font-weight:500;}
-.feed-time{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);margin-top:3px;}
-
-/* ── CHART ── */
-.chart-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;}
-.chart-bar-group{display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:1.2rem;}
-.chart-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
-.chart-bar{width:100%;background:rgba(26,111,255,.15);border-radius:4px 4px 0 0;border:1px solid rgba(26,111,255,.2);position:relative;overflow:hidden;transition:background .2s;}
-.chart-bar:hover{background:rgba(26,111,255,.28);}
-.chart-bar-inner{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--blue),rgba(26,111,255,.4));border-radius:4px 4px 0 0;}
-.chart-bar-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;}
-
-/* ── DEVICES ── */
-.device-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.device-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.6rem;transition:all .25s;cursor:pointer;position:relative;overflow:hidden;}
-.device-card:hover{border-color:var(--b3);background:var(--d3);transform:translateY(-2px);}
-.device-card.online::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);}
-.device-card.offline::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--t3),transparent);}
-.device-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
-.device-icon-wrap{width:44px;height:44px;background:var(--d4);border:1px solid var(--b3);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.3rem;}
-.device-status-dot{width:8px;height:8px;border-radius:50%;}
-.device-status-dot.on{background:var(--green);box-shadow:0 0 10px rgba(0,255,136,.5);animation:dotBlink 2.5s ease infinite;}
-.device-status-dot.off{background:var(--t3);}
-@keyframes dotBlink{0%,100%{opacity:1;}50%{opacity:.35;}}
-.device-name{font-size:.95rem;font-weight:500;color:var(--t1);margin-bottom:3px;}
-.device-type{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
-.device-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1.2rem;}
-.device-stat{background:var(--d4);border-radius:var(--r);padding:.6rem .8rem;}
-.device-stat-val{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--t1);font-weight:500;}
-.device-stat-key{font-size:.65rem;color:var(--t3);margin-top:2px;}
-.device-actions{display:flex;gap:8px;margin-top:1.2rem;}
-
-/* ── FILES ── */
-.files-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap;}
-.filter-chip{display:inline-flex;align-items:center;gap:6px;padding:.4rem 1rem;background:var(--d3);border:1px solid var(--b2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t3);cursor:pointer;transition:all .2s;letter-spacing:.04em;}
+/* FILTERS TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.filter-chip{display:inline-flex;align-items:center;gap:5px;padding:.35rem .9rem;background:var(--d3);border:1px solid var(--b2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--t3);cursor:pointer;transition:all .2s;user-select:none;}
 .filter-chip:hover{border-color:var(--b3);color:var(--t2);}
 .filter-chip.active{background:rgba(26,111,255,.1);border-color:rgba(26,111,255,.3);color:var(--blue2);}
+.view-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r);font-size:.85rem;cursor:pointer;transition:all .2s;color:var(--t3);}
+.view-btn.active,.view-btn:hover{background:var(--d5);border-color:var(--b3);color:var(--t1);}
+.sort-select{background:var(--d3);border:1px solid var(--b2);border-radius:var(--r);padding:.35rem .7rem;color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:.67rem;outline:none;cursor:pointer;}
+.sort-select:focus{border-color:rgba(26,111,255,.4);}
+
+/* TRANSFER PROGRESS */
+.transfer-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:.8rem;transition:border-color .2s;}
+.transfer-card.active-transfer{background:rgba(26,111,255,.04);border-color:rgba(26,111,255,.18);}
+.transfer-card.transfer-done{background:rgba(0,255,136,.03);border-color:rgba(0,255,136,.12);}
+.transfer-card.transfer-err{background:rgba(255,59,92,.04);border-color:rgba(255,59,92,.15);}
+.tc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+.tc-name{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--t1);min-width:0;}
+.tc-name span.fname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;}
+.tc-speed{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--blue2);flex-shrink:0;}
+.tc-actions{display:flex;gap:6px;flex-shrink:0;}
+.prog-bar{height:3px;background:var(--d5);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .6s ease;}
+.prog-fill.done{background:linear-gradient(90deg,var(--green),#00d4aa);}
+.prog-fill.err{background:var(--red);}
+.tc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);}
+
+/* DEVICES */
+.device-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.device-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;transition:all .25s;position:relative;overflow:hidden;}
+.device-card:hover{border-color:var(--b3);background:var(--d3);transform:translateY(-2px);}
+.device-card.online::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.device-card.offline::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--t3),transparent);}
+.dc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.dc-icon{width:42px;height:42px;background:var(--d4);border:1px solid var(--b3);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.dc-dot{width:8px;height:8px;border-radius:50%;}
+.dc-dot.on{background:var(--green);box-shadow:0 0 10px rgba(0,255,136,.5);animation:pulse 2.5s ease infinite;}
+.dc-dot.off{background:var(--t3);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.dc-name{font-size:.92rem;font-weight:500;color:var(--t1);margin-bottom:2px;}
+.dc-type{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;}
+.dc-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:1rem 0;}
+.dc-stat{background:var(--d4);border-radius:var(--r);padding:.5rem .7rem;}
+.dc-stat-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t1);font-weight:500;}
+.dc-stat-key{font-size:.63rem;color:var(--t3);margin-top:1px;}
+.dc-actions{display:flex;gap:7px;}
+
+/* FILES GRID */
 .files-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem;}
-.file-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;cursor:pointer;transition:all .2s;}
+.files-grid.list-view{grid-template-columns:1fr;}
+.file-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.3rem;cursor:pointer;transition:all .2s;}
 .file-card:hover{background:var(--d3);border-color:var(--b3);transform:translateY(-2px);}
-.file-card-icon{width:44px;height:44px;border-radius:var(--r-lg);background:var(--d4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:1rem;}
-.file-card-name{font-size:.84rem;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
-.file-card-meta{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);}
+.file-card.list-view{display:flex;align-items:center;gap:12px;padding:.8rem 1.1rem;transform:none !important;border-radius:var(--r-lg);}
+.file-card-icon{width:42px;height:42px;border-radius:var(--r-lg);background:var(--d4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.9rem;flex-shrink:0;}
+.file-card.list-view .file-card-icon{margin-bottom:0;}
+.file-card-name{font-size:.82rem;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.file-card-meta{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);}
+.file-card.list-view .file-card-info{flex:1;min-width:0;}
 
-/* ── SETTINGS ── */
-.settings-layout{display:grid;grid-template-columns:220px 1fr;gap:24px;}
-.settings-nav{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1rem;height:fit-content;}
-.settings-nav-item{display:flex;align-items:center;gap:10px;padding:.6rem .8rem;border-radius:var(--r);font-size:.83rem;color:var(--t2);cursor:pointer;transition:all .2s;border:1px solid transparent;margin-bottom:2px;}
-.settings-nav-item:hover{background:var(--d4);color:var(--t1);}
-.settings-nav-item.active{background:rgba(26,111,255,.1);color:var(--blue2);border-color:rgba(26,111,255,.2);}
-.settings-panel{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:2rem;}
-.settings-group{margin-bottom:2.5rem;}
-.settings-group-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid var(--b1);}
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;border-bottom:1px solid var(--b1);}
-.settings-row:last-child{border:none;}
-.settings-row-info{flex:1;}
-.settings-row-label{font-size:.88rem;color:var(--t1);font-weight:400;margin-bottom:2px;}
-.settings-row-desc{font-size:.78rem;color:var(--t3);}
-.toggle{width:42px;height:24px;background:var(--d5);border-radius:99px;position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--b2);flex-shrink:0;}
-.toggle.on{background:var(--blue);border-color:var(--blue);}
-.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.5);}
-.toggle.on::after{transform:translateX(18px);}
-.field{margin-bottom:1rem;}
-.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem;}
-.field input,.field select,.field textarea{width:100%;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.72rem 1rem;color:var(--t1);font-size:.88rem;outline:none;transition:border-color .2s,box-shadow .2s;font-family:'Outfit',sans-serif;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
-.field input::placeholder{color:var(--t3);}
-.field input:disabled{opacity:.5;cursor:not-allowed;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
-/* ── AVATAR UPLOAD ── */
-.avatar-upload{display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem;}
-.avatar-lg{width:80px;height:80px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:600;color:#fff;border:2px solid var(--b3);overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;transition:opacity .2s;}
-.avatar-lg:hover{opacity:.85;}
-.avatar-lg img{width:100%;height:100%;object-fit:cover;}
-.avatar-lg-overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;font-size:1.2rem;opacity:0;transition:opacity .2s;border-radius:50%;}
-.avatar-lg:hover .avatar-lg-overlay{opacity:1;}
-#avatar-file-input{display:none;}
-.avatar-upload-info{flex:1;}
-.avatar-upload-info h4{font-size:.9rem;color:var(--t1);margin-bottom:4px;}
-.avatar-upload-info p{font-size:.78rem;color:var(--t3);}
-.avatar-upload-btns{display:flex;gap:8px;margin-top:.8rem;}
-#avatar-upload-progress{height:3px;background:var(--d5);border-radius:99px;overflow:hidden;margin-top:.6rem;display:none;}
-#avatar-upload-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;width:0%;transition:width .3s;}
-
-/* ── ANALYTICS ── */
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2rem;}
-.kpi-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem 1.6rem;}
-.kpi-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
-.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);line-height:1;margin-bottom:4px;}
-.kpi-trend{display:flex;align-items:center;gap:4px;font-size:.72rem;}
-.kpi-trend.up{color:var(--green);}
-.kpi-trend.down{color:var(--red);}
-
-/* ── BADGE ── */
-.badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:3px 10px;border-radius:99px;letter-spacing:.04em;text-transform:uppercase;}
-.badge-green{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.22);color:var(--green);}
-.badge-blue{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
-.badge-gray{background:var(--b1);border:1px solid var(--b2);color:var(--t3);}
-.badge-amber{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.25);color:var(--amber);}
-.badge-red{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.25);color:var(--red);}
-
-/* ── TRANSFER PROGRESS ── */
-.active-transfer{background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:.8rem;}
-.active-transfer-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;}
-.at-name{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--t1);}
-.at-speed{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--blue2);}
-.prog-bar{height:4px;background:var(--d5);border-radius:99px;overflow:hidden;}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .5s ease;}
-.at-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);}
-
-/* ── SYNC ── */
-.sync-status{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:2rem;margin-bottom:1.5rem;}
-.sync-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+/* SYNC */
 .sync-circle{position:relative;width:120px;height:120px;margin:0 auto 1.5rem;}
 .sync-circle svg{transform:rotate(-90deg);}
-.sync-circle .circle-bg{fill:none;stroke:var(--d5);stroke-width:8;}
-.sync-circle .circle-prog{fill:none;stroke:url(#grad-stroke);stroke-width:8;stroke-linecap:round;stroke-dasharray:339.29;stroke-dashoffset:84.82;}
+.circle-bg{fill:none;stroke:var(--d5);stroke-width:8;}
+.circle-prog{fill:none;stroke:url(#grad-stroke);stroke-width:8;stroke-linecap:round;stroke-dasharray:339.29;transition:stroke-dashoffset .5s ease;}
 .sync-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .sync-val-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);line-height:1;}
-.sync-val-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
+.sync-val-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--t3);text-transform:uppercase;}
+.feed-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;}
+.feed-item{display:flex;align-items:flex-start;gap:10px;padding:.8rem 0;border-bottom:1px solid var(--b1);}
+.feed-item:last-child{border:none;}
+.feed-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.feed-text{font-size:.8rem;color:var(--t2);line-height:1.5;}
+.feed-text strong{color:var(--t1);font-weight:500;}
+.feed-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:2px;}
 
-/* ── NOTIFICATION PANEL ── */
-.notif-panel{position:fixed;top:calc(var(--nav-h) + 8px);right:1.5rem;z-index:500;background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);padding:.6rem;min-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;}
-.notif-panel.open{display:block;animation:dropIn .2s ease both;}
-@keyframes dropIn{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:none;}}
-.notif-head{padding:.6rem .8rem .4rem;border-bottom:1px solid var(--b1);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;}
-.notif-head-title{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;}
-.notif-item{display:flex;align-items:flex-start;gap:10px;padding:.7rem .8rem;border-radius:var(--r);transition:background .15s;cursor:pointer;}
-.notif-item:hover{background:var(--d5);}
-.notif-item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-.notif-item-text{font-size:.8rem;color:var(--t2);line-height:1.45;}
-.notif-item-text strong{color:var(--t1);}
-.notif-item-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:2px;}
+/* SETTINGS */
+.settings-layout{display:grid;grid-template-columns:210px 1fr;gap:20px;}
+.settings-nav{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:.8rem;height:fit-content;}
+.s-nav-item{display:flex;align-items:center;gap:9px;padding:.55rem .7rem;border-radius:var(--r);font-size:.81rem;color:var(--t2);cursor:pointer;transition:all .2s;border:1px solid transparent;margin-bottom:1px;}
+.s-nav-item:hover{background:var(--d4);color:var(--t1);}
+.s-nav-item.active{background:rgba(26,111,255,.1);color:var(--blue2);border-color:rgba(26,111,255,.2);}
+.settings-panel{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.8rem;}
+.s-group{margin-bottom:2.2rem;}
+.s-group-title{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.1rem;padding-bottom:.55rem;border-bottom:1px solid var(--b1);}
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px solid var(--b1);}
+.s-row:last-child{border:none;}
+.s-row-info{flex:1;}
+.s-row-label{font-size:.85rem;color:var(--t1);font-weight:400;margin-bottom:2px;}
+.s-row-desc{font-size:.76rem;color:var(--t3);}
+.toggle{width:40px;height:22px;background:var(--d5);border-radius:99px;position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--b2);flex-shrink:0;}
+.toggle.on{background:var(--blue);border-color:var(--blue);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.5);}
+.toggle.on::after{transform:translateX(18px);}
+.field{margin-bottom:.9rem;}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.field input,.field select,.field textarea{width:100%;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.68rem .9rem;color:var(--t1);font-size:.85rem;outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
+.field input::placeholder{color:var(--t3);}
+.field input:disabled{opacity:.45;cursor:not-allowed;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-/* ── LANG SELECTOR ── */
-.lang-selector{display:flex;gap:6px;flex-wrap:wrap;margin-top:.5rem;}
-.lang-btn{display:inline-flex;align-items:center;gap:6px;padding:.4rem .9rem;background:var(--d4);border:1px solid var(--b2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);cursor:pointer;transition:all .2s;}
-.lang-btn:hover{border-color:var(--b3);color:var(--t1);}
+/* AVATAR */
+.avatar-wrap{display:flex;align-items:center;gap:1.4rem;margin-bottom:1.4rem;}
+.avatar-lg{width:76px;height:76px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:600;color:#fff;border:2px solid var(--b3);overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;}
+.avatar-lg img{width:100%;height:100%;object-fit:cover;}
+.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;font-size:1.1rem;}
+.avatar-lg:hover .avatar-overlay{opacity:1;}
+#avatar-input{display:none;}
+.avatar-prog{height:3px;background:var(--d5);border-radius:99px;overflow:hidden;margin-top:.5rem;display:none;}
+.avatar-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;width:0%;transition:width .3s;}
+
+/* LANG */
+.lang-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:.6rem;}
+.lang-btn{display:inline-flex;align-items:center;gap:6px;padding:.38rem .85rem;background:var(--d4);border:1px solid var(--b2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);cursor:pointer;transition:all .2s;}
+.lang-btn:hover{border-color:var(--b3);color:var(--t2);}
 .lang-btn.active{background:rgba(26,111,255,.1);border-color:rgba(26,111,255,.3);color:var(--blue2);}
 
-/* ── TOAST ── */
-#toast-wrap{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;}
-.toast{color:#f5e6c8;display:flex;align-items:center;gap:10px;padding:.85rem 1.2rem;border-radius:var(--r-lg);backdrop-filter:blur(20px);font-size:.875rem;pointer-events:all;max-width:340px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .3s ease;}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
-@keyframes toastOut{to{opacity:0;transform:translateX(20px);}}
+/* ANALYTICS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2rem;}
+.kpi-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.3rem 1.5rem;}
+.kpi-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--white);line-height:1;margin-bottom:3px;}
+.kpi-trend{font-size:.7rem;}
+.kpi-trend.up{color:var(--green);}
+.kpi-trend.down{color:var(--red);}
+.chart-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:1.1rem;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.bar-outer{width:100%;background:rgba(26,111,255,.1);border-radius:4px 4px 0 0;border:1px solid rgba(26,111,255,.18);position:relative;overflow:hidden;height:100%;transition:background .2s;}
+.bar-outer:hover{background:rgba(26,111,255,.22);}
+.bar-inner{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--blue),rgba(26,111,255,.35));border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.4,0,.2,1);}
+.bar-label{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--t3);text-transform:uppercase;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:2rem;}
+
+/* NOTIFICATION */
+.notif-panel{position:fixed;top:calc(var(--nav-h) + 8px);right:1.2rem;z-index:500;background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);padding:.5rem;min-width:310px;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;}
+.notif-panel.open{display:block;animation:dropIn .18s ease both;}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+.notif-head{padding:.55rem .8rem .35rem;border-bottom:1px solid var(--b1);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;}
+.notif-head-title{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;}
+.notif-item{display:flex;align-items:flex-start;gap:9px;padding:.65rem .75rem;border-radius:var(--r);transition:background .15s;cursor:pointer;}
+.notif-item:hover{background:var(--d5);}
+.notif-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.notif-text{font-size:.78rem;color:var(--t2);line-height:1.4;}
+.notif-text strong{color:var(--t1);}
+.notif-time{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);margin-top:2px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:800;display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;animation:fadeIn .2s ease;}
+.modal{background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-2xl);padding:2rem;width:480px;max-width:94vw;box-shadow:0 30px 80px rgba(0,0,0,.8);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--white);margin-bottom:1.5rem;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--b1);}
+
+/* PROGRESS BAR LABEL */
+.prog-label{display:flex;justify-content:space-between;margin-bottom:5px;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:2px 8px;border-radius:99px;text-transform:uppercase;}
+.badge-green{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);}
+.badge-blue{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
+.badge-gray{background:var(--b1);border:1px solid var(--b2);color:var(--t3);}
+.badge-amber{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.22);color:var(--amber);}
+.badge-red{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.22);color:var(--red);}
+
+/* SEARCH HIGHLIGHT */
+.hl{background:rgba(26,111,255,.25);color:var(--white);border-radius:2px;padding:0 1px;}
+
+/* TOAST */
+#toast-wrap{position:fixed;bottom:1.8rem;right:1.8rem;z-index:9999;display:flex;flex-direction:column;gap:9px;pointer-events:none;}
+.toast{display:flex;align-items:center;gap:9px;padding:.8rem 1.1rem;border-radius:var(--r-lg);backdrop-filter:blur(20px);font-size:.84rem;pointer-events:all;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .28s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:none;}}
+@keyframes toastOut{to{opacity:0;transform:translateX(16px);}}
+.toast.success{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:#e2fef2;}
+.toast.error{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.25);color:#ffe0e6;}
+.toast.info{background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.25);color:#deeeff;}
+.toast.warning{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);color:#fff6d8;}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--d6);border-radius:99px;}
 ::-webkit-scrollbar-thumb:hover{background:var(--d7);}
-
-/* ── SPINNER ── */
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── PLAN BADGE ── */
-.plan-badge-wrap{display:inline-flex;align-items:center;gap:6px;padding:.4rem 1rem;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-lg);margin-bottom:1.2rem;}
-.plan-badge-label{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;}
-.plan-badge-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--blue2);font-weight:500;}
 </style>
 </head>
 <body>
 
-<!-- ── LOADING ── -->
+<!-- LOADING -->
 <div id="loading-screen">
   <div class="loading-logo">CR<span>E</span>O</div>
   <div class="loading-bar"><div class="loading-bar-fill"></div></div>
   <div class="loading-txt" id="loading-txt">Vérification de la session…</div>
 </div>
 
-<!-- ── APP ── -->
+<!-- APP -->
 <div id="app-shell">
 <div class="app-shell">
 
@@ -320,27 +344,27 @@ img{display:block;max-width:100%;}
   <aside class="sidebar">
     <div class="sidebar-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></div>
     <div class="sidebar-section">
-      <div class="sidebar-label" data-i18n="nav.main">Principal</div>
-      <div class="nav-link active" onclick="showPage('transferts',this)"><span class="n-icon">⚡</span> <span data-i18n="nav.transfers">Transferts</span></div>
-      <div class="nav-link" onclick="showPage('appareils',this)"><span class="n-icon">📱</span> <span data-i18n="nav.devices">Appareils</span></div>
-      <div class="nav-link" onclick="showPage('fichiers',this)"><span class="n-icon">📂</span> <span data-i18n="nav.files">Fichiers</span></div>
-      <div class="nav-link" onclick="showPage('sync',this)"><span class="n-icon">🔄</span> <span data-i18n="nav.sync">Sync</span></div>
+      <div class="sidebar-label">Principal</div>
+      <div class="nav-link active" data-page="transferts"><span class="n-icon">⚡</span> Transferts</div>
+      <div class="nav-link" data-page="appareils"><span class="n-icon">📱</span> Appareils</div>
+      <div class="nav-link" data-page="fichiers"><span class="n-icon">📂</span> Fichiers</div>
+      <div class="nav-link" data-page="sync"><span class="n-icon">🔄</span> Sync</div>
     </div>
     <div class="sidebar-section">
-      <div class="sidebar-label" data-i18n="nav.account">Compte</div>
-      <div class="nav-link" onclick="showPage('parametres',this)"><span class="n-icon">⚙️</span> <span data-i18n="nav.settings">Paramètres</span></div>
-      <div class="nav-link" onclick="showPage('analytiques',this)"><span class="n-icon">📊</span> <span data-i18n="nav.analytics">Analytiques</span></div>
+      <div class="sidebar-label">Compte</div>
+      <div class="nav-link" data-page="parametres"><span class="n-icon">⚙️</span> Paramètres</div>
+      <div class="nav-link" data-page="analytiques"><span class="n-icon">📊</span> Analytiques</div>
     </div>
     <div class="sidebar-footer">
-      <div class="user-card" onclick="showPage('parametres',document.querySelector('[onclick*=parametres]'))">
+      <div class="user-card" id="user-card">
         <div class="user-avatar" id="sidebar-avatar">?</div>
         <div class="user-info">
           <div class="user-name" id="sidebar-name">…</div>
-          <div class="user-email" id="sidebar-email">…</div>
+          <div class="user-role" id="sidebar-role">…</div>
         </div>
         <span style="color:var(--t3);font-size:.7rem;flex-shrink:0;">›</span>
       </div>
-      <div class="logout-link" id="logout-btn">⎋ &nbsp;<span data-i18n="nav.logout">Déconnexion</span></div>
+      <div class="logout-link" id="logout-btn">⎋ &nbsp;Déconnexion</div>
     </div>
   </aside>
 
@@ -349,165 +373,183 @@ img{display:block;max-width:100%;}
     <header class="topbar">
       <div class="topbar-left">
         <span class="page-title" id="topbar-title">TRANSFERTS</span>
-        <span class="breadcrumb font-mono" id="topbar-breadcrumb">// récents</span>
+        <span class="breadcrumb" id="topbar-bc">// récents</span>
       </div>
       <div class="topbar-right">
         <div class="topbar-search">
-          <span style="color:var(--t3);">🔍</span>
-          <input type="text" id="search-input" placeholder="Rechercher…">
+          <span style="color:var(--t3);font-size:.8rem;">🔍</span>
+          <input type="text" id="search-input" placeholder="Rechercher…" autocomplete="off">
+          <span id="search-clear" style="color:var(--t3);font-size:.7rem;cursor:pointer;display:none;">✕</span>
         </div>
-        <div class="notif-btn" onclick="toggleNotif()" id="notif-btn">
-          🔔<span class="notif-dot"></span>
+        <div class="icon-btn" id="notif-btn" title="Notifications">
+          🔔<span class="badge-dot" id="notif-dot"></span>
         </div>
-        <button class="btn btn-primary btn-sm" id="action-btn" onclick="primaryAction()">
-          <span>＋</span> <span data-i18n="action.new_transfer">Nouveau transfert</span>
-        </button>
+        <button class="btn btn-primary btn-sm" id="action-btn">＋ Nouveau transfert</button>
       </div>
     </header>
 
-    <!-- NOTIFICATION PANEL -->
+    <!-- NOTIF PANEL -->
     <div class="notif-panel" id="notif-panel">
       <div class="notif-head">
-        <span class="notif-head-title" data-i18n="notif.title">Notifications</span>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--blue2);cursor:pointer;" onclick="document.getElementById('notif-panel').classList.remove('open');document.querySelector('.notif-dot')?.remove()" data-i18n="notif.read_all">Tout lire</span>
+        <span class="notif-head-title">Notifications</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--blue2);cursor:pointer;" id="notif-read-all">Tout lire</span>
       </div>
-      <div id="notif-list">
-        <div class="notif-item"><div class="notif-item-dot" style="background:var(--green);box-shadow:0 0 8px rgba(0,255,136,.4);"></div><div><div class="notif-item-text"><strong>montage_final.mp4</strong> transféré avec succès</div><div class="notif-item-time">Il y a 3 min</div></div></div>
-        <div class="notif-item"><div class="notif-item-dot" style="background:var(--blue);"></div><div><div class="notif-item-text">MacBook Air <strong>connecté</strong> sur réseau LAN</div><div class="notif-item-time">Il y a 12 min</div></div></div>
-        <div class="notif-item"><div class="notif-item-dot" style="background:var(--amber);"></div><div><div class="notif-item-text">Espace NAS Home à <strong>78%</strong> — pensez à nettoyer</div><div class="notif-item-time">Il y a 1h</div></div></div>
-      </div>
+      <div id="notif-list"></div>
     </div>
 
     <div class="page-content">
 
       <!-- ══ TRANSFERTS ══ -->
       <div class="page active" id="page-transferts">
-        <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label" data-i18n="stats.total_transferred">Total transféré</div><div class="stat-val">142 <span class="unit">GB</span></div><div class="stat-sub"><span class="stat-delta up">↑ +38%</span> ce mois</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="stats.active_devices">Appareils actifs</div><div class="stat-val">4 <span class="unit" style="color:var(--green);">●</span></div><div class="stat-sub">Sur 3 réseaux</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="stats.avg_speed">Vitesse moy.</div><div class="stat-val">1.2 <span class="unit">GB/s</span></div><div class="stat-sub">Réseau LAN</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="stats.success_rate">Taux de succès</div><div class="stat-val">99.4 <span class="unit">%</span></div><div class="stat-sub"><span class="stat-delta up">↑ +0.2%</span> vs semaine dernière</div></div>
+        <div class="stat-grid stat-grid-4">
+          <div class="stat-card"><div class="stat-label">Total transféré</div><div class="stat-val" id="stat-total">0 <span class="unit">GB</span></div><div class="stat-sub" id="stat-total-sub">ce mois</div></div>
+          <div class="stat-card"><div class="stat-label">Appareils actifs</div><div class="stat-val" id="stat-devices">0</div><div class="stat-sub">en ligne</div></div>
+          <div class="stat-card"><div class="stat-label">Vitesse actuelle</div><div class="stat-val" id="stat-speed">—</div><div class="stat-sub">réseau local</div></div>
+          <div class="stat-card"><div class="stat-label">Taux de succès</div><div class="stat-val" id="stat-success">99.4 <span class="unit">%</span></div><div class="stat-sub"><span class="stat-delta up">↑ stable</span></div></div>
         </div>
-        <div class="section-header" style="margin-bottom:1rem;">
-          <div class="section-title" data-i18n="transfers.active">Transferts actifs <small>2 en cours</small></div>
+
+        <!-- ACTIVE TRANSFERS -->
+        <div class="section-header" style="margin-bottom:.8rem;">
+          <div class="section-title">Transferts actifs <small id="active-count">0 en cours</small></div>
+          <button class="btn btn-ghost btn-sm" id="btn-new-transfer">＋ Nouveau</button>
         </div>
-        <div style="margin-bottom:2rem;">
-          <div class="active-transfer">
-            <div class="active-transfer-header">
-              <div class="at-name"><span>🎨</span> maquettes_v8.fig <span class="badge badge-blue">EN COURS</span></div>
-              <div class="at-speed" id="speed-1">↑ 847 MB/s</div>
-            </div>
-            <div class="prog-bar"><div class="prog-fill" id="prog-1" style="width:63%;"></div></div>
-            <div class="at-footer"><span>PC Bureau → MacBook Air</span><span id="pct-1">63% · 210 MB / 333 MB</span></div>
-          </div>
-          <div class="active-transfer" style="background:rgba(0,255,136,.04);border-color:rgba(0,255,136,.15);">
-            <div class="active-transfer-header">
-              <div class="at-name"><span>📦</span> projet_2025.zip <span class="badge badge-blue">EN COURS</span></div>
-              <div class="at-speed" id="speed-2">↑ 1.1 GB/s</div>
-            </div>
-            <div class="prog-bar"><div class="prog-fill" id="prog-2" style="width:28%;"></div></div>
-            <div class="at-footer"><span>PC Bureau → NAS Home</span><span id="pct-2">28% · 3.6 GB / 12.8 GB</span></div>
-          </div>
-        </div>
+        <div id="active-transfers-container" style="margin-bottom:2rem;"></div>
+
+        <!-- HISTORY -->
         <div class="section-header">
-          <div class="section-title" data-i18n="transfers.history">Historique <small>Aujourd'hui</small></div>
-          <div style="display:flex;gap:8px;">
-            <div class="filter-chip active" data-i18n="filter.all">Tous</div>
-            <div class="filter-chip" data-i18n="filter.sent">Envoyés</div>
-            <div class="filter-chip" data-i18n="filter.received">Reçus</div>
-            <div class="filter-chip" data-i18n="filter.errors">Erreurs</div>
+          <div class="section-title">Historique <small>aujourd'hui</small></div>
+          <div class="toolbar" style="margin-bottom:0;gap:6px;">
+            <div class="filter-chip active" data-filter="all">Tous</div>
+            <div class="filter-chip" data-filter="sent">Envoyés</div>
+            <div class="filter-chip" data-filter="received">Reçus</div>
+            <div class="filter-chip" data-filter="error">Erreurs</div>
+            <select class="sort-select" id="transfers-sort">
+              <option value="date-desc">Plus récent</option>
+              <option value="date-asc">Plus ancien</option>
+              <option value="size-desc">Plus grand</option>
+              <option value="size-asc">Plus petit</option>
+              <option value="name-asc">Nom A→Z</option>
+            </select>
           </div>
         </div>
         <div class="data-table-wrap">
-          <table class="data-table">
-            <thead><tr><th data-i18n="table.file">Fichier</th><th data-i18n="table.size">Taille</th><th data-i18n="table.destination">Destination</th><th data-i18n="table.speed">Vitesse</th><th data-i18n="table.status">Statut</th><th data-i18n="table.time">Heure</th></tr></thead>
-            <tbody>
-              <tr><td><div class="td-name"><span class="td-icon">🎬</span><div><div class="td-fname">montage_final.mp4</div><div class="td-fmeta">H.264 · 4K UHD</div></div></div></td><td class="font-mono" style="font-size:.78rem;">4.2 GB</td><td style="color:var(--t2);">PC Bureau</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">1.4 GB/s</td><td><span class="dash-status st-done">✓ Envoyé</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">14:32</td></tr>
-              <tr><td><div class="td-name"><span class="td-icon">📦</span><div><div class="td-fname">backup_janvier.zip</div><div class="td-fmeta">Archive compressée</div></div></div></td><td class="font-mono" style="font-size:.78rem;">12.8 GB</td><td style="color:var(--t2);">NAS Home</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">980 MB/s</td><td><span class="dash-status st-done">✓ Envoyé</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">13:14</td></tr>
-              <tr><td><div class="td-name"><span class="td-icon">📄</span><div><div class="td-fname">rapport_annuel.pdf</div><div class="td-fmeta">PDF · 142 pages</div></div></div></td><td class="font-mono" style="font-size:.78rem;">1.4 MB</td><td style="color:var(--t2);">PC Bureau</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">—</td><td><span class="dash-status st-wait">⏳ File d'attente</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">—</td></tr>
-              <tr><td><div class="td-name"><span class="td-icon">🎵</span><div><div class="td-fname">studio_session_03.aiff</div><div class="td-fmeta">Audio 24-bit · 96kHz</div></div></div></td><td class="font-mono" style="font-size:.78rem;">2.7 GB</td><td style="color:var(--t2);">MacBook Pro</td><td class="font-mono" style="font-size:.72rem;color:var(--t3);">—</td><td><span class="dash-status st-err">✕ Erreur réseau</span></td><td class="font-mono" style="font-size:.68rem;color:var(--t3);">09:51</td></tr>
-            </tbody>
+          <table class="data-table" id="transfers-table">
+            <thead>
+              <tr>
+                <th data-sort="name">Fichier</th>
+                <th data-sort="size">Taille</th>
+                <th data-sort="dest">Destination</th>
+                <th data-sort="speed">Vitesse</th>
+                <th data-sort="status">Statut</th>
+                <th data-sort="date">Heure</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="transfers-tbody"></tbody>
           </table>
         </div>
       </div>
 
       <!-- ══ APPAREILS ══ -->
       <div class="page" id="page-appareils">
-        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
-          <div class="stat-card"><div class="stat-label" data-i18n="devices.connected">Appareils connectés</div><div class="stat-val">4 <span class="unit" style="color:var(--green);">en ligne</span></div><div class="stat-sub">6 appareils au total</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="devices.bandwidth">Bande passante totale</div><div class="stat-val">3.4 <span class="unit">GB/s</span></div><div class="stat-sub">Agrégée · 3 réseaux</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="devices.last_sync">Dernière sync</div><div class="stat-val" style="font-size:1.6rem;">14:32</div><div class="stat-sub"><span class="stat-delta up">✓</span> Tous synchronisés</div></div>
+        <div class="stat-grid stat-grid-3">
+          <div class="stat-card"><div class="stat-label">Connectés</div><div class="stat-val" id="dev-online">0 <span class="unit" style="color:var(--green);">en ligne</span></div><div class="stat-sub" id="dev-total">0 appareils au total</div></div>
+          <div class="stat-card"><div class="stat-label">Bande passante</div><div class="stat-val" id="dev-bw">0 <span class="unit">MB/s</span></div><div class="stat-sub">agrégée</div></div>
+          <div class="stat-card"><div class="stat-label">Dernière sync</div><div class="stat-val" style="font-size:1.6rem;" id="dev-last-sync">—</div><div class="stat-sub"><span class="stat-delta up">✓</span> tous synchronisés</div></div>
         </div>
         <div class="section-header">
-          <div class="section-title" data-i18n="devices.my_devices">Mes appareils</div>
-          <button class="btn btn-ghost btn-sm" onclick="uiToast('info',t('devices.add_soon'))">＋ <span data-i18n="devices.add">Ajouter un appareil</span></button>
+          <div class="section-title">Mes appareils</div>
+          <button class="btn btn-ghost btn-sm" id="btn-add-device">＋ Ajouter</button>
         </div>
-        <div class="device-grid">
-          <div class="device-card online"><div class="device-header"><div class="device-icon-wrap">🖥️</div><div class="device-status-dot on"></div></div><div class="device-name">PC Bureau</div><div class="device-type">Windows 11 · x86_64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono">1.4 GB/s</div><div class="device-stat-key" data-i18n="device.max_speed">Vitesse max</div></div><div class="device-stat"><div class="device-stat-val font-mono">LAN</div><div class="device-stat-key" data-i18n="device.network">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono">2.1 TB</div><div class="device-stat-key" data-i18n="device.free_space">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono">v4.2.1</div><div class="device-stat-key" data-i18n="device.version">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-primary btn-sm" onclick="uiToast('info','Transfert lancé')"><span data-i18n="device.transfer">Transférer</span></button><button class="btn btn-ghost btn-sm" data-i18n="device.details">Détails</button></div></div>
-          <div class="device-card online"><div class="device-header"><div class="device-icon-wrap">💻</div><div class="device-status-dot on"></div></div><div class="device-name">MacBook Air M3</div><div class="device-type">macOS 15.2 · ARM64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono">1.1 GB/s</div><div class="device-stat-key" data-i18n="device.max_speed">Vitesse max</div></div><div class="device-stat"><div class="device-stat-val font-mono">LAN</div><div class="device-stat-key" data-i18n="device.network">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono">412 GB</div><div class="device-stat-key" data-i18n="device.free_space">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono">v4.2.1</div><div class="device-stat-key" data-i18n="device.version">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-primary btn-sm" onclick="uiToast('info','Transfert lancé')"><span data-i18n="device.transfer">Transférer</span></button><button class="btn btn-ghost btn-sm" data-i18n="device.details">Détails</button></div></div>
-          <div class="device-card offline"><div class="device-header"><div class="device-icon-wrap" style="opacity:.5;">💻</div><div class="device-status-dot off"></div></div><div class="device-name" style="color:var(--t2);">MacBook Pro 16"</div><div class="device-type">macOS 14.6 · ARM64</div><div class="device-stats"><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">—</div><div class="device-stat-key" data-i18n="device.offline">Hors ligne</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">—</div><div class="device-stat-key" data-i18n="device.network">Réseau</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">1.1 TB</div><div class="device-stat-key" data-i18n="device.free_space">Espace libre</div></div><div class="device-stat"><div class="device-stat-val font-mono" style="color:var(--t3);">v4.1.9</div><div class="device-stat-key" data-i18n="device.version">Version CREO</div></div></div><div class="device-actions"><button class="btn btn-ghost btn-sm" disabled style="opacity:.4;" data-i18n="device.offline">Hors ligne</button><button class="btn btn-ghost btn-sm" data-i18n="device.info">Infos</button></div></div>
-        </div>
+        <div class="device-grid" id="devices-grid"></div>
       </div>
 
       <!-- ══ FICHIERS ══ -->
       <div class="page" id="page-fichiers">
-        <div class="stat-grid">
-          <div class="stat-card"><div class="stat-label" data-i18n="files.total">Total fichiers</div><div class="stat-val">14 826</div><div class="stat-sub"><span class="stat-delta up">↑ +127</span> cette semaine</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="files.used">Espace utilisé</div><div class="stat-val">2.8 <span class="unit">TB</span></div><div class="stat-sub">Sur 12 TB total</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="files.shared">Partagés</div><div class="stat-val">43</div><div class="stat-sub">Avec 3 appareils</div></div>
-          <div class="stat-card"><div class="stat-label" data-i18n="files.last_modified">Dernière modif.</div><div class="stat-val" style="font-size:1.6rem;">14:32</div><div class="stat-sub">maquettes_v8.fig</div></div>
+        <div class="stat-grid stat-grid-4">
+          <div class="stat-card"><div class="stat-label">Total fichiers</div><div class="stat-val" id="files-count">0</div><div class="stat-sub"><span class="stat-delta up" id="files-delta">—</span></div></div>
+          <div class="stat-card"><div class="stat-label">Espace utilisé</div><div class="stat-val">2.8 <span class="unit">TB</span></div><div class="stat-sub">sur 12 TB total</div></div>
+          <div class="stat-card"><div class="stat-label">Partagés</div><div class="stat-val" id="files-shared">0</div><div class="stat-sub">avec vos appareils</div></div>
+          <div class="stat-card"><div class="stat-label">Dernière modif.</div><div class="stat-val" style="font-size:1.5rem;" id="files-lastmod">—</div><div class="stat-sub" id="files-lastmod-name">—</div></div>
         </div>
-        <div class="files-toolbar">
-          <div class="filter-chip active" data-i18n="filter.all">Tous</div>
-          <div class="filter-chip">📹 <span data-i18n="filter.videos">Vidéos</span></div>
-          <div class="filter-chip">🎨 <span data-i18n="filter.design">Design</span></div>
-          <div class="filter-chip">📄 <span data-i18n="filter.docs">Docs</span></div>
-          <div class="filter-chip">🖼️ <span data-i18n="filter.images">Images</span></div>
-          <div class="filter-chip">📦 <span data-i18n="filter.archives">Archives</span></div>
+        <div class="toolbar">
+          <div class="filter-chip active" data-filter="all">Tous</div>
+          <div class="filter-chip" data-filter="video">📹 Vidéos</div>
+          <div class="filter-chip" data-filter="design">🎨 Design</div>
+          <div class="filter-chip" data-filter="doc">📄 Docs</div>
+          <div class="filter-chip" data-filter="image">🖼️ Images</div>
+          <div class="filter-chip" data-filter="archive">📦 Archives</div>
+          <div class="filter-chip" data-filter="audio">🎵 Audio</div>
           <div style="flex:1;"></div>
-          <button class="btn btn-ghost btn-sm">☰</button>
-          <button class="btn btn-ghost btn-sm">⊞</button>
+          <select class="sort-select" id="files-sort">
+            <option value="date-desc">Plus récent</option>
+            <option value="date-asc">Plus ancien</option>
+            <option value="size-desc">Plus grand</option>
+            <option value="name-asc">Nom A→Z</option>
+          </select>
+          <div class="view-btn active" id="view-grid-btn" title="Vue grille">⊞</div>
+          <div class="view-btn" id="view-list-btn" title="Vue liste">☰</div>
         </div>
-        <div class="section-header"><div class="section-title" data-i18n="files.recent">Récents</div></div>
-        <div class="files-grid">
-          <div class="file-card"><div class="file-card-icon">🎬</div><div class="file-card-name">montage_final.mp4</div><div class="file-card-meta">4.2 GB · Envoyé</div></div>
-          <div class="file-card"><div class="file-card-icon">🎨</div><div class="file-card-name">maquettes_v8.fig</div><div class="file-card-meta">210 MB · En cours</div></div>
-          <div class="file-card"><div class="file-card-icon">📦</div><div class="file-card-name">backup_janvier.zip</div><div class="file-card-meta">12.8 GB · Envoyé</div></div>
-          <div class="file-card"><div class="file-card-icon">📄</div><div class="file-card-name">rapport_annuel.pdf</div><div class="file-card-meta">1.4 MB · En attente</div></div>
-          <div class="file-card"><div class="file-card-icon">🎵</div><div class="file-card-name">studio_session_03.aiff</div><div class="file-card-meta">2.7 GB · Erreur</div></div>
-          <div class="file-card"><div class="file-card-icon">📐</div><div class="file-card-name">plans_architecture_v3.dwg</div><div class="file-card-meta">890 MB · Envoyé</div></div>
+        <div class="section-header"><div class="section-title">Récents</div></div>
+        <div class="files-grid" id="files-grid"></div>
+        <div class="section-header"><div class="section-title">Tous les fichiers</div></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr>
+              <th data-sort="name">Nom</th>
+              <th data-sort="type">Type</th>
+              <th data-sort="size">Taille</th>
+              <th data-sort="date">Modifié</th>
+              <th data-sort="status">Statut</th>
+              <th></th>
+            </tr></thead>
+            <tbody id="files-tbody"></tbody>
+          </table>
         </div>
       </div>
 
       <!-- ══ SYNC ══ -->
       <div class="page" id="page-sync">
         <div class="two-col">
-          <div class="sync-status">
-            <div class="sync-header">
-              <div><div class="section-title" data-i18n="sync.status">État de synchronisation</div><div style="font-size:.8rem;color:var(--t3);margin-top:4px;" data-i18n="sync.last_update">Dernière mise à jour il y a 3 min</div></div>
-              <button class="btn btn-primary btn-sm" onclick="uiToast('success',t('sync.launched'))">▶ <span data-i18n="sync.launch">Lancer sync</span></button>
+          <div style="background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.8rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;">
+              <div>
+                <div class="section-title">État de sync</div>
+                <div style="font-size:.78rem;color:var(--t3);margin-top:3px;" id="sync-last-update">Dernière MAJ —</div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-launch-sync">▶ Lancer</button>
             </div>
             <div class="sync-circle">
               <svg viewBox="0 0 120 120" width="120" height="120">
-                <defs><linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#1a6fff"/><stop offset="100%" style="stop-color:#00d4ff"/></linearGradient></defs>
+                <defs><linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#1a6fff"/>
+                  <stop offset="100%" style="stop-color:#00d4ff"/>
+                </linearGradient></defs>
                 <circle class="circle-bg" cx="60" cy="60" r="54"/>
-                <circle class="circle-prog" cx="60" cy="60" r="54"/>
+                <circle class="circle-prog" id="sync-circle-prog" cx="60" cy="60" r="54" style="stroke-dashoffset:84.82;"/>
               </svg>
-              <div class="sync-val"><div class="sync-val-num">75%</div><div class="sync-val-label">Sync</div></div>
+              <div class="sync-val">
+                <div class="sync-val-num" id="sync-pct">75%</div>
+                <div class="sync-val-label">Sync</div>
+              </div>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
-              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--green);">1 247</div><div style="font-size:.75rem;color:var(--t3);" data-i18n="sync.synced">Fichiers sync</div></div>
-              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--amber);">312</div><div style="font-size:.75rem;color:var(--t3);" data-i18n="sync.pending">En attente</div></div>
-              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--red);">4</div><div style="font-size:.75rem;color:var(--t3);" data-i18n="sync.conflicts">Conflits</div></div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--green);" id="sync-synced">0</div><div style="font-size:.73rem;color:var(--t3);">Sync</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--amber);" id="sync-pending">0</div><div style="font-size:.73rem;color:var(--t3);">En attente</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--red);" id="sync-conflicts">0</div><div style="font-size:.73rem;color:var(--t3);">Conflits</div></div>
             </div>
           </div>
           <div class="feed-card">
-            <div class="section-header" style="margin-bottom:0;"><div class="section-title" data-i18n="sync.log">Journal de sync</div></div>
-            <div class="feed-item"><div class="feed-dot green"></div><div style="flex:1;"><div class="feed-text"><strong>backup_janvier.zip</strong> synchronisé sur NAS Home</div><div class="feed-time">14:32</div></div></div>
-            <div class="feed-item"><div class="feed-dot blue"></div><div style="flex:1;"><div class="feed-text">Démarrage sync <strong>maquettes_v8.fig</strong></div><div class="feed-time">14:28</div></div></div>
-            <div class="feed-item"><div class="feed-dot" style="background:var(--red);"></div><div style="flex:1;"><div class="feed-text">Conflit détecté — <strong>studio_session_03.aiff</strong></div><div class="feed-time">13:51</div></div></div>
-            <div class="feed-item"><div class="feed-dot green"></div><div style="flex:1;"><div class="feed-text"><strong>1 247 fichiers</strong> synchronisés avec succès</div><div class="feed-time">11:02</div></div></div>
+            <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Journal</div><button class="btn btn-ghost btn-sm" id="btn-clear-log">Effacer</button></div>
+            <div id="sync-log"></div>
           </div>
+        </div>
+        <div class="section-header"><div class="section-title">Règles de sync</div><button class="btn btn-ghost btn-sm" id="btn-add-rule">＋ Ajouter</button></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Règle</th><th>Source</th><th>Destination</th><th>Fréquence</th><th>État</th><th></th></tr></thead>
+            <tbody id="sync-rules-tbody"></tbody>
+          </table>
         </div>
       </div>
 
@@ -515,125 +557,150 @@ img{display:block;max-width:100%;}
       <div class="page" id="page-parametres">
         <div class="settings-layout">
           <div class="settings-nav">
-            <div class="settings-nav-item active" onclick="switchSettingsTab(this,'st-profil')"><span>👤</span> <span data-i18n="settings.profile">Profil</span></div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-securite')"><span>🔐</span> <span data-i18n="settings.security">Sécurité</span></div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-langue')"><span>🌐</span> <span data-i18n="settings.language">Langue</span></div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-notifications')"><span>🔔</span> <span data-i18n="settings.notifications">Notifications</span></div>
-            <div class="settings-nav-item" onclick="switchSettingsTab(this,'st-avance')"><span>⚙️</span> <span data-i18n="settings.advanced">Avancé</span></div>
+            <div class="s-nav-item active" data-tab="st-profil"><span>👤</span> Profil</div>
+            <div class="s-nav-item" data-tab="st-securite"><span>🔐</span> Sécurité</div>
+            <div class="s-nav-item" data-tab="st-langue"><span>🌐</span> Langue</div>
+            <div class="s-nav-item" data-tab="st-notifications"><span>🔔</span> Notifications</div>
+            <div class="s-nav-item" data-tab="st-reseau"><span>📡</span> Réseau</div>
+            <div class="s-nav-item" data-tab="st-avance"><span>⚙️</span> Avancé</div>
           </div>
           <div>
-
             <!-- PROFIL -->
             <div class="settings-panel" id="st-profil">
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="profile.personal_info">Informations personnelles</div>
-
-                <!-- AVATAR UPLOAD -->
-                <div class="avatar-upload">
-                  <div class="avatar-lg" id="settings-avatar" onclick="document.getElementById('avatar-file-input').click()">
+              <div class="s-group">
+                <div class="s-group-title">Photo de profil</div>
+                <div class="avatar-wrap">
+                  <div class="avatar-lg" id="settings-avatar" onclick="document.getElementById('avatar-input').click()">
                     <span id="settings-avatar-initials">?</span>
-                    <div class="avatar-lg-overlay">📷</div>
+                    <div class="avatar-overlay">📷</div>
                   </div>
-                  <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp" onchange="uploadAvatar(this)">
-                  <div class="avatar-upload-info">
-                    <h4 data-i18n="profile.avatar">Photo de profil</h4>
-                    <p data-i18n="profile.avatar_hint">Cliquez sur l'avatar pour changer · PNG, JPG, WEBP · max 2 MB</p>
-                    <div class="avatar-upload-btns">
-                      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('avatar-file-input').click()" data-i18n="profile.change_avatar">Changer</button>
-                      <button class="btn btn-ghost btn-sm" onclick="removeAvatar()" style="color:var(--red);" data-i18n="profile.remove_avatar">Supprimer</button>
+                  <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp">
+                  <div>
+                    <div style="font-size:.88rem;color:var(--t1);margin-bottom:3px;">Avatar</div>
+                    <div style="font-size:.76rem;color:var(--t3);">PNG, JPG, WEBP · max 2 MB</div>
+                    <div style="display:flex;gap:8px;margin-top:.7rem;">
+                      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('avatar-input').click()">Changer</button>
+                      <button class="btn btn-sm" style="color:var(--red);border:1px solid rgba(255,59,92,.2);background:transparent;" id="btn-remove-avatar">Supprimer</button>
                     </div>
-                    <div id="avatar-upload-progress"><div id="avatar-upload-progress-fill"></div></div>
+                    <div class="avatar-prog"><div class="avatar-prog-fill" id="avatar-prog-fill"></div></div>
                   </div>
                 </div>
-
-                <!-- Code client + forfait -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem;">
-                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.75rem 1rem;">
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;" data-i18n="profile.client_code">Code client</div>
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--blue2);" id="settings-client-code">—</div>
-                  </div>
-                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.75rem 1rem;">
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;" data-i18n="profile.plan">Forfait</div>
-                    <div style="font-family:'JetBrains Mono',monospace;font-size:.88rem;color:var(--green);" id="settings-plan">—</div>
-                  </div>
-                </div>
-
-                <div class="field-row">
-                  <div class="field"><label data-i18n="profile.firstname">Prénom</label><input type="text" id="settings-firstname" placeholder="Prénom"></div>
-                  <div class="field"><label data-i18n="profile.lastname">Nom</label><input type="text" id="settings-lastname" placeholder="Nom"></div>
-                </div>
-                <div class="field"><label data-i18n="profile.email">Email</label><input type="email" id="settings-email" disabled></div>
-                <div class="field"><label data-i18n="profile.username">Nom d'utilisateur</label><input type="text" id="settings-username" placeholder="@pseudo"></div>
               </div>
-              <button class="btn btn-primary" id="save-profile-btn" onclick="saveProfile()" data-i18n="profile.save">Enregistrer les modifications</button>
+              <div class="s-group">
+                <div class="s-group-title">Informations personnelles</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.1rem;">
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.7rem .9rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Code client</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--blue2);" id="settings-code">—</div>
+                  </div>
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.7rem .9rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Forfait</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);" id="settings-plan">—</div>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label>Prénom</label><input type="text" id="s-firstname" placeholder="Prénom"></div>
+                  <div class="field"><label>Nom</label><input type="text" id="s-lastname" placeholder="Nom"></div>
+                </div>
+                <div class="field"><label>Email</label><input type="email" id="s-email" disabled></div>
+                <div class="field"><label>Nom d'utilisateur</label><input type="text" id="s-username" placeholder="@pseudo"></div>
+              </div>
+              <button class="btn btn-primary" id="btn-save-profile">Enregistrer</button>
             </div>
 
             <!-- SECURITE -->
             <div class="settings-panel" id="st-securite" style="display:none;">
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="security.change_password">Changer le mot de passe</div>
-                <div class="field"><label data-i18n="security.new_password">Nouveau mot de passe</label><input type="password" id="new-password" placeholder="••••••••"></div>
-                <div class="field"><label data-i18n="security.confirm_password">Confirmer</label><input type="password" id="confirm-password" placeholder="••••••••"></div>
-                <button class="btn btn-primary" onclick="changePassword()" data-i18n="security.change_btn">Changer le mot de passe</button>
+              <div class="s-group">
+                <div class="s-group-title">Changer le mot de passe</div>
+                <div class="field"><label>Nouveau mot de passe</label><input type="password" id="s-pw-new" placeholder="••••••••"></div>
+                <div class="field"><label>Confirmer</label><input type="password" id="s-pw-confirm" placeholder="••••••••"></div>
+                <button class="btn btn-primary" id="btn-change-pw">Changer</button>
               </div>
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="security.session">Session actuelle</div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label"><span data-i18n="security.active_session">Session active</span> <span class="badge badge-green" style="margin-left:8px;" data-i18n="security.current">Actuel</span></div>
-                    <div class="settings-row-desc" id="session-email">—</div>
+              <div class="s-group">
+                <div class="s-group-title">Session</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Session active <span class="badge badge-green" style="margin-left:6px;">Actuel</span></div>
+                    <div class="s-row-desc" id="s-session-email">—</div>
                   </div>
                 </div>
               </div>
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="security.danger_zone">Zone de danger</div>
-                <div class="settings-row">
-                  <div class="settings-row-info">
-                    <div class="settings-row-label" style="color:var(--red);" data-i18n="security.sign_out_all">Se déconnecter de partout</div>
-                    <div class="settings-row-desc" data-i18n="security.sign_out_all_desc">Révoquer toutes les sessions actives</div>
+              <div class="s-group">
+                <div class="s-group-title">Zone de danger</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label" style="color:var(--red);">Déconnexion globale</div>
+                    <div class="s-row-desc">Révoquer toutes les sessions</div>
                   </div>
-                  <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:rgba(255,59,92,.2);" onclick="doSignOut()" data-i18n="security.disconnect">Déconnecter</button>
+                  <button class="btn btn-danger btn-sm" id="btn-signout-all">Déconnecter partout</button>
                 </div>
               </div>
             </div>
 
             <!-- LANGUE -->
             <div class="settings-panel" id="st-langue" style="display:none;">
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="language.title">Langue de l'interface</div>
-                <p style="font-size:.84rem;color:var(--t2);margin-bottom:1.5rem;" data-i18n="language.desc">Choisissez la langue d'affichage de votre tableau de bord.</p>
-                <div class="lang-selector" id="lang-selector">
-                  <div class="lang-btn active" onclick="setLang('fr')" data-lang="fr">🇫🇷 Français</div>
-                  <div class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧 English</div>
-                  <div class="lang-btn" onclick="setLang('es')" data-lang="es">🇪🇸 Español</div>
-                  <div class="lang-btn" onclick="setLang('de')" data-lang="de">🇩🇪 Deutsch</div>
-                  <div class="lang-btn" onclick="setLang('pt')" data-lang="pt">🇧🇷 Português</div>
-                  <div class="lang-btn" onclick="setLang('ja')" data-lang="ja">🇯🇵 日本語</div>
+              <div class="s-group">
+                <div class="s-group-title">Langue de l'interface</div>
+                <p style="font-size:.83rem;color:var(--t2);margin-bottom:1.3rem;">Choisissez la langue d'affichage. Sauvegardée automatiquement.</p>
+                <div class="lang-grid" id="lang-grid">
+                  <div class="lang-btn active" data-lang="fr">🇫🇷 Français</div>
+                  <div class="lang-btn" data-lang="en">🇬🇧 English</div>
+                  <div class="lang-btn" data-lang="es">🇪🇸 Español</div>
+                  <div class="lang-btn" data-lang="de">🇩🇪 Deutsch</div>
+                  <div class="lang-btn" data-lang="pt">🇧🇷 Português</div>
+                  <div class="lang-btn" data-lang="ja">🇯🇵 日本語</div>
                 </div>
-                <p style="font-size:.75rem;color:var(--t3);margin-top:1.2rem;" data-i18n="language.saved_auto">La langue est sauvegardée automatiquement.</p>
               </div>
             </div>
 
             <!-- NOTIFICATIONS -->
             <div class="settings-panel" id="st-notifications" style="display:none;">
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="notif_settings.transfers">Transferts</div>
-                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" data-i18n="notif_settings.transfer_done">Transfert terminé</div><div class="settings-row-desc" data-i18n="notif_settings.transfer_done_desc">Notifier à la fin de chaque transfert</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" data-i18n="notif_settings.transfer_error">Erreur de transfert</div><div class="settings-row-desc" data-i18n="notif_settings.transfer_error_desc">Notifier en cas d'échec</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="s-group">
+                <div class="s-group-title">Transferts</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Transfert terminé</div><div class="s-row-desc">Notification à la fin de chaque transfert</div></div><div class="toggle on" id="notif-done"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Erreur de transfert</div><div class="s-row-desc">Notification en cas d'échec</div></div><div class="toggle on" id="notif-error"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Démarrage</div><div class="s-row-desc">Notification au début d'un transfert</div></div><div class="toggle" id="notif-start"></div></div>
               </div>
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="notif_settings.devices">Appareils &amp; Réseau</div>
-                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" data-i18n="notif_settings.device_connected">Appareil connecté</div><div class="settings-row-desc" data-i18n="notif_settings.device_connected_desc">Quand un nouvel appareil rejoint le réseau</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
-                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" data-i18n="notif_settings.disk_alert">Alerte espace disque</div><div class="settings-row-desc" data-i18n="notif_settings.disk_alert_desc">Quand l'espace disponible est inférieur à 10%</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="s-group">
+                <div class="s-group-title">Appareils</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Appareil connecté</div><div class="s-row-desc">Quand un appareil rejoint le réseau</div></div><div class="toggle on" id="notif-device"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Espace disque faible</div><div class="s-row-desc">Alerte si espace libre &lt; 10%</div></div><div class="toggle on" id="notif-disk"></div></div>
               </div>
+              <button class="btn btn-primary btn-sm" id="btn-save-notif">Sauvegarder</button>
             </div>
 
-            <!-- AVANCE -->
+            <!-- RÉSEAU -->
+            <div class="settings-panel" id="st-reseau" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Réseau local (LAN)</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Découverte automatique</div><div class="s-row-desc">Détecter les appareils CREO sur le réseau</div></div><div class="toggle on" id="net-discovery"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Port d'écoute</div><div class="s-row-desc">Port pour les connexions entrantes</div></div><input type="number" value="42000" id="net-port" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:80px;text-align:center;"></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Chiffrement AES-256</div><div class="s-row-desc">Chiffrer tous les transferts réseau</div></div><div class="toggle on" id="net-encrypt"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Bande passante</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Limiter l'envoi</div><div class="s-row-desc">Illimité actuellement</div></div><div class="toggle" id="net-limit-up"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Limiter la réception</div><div class="s-row-desc">Illimité actuellement</div></div><div class="toggle" id="net-limit-down"></div></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-save-network">Appliquer</button>
+            </div>
+
+            <!-- AVANCÉ -->
             <div class="settings-panel" id="st-avance" style="display:none;">
-              <div class="settings-group">
-                <div class="settings-group-title" data-i18n="advanced.performance">Performances</div>
-                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" data-i18n="advanced.parallel">Transferts parallèles</div><div class="settings-row-desc" data-i18n="advanced.parallel_desc">Nombre de transferts simultanés</div></div><input type="number" value="4" min="1" max="16" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.4rem .8rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;width:70px;text-align:center;"></div>
-                <div class="settings-row"><div class="settings-row-info"><div class="settings-row-label" data-i18n="advanced.compression">Compression à la volée</div><div class="settings-row-desc" data-i18n="advanced.compression_desc">Compresser les données avant transfert</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+              <div class="s-group">
+                <div class="s-group-title">Performances</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Transferts parallèles</div><div class="s-row-desc">Nombre de transferts simultanés</div></div><input type="number" value="4" min="1" max="16" id="adv-parallel" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:65px;text-align:center;"></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Compression à la volée</div><div class="s-row-desc">Compresser avant transfert</div></div><div class="toggle on" id="adv-compress"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Mode debug</div><div class="s-row-desc">Logs détaillés dans la console</div></div><div class="toggle" id="adv-debug"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Cache</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Cache local</div><div class="s-row-desc" id="cache-size">284 MB utilisés</div></div><button class="btn btn-ghost btn-sm" id="btn-clear-cache">Vider le cache</button></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Nettoyage automatique</div><div class="s-row-desc">Supprimer les transferts &gt; 30 jours</div></div><div class="toggle" id="adv-autoclean"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Zone de danger</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label" style="color:var(--red);">Réinitialiser les paramètres</div><div class="s-row-desc">Remettre tous les paramètres par défaut</div></div><button class="btn btn-danger btn-sm" id="btn-reset-settings">Réinitialiser</button></div>
               </div>
             </div>
 
@@ -643,827 +710,1028 @@ img{display:block;max-width:100%;}
 
       <!-- ══ ANALYTIQUES ══ -->
       <div class="page" id="page-analytiques">
-        <div class="kpi-row">
-          <div class="kpi-card"><div class="kpi-label" data-i18n="analytics.data">Données transférées</div><div class="kpi-val">2.8 <span style="font-size:1.2rem;color:var(--blue2);">TB</span></div><div class="kpi-trend up">↑ +18% vs mois dernier</div></div>
-          <div class="kpi-card"><div class="kpi-label" data-i18n="analytics.success">Transferts réussis</div><div class="kpi-val">1 847</div><div class="kpi-trend up">↑ +127 ce mois</div></div>
-          <div class="kpi-card"><div class="kpi-label" data-i18n="analytics.peak_speed">Vitesse pic</div><div class="kpi-val">1.9 <span style="font-size:1.2rem;color:var(--blue2);">GB/s</span></div><div class="kpi-trend up">↑ Nouveau record</div></div>
-          <div class="kpi-card"><div class="kpi-label" data-i18n="analytics.error_rate">Taux d'erreur</div><div class="kpi-val">0.6 <span style="font-size:1.2rem;color:var(--blue2);">%</span></div><div class="kpi-trend down">↓ -0.2% vs semaine dernière</div></div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Données transférées</div><div class="kpi-val" id="kpi-data">2.8 <span style="font-size:1.1rem;color:var(--blue2);">TB</span></div><div class="kpi-trend up" id="kpi-data-trend">↑ +18% vs mois dernier</div></div>
+          <div class="kpi-card"><div class="kpi-label">Transferts réussis</div><div class="kpi-val" id="kpi-success">1 847</div><div class="kpi-trend up">↑ +127 ce mois</div></div>
+          <div class="kpi-card"><div class="kpi-label">Vitesse pic</div><div class="kpi-val" id="kpi-speed">1.9 <span style="font-size:1.1rem;color:var(--blue2);">GB/s</span></div><div class="kpi-trend up">↑ Nouveau record</div></div>
+          <div class="kpi-card"><div class="kpi-label">Taux d'erreur</div><div class="kpi-val" id="kpi-error">0.6 <span style="font-size:1.1rem;color:var(--blue2);">%</span></div><div class="kpi-trend down">↓ -0.2% cette semaine</div></div>
         </div>
         <div class="two-col">
           <div class="chart-card">
-            <div class="section-header" style="margin-bottom:0;"><div class="section-title" data-i18n="analytics.daily_chart">Transferts par jour <small>7 derniers jours</small></div></div>
-            <div class="chart-bar-group" id="chart-daily"></div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Transferts / jour <small>7 derniers jours</small></div></div>
+            <div class="chart-bars" id="chart-daily"></div>
           </div>
           <div class="chart-card">
-            <div class="section-header" style="margin-bottom:0;"><div class="section-title" data-i18n="analytics.type_chart">Répartition par type</div></div>
-            <div style="margin-top:1.2rem;display:flex;flex-direction:column;gap:10px;">
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">🎬 Vidéos</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">1.2 TB · 43%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:43%;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">📦 Archives</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">840 GB · 30%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:30%;height:100%;background:linear-gradient(90deg,var(--purple),var(--blue2));border-radius:99px;"></div></div></div>
-              <div><div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:.8rem;"><span style="color:var(--t2);">🖼️ Images</span><span class="font-mono" style="font-size:.72rem;color:var(--t3);">448 GB · 16%</span></div><div style="height:5px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:16%;height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:99px;"></div></div></div>
-            </div>
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Répartition par type</div></div>
+            <div id="chart-types" style="margin-top:1rem;display:flex;flex-direction:column;gap:9px;"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Appareils les plus actifs</div></div>
+            <table class="data-table"><thead><tr><th>Appareil</th><th>Envoyé</th><th>Reçu</th><th>Total</th></tr></thead><tbody id="analytics-devices-tbody"></tbody></table>
+          </div>
+          <div class="feed-card">
+            <div class="section-header" style="margin-bottom:.3rem;"><div class="section-title">Activité récente</div></div>
+            <div id="analytics-feed"></div>
           </div>
         </div>
       </div>
 
-    </div><!-- end page-content -->
-  </div><!-- end main-area -->
-</div><!-- end app-shell -->
-</div><!-- end #app-shell -->
+    </div><!-- page-content -->
+  </div><!-- main-area -->
+</div><!-- app-shell -->
+</div><!-- #app-shell -->
+
+<!-- MODAL NOUVEAU TRANSFERT -->
+<div class="modal-bg" id="modal-transfer">
+  <div class="modal">
+    <div class="modal-title">Nouveau transfert</div>
+    <div class="field">
+      <label>Nom du fichier / description</label>
+      <input type="text" id="mt-name" placeholder="ex: video_projet.mp4">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Taille</label>
+        <input type="text" id="mt-size" placeholder="ex: 4.2 GB">
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select id="mt-type">
+          <option value="video">🎬 Vidéo</option>
+          <option value="archive">📦 Archive</option>
+          <option value="doc">📄 Document</option>
+          <option value="image">🖼️ Image</option>
+          <option value="audio">🎵 Audio</option>
+          <option value="design">🎨 Design</option>
+          <option value="other">📁 Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Source</label>
+        <select id="mt-source"><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option><option>NAS Home</option></select>
+      </div>
+      <div class="field">
+        <label>Destination</label>
+        <select id="mt-dest"><option>NAS Home</option><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modal-cancel">Annuler</button>
+      <button class="btn btn-primary" id="modal-confirm">⚡ Lancer le transfert</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJOUT APPAREIL -->
+<div class="modal-bg" id="modal-device">
+  <div class="modal">
+    <div class="modal-title">Ajouter un appareil</div>
+    <div class="field">
+      <label>Nom de l'appareil</label>
+      <input type="text" id="md-name" placeholder="ex: MacBook Pro 14">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Type</label>
+        <select id="md-type">
+          <option value="desktop">🖥️ Ordinateur</option>
+          <option value="laptop">💻 Laptop</option>
+          <option value="phone">📱 Mobile</option>
+          <option value="nas">📦 NAS / Serveur</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Système</label>
+        <input type="text" id="md-os" placeholder="ex: Windows 11">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="md-cancel">Annuler</button>
+      <button class="btn btn-primary" id="md-confirm">Ajouter</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast-wrap"></div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-/* ═══════════════════════════════════════
-   SUPABASE
-═══════════════════════════════════════ */
+/* ══ SUPABASE ══ */
 const supabase = createClient(
   "https://mpnfvrizbluhhjcfzztc.supabase.co",
   "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
 );
 
-let currentSession = null;
-let currentProfile = null;
-let currentLang    = localStorage.getItem('creo_lang') || 'fr';
+/* ══ STATE ══ */
+let session = null, profile = null;
+let currentPage = 'transferts';
+let currentLang = localStorage.getItem('creo_lang') || 'fr';
+let fileView = 'grid'; // 'grid' | 'list'
+let notifSettings = { done: true, error: true, start: false, device: true, disk: true };
 
-/* ═══════════════════════════════════════
-   TRADUCTIONS
-═══════════════════════════════════════ */
-const TRANSLATIONS = {
-  fr: {
-    "nav.main":"Principal","nav.transfers":"Transferts","nav.devices":"Appareils",
-    "nav.files":"Fichiers","nav.sync":"Sync","nav.account":"Compte",
-    "nav.settings":"Paramètres","nav.analytics":"Analytiques","nav.logout":"Déconnexion",
-    "action.new_transfer":"Nouveau transfert",
-    "notif.title":"Notifications","notif.read_all":"Tout lire",
-    "stats.total_transferred":"Total transféré","stats.active_devices":"Appareils actifs",
-    "stats.avg_speed":"Vitesse moy.","stats.success_rate":"Taux de succès",
-    "transfers.active":"Transferts actifs","transfers.history":"Historique",
-    "filter.all":"Tous","filter.sent":"Envoyés","filter.received":"Reçus",
-    "filter.errors":"Erreurs","filter.videos":"Vidéos","filter.design":"Design",
-    "filter.docs":"Docs","filter.images":"Images","filter.archives":"Archives",
-    "table.file":"Fichier","table.size":"Taille","table.destination":"Destination",
-    "table.speed":"Vitesse","table.status":"Statut","table.time":"Heure",
-    "devices.connected":"Appareils connectés","devices.bandwidth":"Bande passante totale",
-    "devices.last_sync":"Dernière sync","devices.my_devices":"Mes appareils",
-    "devices.add":"Ajouter un appareil","devices.add_soon":"Bientôt disponible",
-    "device.max_speed":"Vitesse max","device.network":"Réseau","device.free_space":"Espace libre",
-    "device.version":"Version CREO","device.transfer":"Transférer","device.details":"Détails",
-    "device.offline":"Hors ligne","device.info":"Infos",
-    "files.total":"Total fichiers","files.used":"Espace utilisé","files.shared":"Partagés",
-    "files.last_modified":"Dernière modif.","files.recent":"Récents",
-    "sync.status":"État de synchronisation","sync.last_update":"Dernière mise à jour il y a 3 min",
-    "sync.launch":"Lancer sync","sync.launched":"Synchronisation lancée",
-    "sync.log":"Journal de sync","sync.synced":"Fichiers sync",
-    "sync.pending":"En attente","sync.conflicts":"Conflits",
-    "settings.profile":"Profil","settings.security":"Sécurité","settings.language":"Langue",
-    "settings.notifications":"Notifications","settings.advanced":"Avancé",
-    "profile.personal_info":"Informations personnelles","profile.avatar":"Photo de profil",
-    "profile.avatar_hint":"Cliquez sur l'avatar pour changer · PNG, JPG, WEBP · max 2 MB",
-    "profile.change_avatar":"Changer","profile.remove_avatar":"Supprimer",
-    "profile.client_code":"Code client","profile.plan":"Forfait",
-    "profile.firstname":"Prénom","profile.lastname":"Nom",
-    "profile.email":"Email","profile.username":"Nom d'utilisateur",
-    "profile.save":"Enregistrer les modifications",
-    "profile.saved":"Profil sauvegardé !","profile.firstname_required":"Prénom et nom requis.",
-    "profile.username_short":"Pseudo trop court (min 3 car.)","profile.username_taken":"Pseudo déjà pris.",
-    "security.change_password":"Changer le mot de passe","security.new_password":"Nouveau mot de passe",
-    "security.confirm_password":"Confirmer","security.change_btn":"Changer le mot de passe",
-    "security.session":"Session actuelle","security.active_session":"Session active",
-    "security.current":"Actuel","security.danger_zone":"Zone de danger",
-    "security.sign_out_all":"Se déconnecter de partout",
-    "security.sign_out_all_desc":"Révoquer toutes les sessions actives","security.disconnect":"Déconnecter",
-    "security.pw_short":"Mot de passe trop court (min 6 car.)","security.pw_mismatch":"Les mots de passe ne correspondent pas.",
-    "security.pw_changed":"Mot de passe modifié !",
-    "language.title":"Langue de l'interface","language.desc":"Choisissez la langue d'affichage de votre tableau de bord.",
-    "language.saved_auto":"La langue est sauvegardée automatiquement.",
-    "notif_settings.transfers":"Transferts","notif_settings.transfer_done":"Transfert terminé",
-    "notif_settings.transfer_done_desc":"Notifier à la fin de chaque transfert",
-    "notif_settings.transfer_error":"Erreur de transfert","notif_settings.transfer_error_desc":"Notifier en cas d'échec",
-    "notif_settings.devices":"Appareils & Réseau","notif_settings.device_connected":"Appareil connecté",
-    "notif_settings.device_connected_desc":"Quand un nouvel appareil rejoint le réseau",
-    "notif_settings.disk_alert":"Alerte espace disque","notif_settings.disk_alert_desc":"Quand l'espace disponible est inférieur à 10%",
-    "advanced.performance":"Performances","advanced.parallel":"Transferts parallèles",
-    "advanced.parallel_desc":"Nombre de transferts simultanés","advanced.compression":"Compression à la volée",
-    "advanced.compression_desc":"Compresser les données avant transfert",
-    "analytics.data":"Données transférées","analytics.success":"Transferts réussis",
-    "analytics.peak_speed":"Vitesse pic","analytics.error_rate":"Taux d'erreur",
-    "analytics.daily_chart":"Transferts par jour","analytics.type_chart":"Répartition par type",
-    "avatar.uploading":"Upload en cours…","avatar.uploaded":"Avatar mis à jour !",
-    "avatar.too_large":"Fichier trop grand (max 2 MB)","avatar.removed":"Avatar supprimé.",
-    "page.transfers":"TRANSFERTS","page.devices":"APPAREILS","page.files":"FICHIERS",
-    "page.sync":"SYNC","page.settings":"PARAMÈTRES","page.analytics":"ANALYTIQUES",
-    "bc.transfers":"// récents","bc.devices":"// mes appareils","bc.files":"// tous",
-    "bc.sync":"// état","bc.settings":"// compte","bc.analytics":"// ce mois",
-  },
-  en: {
-    "nav.main":"Main","nav.transfers":"Transfers","nav.devices":"Devices",
-    "nav.files":"Files","nav.sync":"Sync","nav.account":"Account",
-    "nav.settings":"Settings","nav.analytics":"Analytics","nav.logout":"Sign out",
-    "action.new_transfer":"New transfer",
-    "notif.title":"Notifications","notif.read_all":"Mark all read",
-    "stats.total_transferred":"Total transferred","stats.active_devices":"Active devices",
-    "stats.avg_speed":"Avg. speed","stats.success_rate":"Success rate",
-    "transfers.active":"Active transfers","transfers.history":"History",
-    "filter.all":"All","filter.sent":"Sent","filter.received":"Received",
-    "filter.errors":"Errors","filter.videos":"Videos","filter.design":"Design",
-    "filter.docs":"Docs","filter.images":"Images","filter.archives":"Archives",
-    "table.file":"File","table.size":"Size","table.destination":"Destination",
-    "table.speed":"Speed","table.status":"Status","table.time":"Time",
-    "devices.connected":"Connected devices","devices.bandwidth":"Total bandwidth",
-    "devices.last_sync":"Last sync","devices.my_devices":"My devices",
-    "devices.add":"Add a device","devices.add_soon":"Coming soon",
-    "device.max_speed":"Max speed","device.network":"Network","device.free_space":"Free space",
-    "device.version":"CREO version","device.transfer":"Transfer","device.details":"Details",
-    "device.offline":"Offline","device.info":"Info",
-    "files.total":"Total files","files.used":"Used space","files.shared":"Shared",
-    "files.last_modified":"Last modified","files.recent":"Recent",
-    "sync.status":"Sync status","sync.last_update":"Last update 3 min ago",
-    "sync.launch":"Start sync","sync.launched":"Sync started",
-    "sync.log":"Sync log","sync.synced":"Synced files","sync.pending":"Pending","sync.conflicts":"Conflicts",
-    "settings.profile":"Profile","settings.security":"Security","settings.language":"Language",
-    "settings.notifications":"Notifications","settings.advanced":"Advanced",
-    "profile.personal_info":"Personal information","profile.avatar":"Profile picture",
-    "profile.avatar_hint":"Click avatar to change · PNG, JPG, WEBP · max 2 MB",
-    "profile.change_avatar":"Change","profile.remove_avatar":"Remove",
-    "profile.client_code":"Client code","profile.plan":"Plan",
-    "profile.firstname":"First name","profile.lastname":"Last name",
-    "profile.email":"Email","profile.username":"Username",
-    "profile.save":"Save changes",
-    "profile.saved":"Profile saved!","profile.firstname_required":"First and last name required.",
-    "profile.username_short":"Username too short (min 3 chars)","profile.username_taken":"Username already taken.",
-    "security.change_password":"Change password","security.new_password":"New password",
-    "security.confirm_password":"Confirm","security.change_btn":"Change password",
-    "security.session":"Current session","security.active_session":"Active session",
-    "security.current":"Current","security.danger_zone":"Danger zone",
-    "security.sign_out_all":"Sign out everywhere",
-    "security.sign_out_all_desc":"Revoke all active sessions","security.disconnect":"Disconnect",
-    "security.pw_short":"Password too short (min 6 chars)","security.pw_mismatch":"Passwords do not match.",
-    "security.pw_changed":"Password changed!",
-    "language.title":"Interface language","language.desc":"Choose the display language for your dashboard.",
-    "language.saved_auto":"Language is saved automatically.",
-    "notif_settings.transfers":"Transfers","notif_settings.transfer_done":"Transfer complete",
-    "notif_settings.transfer_done_desc":"Notify at end of each transfer",
-    "notif_settings.transfer_error":"Transfer error","notif_settings.transfer_error_desc":"Notify on failure",
-    "notif_settings.devices":"Devices & Network","notif_settings.device_connected":"Device connected",
-    "notif_settings.device_connected_desc":"When a new device joins the network",
-    "notif_settings.disk_alert":"Disk space alert","notif_settings.disk_alert_desc":"When available space is below 10%",
-    "advanced.performance":"Performance","advanced.parallel":"Parallel transfers",
-    "advanced.parallel_desc":"Number of simultaneous transfers","advanced.compression":"On-the-fly compression",
-    "advanced.compression_desc":"Compress data before transfer",
-    "analytics.data":"Data transferred","analytics.success":"Successful transfers",
-    "analytics.peak_speed":"Peak speed","analytics.error_rate":"Error rate",
-    "analytics.daily_chart":"Transfers per day","analytics.type_chart":"By type",
-    "avatar.uploading":"Uploading…","avatar.uploaded":"Avatar updated!",
-    "avatar.too_large":"File too large (max 2 MB)","avatar.removed":"Avatar removed.",
-    "page.transfers":"TRANSFERS","page.devices":"DEVICES","page.files":"FILES",
-    "page.sync":"SYNC","page.settings":"SETTINGS","page.analytics":"ANALYTICS",
-    "bc.transfers":"// recent","bc.devices":"// my devices","bc.files":"// all",
-    "bc.sync":"// status","bc.settings":"// account","bc.analytics":"// this month",
-  },
-  es: {
-    "nav.main":"Principal","nav.transfers":"Transferencias","nav.devices":"Dispositivos",
-    "nav.files":"Archivos","nav.sync":"Sync","nav.account":"Cuenta",
-    "nav.settings":"Ajustes","nav.analytics":"Analíticas","nav.logout":"Cerrar sesión",
-    "action.new_transfer":"Nueva transferencia",
-    "notif.title":"Notificaciones","notif.read_all":"Marcar todo",
-    "stats.total_transferred":"Total transferido","stats.active_devices":"Dispositivos activos",
-    "stats.avg_speed":"Vel. media","stats.success_rate":"Tasa de éxito",
-    "transfers.active":"Transferencias activas","transfers.history":"Historial",
-    "filter.all":"Todos","filter.sent":"Enviados","filter.received":"Recibidos",
-    "filter.errors":"Errores","filter.videos":"Vídeos","filter.design":"Diseño",
-    "filter.docs":"Docs","filter.images":"Imágenes","filter.archives":"Archivos",
-    "table.file":"Archivo","table.size":"Tamaño","table.destination":"Destino",
-    "table.speed":"Velocidad","table.status":"Estado","table.time":"Hora",
-    "devices.connected":"Dispositivos conectados","devices.bandwidth":"Ancho de banda total",
-    "devices.last_sync":"Último sync","devices.my_devices":"Mis dispositivos",
-    "devices.add":"Añadir dispositivo","devices.add_soon":"Próximamente",
-    "device.max_speed":"Vel. máx","device.network":"Red","device.free_space":"Espacio libre",
-    "device.version":"Versión CREO","device.transfer":"Transferir","device.details":"Detalles",
-    "device.offline":"Sin conexión","device.info":"Info",
-    "files.total":"Total archivos","files.used":"Espacio usado","files.shared":"Compartidos",
-    "files.last_modified":"Últ. modif.","files.recent":"Recientes",
-    "sync.status":"Estado de sincronización","sync.last_update":"Últ. actualización hace 3 min",
-    "sync.launch":"Iniciar sync","sync.launched":"Sync iniciado",
-    "sync.log":"Registro sync","sync.synced":"Archivos sync","sync.pending":"Pendientes","sync.conflicts":"Conflictos",
-    "settings.profile":"Perfil","settings.security":"Seguridad","settings.language":"Idioma",
-    "settings.notifications":"Notificaciones","settings.advanced":"Avanzado",
-    "profile.personal_info":"Información personal","profile.avatar":"Foto de perfil",
-    "profile.avatar_hint":"Haz clic en el avatar para cambiar · PNG, JPG, WEBP · max 2 MB",
-    "profile.change_avatar":"Cambiar","profile.remove_avatar":"Eliminar",
-    "profile.client_code":"Código cliente","profile.plan":"Plan",
-    "profile.firstname":"Nombre","profile.lastname":"Apellido",
-    "profile.email":"Email","profile.username":"Nombre de usuario",
-    "profile.save":"Guardar cambios",
-    "profile.saved":"¡Perfil guardado!","profile.firstname_required":"Nombre y apellido requeridos.",
-    "profile.username_short":"Usuario muy corto (mín 3 car.)","profile.username_taken":"Usuario ya en uso.",
-    "security.change_password":"Cambiar contraseña","security.new_password":"Nueva contraseña",
-    "security.confirm_password":"Confirmar","security.change_btn":"Cambiar contraseña",
-    "security.session":"Sesión actual","security.active_session":"Sesión activa",
-    "security.current":"Actual","security.danger_zone":"Zona de peligro",
-    "security.sign_out_all":"Cerrar sesión en todas partes",
-    "security.sign_out_all_desc":"Revocar todas las sesiones activas","security.disconnect":"Desconectar",
-    "security.pw_short":"Contraseña muy corta (mín 6 car.)","security.pw_mismatch":"Las contraseñas no coinciden.",
-    "security.pw_changed":"¡Contraseña cambiada!",
-    "language.title":"Idioma de la interfaz","language.desc":"Elige el idioma de visualización de tu panel.",
-    "language.saved_auto":"El idioma se guarda automáticamente.",
-    "notif_settings.transfers":"Transferencias","notif_settings.transfer_done":"Transferencia completada",
-    "notif_settings.transfer_done_desc":"Notificar al final de cada transferencia",
-    "notif_settings.transfer_error":"Error de transferencia","notif_settings.transfer_error_desc":"Notificar en caso de fallo",
-    "notif_settings.devices":"Dispositivos & Red","notif_settings.device_connected":"Dispositivo conectado",
-    "notif_settings.device_connected_desc":"Cuando un nuevo dispositivo se une a la red",
-    "notif_settings.disk_alert":"Alerta espacio en disco","notif_settings.disk_alert_desc":"Cuando el espacio disponible es inferior al 10%",
-    "advanced.performance":"Rendimiento","advanced.parallel":"Transferencias paralelas",
-    "advanced.parallel_desc":"Número de transferencias simultáneas","advanced.compression":"Compresión al vuelo",
-    "advanced.compression_desc":"Comprimir datos antes de transferir",
-    "analytics.data":"Datos transferidos","analytics.success":"Transferencias exitosas",
-    "analytics.peak_speed":"Velocidad pico","analytics.error_rate":"Tasa de error",
-    "analytics.daily_chart":"Transferencias por día","analytics.type_chart":"Por tipo",
-    "avatar.uploading":"Subiendo…","avatar.uploaded":"¡Avatar actualizado!",
-    "avatar.too_large":"Archivo muy grande (max 2 MB)","avatar.removed":"Avatar eliminado.",
-    "page.transfers":"TRANSFERENCIAS","page.devices":"DISPOSITIVOS","page.files":"ARCHIVOS",
-    "page.sync":"SYNC","page.settings":"AJUSTES","page.analytics":"ANALÍTICAS",
-    "bc.transfers":"// recientes","bc.devices":"// mis dispositivos","bc.files":"// todos",
-    "bc.sync":"// estado","bc.settings":"// cuenta","bc.analytics":"// este mes",
-  },
-  de: {
-    "nav.main":"Haupt","nav.transfers":"Übertragungen","nav.devices":"Geräte",
-    "nav.files":"Dateien","nav.sync":"Sync","nav.account":"Konto",
-    "nav.settings":"Einstellungen","nav.analytics":"Analytik","nav.logout":"Abmelden",
-    "action.new_transfer":"Neue Übertragung",
-    "notif.title":"Benachrichtigungen","notif.read_all":"Alle lesen",
-    "stats.total_transferred":"Gesamt übertragen","stats.active_devices":"Aktive Geräte",
-    "stats.avg_speed":"Durchschn. Geschw.","stats.success_rate":"Erfolgsrate",
-    "transfers.active":"Aktive Übertragungen","transfers.history":"Verlauf",
-    "filter.all":"Alle","filter.sent":"Gesendet","filter.received":"Empfangen",
-    "filter.errors":"Fehler","filter.videos":"Videos","filter.design":"Design",
-    "filter.docs":"Docs","filter.images":"Bilder","filter.archives":"Archive",
-    "table.file":"Datei","table.size":"Größe","table.destination":"Ziel",
-    "table.speed":"Geschwindigkeit","table.status":"Status","table.time":"Zeit",
-    "devices.connected":"Verbundene Geräte","devices.bandwidth":"Gesamtbandbreite",
-    "devices.last_sync":"Letzter Sync","devices.my_devices":"Meine Geräte",
-    "devices.add":"Gerät hinzufügen","devices.add_soon":"Demnächst verfügbar",
-    "device.max_speed":"Max. Geschw.","device.network":"Netzwerk","device.free_space":"Freier Speicher",
-    "device.version":"CREO-Version","device.transfer":"Übertragen","device.details":"Details",
-    "device.offline":"Offline","device.info":"Info",
-    "files.total":"Dateien gesamt","files.used":"Belegter Speicher","files.shared":"Geteilt",
-    "files.last_modified":"Letzte Änderung","files.recent":"Zuletzt",
-    "sync.status":"Sync-Status","sync.last_update":"Letztes Update vor 3 Min",
-    "sync.launch":"Sync starten","sync.launched":"Sync gestartet",
-    "sync.log":"Sync-Protokoll","sync.synced":"Synchronisierte Dateien","sync.pending":"Ausstehend","sync.conflicts":"Konflikte",
-    "settings.profile":"Profil","settings.security":"Sicherheit","settings.language":"Sprache",
-    "settings.notifications":"Benachrichtigungen","settings.advanced":"Erweitert",
-    "profile.personal_info":"Persönliche Informationen","profile.avatar":"Profilbild",
-    "profile.avatar_hint":"Klicken Sie auf den Avatar · PNG, JPG, WEBP · max 2 MB",
-    "profile.change_avatar":"Ändern","profile.remove_avatar":"Entfernen",
-    "profile.client_code":"Kundencode","profile.plan":"Tarif",
-    "profile.firstname":"Vorname","profile.lastname":"Nachname",
-    "profile.email":"E-Mail","profile.username":"Benutzername",
-    "profile.save":"Änderungen speichern",
-    "profile.saved":"Profil gespeichert!","profile.firstname_required":"Vor- und Nachname erforderlich.",
-    "profile.username_short":"Benutzername zu kurz (mind. 3 Zeichen)","profile.username_taken":"Benutzername bereits vergeben.",
-    "security.change_password":"Passwort ändern","security.new_password":"Neues Passwort",
-    "security.confirm_password":"Bestätigen","security.change_btn":"Passwort ändern",
-    "security.session":"Aktuelle Sitzung","security.active_session":"Aktive Sitzung",
-    "security.current":"Aktuell","security.danger_zone":"Gefahrenzone",
-    "security.sign_out_all":"Überall abmelden",
-    "security.sign_out_all_desc":"Alle aktiven Sitzungen widerrufen","security.disconnect":"Trennen",
-    "security.pw_short":"Passwort zu kurz (mind. 6 Zeichen)","security.pw_mismatch":"Passwörter stimmen nicht überein.",
-    "security.pw_changed":"Passwort geändert!",
-    "language.title":"Oberflächensprache","language.desc":"Wählen Sie die Anzeigesprache Ihres Dashboards.",
-    "language.saved_auto":"Die Sprache wird automatisch gespeichert.",
-    "notif_settings.transfers":"Übertragungen","notif_settings.transfer_done":"Übertragung abgeschlossen",
-    "notif_settings.transfer_done_desc":"Benachrichtigen am Ende jeder Übertragung",
-    "notif_settings.transfer_error":"Übertragungsfehler","notif_settings.transfer_error_desc":"Bei Fehler benachrichtigen",
-    "notif_settings.devices":"Geräte & Netzwerk","notif_settings.device_connected":"Gerät verbunden",
-    "notif_settings.device_connected_desc":"Wenn ein neues Gerät dem Netzwerk beitritt",
-    "notif_settings.disk_alert":"Speicherplatz-Alarm","notif_settings.disk_alert_desc":"Wenn verfügbarer Speicher unter 10%",
-    "advanced.performance":"Leistung","advanced.parallel":"Parallele Übertragungen",
-    "advanced.parallel_desc":"Anzahl gleichzeitiger Übertragungen","advanced.compression":"On-the-fly-Komprimierung",
-    "advanced.compression_desc":"Daten vor der Übertragung komprimieren",
-    "analytics.data":"Übertragene Daten","analytics.success":"Erfolgreiche Übertragungen",
-    "analytics.peak_speed":"Spitzengeschwindigkeit","analytics.error_rate":"Fehlerrate",
-    "analytics.daily_chart":"Übertragungen pro Tag","analytics.type_chart":"Nach Typ",
-    "avatar.uploading":"Wird hochgeladen…","avatar.uploaded":"Avatar aktualisiert!",
-    "avatar.too_large":"Datei zu groß (max 2 MB)","avatar.removed":"Avatar entfernt.",
-    "page.transfers":"ÜBERTRAGUNGEN","page.devices":"GERÄTE","page.files":"DATEIEN",
-    "page.sync":"SYNC","page.settings":"EINSTELLUNGEN","page.analytics":"ANALYTIK",
-    "bc.transfers":"// zuletzt","bc.devices":"// meine Geräte","bc.files":"// alle",
-    "bc.sync":"// status","bc.settings":"// konto","bc.analytics":"// diesen Monat",
-  },
-  pt: {
-    "nav.main":"Principal","nav.transfers":"Transferências","nav.devices":"Dispositivos",
-    "nav.files":"Arquivos","nav.sync":"Sync","nav.account":"Conta",
-    "nav.settings":"Configurações","nav.analytics":"Análises","nav.logout":"Sair",
-    "action.new_transfer":"Nova transferência",
-    "notif.title":"Notificações","notif.read_all":"Marcar tudo",
-    "stats.total_transferred":"Total transferido","stats.active_devices":"Dispositivos ativos",
-    "stats.avg_speed":"Vel. média","stats.success_rate":"Taxa de sucesso",
-    "transfers.active":"Transferências ativas","transfers.history":"Histórico",
-    "filter.all":"Todos","filter.sent":"Enviados","filter.received":"Recebidos",
-    "filter.errors":"Erros","filter.videos":"Vídeos","filter.design":"Design",
-    "filter.docs":"Docs","filter.images":"Imagens","filter.archives":"Arquivos",
-    "table.file":"Arquivo","table.size":"Tamanho","table.destination":"Destino",
-    "table.speed":"Velocidade","table.status":"Status","table.time":"Hora",
-    "devices.connected":"Dispositivos conectados","devices.bandwidth":"Largura de banda total",
-    "devices.last_sync":"Último sync","devices.my_devices":"Meus dispositivos",
-    "devices.add":"Adicionar dispositivo","devices.add_soon":"Em breve",
-    "device.max_speed":"Vel. máx","device.network":"Rede","device.free_space":"Espaço livre",
-    "device.version":"Versão CREO","device.transfer":"Transferir","device.details":"Detalhes",
-    "device.offline":"Offline","device.info":"Info",
-    "files.total":"Total de arquivos","files.used":"Espaço usado","files.shared":"Compartilhados",
-    "files.last_modified":"Últ. modificação","files.recent":"Recentes",
-    "sync.status":"Status de sincronização","sync.last_update":"Última atualização há 3 min",
-    "sync.launch":"Iniciar sync","sync.launched":"Sync iniciado",
-    "sync.log":"Log de sync","sync.synced":"Arquivos sync","sync.pending":"Pendentes","sync.conflicts":"Conflitos",
-    "settings.profile":"Perfil","settings.security":"Segurança","settings.language":"Idioma",
-    "settings.notifications":"Notificações","settings.advanced":"Avançado",
-    "profile.personal_info":"Informações pessoais","profile.avatar":"Foto de perfil",
-    "profile.avatar_hint":"Clique no avatar para alterar · PNG, JPG, WEBP · máx 2 MB",
-    "profile.change_avatar":"Alterar","profile.remove_avatar":"Remover",
-    "profile.client_code":"Código cliente","profile.plan":"Plano",
-    "profile.firstname":"Nome","profile.lastname":"Sobrenome",
-    "profile.email":"Email","profile.username":"Nome de usuário",
-    "profile.save":"Salvar alterações",
-    "profile.saved":"Perfil salvo!","profile.firstname_required":"Nome e sobrenome obrigatórios.",
-    "profile.username_short":"Usuário muito curto (mín 3 car.)","profile.username_taken":"Usuário já em uso.",
-    "security.change_password":"Alterar senha","security.new_password":"Nova senha",
-    "security.confirm_password":"Confirmar","security.change_btn":"Alterar senha",
-    "security.session":"Sessão atual","security.active_session":"Sessão ativa",
-    "security.current":"Atual","security.danger_zone":"Zona de perigo",
-    "security.sign_out_all":"Sair em todos os lugares",
-    "security.sign_out_all_desc":"Revogar todas as sessões ativas","security.disconnect":"Desconectar",
-    "security.pw_short":"Senha muito curta (mín 6 car.)","security.pw_mismatch":"As senhas não coincidem.",
-    "security.pw_changed":"Senha alterada!",
-    "language.title":"Idioma da interface","language.desc":"Escolha o idioma de exibição do seu painel.",
-    "language.saved_auto":"O idioma é salvo automaticamente.",
-    "notif_settings.transfers":"Transferências","notif_settings.transfer_done":"Transferência concluída",
-    "notif_settings.transfer_done_desc":"Notificar ao final de cada transferência",
-    "notif_settings.transfer_error":"Erro de transferência","notif_settings.transfer_error_desc":"Notificar em caso de falha",
-    "notif_settings.devices":"Dispositivos & Rede","notif_settings.device_connected":"Dispositivo conectado",
-    "notif_settings.device_connected_desc":"Quando um novo dispositivo entra na rede",
-    "notif_settings.disk_alert":"Alerta espaço em disco","notif_settings.disk_alert_desc":"Quando o espaço disponível for inferior a 10%",
-    "advanced.performance":"Desempenho","advanced.parallel":"Transferências paralelas",
-    "advanced.parallel_desc":"Número de transferências simultâneas","advanced.compression":"Compressão em tempo real",
-    "advanced.compression_desc":"Comprimir dados antes de transferir",
-    "analytics.data":"Dados transferidos","analytics.success":"Transferências bem-sucedidas",
-    "analytics.peak_speed":"Velocidade de pico","analytics.error_rate":"Taxa de erro",
-    "analytics.daily_chart":"Transferências por dia","analytics.type_chart":"Por tipo",
-    "avatar.uploading":"Enviando…","avatar.uploaded":"Avatar atualizado!",
-    "avatar.too_large":"Arquivo muito grande (máx 2 MB)","avatar.removed":"Avatar removido.",
-    "page.transfers":"TRANSFERÊNCIAS","page.devices":"DISPOSITIVOS","page.files":"ARQUIVOS",
-    "page.sync":"SYNC","page.settings":"CONFIGURAÇÕES","page.analytics":"ANÁLISES",
-    "bc.transfers":"// recentes","bc.devices":"// meus dispositivos","bc.files":"// todos",
-    "bc.sync":"// status","bc.settings":"// conta","bc.analytics":"// este mês",
-  },
-  ja: {
-    "nav.main":"メイン","nav.transfers":"転送","nav.devices":"デバイス",
-    "nav.files":"ファイル","nav.sync":"同期","nav.account":"アカウント",
-    "nav.settings":"設定","nav.analytics":"分析","nav.logout":"ログアウト",
-    "action.new_transfer":"新しい転送",
-    "notif.title":"通知","notif.read_all":"すべて既読",
-    "stats.total_transferred":"総転送量","stats.active_devices":"アクティブデバイス",
-    "stats.avg_speed":"平均速度","stats.success_rate":"成功率",
-    "transfers.active":"進行中の転送","transfers.history":"履歴",
-    "filter.all":"すべて","filter.sent":"送信済み","filter.received":"受信済み",
-    "filter.errors":"エラー","filter.videos":"動画","filter.design":"デザイン",
-    "filter.docs":"ドキュメント","filter.images":"画像","filter.archives":"アーカイブ",
-    "table.file":"ファイル","table.size":"サイズ","table.destination":"宛先",
-    "table.speed":"速度","table.status":"ステータス","table.time":"時間",
-    "devices.connected":"接続デバイス","devices.bandwidth":"合計帯域幅",
-    "devices.last_sync":"最終同期","devices.my_devices":"マイデバイス",
-    "devices.add":"デバイスを追加","devices.add_soon":"近日公開",
-    "device.max_speed":"最大速度","device.network":"ネットワーク","device.free_space":"空き容量",
-    "device.version":"CREOバージョン","device.transfer":"転送","device.details":"詳細",
-    "device.offline":"オフライン","device.info":"情報",
-    "files.total":"総ファイル数","files.used":"使用容量","files.shared":"共有中",
-    "files.last_modified":"最終更新","files.recent":"最近",
-    "sync.status":"同期ステータス","sync.last_update":"最終更新 3分前",
-    "sync.launch":"同期開始","sync.launched":"同期開始済み",
-    "sync.log":"同期ログ","sync.synced":"同期済みファイル","sync.pending":"保留中","sync.conflicts":"競合",
-    "settings.profile":"プロフィール","settings.security":"セキュリティ","settings.language":"言語",
-    "settings.notifications":"通知","settings.advanced":"詳細設定",
-    "profile.personal_info":"個人情報","profile.avatar":"プロフィール画像",
-    "profile.avatar_hint":"アバターをクリックして変更 · PNG, JPG, WEBP · 最大 2 MB",
-    "profile.change_avatar":"変更","profile.remove_avatar":"削除",
-    "profile.client_code":"クライアントコード","profile.plan":"プラン",
-    "profile.firstname":"名","profile.lastname":"姓",
-    "profile.email":"メール","profile.username":"ユーザー名",
-    "profile.save":"変更を保存",
-    "profile.saved":"プロフィールを保存しました！","profile.firstname_required":"姓名は必須です。",
-    "profile.username_short":"ユーザー名が短すぎます（最小3文字）","profile.username_taken":"このユーザー名は既に使用されています。",
-    "security.change_password":"パスワードを変更","security.new_password":"新しいパスワード",
-    "security.confirm_password":"確認","security.change_btn":"パスワードを変更",
-    "security.session":"現在のセッション","security.active_session":"アクティブセッション",
-    "security.current":"現在","security.danger_zone":"危険ゾーン",
-    "security.sign_out_all":"すべてからサインアウト",
-    "security.sign_out_all_desc":"すべてのアクティブセッションを無効化","security.disconnect":"切断",
-    "security.pw_short":"パスワードが短すぎます（最小6文字）","security.pw_mismatch":"パスワードが一致しません。",
-    "security.pw_changed":"パスワードを変更しました！",
-    "language.title":"インターフェース言語","language.desc":"ダッシュボードの表示言語を選択してください。",
-    "language.saved_auto":"言語は自動的に保存されます。",
-    "notif_settings.transfers":"転送","notif_settings.transfer_done":"転送完了",
-    "notif_settings.transfer_done_desc":"各転送終了時に通知",
-    "notif_settings.transfer_error":"転送エラー","notif_settings.transfer_error_desc":"失敗時に通知",
-    "notif_settings.devices":"デバイス＆ネットワーク","notif_settings.device_connected":"デバイス接続",
-    "notif_settings.device_connected_desc":"新しいデバイスがネットワークに参加したとき",
-    "notif_settings.disk_alert":"ディスク容量アラート","notif_settings.disk_alert_desc":"空き容量が10%未満になったとき",
-    "advanced.performance":"パフォーマンス","advanced.parallel":"並列転送",
-    "advanced.parallel_desc":"同時転送数","advanced.compression":"オンザフライ圧縮",
-    "advanced.compression_desc":"転送前にデータを圧縮",
-    "analytics.data":"転送データ","analytics.success":"成功した転送",
-    "analytics.peak_speed":"ピーク速度","analytics.error_rate":"エラー率",
-    "analytics.daily_chart":"日別転送数","analytics.type_chart":"種類別",
-    "avatar.uploading":"アップロード中…","avatar.uploaded":"アバターを更新しました！",
-    "avatar.too_large":"ファイルが大きすぎます（最大 2 MB）","avatar.removed":"アバターを削除しました。",
-    "page.transfers":"転送","page.devices":"デバイス","page.files":"ファイル",
-    "page.sync":"同期","page.settings":"設定","page.analytics":"分析",
-    "bc.transfers":"// 最近","bc.devices":"// マイデバイス","bc.files":"// すべて",
-    "bc.sync":"// ステータス","bc.settings":"// アカウント","bc.analytics":"// 今月",
-  }
-};
+/* ══ DONNÉES SIMULÉES ══ */
+const TRANSFER_HISTORY = [
+  { id:1, name:'montage_final.mp4',       icon:'🎬', size:'4.2 GB', sizeB:4.2e9, type:'video',   dest:'PC Bureau',    speed:'1.4 GB/s', status:'done',   dir:'sent',     date:'14:32', ts: Date.now()-5*60000 },
+  { id:2, name:'backup_janvier.zip',      icon:'📦', size:'12.8 GB',sizeB:12.8e9,type:'archive', dest:'NAS Home',     speed:'980 MB/s', status:'done',   dir:'sent',     date:'13:14', ts: Date.now()-62*60000 },
+  { id:3, name:'rapport_annuel.pdf',      icon:'📄', size:'1.4 MB', sizeB:1.4e6, type:'doc',     dest:'PC Bureau',    speed:'—',        status:'wait',   dir:'sent',     date:'—',     ts: Date.now()-90*60000 },
+  { id:4, name:'photos_vacances.tar',     icon:'🖼️', size:'23.1 GB',sizeB:23.1e9,type:'archive', dest:'NAS Home',     speed:'1.2 GB/s', status:'done',   dir:'sent',     date:'11:08', ts: Date.now()-200*60000 },
+  { id:5, name:'studio_session_03.aiff',  icon:'🎵', size:'2.7 GB', sizeB:2.7e9, type:'audio',   dest:'MacBook Pro',  speed:'—',        status:'error',  dir:'sent',     date:'09:51', ts: Date.now()-290*60000 },
+  { id:6, name:'maquettes_brand.fig',     icon:'🎨', size:'340 MB', sizeB:340e6, type:'design',  dest:'PC Bureau',    speed:'810 MB/s', status:'done',   dir:'received', date:'08:22', ts: Date.now()-370*60000 },
+  { id:7, name:'plans_archi_v3.dwg',      icon:'📐', size:'890 MB', sizeB:890e6, type:'doc',     dest:'PC Bureau',    speed:'1.1 GB/s', status:'done',   dir:'sent',     date:'09:22', ts: Date.now()-300*60000 },
+  { id:8, name:'assets_brand_2025.zip',   icon:'📦', size:'5.4 GB', sizeB:5.4e9, type:'archive', dest:'NAS Home',     speed:'920 MB/s', status:'done',   dir:'sent',     date:'07:10', ts: Date.now()-420*60000 },
+];
 
-function t(key) {
-  return (TRANSLATIONS[currentLang] || TRANSLATIONS['fr'])[key] || (TRANSLATIONS['fr'][key] || key);
-}
-window.t = t;
+const DEVICES = [
+  { id:1, name:'PC Bureau',     icon:'🖥️', os:'Windows 11 · x86_64', online:true,  speed:'1.4 GB/s', network:'LAN',   free:'2.1 TB', version:'v4.2.1' },
+  { id:2, name:'MacBook Air M3',icon:'💻', os:'macOS 15.2 · ARM64',   online:true,  speed:'1.1 GB/s', network:'LAN',   free:'412 GB', version:'v4.2.1' },
+  { id:3, name:'NAS Home',      icon:'📦', os:'Synology DS923+',       online:true,  speed:'980 MB/s', network:'LAN',   free:'8.2 TB', version:'v4.1.8', warning:'78%' },
+  { id:4, name:'iPhone 16 Pro', icon:'📱', os:'iOS 18.3 · ARM64',     online:true,  speed:'340 MB/s', network:'Wi-Fi', free:'156 GB', version:'v4.2.0' },
+  { id:5, name:'MacBook Pro 16',icon:'💻', os:'macOS 14.6 · ARM64',   online:false, speed:'—',         network:'—',     free:'1.1 TB', version:'v4.1.9' },
+  { id:6, name:'PC Travail',    icon:'🖥️', os:'Windows 10 · x86_64',  online:false, speed:'—',         network:'—',     free:'780 GB', version:'v4.0.2', outdated:true },
+];
 
-function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (val) el.textContent = val;
-  });
-  // Update page title lang
-  document.documentElement.lang = currentLang;
-  // Update lang selector
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLang);
-  });
-}
+const FILES = [
+  { id:1, name:'montage_final.mp4',      icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'4.2 GB', sizeB:4.2e9,   date:'14 avr. 14:32', ts:Date.now()-5*60000,   status:'done',  statusLabel:'✓ Sync' },
+  { id:2, name:'maquettes_v8.fig',       icon:'🎨', type:'design',  typeLabel:'FIGMA',   size:'210 MB', sizeB:210e6,   date:'14 avr. 13:55', ts:Date.now()-60*60000,  status:'send',  statusLabel:'↑ Envoi' },
+  { id:3, name:'backup_janvier.zip',     icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'12.8 GB',sizeB:12.8e9,  date:'14 avr. 13:14', ts:Date.now()-90*60000,  status:'done',  statusLabel:'✓ Sync' },
+  { id:4, name:'rapport_annuel.pdf',     icon:'📄', type:'doc',     typeLabel:'PDF',     size:'1.4 MB', sizeB:1.4e6,   date:'14 avr. 12:00', ts:Date.now()-130*60000, status:'wait',  statusLabel:'⏳ Attente' },
+  { id:5, name:'photos_vacances.tar',    icon:'🖼️', type:'archive', typeLabel:'ARCHIVE', size:'23.1 GB',sizeB:23.1e9,  date:'14 avr. 11:08', ts:Date.now()-190*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:6, name:'studio_session_03.aiff', icon:'🎵', type:'audio',   typeLabel:'AUDIO',   size:'2.7 GB', sizeB:2.7e9,   date:'14 avr. 09:51', ts:Date.now()-290*60000, status:'error', statusLabel:'✕ Erreur' },
+  { id:7, name:'plans_archi_v3.dwg',     icon:'📐', type:'doc',     typeLabel:'CAD',     size:'890 MB', sizeB:890e6,   date:'14 avr. 09:22', ts:Date.now()-310*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:8, name:'assets_brand_2025.zip',  icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'5.4 GB', sizeB:5.4e9,   date:'13 avr. 07:10', ts:Date.now()-420*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:9, name:'logo_creo_v2.svg',       icon:'🎨', type:'design',  typeLabel:'SVG',     size:'28 KB',  sizeB:28e3,    date:'12 avr. 16:45', ts:Date.now()-500*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:10,name:'cours_react.mp4',        icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'1.8 GB', sizeB:1.8e9,   date:'11 avr. 10:00', ts:Date.now()-700*60000, status:'done',  statusLabel:'✓ Sync' },
+];
 
-window.setLang = async function(lang) {
-  currentLang = lang;
-  localStorage.setItem('creo_lang', lang);
-  applyTranslations();
-  // Persist to Supabase
-  if (currentSession) {
-    await supabase.from('profiles').update({ lang }).eq('id', currentSession.user.id);
-  }
-  uiToast('success', '✓ ' + lang.toUpperCase());
-};
+const SYNC_RULES = [
+  { name:'Sync Photos',   source:'iPhone 16 Pro', dest:'NAS Home',     freq:'Temps réel',        active:true },
+  { name:'Backup Docs',   source:'PC Bureau',     dest:'NAS Home',     freq:'Toutes les heures', active:true },
+  { name:'Sync Projets',  source:'MacBook Air M3',dest:'PC Bureau',    freq:'Quotidien 03:00',   active:true },
+  { name:'Archive Vidéos',source:'PC Bureau',     dest:'NAS Home',     freq:'Manuel',            active:false },
+];
 
-/* ═══════════════════════════════════════
-   INIT
-═══════════════════════════════════════ */
+let syncLog = [
+  { color:'var(--green)', text:'<strong>backup_janvier.zip</strong> synchronisé sur NAS Home', time:'14:32' },
+  { color:'var(--blue)',  text:'Démarrage sync <strong>maquettes_v8.fig</strong>',              time:'14:28' },
+  { color:'var(--red)',   text:'Conflit détecté — <strong>studio_session_03.aiff</strong>',     time:'13:51' },
+  { color:'var(--amber)', text:'NAS Home — espace disque à <strong>78%</strong>',               time:'12:10' },
+  { color:'var(--green)', text:'<strong>1 247 fichiers</strong> synchronisés avec succès',      time:'11:02' },
+];
+
+/* Active transfers list */
+let activeTransfers = [];
+let nextTransferId = 100;
+
+/* ══ NOTIFICATIONS ══ */
+const NOTIFS = [
+  { color:'var(--green)', text:'<strong>montage_final.mp4</strong> transféré avec succès', time:'Il y a 3 min' },
+  { color:'var(--blue)',  text:'MacBook Air <strong>connecté</strong> sur réseau LAN',       time:'Il y a 12 min' },
+  { color:'var(--amber)', text:'NAS Home — espace à <strong>78%</strong>',                  time:'Il y a 1h' },
+  { color:'var(--blue2)', text:'Sync terminée — <strong>1 247 fichiers</strong> mis à jour', time:'Il y a 2h' },
+];
+let hasUnreadNotif = true;
+
+/* ══ INIT ══ */
 async function init() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) { window.location.href = '/creo/login/login.html'; return; }
-  currentSession = session;
+  const { data:{ session: s } } = await supabase.auth.getSession();
+  if (!s) { window.location.href = '/creo/login/login.html'; return; }
+  session = s;
 
-  const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-
-  if (!profile?.username || !profile?.client_code || !profile?.type) {
-    // Profil incomplet → rediriger
-    const code = await generateTempCode(session.user.id);
-    window.location.href = '/creo/login/complete-profile.html?code=' + code;
+  const { data: p } = await supabase.from('profiles').select('*').eq('id', s.user.id).single();
+  if (!p?.username || !p?.client_code || !p?.type) {
+    window.location.href = '/creo/login/complete-profile.html';
     return;
   }
+  profile = p;
 
-  currentProfile = profile;
+  if (p.lang) { currentLang = p.lang; localStorage.setItem('creo_lang', p.lang); }
 
-  // Charger la langue depuis le profil si disponible
-  if (profile.lang) {
-    currentLang = profile.lang;
-    localStorage.setItem('creo_lang', profile.lang);
-  }
-
-  applyTranslations();
-  renderUI();
-  hideLoading();
-  startProgressAnims();
-  buildCharts();
-
-  // Écouter les changements auth (déconnexion depuis un autre onglet)
   supabase.auth.onAuthStateChange((event) => {
     if (event === 'SIGNED_OUT') window.location.href = '/creo/login/login.html';
   });
+
+  renderSidebar();
+  renderSettings();
+  renderNotifs();
+  renderTransfersPage();
+  renderDevicesPage();
+  renderFilesPage();
+  renderSyncPage();
+  renderAnalyticsPage();
+  buildCharts();
+  hideLoading();
+  startLiveStats();
+  setupEventListeners();
 }
 
-/* ═══════════════════════════════════════
-   HELPERS AUTH
-═══════════════════════════════════════ */
-async function generateTempCode(userId) {
-  await supabase.from('temp_codes').delete().eq('user_id', userId);
-  let code, exists = true;
-  while (exists) {
-    code = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const { data } = await supabase.from('temp_codes').select('code').eq('code', code).maybeSingle();
-    exists = !!data;
+/* ══ SIDEBAR ══ */
+function renderSidebar() {
+  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
+  const el = document.getElementById('sidebar-avatar');
+  if (av) el.innerHTML = `<img src="${av}" alt="">`;
+  else el.textContent = initials();
+  document.getElementById('sidebar-name').textContent = displayName();
+  document.getElementById('sidebar-role').textContent = profile?.type ? profile.type.charAt(0).toUpperCase()+profile.type.slice(1) : 'Utilisateur';
+}
+
+function displayName() {
+  if (profile?.first_name && profile?.last_name) return `${profile.first_name} ${profile.last_name}`;
+  if (profile?.username) return `@${profile.username}`;
+  return session?.user?.email?.split('@')[0] || 'Utilisateur';
+}
+function initials() {
+  return displayName().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+}
+
+/* ══ SETTINGS ══ */
+function renderSettings() {
+  document.getElementById('settings-code').textContent = profile?.client_code || '—';
+  document.getElementById('settings-plan').textContent = profile?.type ? profile.type.charAt(0).toUpperCase()+profile.type.slice(1) : '—';
+  document.getElementById('s-firstname').value  = profile?.first_name || '';
+  document.getElementById('s-lastname').value   = profile?.last_name  || '';
+  document.getElementById('s-email').value      = profile?.email || session?.user?.email || '';
+  document.getElementById('s-username').value   = profile?.username   || '';
+  document.getElementById('s-session-email').textContent = session?.user?.email || '';
+
+  // Avatar
+  const av = profile?.avatar_url;
+  const avEl = document.getElementById('settings-avatar');
+  if (av) avEl.innerHTML = `<img src="${av}" alt=""><div class="avatar-overlay">📷</div>`;
+  else    document.getElementById('settings-avatar-initials').textContent = initials();
+
+  // Lang
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+}
+
+/* ══ NOTIFICATIONS ══ */
+function renderNotifs() {
+  const list = document.getElementById('notif-list');
+  list.innerHTML = NOTIFS.map(n => `
+    <div class="notif-item">
+      <div class="notif-dot" style="background:${n.color};"></div>
+      <div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>
+    </div>`).join('');
+  document.getElementById('notif-dot').style.display = hasUnreadNotif ? 'block' : 'none';
+}
+
+/* ══ TRANSFERS PAGE ══ */
+let transferFilter = 'all';
+let transferSort   = 'date-desc';
+
+function renderTransfersPage() {
+  renderActiveTransfers();
+  renderTransfersTable();
+  updateTransfersStats();
+}
+
+function renderActiveTransfers() {
+  const container = document.getElementById('active-transfers-container');
+  document.getElementById('active-count').textContent = activeTransfers.length + ' en cours';
+  if (activeTransfers.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucun transfert actif</div>`;
+    return;
   }
-  await supabase.from('temp_codes').insert({ code, user_id: userId });
-  return code;
+  container.innerHTML = activeTransfers.map(t => `
+    <div class="transfer-card ${t.status === 'done' ? 'transfer-done' : t.status === 'error' ? 'transfer-err' : 'active-transfer'}" id="tc-${t.id}">
+      <div class="tc-header">
+        <div class="tc-name">
+          <span>${t.icon}</span>
+          <span class="fname">${t.name}</span>
+          <span class="badge ${t.status==='done'?'badge-green':t.status==='error'?'badge-red':'badge-blue'}">${t.status==='done'?'TERMINÉ':t.status==='error'?'ERREUR':'EN COURS'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="tc-speed" id="tc-speed-${t.id}">${t.speedLabel||'—'}</span>
+          <div class="tc-actions">
+            ${t.status==='active'?`<button class="btn btn-ghost btn-xs" onclick="pauseTransfer(${t.id})">⏸</button>`:''}
+            <button class="btn btn-ghost btn-xs" onclick="removeTransfer(${t.id})" title="Fermer">✕</button>
+          </div>
+        </div>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill ${t.status==='done'?'done':t.status==='error'?'err':''}" id="tc-prog-${t.id}" style="width:${t.progress}%;"></div>
+      </div>
+      <div class="tc-footer">
+        <span>${t.source} → ${t.dest}</span>
+        <span id="tc-pct-${t.id}">${Math.round(t.progress)}% · ${t.size}</span>
+      </div>
+    </div>`).join('');
 }
 
-function getDisplayName(s, p) {
-  if (p?.first_name && p?.last_name) return `${p.first_name} ${p.last_name}`;
-  if (p?.username) return `@${p.username}`;
-  const m = s?.user?.user_metadata;
-  return m?.full_name || m?.name || s?.user?.email?.split('@')[0] || 'Utilisateur';
-}
-function getInitials(s, p) {
-  return getDisplayName(s, p).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-}
-function getAvatar(s, p) {
-  return p?.avatar_url || s?.user?.user_metadata?.avatar_url || null;
-}
+function renderTransfersTable(searchQuery = '') {
+  let data = [...TRANSFER_HISTORY];
 
-/* ═══════════════════════════════════════
-   RENDER UI
-═══════════════════════════════════════ */
-function renderUI() {
-  const s = currentSession;
-  const p = currentProfile;
-  const av = getAvatar(s, p);
-
-  // ── SIDEBAR ──
-  const sidebarAv = document.getElementById('sidebar-avatar');
-  if (av) sidebarAv.innerHTML = `<img src="${av}" alt="">`;
-  else { sidebarAv.innerHTML = ''; sidebarAv.textContent = getInitials(s, p); }
-  document.getElementById('sidebar-name').textContent  = getDisplayName(s, p);
-  document.getElementById('sidebar-email').textContent = p.email || s.user.email;
-
-  // ── SETTINGS AVATAR ──
-  const settingsAv = document.getElementById('settings-avatar');
-  const initSpan   = document.getElementById('settings-avatar-initials');
-  if (av) {
-    settingsAv.innerHTML = `<img src="${av}" alt=""><div class="avatar-lg-overlay">📷</div>`;
-    settingsAv.onclick   = () => document.getElementById('avatar-file-input').click();
-  } else {
-    initSpan.textContent = getInitials(s, p);
+  // filter by category
+  if (transferFilter !== 'all') {
+    if (transferFilter === 'sent')     data = data.filter(t => t.dir === 'sent');
+    if (transferFilter === 'received') data = data.filter(t => t.dir === 'received');
+    if (transferFilter === 'error')    data = data.filter(t => t.status === 'error');
   }
 
-  // ── SETTINGS FIELDS ──
-  document.getElementById('settings-firstname').value   = p.first_name   || '';
-  document.getElementById('settings-lastname').value    = p.last_name    || '';
-  document.getElementById('settings-email').value       = p.email        || s.user.email;
-  document.getElementById('settings-username').value    = p.username     || '';
-  document.getElementById('settings-client-code').textContent = p.client_code || '—';
-  document.getElementById('settings-plan').textContent  = p.type ? (p.type.charAt(0).toUpperCase() + p.type.slice(1)) : '—';
-  document.getElementById('session-email').textContent  = s.user.email;
-}
+  // search
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    data = data.filter(t => t.name.toLowerCase().includes(q) || t.dest.toLowerCase().includes(q));
+  }
 
-/* ═══════════════════════════════════════
-   AVATAR UPLOAD
-═══════════════════════════════════════ */
-window.uploadAvatar = async function(input) {
-  const file = input.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { uiToast('error', t('avatar.too_large')); return; }
-
-  const bar     = document.getElementById('avatar-upload-progress');
-  const barFill = document.getElementById('avatar-upload-progress-fill');
-  bar.style.display = 'block';
-  barFill.style.width = '0%';
-
-  uiToast('info', t('avatar.uploading'));
-  barFill.style.width = '30%';
-
-  const ext      = file.name.split('.').pop();
-  const fileName = `${currentSession.user.id}/avatar.${ext}`;
-
-  // Supprimer l'ancien avatar s'il existe
-  await supabase.storage.from('avatars').remove([fileName]);
-
-  barFill.style.width = '55%';
-
-  const { error: uploadErr } = await supabase.storage.from('avatars').upload(fileName, file, {
-    upsert: true,
-    contentType: file.type,
+  // sort
+  data.sort((a, b) => {
+    if (transferSort === 'date-desc') return b.ts - a.ts;
+    if (transferSort === 'date-asc')  return a.ts - b.ts;
+    if (transferSort === 'size-desc') return b.sizeB - a.sizeB;
+    if (transferSort === 'size-asc')  return a.sizeB - b.sizeB;
+    if (transferSort === 'name-asc')  return a.name.localeCompare(b.name);
+    return 0;
   });
 
-  if (uploadErr) { bar.style.display = 'none'; uiToast('error', uploadErr.message); return; }
-
-  barFill.style.width = '80%';
-
-  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
-  const publicUrl = urlData.publicUrl + '?t=' + Date.now(); // cache bust
-
-  const { error: updateErr } = await supabase.from('profiles').update({ avatar_url: publicUrl }).eq('id', currentSession.user.id);
-  if (updateErr) { bar.style.display = 'none'; uiToast('error', updateErr.message); return; }
-
-  barFill.style.width = '100%';
-  currentProfile.avatar_url = publicUrl;
-  setTimeout(() => { bar.style.display = 'none'; barFill.style.width = '0%'; }, 600);
-
-  renderUI();
-  uiToast('success', t('avatar.uploaded'));
-  input.value = '';
-};
-
-window.removeAvatar = async function() {
-  if (!currentProfile?.avatar_url) return;
-  const { error } = await supabase.from('profiles').update({ avatar_url: null }).eq('id', currentSession.user.id);
-  if (error) { uiToast('error', error.message); return; }
-  currentProfile.avatar_url = null;
-  renderUI();
-  uiToast('success', t('avatar.removed'));
-};
-
-/* ═══════════════════════════════════════
-   SAVE PROFILE
-═══════════════════════════════════════ */
-window.saveProfile = async function() {
-  const btn        = document.getElementById('save-profile-btn');
-  const first_name = document.getElementById('settings-firstname').value.trim();
-  const last_name  = document.getElementById('settings-lastname').value.trim();
-  const username   = document.getElementById('settings-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
-
-  if (!first_name || !last_name) return uiToast('warning', t('profile.firstname_required'));
-  if (username && username.length < 3) return uiToast('warning', t('profile.username_short'));
-
-  btn.classList.add('btn-loading');
-
-  const { error } = await supabase.from('profiles').update({
-    first_name,
-    last_name,
-    username: username || currentProfile.username,
-  }).eq('id', currentSession.user.id);
-
-  btn.classList.remove('btn-loading');
-
-  if (error) {
-    if (error.message.includes('username')) return uiToast('error', t('profile.username_taken'));
-    return uiToast('error', error.message);
+  const tbody = document.getElementById('transfers-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">Aucun résultat</td></tr>`;
+    return;
   }
 
-  currentProfile = { ...currentProfile, first_name, last_name, username: username || currentProfile.username };
-  renderUI();
-  uiToast('success', t('profile.saved'));
+  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err', pause:'st-pause' };
+  const stLbl = { done:'✓ Envoyé', send:'↑ Envoi', wait:'⏳ Attente', error:'✕ Erreur', pause:'⏸ Pause' };
+
+  tbody.innerHTML = data.map(t => {
+    const name = searchQuery ? t.name.replace(new RegExp(searchQuery, 'gi'), m => `<span class="hl">${m}</span>`) : t.name;
+    return `<tr>
+      <td><div class="td-name"><span class="td-icon">${t.icon}</span><div><div class="td-fname">${name}</div><div class="td-fmeta">${t.type}</div></div></div></td>
+      <td class="font-mono" style="font-size:.76rem;">${t.size}</td>
+      <td style="color:var(--t2);">${t.dest}</td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.speed}</td>
+      <td><span class="status ${stMap[t.status]||'st-wait'}">${stLbl[t.status]||'—'}</span></td>
+      <td class="font-mono" style="font-size:.66rem;color:var(--t3);">${t.date}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="retryTransfer(${t.id})" title="Réessayer" style="${t.status!=='error'?'opacity:.3;pointer-events:none;':''}">↺</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateTransfersStats() {
+  const total = TRANSFER_HISTORY.filter(t=>t.status==='done').reduce((s,t)=>s+t.sizeB,0);
+  const gb = total / 1e9;
+  document.getElementById('stat-total').innerHTML = gb >= 1000
+    ? `${(gb/1000).toFixed(1)} <span class="unit">TB</span>`
+    : `${gb.toFixed(1)} <span class="unit">GB</span>`;
+  const online = DEVICES.filter(d=>d.online).length;
+  document.getElementById('stat-devices').innerHTML = `${online} <span class="unit" style="color:var(--green);">●</span>`;
+}
+
+/* ══ ACTIVE TRANSFERS ENGINE ══ */
+function addActiveTransfer(data) {
+  const icons = { video:'🎬', archive:'📦', doc:'📄', image:'🖼️', audio:'🎵', design:'🎨', other:'📁' };
+  const t = {
+    id: nextTransferId++,
+    name: data.name || 'fichier.dat',
+    icon: icons[data.type] || '📁',
+    size: data.size || '—',
+    source: data.source || 'PC Bureau',
+    dest: data.dest || 'NAS Home',
+    progress: 0,
+    status: 'active',
+    speedLabel: '↑ 0 MB/s',
+  };
+  activeTransfers.push(t);
+  renderActiveTransfers();
+  // Start progress
+  const interval = setInterval(() => {
+    const idx = activeTransfers.findIndex(x => x.id === t.id);
+    if (idx === -1) { clearInterval(interval); return; }
+    const inc = 0.8 + Math.random() * 2.5;
+    activeTransfers[idx].progress = Math.min(100, activeTransfers[idx].progress + inc);
+    const spd = (400 + Math.random() * 1200).toFixed(0);
+    activeTransfers[idx].speedLabel = `↑ ${spd} MB/s`;
+    // Update DOM directly for performance
+    const prog = document.getElementById(`tc-prog-${t.id}`);
+    const pct  = document.getElementById(`tc-pct-${t.id}`);
+    const spdEl= document.getElementById(`tc-speed-${t.id}`);
+    if (prog) prog.style.width = activeTransfers[idx].progress + '%';
+    if (pct)  pct.textContent  = Math.round(activeTransfers[idx].progress) + '% · ' + t.size;
+    if (spdEl) spdEl.textContent = activeTransfers[idx].speedLabel;
+
+    if (activeTransfers[idx].progress >= 100) {
+      clearInterval(interval);
+      activeTransfers[idx].status = 'done';
+      activeTransfers[idx].speedLabel = '✓ Terminé';
+      renderActiveTransfers();
+      if (notifSettings.done) uiToast('success', `✓ ${t.name} transféré !`);
+      // Add to history
+      TRANSFER_HISTORY.unshift({
+        id: Date.now(), name: t.name, icon: t.icon,
+        size: t.size, sizeB: 1e9, type: data.type || 'other',
+        dest: t.dest, speed: spd + ' MB/s', status: 'done',
+        dir: 'sent', date: new Date().toTimeString().slice(0,5), ts: Date.now()
+      });
+      renderTransfersTable(document.getElementById('search-input').value.trim());
+      updateTransfersStats();
+      addSyncLogEntry('var(--green)', `<strong>${t.name}</strong> transféré vers ${t.dest}`, new Date().toTimeString().slice(0,5));
+    }
+  }, 300);
+  if (notifSettings.start) uiToast('info', `⚡ Démarrage : ${t.name}`);
+}
+
+window.pauseTransfer = function(id) {
+  const t = activeTransfers.find(x => x.id === id);
+  if (t) { t.status = t.status === 'paused' ? 'active' : 'paused'; renderActiveTransfers(); }
+};
+window.removeTransfer = function(id) {
+  activeTransfers = activeTransfers.filter(x => x.id !== id);
+  renderActiveTransfers();
+};
+window.retryTransfer = function(id) {
+  const t = TRANSFER_HISTORY.find(x => x.id === id);
+  if (t) { addActiveTransfer({ name: t.name, type: t.type, size: t.size, dest: t.dest }); showPage('transferts', document.querySelector('[data-page="transferts"]')); }
 };
 
-/* ═══════════════════════════════════════
-   CHANGE PASSWORD
-═══════════════════════════════════════ */
-window.changePassword = async function() {
-  const np = document.getElementById('new-password').value;
-  const cp = document.getElementById('confirm-password').value;
-  if (!np || np.length < 6) return uiToast('warning', t('security.pw_short'));
-  if (np !== cp) return uiToast('error', t('security.pw_mismatch'));
-  const { error } = await supabase.auth.updateUser({ password: np });
-  if (error) return uiToast('error', error.message);
-  uiToast('success', t('security.pw_changed'));
-  document.getElementById('new-password').value = '';
-  document.getElementById('confirm-password').value = '';
+/* ══ DEVICES PAGE ══ */
+function renderDevicesPage() {
+  const online = DEVICES.filter(d=>d.online).length;
+  document.getElementById('dev-online').innerHTML = `${online} <span class="unit" style="color:var(--green);">en ligne</span>`;
+  document.getElementById('dev-total').textContent = `${DEVICES.length} appareils au total`;
+  document.getElementById('dev-bw').innerHTML = `3.4 <span class="unit">GB/s</span>`;
+  document.getElementById('dev-last-sync').textContent = '14:32';
+
+  document.getElementById('devices-grid').innerHTML = DEVICES.map(d => `
+    <div class="device-card ${d.online ? 'online' : 'offline'}">
+      <div class="dc-head">
+        <div class="dc-icon" style="${!d.online?'opacity:.45':''}">${d.icon}</div>
+        <div class="dc-dot ${d.online ? 'on' : 'off'}"></div>
+      </div>
+      <div class="dc-name" style="${!d.online?'color:var(--t2)':''}">${d.name}</div>
+      <div class="dc-type">${d.os}</div>
+      <div class="dc-stats">
+        <div class="dc-stat"><div class="dc-stat-val">${d.speed}</div><div class="dc-stat-key">Vitesse max</div></div>
+        <div class="dc-stat"><div class="dc-stat-val">${d.network}</div><div class="dc-stat-key">Réseau</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="${d.warning?'color:var(--amber)':d.outdated?'color:var(--amber)':''}">${d.free}</div><div class="dc-stat-key">Espace libre</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="${d.outdated?'color:var(--amber)':''}">${d.version}</div><div class="dc-stat-key">${d.outdated?'⚠ Mise à jour':'Version CREO'}</div></div>
+      </div>
+      <div class="dc-actions">
+        ${d.online
+          ? `<button class="btn btn-primary btn-sm" onclick="startTransferTo('${d.name}')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button>`
+          : `<button class="btn btn-ghost btn-sm" disabled style="opacity:.35;">Hors ligne</button><button class="btn btn-ghost btn-sm">Infos</button>`
+        }
+      </div>
+    </div>`).join('');
+}
+
+window.startTransferTo = function(destName) {
+  document.getElementById('mt-dest').value = destName;
+  openModal('modal-transfer');
 };
 
-/* ═══════════════════════════════════════
-   SIGN OUT
-═══════════════════════════════════════ */
-window.doSignOut = async function() {
-  await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
-};
-document.getElementById('logout-btn').addEventListener('click', window.doSignOut);
+/* ══ FILES PAGE ══ */
+let fileFilter = 'all';
+let fileSort   = 'date-desc';
 
-/* ═══════════════════════════════════════
-   NAV
-═══════════════════════════════════════ */
-const PAGE_CONFIG = {
-  transferts:  { title:'page.transfers',  bc:'bc.transfers',  btn:'action.new_transfer' },
-  appareils:   { title:'page.devices',    bc:'bc.devices',    btn:'action.new_transfer' },
-  fichiers:    { title:'page.files',      bc:'bc.files',      btn:'action.new_transfer' },
-  sync:        { title:'page.sync',       bc:'bc.sync',       btn:'sync.launch' },
-  parametres:  { title:'page.settings',   bc:'bc.settings',   btn:'profile.save' },
-  analytiques: { title:'page.analytics',  bc:'bc.analytics',  btn:'action.new_transfer' },
+function renderFilesPage(searchQuery = '') {
+  let data = [...FILES];
+
+  if (fileFilter !== 'all') data = data.filter(f => f.type === fileFilter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    data = data.filter(f => f.name.toLowerCase().includes(q));
+  }
+
+  data.sort((a, b) => {
+    if (fileSort === 'date-desc') return b.ts - a.ts;
+    if (fileSort === 'date-asc')  return a.ts - b.ts;
+    if (fileSort === 'size-desc') return b.sizeB - a.sizeB;
+    if (fileSort === 'name-asc')  return a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  document.getElementById('files-count').textContent = FILES.length.toLocaleString();
+  document.getElementById('files-delta').textContent = '↑ +127 cette semaine';
+  document.getElementById('files-shared').textContent = '43';
+  document.getElementById('files-lastmod').textContent = '14:32';
+  document.getElementById('files-lastmod-name').textContent = FILES[0].name;
+
+  // Grid (top 6)
+  const grid = document.getElementById('files-grid');
+  const recent = data.slice(0, 6);
+  const isListView = fileView === 'list';
+  grid.className = isListView ? 'files-grid list-view' : 'files-grid';
+  grid.innerHTML = recent.map(f => {
+    const name = searchQuery ? f.name.replace(new RegExp(searchQuery,'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
+    return `<div class="file-card${isListView?' list-view':''}" onclick="uiToast('info','${f.name}')">
+      <div class="file-card-icon">${f.icon}</div>
+      <div class="${isListView?'file-card-info':''}">
+        <div class="file-card-name">${name}</div>
+        <div class="file-card-meta">${f.size} · ${f.date.split(' ')[2]||f.date}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Table
+  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err' };
+  document.getElementById('files-tbody').innerHTML = data.map(f => {
+    const name = searchQuery ? f.name.replace(new RegExp(searchQuery,'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
+    return `<tr>
+      <td><div class="td-name"><span class="td-icon">${f.icon}</span><div><div class="td-fname">${name}</div></div></div></td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${f.typeLabel}</td>
+      <td class="font-mono" style="font-size:.76rem;">${f.size}</td>
+      <td style="font-size:.76rem;color:var(--t3);">${f.date}</td>
+      <td><span class="status ${stMap[f.status]||'st-wait'}">${f.statusLabel}</span></td>
+      <td><button class="btn btn-ghost btn-xs" onclick="uiToast('info','Options pour ${f.name}')">···</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══ SYNC PAGE ══ */
+function renderSyncPage() {
+  document.getElementById('sync-synced').textContent   = '1 247';
+  document.getElementById('sync-pending').textContent  = '312';
+  document.getElementById('sync-conflicts').textContent = '4';
+  document.getElementById('sync-last-update').textContent = 'Dernière MAJ il y a 3 min';
+  renderSyncLog();
+  renderSyncRules();
+}
+
+function renderSyncLog() {
+  document.getElementById('sync-log').innerHTML = syncLog.slice(0, 6).map(l => `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:${l.color};"></div>
+      <div style="flex:1;"><div class="feed-text">${l.text}</div><div class="feed-time">${l.time}</div></div>
+    </div>`).join('');
+}
+
+function addSyncLogEntry(color, text, time) {
+  syncLog.unshift({ color, text, time });
+  if (document.getElementById('page-sync').classList.contains('active')) renderSyncLog();
+}
+
+function renderSyncRules() {
+  document.getElementById('sync-rules-tbody').innerHTML = SYNC_RULES.map((r, i) => `
+    <tr>
+      <td style="color:var(--t1);font-weight:500;">${r.name}</td>
+      <td style="color:var(--t2);">${r.source}</td>
+      <td style="color:var(--t2);">${r.dest}</td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${r.freq}</td>
+      <td><span class="status ${r.active?'st-done':'st-pause'}">${r.active?'● Actif':'⏸ Pausé'}</span></td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-xs" onclick="toggleRule(${i})">${r.active?'Pause':'Reprendre'}</button>
+        <button class="btn btn-ghost btn-xs" onclick="uiToast('info','Édition de ${r.name}')">Éditer</button>
+      </td>
+    </tr>`).join('');
+}
+
+window.toggleRule = function(i) {
+  SYNC_RULES[i].active = !SYNC_RULES[i].active;
+  renderSyncRules();
+  uiToast('success', `Règle "${SYNC_RULES[i].name}" ${SYNC_RULES[i].active ? 'activée' : 'mise en pause'}`);
+};
+
+/* ══ ANALYTICS PAGE ══ */
+function renderAnalyticsPage() {
+  // Devices table
+  document.getElementById('analytics-devices-tbody').innerHTML = [
+    { icon:'🖥️', name:'PC Bureau',     sent:'1.4 TB',  recv:'240 GB', total:'1.64 TB' },
+    { icon:'📦', name:'NAS Home',       sent:'45 GB',   recv:'890 GB', total:'935 GB'  },
+    { icon:'💻', name:'MacBook Air',    sent:'180 GB',  recv:'120 GB', total:'300 GB'  },
+    { icon:'📱', name:'iPhone 16 Pro',  sent:'12 GB',   recv:'48 GB',  total:'60 GB'   },
+  ].map(d => `<tr>
+    <td style="color:var(--t1);">${d.icon} ${d.name}</td>
+    <td class="font-mono" style="font-size:.76rem;color:var(--green);">${d.sent}</td>
+    <td class="font-mono" style="font-size:.76rem;color:var(--blue2);">${d.recv}</td>
+    <td class="font-mono" style="font-size:.76rem;">${d.total}</td>
+  </tr>`).join('');
+
+  // Feed
+  document.getElementById('analytics-feed').innerHTML = TRANSFER_HISTORY.slice(0, 5).map(t => `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:${t.status==='done'?'var(--green)':t.status==='error'?'var(--red)':'var(--blue)'};"></div>
+      <div style="flex:1;"><div class="feed-text"><strong>${t.name}</strong> → ${t.dest} · ${t.size}</div><div class="feed-time">Aujourd'hui ${t.date}</div></div>
+    </div>`).join('');
+}
+
+/* ══ CHARTS ══ */
+function buildCharts() {
+  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+  const vals = [62, 85, 44, 91, 73, 38, 55];
+  const max  = Math.max(...vals);
+  document.getElementById('chart-daily').innerHTML = days.map((d, i) => `
+    <div class="bar-wrap">
+      <div class="bar-outer"><div class="bar-inner" style="height:${(vals[i]/max*100)}%;"></div></div>
+      <span class="bar-label">${d}</span>
+    </div>`).join('');
+
+  document.getElementById('chart-types').innerHTML = [
+    { label:'🎬 Vidéos',  pct:43, color:'var(--blue)' },
+    { label:'📦 Archives',pct:30, color:'var(--purple)' },
+    { label:'🖼️ Images',  pct:16, color:'var(--cyan)' },
+    { label:'🎨 Design',  pct: 8, color:'var(--amber)' },
+    { label:'📄 Docs',    pct: 3, color:'var(--green)' },
+  ].map(t => `
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.78rem;">
+        <span style="color:var(--t2);">${t.label}</span>
+        <span class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.pct}%</span>
+      </div>
+      <div style="height:4px;background:var(--d5);border-radius:99px;overflow:hidden;">
+        <div style="width:${t.pct}%;height:100%;background:${t.color};border-radius:99px;transition:width 1s ease;"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ LIVE STATS ══ */
+function startLiveStats() {
+  setInterval(() => {
+    const spd = (800 + Math.random() * 600).toFixed(0);
+    document.getElementById('stat-speed').innerHTML = `${spd} <span class="unit">MB/s</span>`;
+  }, 1200);
+}
+
+/* ══ SEARCH ══ */
+function handleSearch(q) {
+  const clear = document.getElementById('search-clear');
+  clear.style.display = q ? 'block' : 'none';
+  if (currentPage === 'transferts') renderTransfersTable(q);
+  if (currentPage === 'fichiers')   renderFilesPage(q);
+}
+
+/* ══ NAV ══ */
+const PAGE_META = {
+  transferts:  { title:'TRANSFERTS',  bc:'// récents',        btn:'＋ Nouveau transfert' },
+  appareils:   { title:'APPAREILS',   bc:'// mes appareils',  btn:'＋ Ajouter' },
+  fichiers:    { title:'FICHIERS',    bc:'// tous',           btn:'＋ Importer' },
+  sync:        { title:'SYNC',        bc:'// état',           btn:'▶ Lancer' },
+  parametres:  { title:'PARAMÈTRES',  bc:'// compte',         btn:'✓ Sauvegarder' },
+  analytiques: { title:'ANALYTIQUES', bc:'// ce mois',        btn:'↓ Exporter' },
 };
 
 window.showPage = function(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
+  const page = document.getElementById('page-' + id);
+  if (!page) return;
+  page.classList.add('active');
   el.classList.add('active');
-  const cfg = PAGE_CONFIG[id];
-  document.getElementById('topbar-title').textContent      = t(cfg.title);
-  document.getElementById('topbar-breadcrumb').textContent = t(cfg.bc);
-  document.getElementById('action-btn').querySelector('span:last-child')?.remove();
-  document.getElementById('action-btn').innerHTML = `<span>＋</span> ${t(cfg.btn)}`;
+  currentPage = id;
+  const m = PAGE_META[id];
+  document.getElementById('topbar-title').textContent = m.title;
+  document.getElementById('topbar-bc').textContent    = m.bc;
+  document.getElementById('action-btn').textContent   = m.btn;
   document.getElementById('notif-panel').classList.remove('open');
-  if (id === 'parametres') renderUI();
+  if (id === 'parametres') renderSettings();
+  if (id === 'transferts') renderTransfersPage();
 };
 
-window.primaryAction = function() {
-  const id = document.querySelector('.page.active')?.id?.replace('page-','');
-  if (id === 'parametres') { saveProfile(); return; }
-  if (id === 'sync') { uiToast('success', t('sync.launched')); return; }
-  uiToast('info', '✓');
-};
-
-/* ═══════════════════════════════════════
-   NOTIF
-═══════════════════════════════════════ */
-window.toggleNotif = function() {
-  document.getElementById('notif-panel').classList.toggle('open');
-  document.querySelector('.notif-dot')?.remove();
-};
-document.addEventListener('click', e => {
-  const p = document.getElementById('notif-panel');
-  if (p && !p.contains(e.target) && !e.target.closest('#notif-btn')) p.classList.remove('open');
-});
-
-/* ═══════════════════════════════════════
-   SETTINGS TABS
-═══════════════════════════════════════ */
-window.switchSettingsTab = function(el, panelId) {
-  document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+/* ══ SETTINGS TABS ══ */
+function switchTab(tabId) {
+  document.querySelectorAll('.s-nav-item').forEach(i => i.classList.remove('active'));
   document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
-  el.classList.add('active');
-  document.getElementById(panelId).style.display = 'block';
-};
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  document.getElementById(tabId).style.display = 'block';
+}
 
-/* ═══════════════════════════════════════
-   FILTER CHIPS
-═══════════════════════════════════════ */
-document.querySelectorAll('.filter-chip').forEach(chip => {
-  chip.addEventListener('click', function() {
-    this.parentElement?.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-    this.classList.add('active');
-  });
-});
+/* ══ SAVE PROFILE ══ */
+async function saveProfile() {
+  const btn = document.getElementById('btn-save-profile');
+  const first = document.getElementById('s-firstname').value.trim();
+  const last  = document.getElementById('s-lastname').value.trim();
+  const uname = document.getElementById('s-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  if (!first || !last) return uiToast('warning', 'Prénom et nom requis.');
+  if (uname && uname.length < 3) return uiToast('warning', 'Pseudo trop court (min 3 car.)');
+  btn.classList.add('btn-loading');
+  const { error } = await supabase.from('profiles').update({ first_name: first, last_name: last, username: uname || profile.username }).eq('id', session.user.id);
+  btn.classList.remove('btn-loading');
+  if (error) return uiToast('error', error.message.includes('username') ? 'Pseudo déjà pris.' : error.message);
+  profile = { ...profile, first_name: first, last_name: last, username: uname || profile.username };
+  renderSidebar();
+  uiToast('success', '✓ Profil sauvegardé !');
+}
 
-/* ═══════════════════════════════════════
-   TOAST
-═══════════════════════════════════════ */
+/* ══ CHANGE PASSWORD ══ */
+async function changePassword() {
+  const np = document.getElementById('s-pw-new').value;
+  const cp = document.getElementById('s-pw-confirm').value;
+  if (!np || np.length < 6) return uiToast('warning', 'Mot de passe trop court (min 6 car.)');
+  if (np !== cp) return uiToast('error', 'Les mots de passe ne correspondent pas.');
+  const btn = document.getElementById('btn-change-pw');
+  btn.classList.add('btn-loading');
+  const { error } = await supabase.auth.updateUser({ password: np });
+  btn.classList.remove('btn-loading');
+  if (error) return uiToast('error', error.message);
+  uiToast('success', '✓ Mot de passe modifié !');
+  document.getElementById('s-pw-new').value = '';
+  document.getElementById('s-pw-confirm').value = '';
+}
+
+/* ══ AVATAR UPLOAD ══ */
+async function uploadAvatar(file) {
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { uiToast('error', 'Fichier trop grand (max 2 MB)'); return; }
+  const prog = document.querySelector('.avatar-prog');
+  const fill = document.getElementById('avatar-prog-fill');
+  prog.style.display = 'block';
+  fill.style.width = '20%';
+  const ext = file.name.split('.').pop();
+  const path = `${session.user.id}/avatar.${ext}`;
+  await supabase.storage.from('avatars').remove([path]);
+  fill.style.width = '50%';
+  const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
+  if (upErr) { prog.style.display='none'; return uiToast('error', upErr.message); }
+  fill.style.width = '80%';
+  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+  const url = urlData.publicUrl + '?t=' + Date.now();
+  await supabase.from('profiles').update({ avatar_url: url }).eq('id', session.user.id);
+  profile.avatar_url = url;
+  fill.style.width = '100%';
+  setTimeout(() => { prog.style.display='none'; fill.style.width='0%'; }, 600);
+  renderSidebar();
+  renderSettings();
+  uiToast('success', '✓ Avatar mis à jour !');
+}
+
+async function removeAvatar() {
+  await supabase.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+  profile.avatar_url = null;
+  renderSidebar();
+  renderSettings();
+  uiToast('success', 'Avatar supprimé.');
+}
+
+/* ══ LANG ══ */
+async function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('creo_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  await supabase.from('profiles').update({ lang }).eq('id', session.user.id);
+  uiToast('success', '✓ Langue sauvegardée');
+}
+
+/* ══ MODAL HELPERS ══ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ══ SIGN OUT ══ */
+async function signOut() {
+  await supabase.auth.signOut();
+  window.location.href = '/creo/login/login.html';
+}
+
+/* ══ TOAST ══ */
 window.uiToast = function(type, msg) {
   const wrap = document.getElementById('toast-wrap');
-  const c  = { info:'#1a6fff', success:'#00ff88', error:'#ff3b5c', warning:'#ffb800' }[type] || '#1a6fff';
-  const ic = { info:'ℹ', success:'✓', error:'✕', warning:'⚠' }[type];
+  const icons = { success:'✓', error:'✕', info:'ℹ', warning:'⚠' };
   const el = document.createElement('div');
   el.className = `toast ${type}`;
-  el.style.cssText = `background:${c}14;border:1px solid ${c}55;`;
-  el.innerHTML = `<span style="color:${c};font-size:1rem;">${ic}</span> ${msg}`;
+  el.innerHTML = `<span>${icons[type]||'ℹ'}</span> ${msg}`;
   wrap.appendChild(el);
-  setTimeout(() => { el.style.animation = 'toastOut .3s ease forwards'; setTimeout(() => el.remove(), 300); }, 4200);
+  setTimeout(() => { el.style.animation = 'toastOut .28s ease forwards'; setTimeout(() => el.remove(), 280); }, 3800);
 };
 
-/* ═══════════════════════════════════════
-   CHARTS
-═══════════════════════════════════════ */
-function buildCharts() {
-  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
-  const vals = [62, 85, 44, 91, 73, 38, 55];
-  const max  = Math.max(...vals);
-  const container = document.getElementById('chart-daily');
-  if (!container) return;
-  container.innerHTML = '';
-  days.forEach((d, i) => {
-    const pct = (vals[i] / max) * 100;
-    container.innerHTML += `
-      <div class="chart-bar-wrap">
-        <div class="chart-bar" style="height:100%;flex:1;">
-          <div class="chart-bar-inner" style="height:${pct}%;"></div>
-        </div>
-        <span class="chart-bar-label">${d}</span>
-      </div>`;
-  });
-}
-
-/* ═══════════════════════════════════════
-   LIVE PROGRESS
-═══════════════════════════════════════ */
-function startProgressAnims() {
-  let p1 = 63, p2 = 28;
-  setInterval(() => {
-    p1 = Math.min(100, p1 + Math.random() * 1.8);
-    p2 = Math.min(100, p2 + Math.random() * 1.2);
-    const el1 = document.getElementById('prog-1');
-    const el2 = document.getElementById('prog-2');
-    if (el1) el1.style.width = p1 + '%';
-    if (el2) el2.style.width = p2 + '%';
-    const pct1 = document.getElementById('pct-1');
-    const pct2 = document.getElementById('pct-2');
-    if (pct1) pct1.textContent = Math.round(p1) + '% · ' + (210 * p1/100).toFixed(0) + ' MB / 210 MB';
-    if (pct2) pct2.textContent = Math.round(p2) + '% · ' + (12.8 * p2/100).toFixed(1) + ' GB / 12.8 GB';
-    const spd1 = document.getElementById('speed-1');
-    const spd2 = document.getElementById('speed-2');
-    if (spd1) spd1.textContent = '↑ ' + (700 + Math.random()*400).toFixed(0) + ' MB/s';
-    if (spd2) spd2.textContent = '↑ ' + (0.9 + Math.random()*.4).toFixed(2) + ' GB/s';
-    if (p1 >= 100 && el1) {
-      const badge = el1.closest('.active-transfer')?.querySelector('.badge');
-      if (badge) { badge.className='badge badge-green'; badge.textContent='TERMINÉ'; }
-    }
-  }, 800);
-}
-
-/* ═══════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════ */
+/* ══ HIDE LOADING ══ */
 function hideLoading() {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('app-shell').style.display = 'block';
 }
 
+/* ══ EVENT LISTENERS ══ */
+function setupEventListeners() {
+
+  /* NAV LINKS */
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => showPage(link.dataset.page, link));
+  });
+
+  /* USER CARD → settings */
+  document.getElementById('user-card').addEventListener('click', () => {
+    showPage('parametres', document.querySelector('[data-page="parametres"]'));
+  });
+
+  /* LOGOUT */
+  document.getElementById('logout-btn').addEventListener('click', signOut);
+
+  /* ACTION BTN */
+  document.getElementById('action-btn').addEventListener('click', () => {
+    if (currentPage === 'transferts') openModal('modal-transfer');
+    else if (currentPage === 'appareils') openModal('modal-device');
+    else if (currentPage === 'parametres') saveProfile();
+    else if (currentPage === 'sync') launchSync();
+    else if (currentPage === 'analytiques') uiToast('info', 'Export CSV téléchargé');
+    else openModal('modal-transfer');
+  });
+
+  /* TRANSFERS FILTERS */
+  document.querySelectorAll('#page-transferts .filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('#page-transferts .filter-chip').forEach(c=>c.classList.remove('active'));
+      this.classList.add('active');
+      transferFilter = this.dataset.filter;
+      renderTransfersTable(document.getElementById('search-input').value.trim());
+    });
+  });
+
+  /* TRANSFERS SORT */
+  document.getElementById('transfers-sort').addEventListener('change', function() {
+    transferSort = this.value;
+    renderTransfersTable(document.getElementById('search-input').value.trim());
+  });
+
+  /* TABLE HEADER SORT */
+  document.querySelectorAll('.data-table thead th[data-sort]').forEach(th => {
+    th.addEventListener('click', function() {
+      const col = this.dataset.sort;
+      const isAsc = this.classList.contains('sort-asc');
+      document.querySelectorAll('.data-table thead th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
+      this.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+    });
+  });
+
+  /* FILES FILTERS */
+  document.querySelectorAll('#page-fichiers .filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('#page-fichiers .filter-chip').forEach(c=>c.classList.remove('active'));
+      this.classList.add('active');
+      fileFilter = this.dataset.filter;
+      renderFilesPage(document.getElementById('search-input').value.trim());
+    });
+  });
+
+  /* FILES SORT */
+  document.getElementById('files-sort').addEventListener('change', function() {
+    fileSort = this.value;
+    renderFilesPage(document.getElementById('search-input').value.trim());
+  });
+
+  /* VIEW TOGGLE */
+  document.getElementById('view-grid-btn').addEventListener('click', function() {
+    fileView = 'grid';
+    this.classList.add('active');
+    document.getElementById('view-list-btn').classList.remove('active');
+    renderFilesPage(document.getElementById('search-input').value.trim());
+  });
+  document.getElementById('view-list-btn').addEventListener('click', function() {
+    fileView = 'list';
+    this.classList.add('active');
+    document.getElementById('view-grid-btn').classList.remove('active');
+    renderFilesPage(document.getElementById('search-input').value.trim());
+  });
+
+  /* SEARCH */
+  document.getElementById('search-input').addEventListener('input', function() {
+    handleSearch(this.value.trim());
+  });
+  document.getElementById('search-clear').addEventListener('click', function() {
+    document.getElementById('search-input').value = '';
+    this.style.display = 'none';
+    handleSearch('');
+  });
+
+  /* NOTIF */
+  document.getElementById('notif-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('notif-panel').classList.toggle('open');
+    hasUnreadNotif = false;
+    document.getElementById('notif-dot').style.display = 'none';
+  });
+  document.getElementById('notif-read-all').addEventListener('click', () => {
+    document.getElementById('notif-panel').classList.remove('open');
+  });
+  document.addEventListener('click', e => {
+    const p = document.getElementById('notif-panel');
+    if (p && !p.contains(e.target) && !e.target.closest('#notif-btn')) p.classList.remove('open');
+  });
+
+  /* SETTINGS TABS */
+  document.querySelectorAll('.s-nav-item').forEach(item => {
+    item.addEventListener('click', () => switchTab(item.dataset.tab));
+  });
+
+  /* SAVE PROFILE */
+  document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
+
+  /* CHANGE PW */
+  document.getElementById('btn-change-pw').addEventListener('click', changePassword);
+
+  /* SIGN OUT ALL */
+  document.getElementById('btn-signout-all').addEventListener('click', signOut);
+
+  /* AVATAR */
+  document.getElementById('avatar-input').addEventListener('change', function() {
+    if (this.files[0]) uploadAvatar(this.files[0]);
+    this.value = '';
+  });
+  document.getElementById('btn-remove-avatar').addEventListener('click', removeAvatar);
+
+  /* LANG */
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.addEventListener('click', () => setLang(b.dataset.lang));
+  });
+
+  /* TOGGLES */
+  document.querySelectorAll('.toggle').forEach(t => {
+    t.addEventListener('click', function() { this.classList.toggle('on'); });
+  });
+
+  /* SAVE NOTIF */
+  document.getElementById('btn-save-notif').addEventListener('click', () => {
+    notifSettings.done   = document.getElementById('notif-done').classList.contains('on');
+    notifSettings.error  = document.getElementById('notif-error').classList.contains('on');
+    notifSettings.start  = document.getElementById('notif-start').classList.contains('on');
+    notifSettings.device = document.getElementById('notif-device').classList.contains('on');
+    notifSettings.disk   = document.getElementById('notif-disk').classList.contains('on');
+    uiToast('success', '✓ Notifications sauvegardées');
+  });
+
+  /* SAVE NETWORK */
+  document.getElementById('btn-save-network').addEventListener('click', () => {
+    const port = document.getElementById('net-port').value;
+    uiToast('success', `✓ Réseau appliqué (port ${port})`);
+  });
+
+  /* CACHE */
+  document.getElementById('btn-clear-cache').addEventListener('click', () => {
+    document.getElementById('cache-size').textContent = '0 MB utilisés';
+    uiToast('success', '✓ Cache vidé');
+  });
+
+  /* RESET SETTINGS */
+  document.getElementById('btn-reset-settings').addEventListener('click', () => {
+    if (confirm('Réinitialiser tous les paramètres ?')) {
+      document.querySelectorAll('.toggle').forEach(t => t.classList.remove('on'));
+      uiToast('info', 'Paramètres réinitialisés');
+    }
+  });
+
+  /* MODAL TRANSFER */
+  document.getElementById('btn-new-transfer').addEventListener('click', () => openModal('modal-transfer'));
+  document.getElementById('modal-cancel').addEventListener('click', () => closeModal('modal-transfer'));
+  document.getElementById('modal-confirm').addEventListener('click', () => {
+    const name = document.getElementById('mt-name').value.trim();
+    if (!name) { uiToast('warning', 'Donnez un nom au fichier.'); return; }
+    addActiveTransfer({
+      name,
+      size:   document.getElementById('mt-size').value || '—',
+      type:   document.getElementById('mt-type').value,
+      source: document.getElementById('mt-source').value,
+      dest:   document.getElementById('mt-dest').value,
+    });
+    closeModal('modal-transfer');
+    document.getElementById('mt-name').value = '';
+    document.getElementById('mt-size').value = '';
+    showPage('transferts', document.querySelector('[data-page="transferts"]'));
+    uiToast('info', '⚡ Transfert démarré !');
+  });
+  document.getElementById('modal-transfer').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal('modal-transfer');
+  });
+
+  /* MODAL DEVICE */
+  document.getElementById('btn-add-device').addEventListener('click', () => openModal('modal-device'));
+  document.getElementById('md-cancel').addEventListener('click', () => closeModal('modal-device'));
+  document.getElementById('md-confirm').addEventListener('click', () => {
+    const name = document.getElementById('md-name').value.trim();
+    if (!name) { uiToast('warning', 'Donnez un nom à l\'appareil.'); return; }
+    const icons = { desktop:'🖥️', laptop:'💻', phone:'📱', nas:'📦' };
+    DEVICES.push({ id: Date.now(), name, icon: icons[document.getElementById('md-type').value]||'🖥️', os: document.getElementById('md-os').value || '—', online: false, speed:'—', network:'—', free:'—', version:'v4.2.1' });
+    closeModal('modal-device');
+    document.getElementById('md-name').value = '';
+    document.getElementById('md-os').value = '';
+    renderDevicesPage();
+    uiToast('success', `✓ Appareil "${name}" ajouté`);
+  });
+  document.getElementById('modal-device').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal('modal-device');
+  });
+
+  /* SYNC BUTTONS */
+  document.getElementById('btn-launch-sync').addEventListener('click', launchSync);
+  document.getElementById('btn-clear-log').addEventListener('click', () => {
+    syncLog = [];
+    renderSyncLog();
+    uiToast('info', 'Journal effacé');
+  });
+  document.getElementById('btn-add-rule').addEventListener('click', () => uiToast('info', 'Bientôt disponible'));
+
+  /* ENTER KEY on modals */
+  document.getElementById('mt-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('modal-confirm').click(); });
+  document.getElementById('md-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('md-confirm').click(); });
+}
+
+function launchSync() {
+  uiToast('success', '▶ Synchronisation lancée !');
+  addSyncLogEntry('var(--blue)', 'Synchronisation <strong>démarrée manuellement</strong>', new Date().toTimeString().slice(0,5));
+  let pct = 75;
+  const iv = setInterval(() => {
+    pct = Math.min(100, pct + Math.random() * 3);
+    document.getElementById('sync-pct').textContent = Math.round(pct) + '%';
+    const offset = 339.29 * (1 - pct / 100);
+    document.getElementById('sync-circle-prog').style.strokeDashoffset = offset;
+    if (pct >= 100) {
+      clearInterval(iv);
+      uiToast('success', '✓ Synchronisation terminée');
+      addSyncLogEntry('var(--green)', '<strong>Synchronisation complète</strong>', new Date().toTimeString().slice(0,5));
+    }
+  }, 200);
+}
+
+/* ══ START ══ */
 init();
 </script>
 </body>
