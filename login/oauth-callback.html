@@ -57,7 +57,7 @@ async function handleOAuth() {
     const code = await generateTempCode(user.id);
     window.location.href = "complete-profile.html?code=" + code;
   } else {
-    window.location.href = "creo/client/client.html";
+    window.location.href = "../client/client.html";
   }
 }
 
