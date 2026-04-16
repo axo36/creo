@@ -88,8 +88,9 @@
 </footer>
 
 <script type="module">
-  import { buildNav, initReveal, pageFade } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, pageFade } from './app.js';
   pageFade();
+  redirectIfAuth();
   buildNav('about');
   initReveal();
 </script>
