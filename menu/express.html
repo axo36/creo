@@ -250,8 +250,9 @@
 </footer>
 
 <script type="module">
-  import { buildNav, pageFade, setLoading, toast } from './app.js';
+  import { redirectIfAuth, buildNav, pageFade, setLoading, toast } from './app.js';
   pageFade();
+  redirectIfAuth();
   buildNav('express');
 
   const fileDrop = document.getElementById('file-drop');
