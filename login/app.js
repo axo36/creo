@@ -21,7 +21,7 @@ export async function getSession() {
 }
 export async function requireAuth() {
   const s = await getSession();
-  if (!s) { window.location.href = 'login.html'; return null; }
+  if (!s) { window.location.href = '../login/login.html'; return null; }
   return s;
 }
 export async function redirectIfAuth() {
