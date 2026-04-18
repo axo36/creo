@@ -325,6 +325,324 @@ img{display:block;max-width:100%;}
 ::-webkit-scrollbar-thumb:hover{background:var(--d7);}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* ══════════════════════════════════════════
+   MOBILE — version téléphone complète
+   Breakpoint: ≤ 768px
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* ── LAYOUT MOBILE ── */
+  .sidebar { display: none !important; }
+  .main-area { margin-left: 0 !important; padding-bottom: 72px; }
+  .page-content { padding: 1rem 1rem 1.5rem; }
+
+  /* ── TOPBAR MOBILE ── */
+  .topbar { padding: 0 1rem; height: 56px; }
+  .topbar-left { gap: .6rem; }
+  .page-title { font-size: 1.2rem; }
+  .breadcrumb { display: none; }
+  .topbar-search { display: none; }
+  .topbar-right { gap: 8px; }
+  .icon-btn { width: 32px; height: 32px; font-size: .8rem; }
+  #action-btn { padding: .4rem .85rem; font-size: .76rem; }
+  --nav-h: 56px;
+
+  /* ── BOTTOM NAV ── */
+  #bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 64px;
+    background: rgba(8,8,8,.97);
+    backdrop-filter: blur(24px);
+    border-top: 1px solid var(--b2);
+    z-index: 200;
+    padding: 0 .5rem;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    align-items: center;
+    justify-content: space-around;
+  }
+  .bn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: .5rem .7rem;
+    border-radius: var(--r-lg);
+    cursor: pointer;
+    transition: all .18s;
+    flex: 1;
+    position: relative;
+  }
+  .bn-item:active { transform: scale(.92); }
+  .bn-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: transform .2s;
+  }
+  .bn-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .52rem;
+    color: var(--t3);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    transition: color .18s;
+  }
+  .bn-item.active .bn-label { color: var(--blue2); }
+  .bn-item.active .bn-icon { transform: scale(1.15); filter: drop-shadow(0 0 6px rgba(26,111,255,.5)); }
+  .bn-active-pill {
+    position: absolute;
+    top: 6px; left: 50%; transform: translateX(-50%);
+    width: 24px; height: 2px;
+    background: linear-gradient(90deg, var(--blue), var(--cyan));
+    border-radius: 99px;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .bn-item.active .bn-active-pill { opacity: 1; }
+
+  /* More button (⋯) for parametres + analytiques */
+  #bn-more-panel {
+    display: none;
+    position: fixed;
+    bottom: 72px; left: 0; right: 0;
+    background: var(--d2);
+    border-top: 1px solid var(--b2);
+    z-index: 199;
+    padding: 1rem;
+    animation: slideUp .2s ease;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+  }
+  #bn-more-panel.open { display: block; }
+  @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: none; opacity: 1; } }
+  .bn-more-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: .9rem 1rem;
+    border-radius: var(--r-lg);
+    font-size: .9rem;
+    color: var(--t2);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .bn-more-item:hover, .bn-more-item:active { background: var(--d4); color: var(--t1); }
+  .bn-more-icon { font-size: 1.1rem; width: 28px; text-align: center; }
+  .bn-more-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.6);
+    z-index: 198;
+  }
+  .bn-more-overlay.open { display: block; }
+
+  /* ── SEARCH MOBILE OVERLAY ── */
+  #mobile-search-btn { display: flex !important; }
+  #mobile-search-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 300;
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  #mobile-search-overlay.open { display: flex; animation: fadeIn .15s ease; }
+  .mob-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--d3);
+    border: 1px solid var(--b3);
+    border-radius: var(--r-xl);
+    padding: .7rem 1rem;
+    margin-top: env(safe-area-inset-top, 0);
+  }
+  .mob-search-bar input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: var(--t1);
+  }
+  .mob-search-bar input::placeholder { color: var(--t3); }
+  #mob-search-results { flex: 1; overflow-y: auto; }
+  .mob-result-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: .85rem 1rem;
+    border-radius: var(--r-lg);
+    cursor: pointer;
+    transition: background .15s;
+    border-bottom: 1px solid var(--b1);
+  }
+  .mob-result-item:last-child { border: none; }
+  .mob-result-item:active { background: var(--d3); }
+  .mob-result-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .mob-result-name { font-size: .88rem; color: var(--t1); font-weight: 400; }
+  .mob-result-meta { font-family: 'JetBrains Mono', monospace; font-size: .65rem; color: var(--t3); margin-top: 1px; }
+  .mob-search-empty { text-align: center; padding: 3rem 1rem; color: var(--t3); font-family: 'JetBrains Mono', monospace; font-size: .75rem; }
+
+  /* ── STAT CARDS MOBILE ── */
+  .stat-grid-4 { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+  .stat-grid-3 { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+  .stat-grid-3 .stat-card:last-child { grid-column: 1 / -1; }
+  .stat-card { padding: 1rem 1.1rem; }
+  .stat-val { font-size: 1.7rem; }
+
+  /* ── SECTION HEADER MOBILE ── */
+  .section-header { flex-wrap: wrap; gap: 8px; }
+  .section-header .toolbar { margin-bottom: 0; }
+
+  /* ── TABLE MOBILE: scroll horizontal ── */
+  .data-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--r-lg); }
+  .data-table { min-width: 560px; }
+  .data-table td, .data-table thead th { padding: .65rem .8rem; font-size: .76rem; }
+
+  /* ── TRANSFER CARDS MOBILE ── */
+  .transfer-card { padding: .9rem 1rem; }
+  .tc-name span.fname { max-width: 160px; }
+
+  /* ── DEVICES MOBILE ── */
+  .device-grid { grid-template-columns: 1fr !important; gap: 10px; }
+  .dc-stats { grid-template-columns: repeat(2, 1fr); }
+
+  /* ── FILES MOBILE ── */
+  .files-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+  .files-grid.list-view { grid-template-columns: 1fr !important; }
+
+  /* ── SYNC MOBILE ── */
+  .two-col { grid-template-columns: 1fr !important; gap: 12px; }
+
+  /* ── ANALYTICS MOBILE ── */
+  .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+  .kpi-val { font-size: 1.5rem; }
+
+  /* ── SETTINGS MOBILE ── */
+  .settings-layout { grid-template-columns: 1fr !important; gap: 12px; }
+  .settings-nav {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: .6rem;
+  }
+  .s-nav-item {
+    padding: .45rem .7rem;
+    font-size: .76rem;
+    flex-shrink: 0;
+  }
+  .field-row { grid-template-columns: 1fr !important; }
+
+  /* ── MODAL MOBILE: full-screen bottom sheet ── */
+  .modal-bg { align-items: flex-end !important; }
+  .modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: var(--r-2xl) var(--r-2xl) 0 0 !important;
+    padding: 1.5rem 1.2rem !important;
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0)) !important;
+    animation: bottomSheet .25s ease !important;
+  }
+  @keyframes bottomSheet { from { transform: translateY(100%); } to { transform: none; } }
+  .modal::before {
+    content: '';
+    display: block;
+    width: 36px; height: 3px;
+    background: var(--b3);
+    border-radius: 99px;
+    margin: 0 auto 1.2rem;
+  }
+  .modal-footer { flex-direction: column-reverse !important; }
+  .modal-footer .btn { width: 100%; justify-content: center; }
+
+  /* ── NOTIF PANEL MOBILE ── */
+  .notif-panel {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 72px !important;
+    right: .6rem !important;
+    left: .6rem !important;
+    min-width: auto !important;
+  }
+
+  /* ── TOAST MOBILE ── */
+  #toast-wrap {
+    bottom: 80px !important;
+    right: .8rem !important;
+    left: .8rem !important;
+  }
+  .toast { max-width: 100% !important; }
+
+  /* ── FAB (Floating Action Button) ── */
+  #mobile-fab {
+    display: flex !important;
+    position: fixed;
+    bottom: 80px;
+    right: 1rem;
+    width: 52px; height: 52px;
+    background: var(--blue);
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 20px rgba(26,111,255,.5), 0 0 0 0 rgba(26,111,255,.3);
+    cursor: pointer;
+    z-index: 150;
+    transition: transform .2s, box-shadow .2s;
+    animation: fabPulse 3s ease infinite;
+  }
+  #mobile-fab:active { transform: scale(.92); }
+  @keyframes fabPulse {
+    0%, 100% { box-shadow: 0 4px 20px rgba(26,111,255,.5), 0 0 0 0 rgba(26,111,255,.3); }
+    50%       { box-shadow: 0 4px 20px rgba(26,111,255,.5), 0 0 0 10px rgba(26,111,255,.0); }
+  }
+
+  /* ── PROFILE CARD MOBILE (replaces sidebar user-card) ── */
+  .mob-profile-strip {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--d2);
+    border: 1px solid var(--b2);
+    border-radius: var(--r-xl);
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.2rem;
+    cursor: pointer;
+  }
+  .mob-profile-strip .mob-av {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 600; color: #fff;
+    overflow: hidden; flex-shrink: 0;
+  }
+  .mob-profile-strip .mob-av img { width: 100%; height: 100%; object-fit: cover; }
+  .mob-profile-strip-info { flex: 1; min-width: 0; }
+  .mob-profile-name { font-size: .92rem; color: var(--t1); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mob-profile-role { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--t3); }
+
+  /* ── TOOLBAR MOBILE: horizontal scroll ── */
+  .toolbar { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .toolbar::-webkit-scrollbar { display: none; }
+  .filter-chip { flex-shrink: 0; }
+
+  /* hide desktop-only elements */
+  #view-grid-btn, #view-list-btn { display: none; }
+}
+
+/* Show mobile-only elements only on mobile */
+#bottom-nav { display: none; }
+#mobile-fab { display: none; }
+#mobile-search-btn { display: none; }
+#mobile-search-overlay { display: none; }
+#bn-more-panel { display: none; }
+.bn-more-overlay { display: none; }
+.mob-profile-strip { display: none; }
 </style>
 </head>
 <body>
@@ -381,6 +699,7 @@ img{display:block;max-width:100%;}
           <input type="text" id="search-input" placeholder="Rechercher…" autocomplete="off">
           <span id="search-clear" style="color:var(--t3);font-size:.7rem;cursor:pointer;display:none;">✕</span>
         </div>
+        <div class="icon-btn" id="mobile-search-btn" title="Rechercher">🔍</div>
         <div class="icon-btn" id="notif-btn" title="Notifications">
           🔔<span class="badge-dot" id="notif-dot"></span>
         </div>
@@ -555,6 +874,15 @@ img{display:block;max-width:100%;}
 
       <!-- ══ PARAMÈTRES ══ -->
       <div class="page" id="page-parametres">
+        <!-- Mobile profile strip -->
+        <div class="mob-profile-strip" id="mob-profile-strip">
+          <div class="mob-av" id="mob-strip-av">?</div>
+          <div class="mob-profile-strip-info">
+            <div class="mob-profile-name" id="mob-strip-name">…</div>
+            <div class="mob-profile-role" id="mob-strip-role">…</div>
+          </div>
+          <span style="color:var(--t3);font-size:.8rem;">›</span>
+        </div>
         <div class="settings-layout">
           <div class="settings-nav">
             <div class="s-nav-item active" data-tab="st-profil"><span>👤</span> Profil</div>
@@ -742,6 +1070,63 @@ img{display:block;max-width:100%;}
   </div><!-- main-area -->
 </div><!-- app-shell -->
 </div><!-- #app-shell -->
+
+<!-- ══ BOTTOM NAV (mobile) ══ -->
+<nav id="bottom-nav">
+  <div class="bn-item active" data-page="transferts">
+    <div class="bn-active-pill"></div>
+    <div class="bn-icon">⚡</div>
+    <div class="bn-label">Transferts</div>
+  </div>
+  <div class="bn-item" data-page="appareils">
+    <div class="bn-active-pill"></div>
+    <div class="bn-icon">📱</div>
+    <div class="bn-label">Appareils</div>
+  </div>
+  <div class="bn-item" data-page="fichiers">
+    <div class="bn-active-pill"></div>
+    <div class="bn-icon">📂</div>
+    <div class="bn-label">Fichiers</div>
+  </div>
+  <div class="bn-item" data-page="sync">
+    <div class="bn-active-pill"></div>
+    <div class="bn-icon">🔄</div>
+    <div class="bn-label">Sync</div>
+  </div>
+  <div class="bn-item" id="bn-more-btn">
+    <div class="bn-active-pill"></div>
+    <div class="bn-icon">⋯</div>
+    <div class="bn-label">Plus</div>
+  </div>
+</nav>
+
+<!-- ══ MORE PANEL (mobile) ══ -->
+<div class="bn-more-overlay" id="bn-more-overlay"></div>
+<div id="bn-more-panel">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:.3rem 1rem .7rem;border-bottom:1px solid var(--b1);margin-bottom:.5rem;">Navigation</div>
+  <div class="bn-more-item" data-page="parametres" id="more-settings">
+    <span class="bn-more-icon">⚙️</span> Paramètres
+  </div>
+  <div class="bn-more-item" data-page="analytiques" id="more-analytics">
+    <span class="bn-more-icon">📊</span> Analytiques
+  </div>
+  <div class="bn-more-item" id="more-logout" style="color:var(--red);margin-top:.3rem;border-top:1px solid var(--b1);padding-top:.8rem;">
+    <span class="bn-more-icon">⎋</span> Déconnexion
+  </div>
+</div>
+
+<!-- ══ FAB (mobile) ══ -->
+<div id="mobile-fab">＋</div>
+
+<!-- ══ SEARCH OVERLAY (mobile) ══ -->
+<div id="mobile-search-overlay">
+  <div class="mob-search-bar">
+    <span style="color:var(--t3);font-size:1rem;">🔍</span>
+    <input type="text" id="mob-search-input" placeholder="Rechercher fichiers, transferts…" autocomplete="off">
+    <span style="color:var(--t3);font-size:.85rem;cursor:pointer;" id="mob-search-close">Annuler</span>
+  </div>
+  <div id="mob-search-results"></div>
+</div>
 
 <!-- MODAL NOUVEAU TRANSFERT -->
 <div class="modal-bg" id="modal-transfer">
@@ -1733,6 +2118,181 @@ function launchSync() {
 
 /* ══ START ══ */
 init();
+
+/* ══════════════════════════════════════════
+   MOBILE JS
+══════════════════════════════════════════ */
+
+/* ── BOTTOM NAV ── */
+document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => {
+    const page = item.dataset.page;
+    const sidebarLink = document.querySelector(`.nav-link[data-page="${page}"]`);
+    if (sidebarLink) {
+      showPage(page, sidebarLink);
+    }
+    // Sync bottom nav active state
+    document.querySelectorAll('#bottom-nav .bn-item').forEach(b => b.classList.remove('active'));
+    item.classList.add('active');
+    closeBnMore();
+  });
+});
+
+// Override showPage to also sync bottom nav
+const _origShowPage = window.showPage;
+window.showPage = function(id, el) {
+  _origShowPage(id, el);
+  // sync bottom nav
+  document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(b => {
+    b.classList.toggle('active', b.dataset.page === id);
+  });
+  // Hide more panel
+  closeBnMore();
+  // Scroll page-content to top on mobile
+  const pc = document.querySelector('.page-content');
+  if (pc && window.innerWidth <= 768) pc.scrollTop = 0;
+  // Update mobile profile strip in settings
+  if (id === 'parametres') updateMobProfileStrip();
+};
+
+/* ── MORE PANEL ── */
+const bnMoreBtn = document.getElementById('bn-more-btn');
+const bnMorePanel = document.getElementById('bn-more-panel');
+const bnMoreOverlay = document.getElementById('bn-more-overlay');
+
+function openBnMore() {
+  bnMorePanel.classList.add('open');
+  bnMoreOverlay.classList.add('open');
+}
+function closeBnMore() {
+  bnMorePanel.classList.remove('open');
+  bnMoreOverlay.classList.remove('open');
+}
+
+bnMoreBtn.addEventListener('click', () => {
+  if (bnMorePanel.classList.contains('open')) closeBnMore();
+  else openBnMore();
+});
+bnMoreOverlay.addEventListener('click', closeBnMore);
+
+document.getElementById('more-settings').addEventListener('click', () => {
+  showPage('parametres', document.querySelector('[data-page="parametres"]'));
+});
+document.getElementById('more-analytics').addEventListener('click', () => {
+  showPage('analytiques', document.querySelector('[data-page="analytiques"]'));
+});
+document.getElementById('more-logout').addEventListener('click', async () => {
+  closeBnMore();
+  await supabase.auth.signOut();
+  window.location.href = '/creo/login/login.html';
+});
+
+/* ── FAB ── */
+document.getElementById('mobile-fab').addEventListener('click', () => {
+  if (currentPage === 'transferts' || currentPage === 'fichiers') openModal('modal-transfer');
+  else if (currentPage === 'appareils') openModal('modal-device');
+  else if (currentPage === 'sync') launchSync();
+  else openModal('modal-transfer');
+});
+
+/* ── MOBILE SEARCH ── */
+const mobSearchOverlay = document.getElementById('mobile-search-overlay');
+const mobSearchInput   = document.getElementById('mob-search-input');
+const mobSearchResults = document.getElementById('mob-search-results');
+
+window.openMobileSearch = function() {
+  mobSearchOverlay.classList.add('open');
+  setTimeout(() => mobSearchInput.focus(), 100);
+};
+document.getElementById('mobile-search-btn').addEventListener('click', window.openMobileSearch);
+
+function closeMobileSearch() {
+  mobSearchOverlay.classList.remove('open');
+  mobSearchInput.value = '';
+  mobSearchResults.innerHTML = '';
+}
+document.getElementById('mob-search-close').addEventListener('click', closeMobileSearch);
+
+mobSearchInput.addEventListener('input', function() {
+  const q = this.value.trim();
+  if (!q) { mobSearchResults.innerHTML = ''; return; }
+
+  // Search in transfers + files
+  const allItems = [
+    ...TRANSFER_HISTORY.map(t => ({ icon: t.icon, name: t.name, meta: `${t.size} · ${t.dest}`, page: 'transferts' })),
+    ...FILES.map(f => ({ icon: f.icon, name: f.name, meta: `${f.size} · ${f.typeLabel}`, page: 'fichiers' })),
+  ].filter(item => item.name.toLowerCase().includes(q.toLowerCase()));
+
+  if (allItems.length === 0) {
+    mobSearchResults.innerHTML = `<div class="mob-search-empty">Aucun résultat pour « ${q} »</div>`;
+    return;
+  }
+
+  const hl = str => str.replace(new RegExp(q, 'gi'), m => `<span class="hl">${m}</span>`);
+
+  mobSearchResults.innerHTML = allItems.slice(0, 12).map(item => `
+    <div class="mob-result-item" onclick="closeMobileSearch();showPage('${item.page}',document.querySelector('[data-page=${item.page}]'))">
+      <div class="mob-result-icon">${item.icon}</div>
+      <div>
+        <div class="mob-result-name">${hl(item.name)}</div>
+        <div class="mob-result-meta">${item.meta}</div>
+      </div>
+    </div>`).join('');
+});
+window.closeMobileSearch = closeMobileSearch;
+
+/* ── MOBILE PROFILE STRIP ── */
+function updateMobProfileStrip() {
+  if (!session || !profile) return;
+  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
+  const avEl = document.getElementById('mob-strip-av');
+  if (avEl) {
+    if (av) avEl.innerHTML = `<img src="${av}" alt="">`;
+    else avEl.textContent = (profile?.first_name?.[0]||'') + (profile?.last_name?.[0]||'') || session.user.email?.[0]?.toUpperCase() || '?';
+  }
+  const nameEl = document.getElementById('mob-strip-name');
+  const roleEl = document.getElementById('mob-strip-role');
+  if (nameEl) nameEl.textContent = (profile?.first_name && profile?.last_name) ? `${profile.first_name} ${profile.last_name}` : (profile?.username ? `@${profile.username}` : session.user.email?.split('@')[0]);
+  if (roleEl) roleEl.textContent = profile?.type ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1) : 'Utilisateur';
+}
+document.getElementById('mob-profile-strip')?.addEventListener('click', () => {
+  document.querySelector('[data-tab="st-profil"]')?.click();
+});
+
+/* ── SWIPE to navigate (mobile) ── */
+let touchStartX = 0, touchStartY = 0;
+const pages = ['transferts','appareils','fichiers','sync'];
+
+document.querySelector('.page-content')?.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+
+document.querySelector('.page-content')?.addEventListener('touchend', e => {
+  if (window.innerWidth > 768) return;
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return; // not a horizontal swipe
+  const cur = pages.indexOf(currentPage);
+  if (cur === -1) return;
+  if (dx < -60 && cur < pages.length - 1) {
+    const next = pages[cur + 1];
+    showPage(next, document.querySelector(`[data-page="${next}"]`));
+  } else if (dx > 60 && cur > 0) {
+    const prev = pages[cur - 1];
+    showPage(prev, document.querySelector(`[data-page="${prev}"]`));
+  }
+}, { passive: true });
+
+/* ── Render sidebar updates also update mobile strip ── */
+const _origRenderSidebar = renderSidebar;
+// (renderSidebar is local, we re-run updateMobProfileStrip after it via patching init)
+const _origHideLoading = hideLoading;
+function hideLoading() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
+  updateMobProfileStrip();
+}
 </script>
 </body>
 </html>
