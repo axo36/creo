@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CREO — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#000;--d1:#040404;--d2:#080808;--d3:#0e0e0e;
+  --d4:#141414;--d5:#1c1c1c;--d6:#242424;--d7:#2e2e2e;
+  --b1:rgba(255,255,255,.04);--b2:rgba(255,255,255,.08);
+  --b3:rgba(255,255,255,.14);--b4:rgba(255,255,255,.22);
+  --white:#fff;--t1:#e2e2e2;--t2:#7a7a7a;--t3:#3a3a3a;
+  --blue:#1a6fff;--blue2:#4d8fff;--blue3:#80b3ff;
+  --cyan:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+  --amber:#ffb800;--purple:#8b5cf6;
+  --blue-glow:rgba(26,111,255,.22);
+  --r:8px;--r-lg:14px;--r-xl:20px;--r-2xl:28px;--nav-h:66px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--t1);font-family:'Outfit',sans-serif;font-weight:300;line-height:1.65;overflow-x:hidden;min-height:100vh;}
+a{text-decoration:none;color:inherit;}
+ul{list-style:none;}
+button{font-family:'Outfit',sans-serif;cursor:pointer;border:none;background:none;}
+input,textarea,select{font-family:'Outfit',sans-serif;}
+img{display:block;max-width:100%;}
+.font-mono{font-family:'JetBrains Mono',monospace;}
+
+/* LOADING */
+#loading-screen{position:fixed;inset:0;background:var(--black);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:1.2rem;}
+.loading-logo{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--white);letter-spacing:.1em;}
+.loading-logo span{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.loading-bar{width:180px;height:2px;background:var(--d5);border-radius:99px;overflow:hidden;}
+.loading-bar-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;animation:loadAnim 1.2s ease infinite;}
+@keyframes loadAnim{0%{width:0;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0;margin-left:100%;}}
+.loading-txt{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);}
+
+/* LAYOUT */
+#app-shell{display:none;}
+.app-shell{display:flex;min-height:100vh;}
+.sidebar{width:230px;flex-shrink:0;background:var(--d2);border-right:1px solid var(--b1);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;padding:1.6rem 1rem 2rem;}
+.main-area{margin-left:230px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(4,4,4,.9);backdrop-filter:blur(30px);border-bottom:1px solid var(--b1);position:sticky;top:0;z-index:90;}
+.page-content{flex:1;padding:2.5rem;overflow-y:auto;}
+
+/* SIDEBAR */
+.sidebar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--white);letter-spacing:.1em;padding:0 .5rem;margin-bottom:2.5rem;display:flex;align-items:center;gap:2px;}
+.sidebar-logo .logo-e{background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sidebar-logo .logo-dot{width:5px;height:5px;background:var(--blue);border-radius:50%;margin-left:3px;box-shadow:0 0 8px var(--blue);align-self:flex-end;margin-bottom:8px;}
+.sidebar-section{margin-bottom:2rem;}
+.sidebar-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;padding:0 .5rem;margin-bottom:.6rem;}
+.nav-link{display:flex;align-items:center;gap:10px;padding:.58rem .7rem;border-radius:var(--r);font-size:.84rem;color:var(--t2);margin-bottom:2px;cursor:pointer;transition:all .2s;border:1px solid transparent;user-select:none;}
+.nav-link:hover{background:var(--d4);color:var(--t1);}
+.nav-link.active{background:rgba(26,111,255,.1);color:var(--blue2);border-color:rgba(26,111,255,.2);}
+.nav-link .n-icon{font-size:.95rem;flex-shrink:0;width:20px;text-align:center;}
+.sidebar-footer{margin-top:auto;padding-top:1.5rem;border-top:1px solid var(--b1);}
+.user-card{display:flex;align-items:center;gap:10px;padding:.6rem .5rem;border-radius:var(--r-lg);cursor:pointer;transition:background .2s;}
+.user-card:hover{background:var(--d4);}
+.user-avatar{width:32px;height:32px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;color:#fff;flex-shrink:0;overflow:hidden;}
+.user-avatar img{width:100%;height:100%;object-fit:cover;}
+.user-info{flex:1;min-width:0;}
+.user-name{font-size:.82rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-role{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.logout-link{display:flex;align-items:center;gap:8px;padding:.48rem .7rem;margin-top:4px;border-radius:var(--r);font-size:.8rem;color:var(--t3);cursor:pointer;transition:all .2s;}
+.logout-link:hover{background:rgba(255,59,92,.08);color:var(--red);}
+
+/* TOPBAR */
+.topbar-left{display:flex;align-items:center;gap:1rem;}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.06em;color:var(--white);}
+.breadcrumb{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t3);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-search{display:flex;align-items:center;gap:8px;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.42rem .9rem;width:200px;transition:all .2s;}
+.topbar-search:focus-within{border-color:rgba(26,111,255,.4);width:260px;box-shadow:0 0 0 3px rgba(26,111,255,.07);}
+.topbar-search input{background:none;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t1);width:100%;}
+.topbar-search input::placeholder{color:var(--t3);}
+.icon-btn{width:34px;height:34px;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:var(--t2);cursor:pointer;transition:all .2s;position:relative;flex-shrink:0;}
+.icon-btn:hover{background:var(--d5);color:var(--t1);}
+.icon-btn .badge-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--blue);border-radius:50%;border:1.5px solid var(--d4);box-shadow:0 0 6px var(--blue);}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:.55rem 1.2rem;border-radius:var(--r-lg);font-size:.82rem;font-weight:500;transition:all .22s;white-space:nowrap;cursor:pointer;}
+.btn-primary{background:var(--blue);color:#fff;box-shadow:0 0 20px var(--blue-glow),inset 0 1px 0 rgba(255,255,255,.12);}
+.btn-primary:hover{background:#2a7aff;box-shadow:0 0 40px rgba(26,111,255,.5);transform:translateY(-1px);}
+.btn-ghost{background:transparent;color:var(--t2);border:1px solid var(--b3);}
+.btn-ghost:hover{border-color:var(--b4);color:var(--t1);background:var(--d4);}
+.btn-danger{background:transparent;color:var(--red);border:1px solid rgba(255,59,92,.25);}
+.btn-danger:hover{background:rgba(255,59,92,.1);}
+.btn-sm{padding:.36rem .8rem;font-size:.76rem;border-radius:var(--r);}
+.btn-xs{padding:.25rem .6rem;font-size:.7rem;border-radius:6px;}
+.btn-loading{opacity:.6;pointer-events:none;}
+.btn-loading::after{content:'';width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-left:6px;}
+
+/* PAGES */
+.page{display:none;animation:fadeIn .2s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+
+/* STAT CARDS */
+.stat-grid{display:grid;gap:14px;margin-bottom:2rem;}
+.stat-grid-4{grid-template-columns:repeat(4,1fr);}
+.stat-grid-3{grid-template-columns:repeat(3,1fr);}
+.stat-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem 1.6rem;position:relative;overflow:hidden;transition:border-color .2s;}
+.stat-card:hover{border-color:var(--b3);}
+.stat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity .3s;}
+.stat-card:hover::after{opacity:1;}
+.stat-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.6rem;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--white);line-height:1;}
+.stat-val .unit{font-size:1rem;color:var(--blue2);font-family:'Outfit',sans-serif;font-weight:500;}
+.stat-sub{font-size:.72rem;color:var(--t3);margin-top:4px;}
+.stat-delta{display:inline-flex;align-items:center;gap:3px;font-size:.7rem;font-weight:500;}
+.stat-delta.up{color:var(--green);}
+.stat-delta.down{color:var(--red);}
+
+/* SECTION HEADER */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;color:var(--white);}
+.section-title small{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);font-weight:300;letter-spacing:.1em;text-transform:uppercase;margin-left:.5rem;}
+
+/* TABLE */
+.data-table-wrap{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);overflow:hidden;}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table thead th{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:.65rem 1.1rem;text-align:left;border-bottom:1px solid var(--b1);background:var(--d3);cursor:pointer;user-select:none;transition:color .15s;}
+.data-table thead th:hover{color:var(--t2);}
+.data-table thead th.sort-asc::after{content:' ↑';}
+.data-table thead th.sort-desc::after{content:' ↓';}
+.data-table tbody tr{border-bottom:1px solid var(--b1);transition:background .15s;cursor:pointer;}
+.data-table tbody tr:last-child{border:none;}
+.data-table tbody tr:hover{background:var(--d3);}
+.data-table td{padding:.8rem 1.1rem;font-size:.82rem;color:var(--t2);vertical-align:middle;}
+.td-name{display:flex;align-items:center;gap:10px;}
+.td-icon{font-size:1.05rem;flex-shrink:0;}
+.td-fname{color:var(--t1);font-weight:400;}
+.td-fmeta{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);margin-top:1px;}
+.table-empty{text-align:center;padding:3rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.75rem;}
+
+/* STATUS BADGES */
+.status{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:3px 9px;border-radius:99px;}
+.st-done{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);}
+.st-send{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
+.st-wait{background:var(--b1);border:1px solid var(--b2);color:var(--t3);}
+.st-err{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.2);color:var(--red);}
+.st-pause{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);color:var(--amber);}
+
+/* FILTERS TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.filter-chip{display:inline-flex;align-items:center;gap:5px;padding:.35rem .9rem;background:var(--d3);border:1px solid var(--b2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--t3);cursor:pointer;transition:all .2s;user-select:none;}
+.filter-chip:hover{border-color:var(--b3);color:var(--t2);}
+.filter-chip.active{background:rgba(26,111,255,.1);border-color:rgba(26,111,255,.3);color:var(--blue2);}
+.view-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r);font-size:.85rem;cursor:pointer;transition:all .2s;color:var(--t3);}
+.view-btn.active,.view-btn:hover{background:var(--d5);border-color:var(--b3);color:var(--t1);}
+.sort-select{background:var(--d3);border:1px solid var(--b2);border-radius:var(--r);padding:.35rem .7rem;color:var(--t2);font-family:'JetBrains Mono',monospace;font-size:.67rem;outline:none;cursor:pointer;}
+.sort-select:focus{border-color:rgba(26,111,255,.4);}
+
+/* TRANSFER PROGRESS */
+.transfer-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:.8rem;transition:border-color .2s;}
+.transfer-card.active-transfer{background:rgba(26,111,255,.04);border-color:rgba(26,111,255,.18);}
+.transfer-card.transfer-done{background:rgba(0,255,136,.03);border-color:rgba(0,255,136,.12);}
+.transfer-card.transfer-err{background:rgba(255,59,92,.04);border-color:rgba(255,59,92,.15);}
+.tc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;}
+.tc-name{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--t1);min-width:0;}
+.tc-name span.fname{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;}
+.tc-speed{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--blue2);flex-shrink:0;}
+.tc-actions{display:flex;gap:6px;flex-shrink:0;}
+.prog-bar{height:3px;background:var(--d5);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;transition:width .6s ease;}
+.prog-fill.done{background:linear-gradient(90deg,var(--green),#00d4aa);}
+.prog-fill.err{background:var(--red);}
+.tc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);}
+
+/* DEVICES */
+.device-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.device-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;transition:all .25s;position:relative;overflow:hidden;}
+.device-card:hover{border-color:var(--b3);background:var(--d3);transform:translateY(-2px);}
+.device-card.online::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.device-card.offline::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--t3),transparent);}
+.dc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.dc-icon{width:42px;height:42px;background:var(--d4);border:1px solid var(--b3);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.dc-dot{width:8px;height:8px;border-radius:50%;}
+.dc-dot.on{background:var(--green);box-shadow:0 0 10px rgba(0,255,136,.5);animation:pulse 2.5s ease infinite;}
+.dc-dot.off{background:var(--t3);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.dc-name{font-size:.92rem;font-weight:500;color:var(--t1);margin-bottom:2px;}
+.dc-type{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;}
+.dc-stats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:1rem 0;}
+.dc-stat{background:var(--d4);border-radius:var(--r);padding:.5rem .7rem;}
+.dc-stat-val{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t1);font-weight:500;}
+.dc-stat-key{font-size:.63rem;color:var(--t3);margin-top:1px;}
+.dc-actions{display:flex;gap:7px;}
+
+/* FILES GRID */
+.files-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem;}
+.files-grid.list-view{grid-template-columns:1fr;}
+.file-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.3rem;cursor:pointer;transition:all .2s;}
+.file-card:hover{background:var(--d3);border-color:var(--b3);transform:translateY(-2px);}
+.file-card.list-view{display:flex;align-items:center;gap:12px;padding:.8rem 1.1rem;transform:none !important;border-radius:var(--r-lg);}
+.file-card-icon{width:42px;height:42px;border-radius:var(--r-lg);background:var(--d4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:.9rem;flex-shrink:0;}
+.file-card.list-view .file-card-icon{margin-bottom:0;}
+.file-card-name{font-size:.82rem;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.file-card-meta{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);}
+.file-card.list-view .file-card-info{flex:1;min-width:0;}
+
+/* SYNC */
+.sync-circle{position:relative;width:120px;height:120px;margin:0 auto 1.5rem;}
+.sync-circle svg{transform:rotate(-90deg);}
+.circle-bg{fill:none;stroke:var(--d5);stroke-width:8;}
+.circle-prog{fill:none;stroke:url(#grad-stroke);stroke-width:8;stroke-linecap:round;stroke-dasharray:339.29;transition:stroke-dashoffset .5s ease;}
+.sync-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.sync-val-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);line-height:1;}
+.sync-val-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--t3);text-transform:uppercase;}
+.feed-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;}
+.feed-item{display:flex;align-items:flex-start;gap:10px;padding:.8rem 0;border-bottom:1px solid var(--b1);}
+.feed-item:last-child{border:none;}
+.feed-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.feed-text{font-size:.8rem;color:var(--t2);line-height:1.5;}
+.feed-text strong{color:var(--t1);font-weight:500;}
+.feed-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:2px;}
+
+/* SETTINGS */
+.settings-layout{display:grid;grid-template-columns:210px 1fr;gap:20px;}
+.settings-nav{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:.8rem;height:fit-content;}
+.s-nav-item{display:flex;align-items:center;gap:9px;padding:.55rem .7rem;border-radius:var(--r);font-size:.81rem;color:var(--t2);cursor:pointer;transition:all .2s;border:1px solid transparent;margin-bottom:1px;}
+.s-nav-item:hover{background:var(--d4);color:var(--t1);}
+.s-nav-item.active{background:rgba(26,111,255,.1);color:var(--blue2);border-color:rgba(26,111,255,.2);}
+.settings-panel{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.8rem;}
+.s-group{margin-bottom:2.2rem;}
+.s-group-title{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.1rem;padding-bottom:.55rem;border-bottom:1px solid var(--b1);}
+.s-row{display:flex;align-items:center;justify-content:space-between;padding:.9rem 0;border-bottom:1px solid var(--b1);}
+.s-row:last-child{border:none;}
+.s-row-info{flex:1;}
+.s-row-label{font-size:.85rem;color:var(--t1);font-weight:400;margin-bottom:2px;}
+.s-row-desc{font-size:.76rem;color:var(--t3);}
+.toggle{width:40px;height:22px;background:var(--d5);border-radius:99px;position:relative;cursor:pointer;transition:background .25s;border:1px solid var(--b2);flex-shrink:0;}
+.toggle.on{background:var(--blue);border-color:var(--blue);}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.5);}
+.toggle.on::after{transform:translateX(18px);}
+.field{margin-bottom:.9rem;}
+.field label{display:block;font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;}
+.field input,.field select,.field textarea{width:100%;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.68rem .9rem;color:var(--t1);font-size:.85rem;outline:none;transition:border-color .2s,box-shadow .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,111,255,.1);}
+.field input::placeholder{color:var(--t3);}
+.field input:disabled{opacity:.45;cursor:not-allowed;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* AVATAR */
+.avatar-wrap{display:flex;align-items:center;gap:1.4rem;margin-bottom:1.4rem;}
+.avatar-lg{width:76px;height:76px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:600;color:#fff;border:2px solid var(--b3);overflow:hidden;flex-shrink:0;cursor:pointer;position:relative;}
+.avatar-lg img{width:100%;height:100%;object-fit:cover;}
+.avatar-overlay{position:absolute;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:50%;font-size:1.1rem;}
+.avatar-lg:hover .avatar-overlay{opacity:1;}
+#avatar-input{display:none;}
+.avatar-prog{height:3px;background:var(--d5);border-radius:99px;overflow:hidden;margin-top:.5rem;display:none;}
+.avatar-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;width:0%;transition:width .3s;}
+
+/* LANG */
+.lang-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:.6rem;}
+.lang-btn{display:inline-flex;align-items:center;gap:6px;padding:.38rem .85rem;background:var(--d4);border:1px solid var(--b2);border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);cursor:pointer;transition:all .2s;}
+.lang-btn:hover{border-color:var(--b3);color:var(--t2);}
+.lang-btn.active{background:rgba(26,111,255,.1);border-color:rgba(26,111,255,.3);color:var(--blue2);}
+
+/* ANALYTICS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:2rem;}
+.kpi-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.3rem 1.5rem;}
+.kpi-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--white);line-height:1;margin-bottom:3px;}
+.kpi-trend{font-size:.7rem;}
+.kpi-trend.up{color:var(--green);}
+.kpi-trend.down{color:var(--red);}
+.chart-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:110px;margin-top:1.1rem;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.bar-outer{width:100%;background:rgba(26,111,255,.1);border-radius:4px 4px 0 0;border:1px solid rgba(26,111,255,.18);position:relative;overflow:hidden;height:100%;transition:background .2s;}
+.bar-outer:hover{background:rgba(26,111,255,.22);}
+.bar-inner{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,var(--blue),rgba(26,111,255,.35));border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.4,0,.2,1);}
+.bar-label{font-family:'JetBrains Mono',monospace;font-size:.56rem;color:var(--t3);text-transform:uppercase;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:2rem;}
+
+/* NOTIFICATION */
+.notif-panel{position:fixed;top:calc(var(--nav-h) + 8px);right:1.2rem;z-index:500;background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);padding:.5rem;min-width:310px;box-shadow:0 20px 60px rgba(0,0,0,.8);display:none;}
+.notif-panel.open{display:block;animation:dropIn .18s ease both;}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+.notif-head{padding:.55rem .8rem .35rem;border-bottom:1px solid var(--b1);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;}
+.notif-head-title{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;}
+.notif-item{display:flex;align-items:flex-start;gap:9px;padding:.65rem .75rem;border-radius:var(--r);transition:background .15s;cursor:pointer;}
+.notif-item:hover{background:var(--d5);}
+.notif-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.notif-text{font-size:.78rem;color:var(--t2);line-height:1.4;}
+.notif-text strong{color:var(--t1);}
+.notif-time{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);margin-top:2px;}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:800;display:none;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;animation:fadeIn .2s ease;}
+.modal{background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-2xl);padding:2rem;width:480px;max-width:94vw;box-shadow:0 30px 80px rgba(0,0,0,.8);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--white);margin-bottom:1.5rem;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;padding-top:1.2rem;border-top:1px solid var(--b1);}
+
+/* PROGRESS BAR LABEL */
+.prog-label{display:flex;justify-content:space-between;margin-bottom:5px;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:2px 8px;border-radius:99px;text-transform:uppercase;}
+.badge-green{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green);}
+.badge-blue{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
+.badge-gray{background:var(--b1);border:1px solid var(--b2);color:var(--t3);}
+.badge-amber{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.22);color:var(--amber);}
+.badge-red{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.22);color:var(--red);}
+
+/* SEARCH HIGHLIGHT */
+.hl{background:rgba(26,111,255,.25);color:var(--white);border-radius:2px;padding:0 1px;}
+
+/* TOAST */
+#toast-wrap{position:fixed;bottom:1.8rem;right:1.8rem;z-index:9999;display:flex;flex-direction:column;gap:9px;pointer-events:none;}
+.toast{display:flex;align-items:center;gap:9px;padding:.8rem 1.1rem;border-radius:var(--r-lg);backdrop-filter:blur(20px);font-size:.84rem;pointer-events:all;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:toastIn .28s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateX(16px);}to{opacity:1;transform:none;}}
+@keyframes toastOut{to{opacity:0;transform:translateX(16px);}}
+.toast.success{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:#e2fef2;}
+.toast.error{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.25);color:#ffe0e6;}
+.toast.info{background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.25);color:#deeeff;}
+.toast.warning{background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.25);color:#fff6d8;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--d6);border-radius:99px;}
+::-webkit-scrollbar-thumb:hover{background:var(--d7);}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo">CR<span>E</span>O</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-txt" id="loading-txt">Vérification de la session…</div>
+</div>
+
+<!-- APP -->
+<div id="app-shell">
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Principal</div>
+      <div class="nav-link active" data-page="transferts"><span class="n-icon">⚡</span> Transferts</div>
+      <div class="nav-link" data-page="appareils"><span class="n-icon">📱</span> Appareils</div>
+      <div class="nav-link" data-page="fichiers"><span class="n-icon">📂</span> Fichiers</div>
+      <div class="nav-link" data-page="sync"><span class="n-icon">🔄</span> Sync</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Compte</div>
+      <div class="nav-link" data-page="parametres"><span class="n-icon">⚙️</span> Paramètres</div>
+      <div class="nav-link" data-page="analytiques"><span class="n-icon">📊</span> Analytiques</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-card" id="user-card">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-name">…</div>
+          <div class="user-role" id="sidebar-role">…</div>
+        </div>
+        <span style="color:var(--t3);font-size:.7rem;flex-shrink:0;">›</span>
+      </div>
+      <div class="logout-link" id="logout-btn">⎋ &nbsp;Déconnexion</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="page-title" id="topbar-title">TRANSFERTS</span>
+        <span class="breadcrumb" id="topbar-bc">// récents</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <span style="color:var(--t3);font-size:.8rem;">🔍</span>
+          <input type="text" id="search-input" placeholder="Rechercher…" autocomplete="off">
+          <span id="search-clear" style="color:var(--t3);font-size:.7rem;cursor:pointer;display:none;">✕</span>
+        </div>
+        <div class="icon-btn" id="notif-btn" title="Notifications">
+          🔔<span class="badge-dot" id="notif-dot"></span>
+        </div>
+        <button class="btn btn-primary btn-sm" id="action-btn">＋ Nouveau transfert</button>
+      </div>
+    </header>
+
+    <!-- NOTIF PANEL -->
+    <div class="notif-panel" id="notif-panel">
+      <div class="notif-head">
+        <span class="notif-head-title">Notifications</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--blue2);cursor:pointer;" id="notif-read-all">Tout lire</span>
+      </div>
+      <div id="notif-list"></div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ══ TRANSFERTS ══ -->
+      <div class="page active" id="page-transferts">
+        <div class="stat-grid stat-grid-4">
+          <div class="stat-card"><div class="stat-label">Total transféré</div><div class="stat-val" id="stat-total">0 <span class="unit">GB</span></div><div class="stat-sub" id="stat-total-sub">ce mois</div></div>
+          <div class="stat-card"><div class="stat-label">Appareils actifs</div><div class="stat-val" id="stat-devices">0</div><div class="stat-sub">en ligne</div></div>
+          <div class="stat-card"><div class="stat-label">Vitesse actuelle</div><div class="stat-val" id="stat-speed">—</div><div class="stat-sub">réseau local</div></div>
+          <div class="stat-card"><div class="stat-label">Taux de succès</div><div class="stat-val" id="stat-success">99.4 <span class="unit">%</span></div><div class="stat-sub"><span class="stat-delta up">↑ stable</span></div></div>
+        </div>
+
+        <!-- ACTIVE TRANSFERS -->
+        <div class="section-header" style="margin-bottom:.8rem;">
+          <div class="section-title">Transferts actifs <small id="active-count">0 en cours</small></div>
+          <button class="btn btn-ghost btn-sm" id="btn-new-transfer">＋ Nouveau</button>
+        </div>
+        <div id="active-transfers-container" style="margin-bottom:2rem;"></div>
+
+        <!-- HISTORY -->
+        <div class="section-header">
+          <div class="section-title">Historique <small>aujourd'hui</small></div>
+          <div class="toolbar" style="margin-bottom:0;gap:6px;">
+            <div class="filter-chip active" data-filter="all">Tous</div>
+            <div class="filter-chip" data-filter="sent">Envoyés</div>
+            <div class="filter-chip" data-filter="received">Reçus</div>
+            <div class="filter-chip" data-filter="error">Erreurs</div>
+            <select class="sort-select" id="transfers-sort">
+              <option value="date-desc">Plus récent</option>
+              <option value="date-asc">Plus ancien</option>
+              <option value="size-desc">Plus grand</option>
+              <option value="size-asc">Plus petit</option>
+              <option value="name-asc">Nom A→Z</option>
+            </select>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table" id="transfers-table">
+            <thead>
+              <tr>
+                <th data-sort="name">Fichier</th>
+                <th data-sort="size">Taille</th>
+                <th data-sort="dest">Destination</th>
+                <th data-sort="speed">Vitesse</th>
+                <th data-sort="status">Statut</th>
+                <th data-sort="date">Heure</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="transfers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ APPAREILS ══ -->
+      <div class="page" id="page-appareils">
+        <div class="stat-grid stat-grid-3">
+          <div class="stat-card"><div class="stat-label">Connectés</div><div class="stat-val" id="dev-online">0 <span class="unit" style="color:var(--green);">en ligne</span></div><div class="stat-sub" id="dev-total">0 appareils au total</div></div>
+          <div class="stat-card"><div class="stat-label">Bande passante</div><div class="stat-val" id="dev-bw">0 <span class="unit">MB/s</span></div><div class="stat-sub">agrégée</div></div>
+          <div class="stat-card"><div class="stat-label">Dernière sync</div><div class="stat-val" style="font-size:1.6rem;" id="dev-last-sync">—</div><div class="stat-sub"><span class="stat-delta up">✓</span> tous synchronisés</div></div>
+        </div>
+        <div class="section-header">
+          <div class="section-title">Mes appareils</div>
+          <button class="btn btn-ghost btn-sm" id="btn-add-device">＋ Ajouter</button>
+        </div>
+        <div class="device-grid" id="devices-grid"></div>
+      </div>
+
+      <!-- ══ FICHIERS ══ -->
+      <div class="page" id="page-fichiers">
+        <div class="stat-grid stat-grid-4">
+          <div class="stat-card"><div class="stat-label">Total fichiers</div><div class="stat-val" id="files-count">0</div><div class="stat-sub"><span class="stat-delta up" id="files-delta">—</span></div></div>
+          <div class="stat-card"><div class="stat-label">Espace utilisé</div><div class="stat-val">2.8 <span class="unit">TB</span></div><div class="stat-sub">sur 12 TB total</div></div>
+          <div class="stat-card"><div class="stat-label">Partagés</div><div class="stat-val" id="files-shared">0</div><div class="stat-sub">avec vos appareils</div></div>
+          <div class="stat-card"><div class="stat-label">Dernière modif.</div><div class="stat-val" style="font-size:1.5rem;" id="files-lastmod">—</div><div class="stat-sub" id="files-lastmod-name">—</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="filter-chip active" data-filter="all">Tous</div>
+          <div class="filter-chip" data-filter="video">📹 Vidéos</div>
+          <div class="filter-chip" data-filter="design">🎨 Design</div>
+          <div class="filter-chip" data-filter="doc">📄 Docs</div>
+          <div class="filter-chip" data-filter="image">🖼️ Images</div>
+          <div class="filter-chip" data-filter="archive">📦 Archives</div>
+          <div class="filter-chip" data-filter="audio">🎵 Audio</div>
+          <div style="flex:1;"></div>
+          <select class="sort-select" id="files-sort">
+            <option value="date-desc">Plus récent</option>
+            <option value="date-asc">Plus ancien</option>
+            <option value="size-desc">Plus grand</option>
+            <option value="name-asc">Nom A→Z</option>
+          </select>
+          <div class="view-btn active" id="view-grid-btn" title="Vue grille">⊞</div>
+          <div class="view-btn" id="view-list-btn" title="Vue liste">☰</div>
+        </div>
+        <div class="section-header"><div class="section-title">Récents</div></div>
+        <div class="files-grid" id="files-grid"></div>
+        <div class="section-header"><div class="section-title">Tous les fichiers</div></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr>
+              <th data-sort="name">Nom</th>
+              <th data-sort="type">Type</th>
+              <th data-sort="size">Taille</th>
+              <th data-sort="date">Modifié</th>
+              <th data-sort="status">Statut</th>
+              <th></th>
+            </tr></thead>
+            <tbody id="files-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ SYNC ══ -->
+      <div class="page" id="page-sync">
+        <div class="two-col">
+          <div style="background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.8rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;">
+              <div>
+                <div class="section-title">État de sync</div>
+                <div style="font-size:.78rem;color:var(--t3);margin-top:3px;" id="sync-last-update">Dernière MAJ —</div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-launch-sync">▶ Lancer</button>
+            </div>
+            <div class="sync-circle">
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <defs><linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#1a6fff"/>
+                  <stop offset="100%" style="stop-color:#00d4ff"/>
+                </linearGradient></defs>
+                <circle class="circle-bg" cx="60" cy="60" r="54"/>
+                <circle class="circle-prog" id="sync-circle-prog" cx="60" cy="60" r="54" style="stroke-dashoffset:84.82;"/>
+              </svg>
+              <div class="sync-val">
+                <div class="sync-val-num" id="sync-pct">75%</div>
+                <div class="sync-val-label">Sync</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--green);" id="sync-synced">0</div><div style="font-size:.73rem;color:var(--t3);">Sync</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--amber);" id="sync-pending">0</div><div style="font-size:.73rem;color:var(--t3);">En attente</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--red);" id="sync-conflicts">0</div><div style="font-size:.73rem;color:var(--t3);">Conflits</div></div>
+            </div>
+          </div>
+          <div class="feed-card">
+            <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Journal</div><button class="btn btn-ghost btn-sm" id="btn-clear-log">Effacer</button></div>
+            <div id="sync-log"></div>
+          </div>
+        </div>
+        <div class="section-header"><div class="section-title">Règles de sync</div><button class="btn btn-ghost btn-sm" id="btn-add-rule">＋ Ajouter</button></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Règle</th><th>Source</th><th>Destination</th><th>Fréquence</th><th>État</th><th></th></tr></thead>
+            <tbody id="sync-rules-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PARAMÈTRES ══ -->
+      <div class="page" id="page-parametres">
+        <div class="settings-layout">
+          <div class="settings-nav">
+            <div class="s-nav-item active" data-tab="st-profil"><span>👤</span> Profil</div>
+            <div class="s-nav-item" data-tab="st-securite"><span>🔐</span> Sécurité</div>
+            <div class="s-nav-item" data-tab="st-langue"><span>🌐</span> Langue</div>
+            <div class="s-nav-item" data-tab="st-notifications"><span>🔔</span> Notifications</div>
+            <div class="s-nav-item" data-tab="st-reseau"><span>📡</span> Réseau</div>
+            <div class="s-nav-item" data-tab="st-avance"><span>⚙️</span> Avancé</div>
+          </div>
+          <div>
+            <!-- PROFIL -->
+            <div class="settings-panel" id="st-profil">
+              <div class="s-group">
+                <div class="s-group-title">Photo de profil</div>
+                <div class="avatar-wrap">
+                  <div class="avatar-lg" id="settings-avatar" onclick="document.getElementById('avatar-input').click()">
+                    <span id="settings-avatar-initials">?</span>
+                    <div class="avatar-overlay">📷</div>
+                  </div>
+                  <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp">
+                  <div>
+                    <div style="font-size:.88rem;color:var(--t1);margin-bottom:3px;">Avatar</div>
+                    <div style="font-size:.76rem;color:var(--t3);">PNG, JPG, WEBP · max 2 MB</div>
+                    <div style="display:flex;gap:8px;margin-top:.7rem;">
+                      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('avatar-input').click()">Changer</button>
+                      <button class="btn btn-sm" style="color:var(--red);border:1px solid rgba(255,59,92,.2);background:transparent;" id="btn-remove-avatar">Supprimer</button>
+                    </div>
+                    <div class="avatar-prog"><div class="avatar-prog-fill" id="avatar-prog-fill"></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Informations personnelles</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.1rem;">
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.7rem .9rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Code client</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--blue2);" id="settings-code">—</div>
+                  </div>
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.7rem .9rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Forfait</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);" id="settings-plan">—</div>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label>Prénom</label><input type="text" id="s-firstname" placeholder="Prénom"></div>
+                  <div class="field"><label>Nom</label><input type="text" id="s-lastname" placeholder="Nom"></div>
+                </div>
+                <div class="field"><label>Email</label><input type="email" id="s-email" disabled></div>
+                <div class="field"><label>Nom d'utilisateur</label><input type="text" id="s-username" placeholder="@pseudo"></div>
+              </div>
+              <button class="btn btn-primary" id="btn-save-profile">Enregistrer</button>
+            </div>
+
+            <!-- SECURITE -->
+            <div class="settings-panel" id="st-securite" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Changer le mot de passe</div>
+                <div class="field"><label>Nouveau mot de passe</label><input type="password" id="s-pw-new" placeholder="••••••••"></div>
+                <div class="field"><label>Confirmer</label><input type="password" id="s-pw-confirm" placeholder="••••••••"></div>
+                <button class="btn btn-primary" id="btn-change-pw">Changer</button>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Session</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Session active <span class="badge badge-green" style="margin-left:6px;">Actuel</span></div>
+                    <div class="s-row-desc" id="s-session-email">—</div>
+                  </div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Zone de danger</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label" style="color:var(--red);">Déconnexion globale</div>
+                    <div class="s-row-desc">Révoquer toutes les sessions</div>
+                  </div>
+                  <button class="btn btn-danger btn-sm" id="btn-signout-all">Déconnecter partout</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- LANGUE -->
+            <div class="settings-panel" id="st-langue" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Langue de l'interface</div>
+                <p style="font-size:.83rem;color:var(--t2);margin-bottom:1.3rem;">Choisissez la langue d'affichage. Sauvegardée automatiquement.</p>
+                <div class="lang-grid" id="lang-grid">
+                  <div class="lang-btn active" data-lang="fr">🇫🇷 Français</div>
+                  <div class="lang-btn" data-lang="en">🇬🇧 English</div>
+                  <div class="lang-btn" data-lang="es">🇪🇸 Español</div>
+                  <div class="lang-btn" data-lang="de">🇩🇪 Deutsch</div>
+                  <div class="lang-btn" data-lang="pt">🇧🇷 Português</div>
+                  <div class="lang-btn" data-lang="ja">🇯🇵 日本語</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div class="settings-panel" id="st-notifications" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Transferts</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Transfert terminé</div><div class="s-row-desc">Notification à la fin de chaque transfert</div></div><div class="toggle on" id="notif-done"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Erreur de transfert</div><div class="s-row-desc">Notification en cas d'échec</div></div><div class="toggle on" id="notif-error"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Démarrage</div><div class="s-row-desc">Notification au début d'un transfert</div></div><div class="toggle" id="notif-start"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Appareils</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Appareil connecté</div><div class="s-row-desc">Quand un appareil rejoint le réseau</div></div><div class="toggle on" id="notif-device"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Espace disque faible</div><div class="s-row-desc">Alerte si espace libre &lt; 10%</div></div><div class="toggle on" id="notif-disk"></div></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-save-notif">Sauvegarder</button>
+            </div>
+
+            <!-- RÉSEAU -->
+            <div class="settings-panel" id="st-reseau" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Réseau local (LAN)</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Découverte automatique</div><div class="s-row-desc">Détecter les appareils CREO sur le réseau</div></div><div class="toggle on" id="net-discovery"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Port d'écoute</div><div class="s-row-desc">Port pour les connexions entrantes</div></div><input type="number" value="42000" id="net-port" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:80px;text-align:center;"></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Chiffrement AES-256</div><div class="s-row-desc">Chiffrer tous les transferts réseau</div></div><div class="toggle on" id="net-encrypt"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Bande passante</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Limiter l'envoi</div><div class="s-row-desc">Illimité actuellement</div></div><div class="toggle" id="net-limit-up"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Limiter la réception</div><div class="s-row-desc">Illimité actuellement</div></div><div class="toggle" id="net-limit-down"></div></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-save-network">Appliquer</button>
+            </div>
+
+            <!-- AVANCÉ -->
+            <div class="settings-panel" id="st-avance" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Performances</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Transferts parallèles</div><div class="s-row-desc">Nombre de transferts simultanés</div></div><input type="number" value="4" min="1" max="16" id="adv-parallel" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:65px;text-align:center;"></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Compression à la volée</div><div class="s-row-desc">Compresser avant transfert</div></div><div class="toggle on" id="adv-compress"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Mode debug</div><div class="s-row-desc">Logs détaillés dans la console</div></div><div class="toggle" id="adv-debug"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Cache</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Cache local</div><div class="s-row-desc" id="cache-size">284 MB utilisés</div></div><button class="btn btn-ghost btn-sm" id="btn-clear-cache">Vider le cache</button></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Nettoyage automatique</div><div class="s-row-desc">Supprimer les transferts &gt; 30 jours</div></div><div class="toggle" id="adv-autoclean"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Zone de danger</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label" style="color:var(--red);">Réinitialiser les paramètres</div><div class="s-row-desc">Remettre tous les paramètres par défaut</div></div><button class="btn btn-danger btn-sm" id="btn-reset-settings">Réinitialiser</button></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ANALYTIQUES ══ -->
+      <div class="page" id="page-analytiques">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Données transférées</div><div class="kpi-val" id="kpi-data">2.8 <span style="font-size:1.1rem;color:var(--blue2);">TB</span></div><div class="kpi-trend up" id="kpi-data-trend">↑ +18% vs mois dernier</div></div>
+          <div class="kpi-card"><div class="kpi-label">Transferts réussis</div><div class="kpi-val" id="kpi-success">1 847</div><div class="kpi-trend up">↑ +127 ce mois</div></div>
+          <div class="kpi-card"><div class="kpi-label">Vitesse pic</div><div class="kpi-val" id="kpi-speed">1.9 <span style="font-size:1.1rem;color:var(--blue2);">GB/s</span></div><div class="kpi-trend up">↑ Nouveau record</div></div>
+          <div class="kpi-card"><div class="kpi-label">Taux d'erreur</div><div class="kpi-val" id="kpi-error">0.6 <span style="font-size:1.1rem;color:var(--blue2);">%</span></div><div class="kpi-trend down">↓ -0.2% cette semaine</div></div>
+        </div>
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Transferts / jour <small>7 derniers jours</small></div></div>
+            <div class="chart-bars" id="chart-daily"></div>
+          </div>
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Répartition par type</div></div>
+            <div id="chart-types" style="margin-top:1rem;display:flex;flex-direction:column;gap:9px;"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Appareils les plus actifs</div></div>
+            <table class="data-table"><thead><tr><th>Appareil</th><th>Envoyé</th><th>Reçu</th><th>Total</th></tr></thead><tbody id="analytics-devices-tbody"></tbody></table>
+          </div>
+          <div class="feed-card">
+            <div class="section-header" style="margin-bottom:.3rem;"><div class="section-title">Activité récente</div></div>
+            <div id="analytics-feed"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- page-content -->
+  </div><!-- main-area -->
+</div><!-- app-shell -->
+</div><!-- #app-shell -->
+
+<!-- MODAL NOUVEAU TRANSFERT -->
+<div class="modal-bg" id="modal-transfer">
+  <div class="modal">
+    <div class="modal-title">Nouveau transfert</div>
+    <div class="field">
+      <label>Nom du fichier / description</label>
+      <input type="text" id="mt-name" placeholder="ex: video_projet.mp4">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Taille</label>
+        <input type="text" id="mt-size" placeholder="ex: 4.2 GB">
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select id="mt-type">
+          <option value="video">🎬 Vidéo</option>
+          <option value="archive">📦 Archive</option>
+          <option value="doc">📄 Document</option>
+          <option value="image">🖼️ Image</option>
+          <option value="audio">🎵 Audio</option>
+          <option value="design">🎨 Design</option>
+          <option value="other">📁 Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Source</label>
+        <select id="mt-source"><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option><option>NAS Home</option></select>
+      </div>
+      <div class="field">
+        <label>Destination</label>
+        <select id="mt-dest"><option>NAS Home</option><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modal-cancel">Annuler</button>
+      <button class="btn btn-primary" id="modal-confirm">⚡ Lancer le transfert</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJOUT APPAREIL -->
+<div class="modal-bg" id="modal-device">
+  <div class="modal">
+    <div class="modal-title">Ajouter un appareil</div>
+    <div class="field">
+      <label>Nom de l'appareil</label>
+      <input type="text" id="md-name" placeholder="ex: MacBook Pro 14">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Type</label>
+        <select id="md-type">
+          <option value="desktop">🖥️ Ordinateur</option>
+          <option value="laptop">💻 Laptop</option>
+          <option value="phone">📱 Mobile</option>
+          <option value="nas">📦 NAS / Serveur</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Système</label>
+        <input type="text" id="md-os" placeholder="ex: Windows 11">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="md-cancel">Annuler</button>
+      <button class="btn btn-primary" id="md-confirm">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+/* ══ SUPABASE ══ */
+const supabase = createClient(
+  "https://mpnfvrizbluhhjcfzztc.supabase.co",
+  "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
+);
+
+/* ══ STATE ══ */
+let session = null, profile = null;
+let currentPage = 'transferts';
+let currentLang = localStorage.getItem('creo_lang') || 'fr';
+let fileView = 'grid'; // 'grid' | 'list'
+let notifSettings = { done: true, error: true, start: false, device: true, disk: true };
+
+/* ══ DONNÉES SIMULÉES ══ */
+const TRANSFER_HISTORY = [
+  { id:1, name:'montage_final.mp4',       icon:'🎬', size:'4.2 GB', sizeB:4.2e9, type:'video',   dest:'PC Bureau',    speed:'1.4 GB/s', status:'done',   dir:'sent',     date:'14:32', ts: Date.now()-5*60000 },
+  { id:2, name:'backup_janvier.zip',      icon:'📦', size:'12.8 GB',sizeB:12.8e9,type:'archive', dest:'NAS Home',     speed:'980 MB/s', status:'done',   dir:'sent',     date:'13:14', ts: Date.now()-62*60000 },
+  { id:3, name:'rapport_annuel.pdf',      icon:'📄', size:'1.4 MB', sizeB:1.4e6, type:'doc',     dest:'PC Bureau',    speed:'—',        status:'wait',   dir:'sent',     date:'—',     ts: Date.now()-90*60000 },
+  { id:4, name:'photos_vacances.tar',     icon:'🖼️', size:'23.1 GB',sizeB:23.1e9,type:'archive', dest:'NAS Home',     speed:'1.2 GB/s', status:'done',   dir:'sent',     date:'11:08', ts: Date.now()-200*60000 },
+  { id:5, name:'studio_session_03.aiff',  icon:'🎵', size:'2.7 GB', sizeB:2.7e9, type:'audio',   dest:'MacBook Pro',  speed:'—',        status:'error',  dir:'sent',     date:'09:51', ts: Date.now()-290*60000 },
+  { id:6, name:'maquettes_brand.fig',     icon:'🎨', size:'340 MB', sizeB:340e6, type:'design',  dest:'PC Bureau',    speed:'810 MB/s', status:'done',   dir:'received', date:'08:22', ts: Date.now()-370*60000 },
+  { id:7, name:'plans_archi_v3.dwg',      icon:'📐', size:'890 MB', sizeB:890e6, type:'doc',     dest:'PC Bureau',    speed:'1.1 GB/s', status:'done',   dir:'sent',     date:'09:22', ts: Date.now()-300*60000 },
+  { id:8, name:'assets_brand_2025.zip',   icon:'📦', size:'5.4 GB', sizeB:5.4e9, type:'archive', dest:'NAS Home',     speed:'920 MB/s', status:'done',   dir:'sent',     date:'07:10', ts: Date.now()-420*60000 },
+];
+
+const DEVICES = [
+  { id:1, name:'PC Bureau',     icon:'🖥️', os:'Windows 11 · x86_64', online:true,  speed:'1.4 GB/s', network:'LAN',   free:'2.1 TB', version:'v4.2.1' },
+  { id:2, name:'MacBook Air M3',icon:'💻', os:'macOS 15.2 · ARM64',   online:true,  speed:'1.1 GB/s', network:'LAN',   free:'412 GB', version:'v4.2.1' },
+  { id:3, name:'NAS Home',      icon:'📦', os:'Synology DS923+',       online:true,  speed:'980 MB/s', network:'LAN',   free:'8.2 TB', version:'v4.1.8', warning:'78%' },
+  { id:4, name:'iPhone 16 Pro', icon:'📱', os:'iOS 18.3 · ARM64',     online:true,  speed:'340 MB/s', network:'Wi-Fi', free:'156 GB', version:'v4.2.0' },
+  { id:5, name:'MacBook Pro 16',icon:'💻', os:'macOS 14.6 · ARM64',   online:false, speed:'—',         network:'—',     free:'1.1 TB', version:'v4.1.9' },
+  { id:6, name:'PC Travail',    icon:'🖥️', os:'Windows 10 · x86_64',  online:false, speed:'—',         network:'—',     free:'780 GB', version:'v4.0.2', outdated:true },
+];
+
+const FILES = [
+  { id:1, name:'montage_final.mp4',      icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'4.2 GB', sizeB:4.2e9,   date:'14 avr. 14:32', ts:Date.now()-5*60000,   status:'done',  statusLabel:'✓ Sync' },
+  { id:2, name:'maquettes_v8.fig',       icon:'🎨', type:'design',  typeLabel:'FIGMA',   size:'210 MB', sizeB:210e6,   date:'14 avr. 13:55', ts:Date.now()-60*60000,  status:'send',  statusLabel:'↑ Envoi' },
+  { id:3, name:'backup_janvier.zip',     icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'12.8 GB',sizeB:12.8e9,  date:'14 avr. 13:14', ts:Date.now()-90*60000,  status:'done',  statusLabel:'✓ Sync' },
+  { id:4, name:'rapport_annuel.pdf',     icon:'📄', type:'doc',     typeLabel:'PDF',     size:'1.4 MB', sizeB:1.4e6,   date:'14 avr. 12:00', ts:Date.now()-130*60000, status:'wait',  statusLabel:'⏳ Attente' },
+  { id:5, name:'photos_vacances.tar',    icon:'🖼️', type:'archive', typeLabel:'ARCHIVE', size:'23.1 GB',sizeB:23.1e9,  date:'14 avr. 11:08', ts:Date.now()-190*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:6, name:'studio_session_03.aiff', icon:'🎵', type:'audio',   typeLabel:'AUDIO',   size:'2.7 GB', sizeB:2.7e9,   date:'14 avr. 09:51', ts:Date.now()-290*60000, status:'error', statusLabel:'✕ Erreur' },
+  { id:7, name:'plans_archi_v3.dwg',     icon:'📐', type:'doc',     typeLabel:'CAD',     size:'890 MB', sizeB:890e6,   date:'14 avr. 09:22', ts:Date.now()-310*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:8, name:'assets_brand_2025.zip',  icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'5.4 GB', sizeB:5.4e9,   date:'13 avr. 07:10', ts:Date.now()-420*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:9, name:'logo_creo_v2.svg',       icon:'🎨', type:'design',  typeLabel:'SVG',     size:'28 KB',  sizeB:28e3,    date:'12 avr. 16:45', ts:Date.now()-500*60000, status:'done',  statusLabel:'✓ Sync' },
+  { id:10,name:'cours_react.mp4',        icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'1.8 GB', sizeB:1.8e9,   date:'11 avr. 10:00', ts:Date.now()-700*60000, status:'done',  statusLabel:'✓ Sync' },
+];
+
+const SYNC_RULES = [
+  { name:'Sync Photos',   source:'iPhone 16 Pro', dest:'NAS Home',     freq:'Temps réel',        active:true },
+  { name:'Backup Docs',   source:'PC Bureau',     dest:'NAS Home',     freq:'Toutes les heures', active:true },
+  { name:'Sync Projets',  source:'MacBook Air M3',dest:'PC Bureau',    freq:'Quotidien 03:00',   active:true },
+  { name:'Archive Vidéos',source:'PC Bureau',     dest:'NAS Home',     freq:'Manuel',            active:false },
+];
+
+let syncLog = [
+  { color:'var(--green)', text:'<strong>backup_janvier.zip</strong> synchronisé sur NAS Home', time:'14:32' },
+  { color:'var(--blue)',  text:'Démarrage sync <strong>maquettes_v8.fig</strong>',              time:'14:28' },
+  { color:'var(--red)',   text:'Conflit détecté — <strong>studio_session_03.aiff</strong>',     time:'13:51' },
+  { color:'var(--amber)', text:'NAS Home — espace disque à <strong>78%</strong>',               time:'12:10' },
+  { color:'var(--green)', text:'<strong>1 247 fichiers</strong> synchronisés avec succès',      time:'11:02' },
+];
+
+/* Active transfers list */
+let activeTransfers = [];
+let nextTransferId = 100;
+
+/* ══ NOTIFICATIONS ══ */
+const NOTIFS = [
+  { color:'var(--green)', text:'<strong>montage_final.mp4</strong> transféré avec succès', time:'Il y a 3 min' },
+  { color:'var(--blue)',  text:'MacBook Air <strong>connecté</strong> sur réseau LAN',       time:'Il y a 12 min' },
+  { color:'var(--amber)', text:'NAS Home — espace à <strong>78%</strong>',                  time:'Il y a 1h' },
+  { color:'var(--blue2)', text:'Sync terminée — <strong>1 247 fichiers</strong> mis à jour', time:'Il y a 2h' },
+];
+let hasUnreadNotif = true;
+
+/* ══ INIT ══ */
+async function init() {
+  const { data:{ session: s } } = await supabase.auth.getSession();
+  if (!s) { window.location.href = '/creo/login/login.html'; return; }
+  session = s;
+
+  const { data: p } = await supabase.from('profiles').select('*').eq('id', s.user.id).single();
+  if (!p?.username || !p?.client_code || !p?.type) {
+    window.location.href = '/creo/login/complete-profile.html';
+    return;
+  }
+  profile = p;
+
+  if (p.lang) { currentLang = p.lang; localStorage.setItem('creo_lang', p.lang); }
+
+  supabase.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') window.location.href = '/creo/login/login.html';
+  });
+
+  renderSidebar();
+  renderSettings();
+  renderNotifs();
+  renderTransfersPage();
+  renderDevicesPage();
+  renderFilesPage();
+  renderSyncPage();
+  renderAnalyticsPage();
+  buildCharts();
+  hideLoading();
+  startLiveStats();
+  setupEventListeners();
+}
+
+/* ══ SIDEBAR ══ */
+function renderSidebar() {
+  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
+  const el = document.getElementById('sidebar-avatar');
+  if (av) el.innerHTML = `<img src="${av}" alt="">`;
+  else el.textContent = initials();
+  document.getElementById('sidebar-name').textContent = displayName();
+  document.getElementById('sidebar-role').textContent = profile?.type ? profile.type.charAt(0).toUpperCase()+profile.type.slice(1) : 'Utilisateur';
+}
+
+function displayName() {
+  if (profile?.first_name && profile?.last_name) return `${profile.first_name} ${profile.last_name}`;
+  if (profile?.username) return `@${profile.username}`;
+  return session?.user?.email?.split('@')[0] || 'Utilisateur';
+}
+function initials() {
+  return displayName().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+}
+
+/* ══ SETTINGS ══ */
+function renderSettings() {
+  document.getElementById('settings-code').textContent = profile?.client_code || '—';
+  document.getElementById('settings-plan').textContent = profile?.type ? profile.type.charAt(0).toUpperCase()+profile.type.slice(1) : '—';
+  document.getElementById('s-firstname').value  = profile?.first_name || '';
+  document.getElementById('s-lastname').value   = profile?.last_name  || '';
+  document.getElementById('s-email').value      = profile?.email || session?.user?.email || '';
+  document.getElementById('s-username').value   = profile?.username   || '';
+  document.getElementById('s-session-email').textContent = session?.user?.email || '';
+
+  // Avatar
+  const av = profile?.avatar_url;
+  const avEl = document.getElementById('settings-avatar');
+  if (av) avEl.innerHTML = `<img src="${av}" alt=""><div class="avatar-overlay">📷</div>`;
+  else    document.getElementById('settings-avatar-initials').textContent = initials();
+
+  // Lang
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+}
+
+/* ══ NOTIFICATIONS ══ */
+function renderNotifs() {
+  const list = document.getElementById('notif-list');
+  list.innerHTML = NOTIFS.map(n => `
+    <div class="notif-item">
+      <div class="notif-dot" style="background:${n.color};"></div>
+      <div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>
+    </div>`).join('');
+  document.getElementById('notif-dot').style.display = hasUnreadNotif ? 'block' : 'none';
+}
+
+/* ══ TRANSFERS PAGE ══ */
+let transferFilter = 'all';
+let transferSort   = 'date-desc';
+
+function renderTransfersPage() {
+  renderActiveTransfers();
+  renderTransfersTable();
+  updateTransfersStats();
+}
+
+function renderActiveTransfers() {
+  const container = document.getElementById('active-transfers-container');
+  document.getElementById('active-count').textContent = activeTransfers.length + ' en cours';
+  if (activeTransfers.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucun transfert actif</div>`;
+    return;
+  }
+  container.innerHTML = activeTransfers.map(t => `
+    <div class="transfer-card ${t.status === 'done' ? 'transfer-done' : t.status === 'error' ? 'transfer-err' : 'active-transfer'}" id="tc-${t.id}">
+      <div class="tc-header">
+        <div class="tc-name">
+          <span>${t.icon}</span>
+          <span class="fname">${t.name}</span>
+          <span class="badge ${t.status==='done'?'badge-green':t.status==='error'?'badge-red':'badge-blue'}">${t.status==='done'?'TERMINÉ':t.status==='error'?'ERREUR':'EN COURS'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="tc-speed" id="tc-speed-${t.id}">${t.speedLabel||'—'}</span>
+          <div class="tc-actions">
+            ${t.status==='active'?`<button class="btn btn-ghost btn-xs" onclick="pauseTransfer(${t.id})">⏸</button>`:''}
+            <button class="btn btn-ghost btn-xs" onclick="removeTransfer(${t.id})" title="Fermer">✕</button>
+          </div>
+        </div>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill ${t.status==='done'?'done':t.status==='error'?'err':''}" id="tc-prog-${t.id}" style="width:${t.progress}%;"></div>
+      </div>
+      <div class="tc-footer">
+        <span>${t.source} → ${t.dest}</span>
+        <span id="tc-pct-${t.id}">${Math.round(t.progress)}% · ${t.size}</span>
+      </div>
+    </div>`).join('');
+}
+
+function renderTransfersTable(searchQuery = '') {
+  let data = [...TRANSFER_HISTORY];
+
+  // filter by category
+  if (transferFilter !== 'all') {
+    if (transferFilter === 'sent')     data = data.filter(t => t.dir === 'sent');
+    if (transferFilter === 'received') data = data.filter(t => t.dir === 'received');
+    if (transferFilter === 'error')    data = data.filter(t => t.status === 'error');
+  }
+
+  // search
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    data = data.filter(t => t.name.toLowerCase().includes(q) || t.dest.toLowerCase().includes(q));
+  }
+
+  // sort
+  data.sort((a, b) => {
+    if (transferSort === 'date-desc') return b.ts - a.ts;
+    if (transferSort === 'date-asc')  return a.ts - b.ts;
+    if (transferSort === 'size-desc') return b.sizeB - a.sizeB;
+    if (transferSort === 'size-asc')  return a.sizeB - b.sizeB;
+    if (transferSort === 'name-asc')  return a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  const tbody = document.getElementById('transfers-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">Aucun résultat</td></tr>`;
+    return;
+  }
+
+  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err', pause:'st-pause' };
+  const stLbl = { done:'✓ Envoyé', send:'↑ Envoi', wait:'⏳ Attente', error:'✕ Erreur', pause:'⏸ Pause' };
+
+  tbody.innerHTML = data.map(t => {
+    const name = searchQuery ? t.name.replace(new RegExp(searchQuery, 'gi'), m => `<span class="hl">${m}</span>`) : t.name;
+    return `<tr>
+      <td><div class="td-name"><span class="td-icon">${t.icon}</span><div><div class="td-fname">${name}</div><div class="td-fmeta">${t.type}</div></div></div></td>
+      <td class="font-mono" style="font-size:.76rem;">${t.size}</td>
+      <td style="color:var(--t2);">${t.dest}</td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.speed}</td>
+      <td><span class="status ${stMap[t.status]||'st-wait'}">${stLbl[t.status]||'—'}</span></td>
+      <td class="font-mono" style="font-size:.66rem;color:var(--t3);">${t.date}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="retryTransfer(${t.id})" title="Réessayer" style="${t.status!=='error'?'opacity:.3;pointer-events:none;':''}">↺</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateTransfersStats() {
+  const total = TRANSFER_HISTORY.filter(t=>t.status==='done').reduce((s,t)=>s+t.sizeB,0);
+  const gb = total / 1e9;
+  document.getElementById('stat-total').innerHTML = gb >= 1000
+    ? `${(gb/1000).toFixed(1)} <span class="unit">TB</span>`
+    : `${gb.toFixed(1)} <span class="unit">GB</span>`;
+  const online = DEVICES.filter(d=>d.online).length;
+  document.getElementById('stat-devices').innerHTML = `${online} <span class="unit" style="color:var(--green);">●</span>`;
+}
+
+/* ══ ACTIVE TRANSFERS ENGINE ══ */
+function addActiveTransfer(data) {
+  const icons = { video:'🎬', archive:'📦', doc:'📄', image:'🖼️', audio:'🎵', design:'🎨', other:'📁' };
+  const t = {
+    id: nextTransferId++,
+    name: data.name || 'fichier.dat',
+    icon: icons[data.type] || '📁',
+    size: data.size || '—',
+    source: data.source || 'PC Bureau',
+    dest: data.dest || 'NAS Home',
+    progress: 0,
+    status: 'active',
+    speedLabel: '↑ 0 MB/s',
+  };
+  activeTransfers.push(t);
+  renderActiveTransfers();
+  // Start progress
+  const interval = setInterval(() => {
+    const idx = activeTransfers.findIndex(x => x.id === t.id);
+    if (idx === -1) { clearInterval(interval); return; }
+    const inc = 0.8 + Math.random() * 2.5;
+    activeTransfers[idx].progress = Math.min(100, activeTransfers[idx].progress + inc);
+    const spd = (400 + Math.random() * 1200).toFixed(0);
+    activeTransfers[idx].speedLabel = `↑ ${spd} MB/s`;
+    // Update DOM directly for performance
+    const prog = document.getElementById(`tc-prog-${t.id}`);
+    const pct  = document.getElementById(`tc-pct-${t.id}`);
+    const spdEl= document.getElementById(`tc-speed-${t.id}`);
+    if (prog) prog.style.width = activeTransfers[idx].progress + '%';
+    if (pct)  pct.textContent  = Math.round(activeTransfers[idx].progress) + '% · ' + t.size;
+    if (spdEl) spdEl.textContent = activeTransfers[idx].speedLabel;
+
+    if (activeTransfers[idx].progress >= 100) {
+      clearInterval(interval);
+      activeTransfers[idx].status = 'done';
+      activeTransfers[idx].speedLabel = '✓ Terminé';
+      renderActiveTransfers();
+      if (notifSettings.done) uiToast('success', `✓ ${t.name} transféré !`);
+      // Add to history
+      TRANSFER_HISTORY.unshift({
+        id: Date.now(), name: t.name, icon: t.icon,
+        size: t.size, sizeB: 1e9, type: data.type || 'other',
+        dest: t.dest, speed: spd + ' MB/s', status: 'done',
+        dir: 'sent', date: new Date().toTimeString().slice(0,5), ts: Date.now()
+      });
+      renderTransfersTable(document.getElementById('search-input').value.trim());
+      updateTransfersStats();
+      addSyncLogEntry('var(--green)', `<strong>${t.name}</strong> transféré vers ${t.dest}`, new Date().toTimeString().slice(0,5));
+    }
+  }, 300);
+  if (notifSettings.start) uiToast('info', `⚡ Démarrage : ${t.name}`);
+}
+
+window.pauseTransfer = function(id) {
+  const t = activeTransfers.find(x => x.id === id);
+  if (t) { t.status = t.status === 'paused' ? 'active' : 'paused'; renderActiveTransfers(); }
+};
+window.removeTransfer = function(id) {
+  activeTransfers = activeTransfers.filter(x => x.id !== id);
+  renderActiveTransfers();
+};
+window.retryTransfer = function(id) {
+  const t = TRANSFER_HISTORY.find(x => x.id === id);
+  if (t) { addActiveTransfer({ name: t.name, type: t.type, size: t.size, dest: t.dest }); showPage('transferts', document.querySelector('[data-page="transferts"]')); }
+};
+
+/* ══ DEVICES PAGE ══ */
+function renderDevicesPage() {
+  const online = DEVICES.filter(d=>d.online).length;
+  document.getElementById('dev-online').innerHTML = `${online} <span class="unit" style="color:var(--green);">en ligne</span>`;
+  document.getElementById('dev-total').textContent = `${DEVICES.length} appareils au total`;
+  document.getElementById('dev-bw').innerHTML = `3.4 <span class="unit">GB/s</span>`;
+  document.getElementById('dev-last-sync').textContent = '14:32';
+
+  document.getElementById('devices-grid').innerHTML = DEVICES.map(d => `
+    <div class="device-card ${d.online ? 'online' : 'offline'}">
+      <div class="dc-head">
+        <div class="dc-icon" style="${!d.online?'opacity:.45':''}">${d.icon}</div>
+        <div class="dc-dot ${d.online ? 'on' : 'off'}"></div>
+      </div>
+      <div class="dc-name" style="${!d.online?'color:var(--t2)':''}">${d.name}</div>
+      <div class="dc-type">${d.os}</div>
+      <div class="dc-stats">
+        <div class="dc-stat"><div class="dc-stat-val">${d.speed}</div><div class="dc-stat-key">Vitesse max</div></div>
+        <div class="dc-stat"><div class="dc-stat-val">${d.network}</div><div class="dc-stat-key">Réseau</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="${d.warning?'color:var(--amber)':d.outdated?'color:var(--amber)':''}">${d.free}</div><div class="dc-stat-key">Espace libre</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="${d.outdated?'color:var(--amber)':''}">${d.version}</div><div class="dc-stat-key">${d.outdated?'⚠ Mise à jour':'Version CREO'}</div></div>
+      </div>
+      <div class="dc-actions">
+        ${d.online
+          ? `<button class="btn btn-primary btn-sm" onclick="startTransferTo('${d.name}')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button>`
+          : `<button class="btn btn-ghost btn-sm" disabled style="opacity:.35;">Hors ligne</button><button class="btn btn-ghost btn-sm">Infos</button>`
+        }
+      </div>
+    </div>`).join('');
+}
+
+window.startTransferTo = function(destName) {
+  document.getElementById('mt-dest').value = destName;
+  openModal('modal-transfer');
+};
+
+/* ══ FILES PAGE ══ */
+let fileFilter = 'all';
+let fileSort   = 'date-desc';
+
+function renderFilesPage(searchQuery = '') {
+  let data = [...FILES];
+
+  if (fileFilter !== 'all') data = data.filter(f => f.type === fileFilter);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    data = data.filter(f => f.name.toLowerCase().includes(q));
+  }
+
+  data.sort((a, b) => {
+    if (fileSort === 'date-desc') return b.ts - a.ts;
+    if (fileSort === 'date-asc')  return a.ts - b.ts;
+    if (fileSort === 'size-desc') return b.sizeB - a.sizeB;
+    if (fileSort === 'name-asc')  return a.name.localeCompare(b.name);
+    return 0;
+  });
+
+  document.getElementById('files-count').textContent = FILES.length.toLocaleString();
+  document.getElementById('files-delta').textContent = '↑ +127 cette semaine';
+  document.getElementById('files-shared').textContent = '43';
+  document.getElementById('files-lastmod').textContent = '14:32';
+  document.getElementById('files-lastmod-name').textContent = FILES[0].name;
+
+  // Grid (top 6)
+  const grid = document.getElementById('files-grid');
+  const recent = data.slice(0, 6);
+  const isListView = fileView === 'list';
+  grid.className = isListView ? 'files-grid list-view' : 'files-grid';
+  grid.innerHTML = recent.map(f => {
+    const name = searchQuery ? f.name.replace(new RegExp(searchQuery,'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
+    return `<div class="file-card${isListView?' list-view':''}" onclick="uiToast('info','${f.name}')">
+      <div class="file-card-icon">${f.icon}</div>
+      <div class="${isListView?'file-card-info':''}">
+        <div class="file-card-name">${name}</div>
+        <div class="file-card-meta">${f.size} · ${f.date.split(' ')[2]||f.date}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Table
+  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err' };
+  document.getElementById('files-tbody').innerHTML = data.map(f => {
+    const name = searchQuery ? f.name.replace(new RegExp(searchQuery,'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
+    return `<tr>
+      <td><div class="td-name"><span class="td-icon">${f.icon}</span><div><div class="td-fname">${name}</div></div></div></td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${f.typeLabel}</td>
+      <td class="font-mono" style="font-size:.76rem;">${f.size}</td>
+      <td style="font-size:.76rem;color:var(--t3);">${f.date}</td>
+      <td><span class="status ${stMap[f.status]||'st-wait'}">${f.statusLabel}</span></td>
+      <td><button class="btn btn-ghost btn-xs" onclick="uiToast('info','Options pour ${f.name}')">···</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══ SYNC PAGE ══ */
+function renderSyncPage() {
+  document.getElementById('sync-synced').textContent   = '1 247';
+  document.getElementById('sync-pending').textContent  = '312';
+  document.getElementById('sync-conflicts').textContent = '4';
+  document.getElementById('sync-last-update').textContent = 'Dernière MAJ il y a 3 min';
+  renderSyncLog();
+  renderSyncRules();
+}
+
+function renderSyncLog() {
+  document.getElementById('sync-log').innerHTML = syncLog.slice(0, 6).map(l => `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:${l.color};"></div>
+      <div style="flex:1;"><div class="feed-text">${l.text}</div><div class="feed-time">${l.time}</div></div>
+    </div>`).join('');
+}
+
+function addSyncLogEntry(color, text, time) {
+  syncLog.unshift({ color, text, time });
+  if (document.getElementById('page-sync').classList.contains('active')) renderSyncLog();
+}
+
+function renderSyncRules() {
+  document.getElementById('sync-rules-tbody').innerHTML = SYNC_RULES.map((r, i) => `
+    <tr>
+      <td style="color:var(--t1);font-weight:500;">${r.name}</td>
+      <td style="color:var(--t2);">${r.source}</td>
+      <td style="color:var(--t2);">${r.dest}</td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${r.freq}</td>
+      <td><span class="status ${r.active?'st-done':'st-pause'}">${r.active?'● Actif':'⏸ Pausé'}</span></td>
+      <td style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-xs" onclick="toggleRule(${i})">${r.active?'Pause':'Reprendre'}</button>
+        <button class="btn btn-ghost btn-xs" onclick="uiToast('info','Édition de ${r.name}')">Éditer</button>
+      </td>
+    </tr>`).join('');
+}
+
+window.toggleRule = function(i) {
+  SYNC_RULES[i].active = !SYNC_RULES[i].active;
+  renderSyncRules();
+  uiToast('success', `Règle "${SYNC_RULES[i].name}" ${SYNC_RULES[i].active ? 'activée' : 'mise en pause'}`);
+};
+
+/* ══ ANALYTICS PAGE ══ */
+function renderAnalyticsPage() {
+  // Devices table
+  document.getElementById('analytics-devices-tbody').innerHTML = [
+    { icon:'🖥️', name:'PC Bureau',     sent:'1.4 TB',  recv:'240 GB', total:'1.64 TB' },
+    { icon:'📦', name:'NAS Home',       sent:'45 GB',   recv:'890 GB', total:'935 GB'  },
+    { icon:'💻', name:'MacBook Air',    sent:'180 GB',  recv:'120 GB', total:'300 GB'  },
+    { icon:'📱', name:'iPhone 16 Pro',  sent:'12 GB',   recv:'48 GB',  total:'60 GB'   },
+  ].map(d => `<tr>
+    <td style="color:var(--t1);">${d.icon} ${d.name}</td>
+    <td class="font-mono" style="font-size:.76rem;color:var(--green);">${d.sent}</td>
+    <td class="font-mono" style="font-size:.76rem;color:var(--blue2);">${d.recv}</td>
+    <td class="font-mono" style="font-size:.76rem;">${d.total}</td>
+  </tr>`).join('');
+
+  // Feed
+  document.getElementById('analytics-feed').innerHTML = TRANSFER_HISTORY.slice(0, 5).map(t => `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:${t.status==='done'?'var(--green)':t.status==='error'?'var(--red)':'var(--blue)'};"></div>
+      <div style="flex:1;"><div class="feed-text"><strong>${t.name}</strong> → ${t.dest} · ${t.size}</div><div class="feed-time">Aujourd'hui ${t.date}</div></div>
+    </div>`).join('');
+}
+
+/* ══ CHARTS ══ */
+function buildCharts() {
+  const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
+  const vals = [62, 85, 44, 91, 73, 38, 55];
+  const max  = Math.max(...vals);
+  document.getElementById('chart-daily').innerHTML = days.map((d, i) => `
+    <div class="bar-wrap">
+      <div class="bar-outer"><div class="bar-inner" style="height:${(vals[i]/max*100)}%;"></div></div>
+      <span class="bar-label">${d}</span>
+    </div>`).join('');
+
+  document.getElementById('chart-types').innerHTML = [
+    { label:'🎬 Vidéos',  pct:43, color:'var(--blue)' },
+    { label:'📦 Archives',pct:30, color:'var(--purple)' },
+    { label:'🖼️ Images',  pct:16, color:'var(--cyan)' },
+    { label:'🎨 Design',  pct: 8, color:'var(--amber)' },
+    { label:'📄 Docs',    pct: 3, color:'var(--green)' },
+  ].map(t => `
+    <div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.78rem;">
+        <span style="color:var(--t2);">${t.label}</span>
+        <span class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.pct}%</span>
+      </div>
+      <div style="height:4px;background:var(--d5);border-radius:99px;overflow:hidden;">
+        <div style="width:${t.pct}%;height:100%;background:${t.color};border-radius:99px;transition:width 1s ease;"></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ══ LIVE STATS ══ */
+function startLiveStats() {
+  setInterval(() => {
+    const spd = (800 + Math.random() * 600).toFixed(0);
+    document.getElementById('stat-speed').innerHTML = `${spd} <span class="unit">MB/s</span>`;
+  }, 1200);
+}
+
+/* ══ SEARCH ══ */
+function handleSearch(q) {
+  const clear = document.getElementById('search-clear');
+  clear.style.display = q ? 'block' : 'none';
+  if (currentPage === 'transferts') renderTransfersTable(q);
+  if (currentPage === 'fichiers')   renderFilesPage(q);
+}
+
+/* ══ NAV ══ */
+const PAGE_META = {
+  transferts:  { title:'TRANSFERTS',  bc:'// récents',        btn:'＋ Nouveau transfert' },
+  appareils:   { title:'APPAREILS',   bc:'// mes appareils',  btn:'＋ Ajouter' },
+  fichiers:    { title:'FICHIERS',    bc:'// tous',           btn:'＋ Importer' },
+  sync:        { title:'SYNC',        bc:'// état',           btn:'▶ Lancer' },
+  parametres:  { title:'PARAMÈTRES',  bc:'// compte',         btn:'✓ Sauvegarder' },
+  analytiques: { title:'ANALYTIQUES', bc:'// ce mois',        btn:'↓ Exporter' },
+};
+
+window.showPage = function(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (!page) return;
+  page.classList.add('active');
+  el.classList.add('active');
+  currentPage = id;
+  const m = PAGE_META[id];
+  document.getElementById('topbar-title').textContent = m.title;
+  document.getElementById('topbar-bc').textContent    = m.bc;
+  document.getElementById('action-btn').textContent   = m.btn;
+  document.getElementById('notif-panel').classList.remove('open');
+  if (id === 'parametres') renderSettings();
+  if (id === 'transferts') renderTransfersPage();
+};
+
+/* ══ SETTINGS TABS ══ */
+function switchTab(tabId) {
+  document.querySelectorAll('.s-nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  document.getElementById(tabId).style.display = 'block';
+}
+
+/* ══ SAVE PROFILE ══ */
+async function saveProfile() {
+  const btn = document.getElementById('btn-save-profile');
+  const first = document.getElementById('s-firstname').value.trim();
+  const last  = document.getElementById('s-lastname').value.trim();
+  const uname = document.getElementById('s-username').value.trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  if (!first || !last) return uiToast('warning', 'Prénom et nom requis.');
+  if (uname && uname.length < 3) return uiToast('warning', 'Pseudo trop court (min 3 car.)');
+  btn.classList.add('btn-loading');
+  const { error } = await supabase.from('profiles').update({ first_name: first, last_name: last, username: uname || profile.username }).eq('id', session.user.id);
+  btn.classList.remove('btn-loading');
+  if (error) return uiToast('error', error.message.includes('username') ? 'Pseudo déjà pris.' : error.message);
+  profile = { ...profile, first_name: first, last_name: last, username: uname || profile.username };
+  renderSidebar();
+  uiToast('success', '✓ Profil sauvegardé !');
+}
+
+/* ══ CHANGE PASSWORD ══ */
+async function changePassword() {
+  const np = document.getElementById('s-pw-new').value;
+  const cp = document.getElementById('s-pw-confirm').value;
+  if (!np || np.length < 6) return uiToast('warning', 'Mot de passe trop court (min 6 car.)');
+  if (np !== cp) return uiToast('error', 'Les mots de passe ne correspondent pas.');
+  const btn = document.getElementById('btn-change-pw');
+  btn.classList.add('btn-loading');
+  const { error } = await supabase.auth.updateUser({ password: np });
+  btn.classList.remove('btn-loading');
+  if (error) return uiToast('error', error.message);
+  uiToast('success', '✓ Mot de passe modifié !');
+  document.getElementById('s-pw-new').value = '';
+  document.getElementById('s-pw-confirm').value = '';
+}
+
+/* ══ AVATAR UPLOAD ══ */
+async function uploadAvatar(file) {
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { uiToast('error', 'Fichier trop grand (max 2 MB)'); return; }
+  const prog = document.querySelector('.avatar-prog');
+  const fill = document.getElementById('avatar-prog-fill');
+  prog.style.display = 'block';
+  fill.style.width = '20%';
+  const ext = file.name.split('.').pop();
+  const path = `${session.user.id}/avatar.${ext}`;
+  await supabase.storage.from('avatars').remove([path]);
+  fill.style.width = '50%';
+  const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
+  if (upErr) { prog.style.display='none'; return uiToast('error', upErr.message); }
+  fill.style.width = '80%';
+  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+  const url = urlData.publicUrl + '?t=' + Date.now();
+  await supabase.from('profiles').update({ avatar_url: url }).eq('id', session.user.id);
+  profile.avatar_url = url;
+  fill.style.width = '100%';
+  setTimeout(() => { prog.style.display='none'; fill.style.width='0%'; }, 600);
+  renderSidebar();
+  renderSettings();
+  uiToast('success', '✓ Avatar mis à jour !');
+}
+
+async function removeAvatar() {
+  await supabase.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
+  profile.avatar_url = null;
+  renderSidebar();
+  renderSettings();
+  uiToast('success', 'Avatar supprimé.');
+}
+
+/* ══ LANG ══ */
+async function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('creo_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  await supabase.from('profiles').update({ lang }).eq('id', session.user.id);
+  uiToast('success', '✓ Langue sauvegardée');
+}
+
+/* ══ MODAL HELPERS ══ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+/* ══ SIGN OUT ══ */
+async function signOut() {
+  await supabase.auth.signOut();
+  window.location.href = '/creo/login/login.html';
+}
+
+/* ══ TOAST ══ */
+window.uiToast = function(type, msg) {
+  const wrap = document.getElementById('toast-wrap');
+  const icons = { success:'✓', error:'✕', info:'ℹ', warning:'⚠' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icons[type]||'ℹ'}</span> ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.animation = 'toastOut .28s ease forwards'; setTimeout(() => el.remove(), 280); }, 3800);
+};
+
+/* ══ HIDE LOADING ══ */
+function hideLoading() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
+}
+
+/* ══ EVENT LISTENERS ══ */
+function setupEventListeners() {
+
+  /* NAV LINKS */
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => showPage(link.dataset.page, link));
+  });
+
+  /* USER CARD → settings */
+  document.getElementById('user-card').addEventListener('click', () => {
+    showPage('parametres', document.querySelector('[data-page="parametres"]'));
+  });
+
+  /* LOGOUT */
+  document.getElementById('logout-btn').addEventListener('click', signOut);
+
+  /* ACTION BTN */
+  document.getElementById('action-btn').addEventListener('click', () => {
+    if (currentPage === 'transferts') openModal('modal-transfer');
+    else if (currentPage === 'appareils') openModal('modal-device');
+    else if (currentPage === 'parametres') saveProfile();
+    else if (currentPage === 'sync') launchSync();
+    else if (currentPage === 'analytiques') uiToast('info', 'Export CSV téléchargé');
+    else openModal('modal-transfer');
+  });
+
+  /* TRANSFERS FILTERS */
+  document.querySelectorAll('#page-transferts .filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('#page-transferts .filter-chip').forEach(c=>c.classList.remove('active'));
+      this.classList.add('active');
+      transferFilter = this.dataset.filter;
+      renderTransfersTable(document.getElementById('search-input').value.trim());
+    });
+  });
+
+  /* TRANSFERS SORT */
+  document.getElementById('transfers-sort').addEventListener('change', function() {
+    transferSort = this.value;
+    renderTransfersTable(document.getElementById('search-input').value.trim());
+  });
+
+  /* TABLE HEADER SORT */
+  document.querySelectorAll('.data-table thead th[data-sort]').forEach(th => {
+    th.addEventListener('click', function() {
+      const col = this.dataset.sort;
+      const isAsc = this.classList.contains('sort-asc');
+      document.querySelectorAll('.data-table thead th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
+      this.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
+    });
+  });
+
+  /* FILES FILTERS */
+  document.querySelectorAll('#page-fichiers .filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('#page-fichiers .filter-chip').forEach(c=>c.classList.remove('active'));
+      this.classList.add('active');
+      fileFilter = this.dataset.filter;
+      renderFilesPage(document.getElementById('search-input').value.trim());
+    });
+  });
+
+  /* FILES SORT */
+  document.getElementById('files-sort').addEventListener('change', function() {
+    fileSort = this.value;
+    renderFilesPage(document.getElementById('search-input').value.trim());
+  });
+
+  /* VIEW TOGGLE */
+  document.getElementById('view-grid-btn').addEventListener('click', function() {
+    fileView = 'grid';
+    this.classList.add('active');
+    document.getElementById('view-list-btn').classList.remove('active');
+    renderFilesPage(document.getElementById('search-input').value.trim());
+  });
+  document.getElementById('view-list-btn').addEventListener('click', function() {
+    fileView = 'list';
+    this.classList.add('active');
+    document.getElementById('view-grid-btn').classList.remove('active');
+    renderFilesPage(document.getElementById('search-input').value.trim());
+  });
+
+  /* SEARCH */
+  document.getElementById('search-input').addEventListener('input', function() {
+    handleSearch(this.value.trim());
+  });
+  document.getElementById('search-clear').addEventListener('click', function() {
+    document.getElementById('search-input').value = '';
+    this.style.display = 'none';
+    handleSearch('');
+  });
+
+  /* NOTIF */
+  document.getElementById('notif-btn').addEventListener('click', e => {
+    e.stopPropagation();
+    document.getElementById('notif-panel').classList.toggle('open');
+    hasUnreadNotif = false;
+    document.getElementById('notif-dot').style.display = 'none';
+  });
+  document.getElementById('notif-read-all').addEventListener('click', () => {
+    document.getElementById('notif-panel').classList.remove('open');
+  });
+  document.addEventListener('click', e => {
+    const p = document.getElementById('notif-panel');
+    if (p && !p.contains(e.target) && !e.target.closest('#notif-btn')) p.classList.remove('open');
+  });
+
+  /* SETTINGS TABS */
+  document.querySelectorAll('.s-nav-item').forEach(item => {
+    item.addEventListener('click', () => switchTab(item.dataset.tab));
+  });
+
+  /* SAVE PROFILE */
+  document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
+
+  /* CHANGE PW */
+  document.getElementById('btn-change-pw').addEventListener('click', changePassword);
+
+  /* SIGN OUT ALL */
+  document.getElementById('btn-signout-all').addEventListener('click', signOut);
+
+  /* AVATAR */
+  document.getElementById('avatar-input').addEventListener('change', function() {
+    if (this.files[0]) uploadAvatar(this.files[0]);
+    this.value = '';
+  });
+  document.getElementById('btn-remove-avatar').addEventListener('click', removeAvatar);
+
+  /* LANG */
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.addEventListener('click', () => setLang(b.dataset.lang));
+  });
+
+  /* TOGGLES */
+  document.querySelectorAll('.toggle').forEach(t => {
+    t.addEventListener('click', function() { this.classList.toggle('on'); });
+  });
+
+  /* SAVE NOTIF */
+  document.getElementById('btn-save-notif').addEventListener('click', () => {
+    notifSettings.done   = document.getElementById('notif-done').classList.contains('on');
+    notifSettings.error  = document.getElementById('notif-error').classList.contains('on');
+    notifSettings.start  = document.getElementById('notif-start').classList.contains('on');
+    notifSettings.device = document.getElementById('notif-device').classList.contains('on');
+    notifSettings.disk   = document.getElementById('notif-disk').classList.contains('on');
+    uiToast('success', '✓ Notifications sauvegardées');
+  });
+
+  /* SAVE NETWORK */
+  document.getElementById('btn-save-network').addEventListener('click', () => {
+    const port = document.getElementById('net-port').value;
+    uiToast('success', `✓ Réseau appliqué (port ${port})`);
+  });
+
+  /* CACHE */
+  document.getElementById('btn-clear-cache').addEventListener('click', () => {
+    document.getElementById('cache-size').textContent = '0 MB utilisés';
+    uiToast('success', '✓ Cache vidé');
+  });
+
+  /* RESET SETTINGS */
+  document.getElementById('btn-reset-settings').addEventListener('click', () => {
+    if (confirm('Réinitialiser tous les paramètres ?')) {
+      document.querySelectorAll('.toggle').forEach(t => t.classList.remove('on'));
+      uiToast('info', 'Paramètres réinitialisés');
+    }
+  });
+
+  /* MODAL TRANSFER */
+  document.getElementById('btn-new-transfer').addEventListener('click', () => openModal('modal-transfer'));
+  document.getElementById('modal-cancel').addEventListener('click', () => closeModal('modal-transfer'));
+  document.getElementById('modal-confirm').addEventListener('click', () => {
+    const name = document.getElementById('mt-name').value.trim();
+    if (!name) { uiToast('warning', 'Donnez un nom au fichier.'); return; }
+    addActiveTransfer({
+      name,
+      size:   document.getElementById('mt-size').value || '—',
+      type:   document.getElementById('mt-type').value,
+      source: document.getElementById('mt-source').value,
+      dest:   document.getElementById('mt-dest').value,
+    });
+    closeModal('modal-transfer');
+    document.getElementById('mt-name').value = '';
+    document.getElementById('mt-size').value = '';
+    showPage('transferts', document.querySelector('[data-page="transferts"]'));
+    uiToast('info', '⚡ Transfert démarré !');
+  });
+  document.getElementById('modal-transfer').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal('modal-transfer');
+  });
+
+  /* MODAL DEVICE */
+  document.getElementById('btn-add-device').addEventListener('click', () => openModal('modal-device'));
+  document.getElementById('md-cancel').addEventListener('click', () => closeModal('modal-device'));
+  document.getElementById('md-confirm').addEventListener('click', () => {
+    const name = document.getElementById('md-name').value.trim();
+    if (!name) { uiToast('warning', 'Donnez un nom à l\'appareil.'); return; }
+    const icons = { desktop:'🖥️', laptop:'💻', phone:'📱', nas:'📦' };
+    DEVICES.push({ id: Date.now(), name, icon: icons[document.getElementById('md-type').value]||'🖥️', os: document.getElementById('md-os').value || '—', online: false, speed:'—', network:'—', free:'—', version:'v4.2.1' });
+    closeModal('modal-device');
+    document.getElementById('md-name').value = '';
+    document.getElementById('md-os').value = '';
+    renderDevicesPage();
+    uiToast('success', `✓ Appareil "${name}" ajouté`);
+  });
+  document.getElementById('modal-device').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal('modal-device');
+  });
+
+  /* SYNC BUTTONS */
+  document.getElementById('btn-launch-sync').addEventListener('click', launchSync);
+  document.getElementById('btn-clear-log').addEventListener('click', () => {
+    syncLog = [];
+    renderSyncLog();
+    uiToast('info', 'Journal effacé');
+  });
+  document.getElementById('btn-add-rule').addEventListener('click', () => uiToast('info', 'Bientôt disponible'));
+
+  /* ENTER KEY on modals */
+  document.getElementById('mt-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('modal-confirm').click(); });
+  document.getElementById('md-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('md-confirm').click(); });
+}
+
+function launchSync() {
+  uiToast('success', '▶ Synchronisation lancée !');
+  addSyncLogEntry('var(--blue)', 'Synchronisation <strong>démarrée manuellement</strong>', new Date().toTimeString().slice(0,5));
+  let pct = 75;
+  const iv = setInterval(() => {
+    pct = Math.min(100, pct + Math.random() * 3);
+    document.getElementById('sync-pct').textContent = Math.round(pct) + '%';
+    const offset = 339.29 * (1 - pct / 100);
+    document.getElementById('sync-circle-prog').style.strokeDashoffset = offset;
+    if (pct >= 100) {
+      clearInterval(iv);
+      uiToast('success', '✓ Synchronisation terminée');
+      addSyncLogEntry('var(--green)', '<strong>Synchronisation complète</strong>', new Date().toTimeString().slice(0,5));
+    }
+  }, 200);
+}
+
+/* ══ START ══ */
+init();
+</script>
+</body>
+</html>
