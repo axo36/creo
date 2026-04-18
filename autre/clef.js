@@ -1,0 +1,194 @@
+// ================================================
+// MENU
+// ================================================
+
+const openBtn = document.getElementById("openBtn");
+const closeBtn = document.getElementById("closeBtn");
+const menu = document.getElementById("sideMenu");
+
+function updateMenuState() {
+    if (window.innerWidth > 768) {
+        menu.classList.add("open");
+        document.body.classList.add("menu-open");
+    } else {
+        menu.classList.remove("open");
+        document.body.classList.remove("menu-open");
+    }
+}
+
+updateMenuState();
+window.addEventListener("resize", updateMenuState);
+
+openBtn.addEventListener("click", () => {
+    menu.classList.add("open");
+    if (window.innerWidth > 768) document.body.classList.add("menu-open");
+});
+
+closeBtn.addEventListener("click", () => {
+    menu.classList.remove("open");
+    document.body.classList.remove("menu-open");
+});
+
+document.addEventListener("click", (e) => {
+    if (window.innerWidth <= 768) {
+        if (!menu.contains(e.target) && e.target !== openBtn) {
+            menu.classList.remove("open");
+        }
+    }
+});
+
+// ================================================
+// SUPABASE
+// ================================================
+
+const SUPABASE_URL = "https://tjiqssgrxvxnjqhewtrt.supabase.co";
+const SUPABASE_KEY = "sb_publishable_IUb-C1nf11c98QajH_MTVw_8ZQGhMWp";
+
+let allClients = [];
+let currentMode = null;
+
+// ================================================
+// MODE RESPONSIVE GLOBAL
+// ================================================
+
+function detectMode() {
+    return window.innerWidth > 400 ? "desktop" : "mobile";
+}
+
+function updateDisplayMode() {
+    const newMode = detectMode();
+
+    if (newMode !== currentMode) {
+        currentMode = newMode;
+        renderClients(allClients);
+    }
+}
+
+window.addEventListener("resize", updateDisplayMode);
+
+// ================================================
+// TEMPLATE UNIQUE (gauche + droite)
+// ================================================
+
+function clientTemplate(client) {
+    return `
+        <div class="client-row">
+
+            <div class="client-left">
+                <div class="name title"></div>
+                <div class="code subtitle"></div>
+                <div class="date"></div>
+            </div>
+
+            <div class="client-right">
+                <div class="code-pc"></div>
+                <div class="pc-text"></div>
+            </div>
+
+        </div>
+    `;
+}
+
+// ================================================
+// RENDER (création des cartes)
+// ================================================
+
+function renderClients(clients) {
+    const container = document.getElementById("clientsContainer");
+    container.innerHTML = "";
+
+    clients.forEach(client => {
+        const card = document.createElement("div");
+        card.className = "client-card";
+        card.id = `client-${client.code}`;
+
+        card.innerHTML = clientTemplate(client);
+
+        container.appendChild(card);
+    });
+
+    updateClients(clients);
+}
+
+// ================================================
+// UPDATE (mise à jour sans recréer)
+// ================================================
+
+function updateClients(clients) {
+    clients.forEach(client => {
+        const card = document.getElementById(`client-${client.code}`);
+        if (!card) return;
+
+        // --- BLOC GAUCHE ---
+        const name = card.querySelector(".name");
+        const code = card.querySelector(".code");
+        const date = card.querySelector(".date");
+
+        if (name) name.textContent = client.name || "N/A";
+        if (code) code.textContent = client.code || "N/A";
+        if (date) date.textContent = client.date || "N/A";
+
+        // --- BLOC DROIT ---
+        const codePc = card.querySelector(".code-pc");
+        const pcText = card.querySelector(".pc-text");
+
+        if (codePc) codePc.textContent = client["code-pc"] || "N/A";
+
+        if (pcText) {
+            let text = client.text || "";
+            text = text.split("|||").join("\n"); // coupe en lignes
+            pcText.textContent = text;
+        }
+    });
+}
+
+// ================================================
+// CHARGEMENT DES CLIENTS (clef-toile uniquement)
+// ================================================
+
+async function loadClients() {
+    try {
+        const clientsUrl = `${SUPABASE_URL}/rest/v1/clef-toile?select=*&order=id.desc`;
+        const response = await fetch(clientsUrl, {
+            headers: {
+                "Authorization": `Bearer ${SUPABASE_KEY}`,
+                "apikey": SUPABASE_KEY
+            }
+        });
+
+        allClients = await response.json();
+
+        if (!currentMode) {
+            currentMode = detectMode();
+            renderClients(allClients);
+        } else {
+            updateClients(allClients);
+        }
+
+    } catch (err) {
+        console.error("Erreur chargement clients:", err);
+    }
+}
+
+// ================================================
+// RECHERCHE
+// ================================================
+
+const searchInput = document.getElementById("searchInput");
+if (searchInput) {
+    searchInput.addEventListener("input", () => {
+        const term = searchInput.value.toLowerCase();
+        const filtered = allClients.filter(c =>
+            c.code.toLowerCase().includes(term) ||
+            (c.name && c.name.toLowerCase().includes(term))
+        );
+        renderClients(filtered);
+    });
+}
+
+// ================================================
+// INIT
+// ================================================
+
+loadClients();
+setInterval(loadClients, 5000);
