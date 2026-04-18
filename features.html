@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Fonctionnalités</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .compat-table{width:100%;border-collapse:collapse;}
+    .compat-table th{padding:1rem 1.5rem;text-align:left;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;background:var(--d3);}
+    .compat-table th:not(:first-child){text-align:center;}
+    .compat-table td{padding:1rem 1.5rem;font-size:.88rem;color:var(--t1);border-top:1px solid var(--b1);}
+    .compat-table td:not(:first-child){text-align:center;}
+    .ok{color:var(--green);}.maybe{color:var(--amber);}.no{color:var(--t3);}
+    .feat-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b1);border:1px solid var(--b2);border-radius:var(--r-2xl);overflow:hidden;}
+    .feat-detail{background:var(--d1);padding:3rem;transition:background .2s;}
+    .feat-detail:hover{background:var(--d2);}
+    .fd-icon{font-size:2.5rem;margin-bottom:1.2rem;}
+    .fd-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;}
+    .fd-desc{font-size:.88rem;color:var(--t2);line-height:1.75;margin-bottom:1rem;}
+    .fd-list{display:flex;flex-direction:column;gap:.5rem;}
+    .fd-list li{display:flex;gap:8px;font-size:.83rem;color:var(--t2);}
+    .fd-list li span:first-child{color:var(--green);flex-shrink:0;}
+    @media(max-width:900px){.feat-detail-grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<nav id="nav"></nav>
+
+<div class="sub-hero">
+  <div class="grid-bg"></div>
+  <div class="tag">Fonctionnalités complètes</div>
+  <h1 class="sub-hero-h1 grad-text">TOUT CE QUE<br>CREO PEUT FAIRE.</h1>
+  <p class="sub-hero-desc">Une plateforme pensée pour être simple, rapide, fiable et sécurisée — sans compromis.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="../login/login.html?tab=signup" class="btn btn-primary btn-lg">⚡ Essayer gratuitement</a>
+    <a href="pricing.html" class="btn btn-ghost btn-lg">Voir les tarifs →</a>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="features-layout">
+    <div class="feat-card reveal"><div class="feat-header"><div class="feat-icon-wrap">⚡</div><span class="feat-num font-mono">01</span></div><h3>Ultra-Rapide</h3><p>Nous offrons la meilleure vitesse de transfert possible, avec plus de 2 GB/s en débit soutenu.</p><span class="feat-chip">jusqu'à 2.4 GB/s</span></div>
+    <div class="feat-card reveal d1"><div class="feat-header"><div class="feat-icon-wrap">🔐</div><span class="feat-num font-mono">02</span></div><h3>double securisation</h3><p> Vos données sont sécurisées grâce à un second code client secret et à un mot de passe généré pour chaque fichier. </p><span class="feat-chip">code fichier</span></div>
+    <div class="feat-card reveal"><div class="feat-header"><div class="feat-icon-wrap">🌐</div><span class="feat-num font-mono">03</span></div><h3>Réseau Distant (Équipe)</h3><p>Relay chiffré pour traverser les NAT et firewalls. Connectez n'importe quel appareil, n'importe où, sans configuration.</p><span class="feat-chip">Relay chiffré E2E</span></div>
+    <div class="feat-card reveal d1"><div class="feat-header"><div class="feat-icon-wrap">🔄</div><span class="feat-num font-mono">04</span></div><h3>Synchronisation (Pro)</h3><p>Dossiers synchronisés en temps réel entre vos appareils. Gestion des conflits et versioning intégrés.</p><span class="feat-chip">Temps réel</span></div>
+    <div class="feat-card wide reveal"><div class="feat-wide-inner">
+      <div><div class="feat-header"><div class="feat-icon-wrap">📱</div><span class="feat-num font-mono">05</span></div><h3>Multi-Plateforme</h3><p>Windows Avenir: macOS, Linux, iOS, Android. Un compte pour unifier tous vos appareils.</p><span class="feat-chip">5 plateformes</span></div>
+      <div><div class="feat-header"><div class="feat-icon-wrap">📂</div><span class="feat-num font-mono">06</span></div><h3>Dossiers Complets</h3><p>Structure intacte, compression à la volée, reprise automatique sur coupure réseau.</p><span class="feat-chip">Reprise auto</span></div>
+    </div></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="tag">Détails techniques</div>
+  <h2 class="section-h2">Sous le capot.</h2>
+  <div class="feat-detail-grid reveal">
+    <div class="feat-detail"><div class="fd-icon">⚡</div><div class="fd-title">Protocole de transfert</div><p class="fd-desc">Creo utilise un protocole conçu pour la vitesse : les fichiers sont transférés en temps réel, stockés sur un serveur dédié et protégés par trois mots de passe uniques. </p><ul class="fd-list"><li><span>✓</span><span>Wi-Fi Direct</span></li><li><span>✓</span><span>Protocole optimisé</span></li></ul></div>
+    <div class="feat-detail"><div class="fd-icon">🔐</div><div class="fd-title">Modèle de sécurité</div><p class="fd-desc">Creo utilise un protocole sécurisé : les fichiers sont stockés sur un serveur et verrouillés par trois niveaux de mot de passe.</p><ul class="fd-list"><li><span>✓</span><span>code client</span></li><li><span>✓</span><span>code client secret</span></li><li><span>✓</span><span>code secret fichier</span></li></ul></div>
+    <div class="feat-detail"><div class="fd-icon">🌐</div><div class="fd-title">Infrastructure réseau</div><p class="fd-desc">Nos relay servers servent uniquement de relais chiffrés. Ils ne peuvent pas déchiffrer le trafic qu'ils transportent.</p><ul class="fd-list"><li><span>✓</span><span>Relay chiffré</span></li><li><span>✓</span><span>Serveurs EU / US / Asia</span></li></ul></div>
+    <div class="feat-detail"><div class="fd-icon">🔄</div><div class="fd-title">Synchronisation</div><p class="fd-desc">Algorithme de sync incrémentale : seuls les blocs modifiés sont transférés. Économisez la bande passante sur les gros fichiers.</p><ul class="fd-list"><li><span>✓</span><span>Sync bidirectionnel</span></li><li><span>✓</span><span>Résolution de conflits</span></li><li><span>✓</span><span>Historique 30 jours</span></li><li><span>✓</span><span>Filtres d'exclusion</span></li></ul></div>
+  </div>
+</div>
+
+<div class="section-wrap">
+  <div class="tag">Compatibilité</div>
+  <h2 class="section-h2">Support des plateformes.</h2>
+  <div style="border:1px solid var(--b2);border-radius:var(--r-xl);overflow:hidden;" class="reveal">
+    <table class="compat-table">
+      <thead><tr><th>Plateforme</th><th>Transfert</th><th>Sync Auto</th><th>Double sécurité</th><th>Relais chiffré</th></tr></thead>
+      <tbody>
+        <tr><td>🍎 macOS</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="no">—</td></tr>
+        <tr><td>🪟 Windows</td><td class="ok">✓</td><td class="ok">✓</td><td class="ok">✓</td><td class="no">—</td></tr>
+        <tr><td>🐧 Linux</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="no">—</td></tr>
+        <tr><td>📱 iOS</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="no">—</td></tr>
+        <tr><td>🤖 Android</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="maybe">Bientôt</td><td class="no">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="cta-band">
+  <div class="cta-label font-mono">// Prêt à essayer ?</div>
+  <h2 class="cta-h2 font-display grad-text">GRATUIT.<br>POUR TOUJOURS.</h2>
+  <p class="cta-sub">Commencez avec le plan gratuit — aucune carte bancaire requise.</p>
+  <div class="cta-actions"><a href="../login/login.html?tab=signup" class="btn btn-primary btn-lg">⚡ Créer un compte gratuit</a><a href="pricing.html" class="btn btn-ghost btn-lg">Voir les tarifs</a></div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits. Peer-to-peer, chiffré, ultra-rapide.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="../login/login.html">Connexion</a><a href="../login/login.html?tab=signup">Créer un compte</a><a href="cgu.html">CGU</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { redirectIfAuth, buildNav, initReveal, initFeatureGlow, pageFade } from './app.js';
+  pageFade();
+  redirectIfAuth();
+  buildNav('features');
+  initReveal();
+  initFeatureGlow();
+</script>
+</body>
+</html>

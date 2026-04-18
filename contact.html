@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Contact</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .contact-wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:4rem;align-items:start;}
+    .contact-info h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:.04em;color:var(--white);margin-bottom:.8rem;}
+    .contact-info p{font-size:.9rem;color:var(--t2);line-height:1.8;margin-bottom:2rem;}
+    .c-item{display:flex;align-items:center;gap:14px;padding:.9rem 0;border-bottom:1px solid var(--b1);}
+    .c-item:last-child{border:none;}
+    .c-icon{width:40px;height:40px;background:var(--d4);border:1px solid var(--b2);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+    .c-label{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+    .c-val{font-size:.88rem;color:var(--t1);}
+    .contact-form{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-2xl);padding:2.8rem;position:relative;overflow:hidden;}
+    .contact-form::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);}
+    .form-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:.04em;color:var(--white);margin-bottom:1.8rem;}
+    @media(max-width:900px){.contact-wrap{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<nav id="nav"></nav>
+
+<div class="sub-hero">
+  <div class="grid-bg"></div>
+  <div class="tag">Contact</div>
+  <h1 class="sub-hero-h1 grad-text">ON EST LÀ<br>POUR VOUS.</h1>
+  <p class="sub-hero-desc">Une question, un partenariat, un bug à signaler ? Écrivez-nous — nous répondons généralement en moins de 48h.</p>
+</div>
+
+<div class="section-wrap">
+  <div class="contact-wrap reveal">
+    <div class="contact-info">
+      <h3>Restons en contact</h3>
+      <p>Notre équipe est disponible du lundi au vendredi, de 17h à 20h, et du samedie au dimanche, de 10h a 22h (CET). Support urgent 12/7 pour les comptes Pro et Équipe.</p>
+      <div class="c-item"><div class="c-icon">📧</div><div><div class="c-label">Email général</div><div class="c-val">creo.web6@gmail.com</div></div></div>
+      <div class="c-item"><div class="c-icon">🐙</div><div><div class="c-label">GitHub open source</div><div class="c-val">github.com/axo36</div></div></div>
+      <div style="margin-top:2rem;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.8rem;">Nous suivre</div>
+        <div style="display:flex;gap:10px;"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+      </div>
+    </div>
+
+    <!-- FORMULAIRE ADAPTÉ POUR EMAILJS -->
+    <form id="contact-form" class="contact-form">
+      <div class="form-title">Envoyez-nous un message</div>
+
+      <div class="field-row">
+        <div class="field"><label>Prénom</label><input type="text" name="first_name" placeholder="Alex"></div>
+        <div class="field"><label>Nom</label><input type="text" name="last_name" placeholder="Martin"></div>
+      </div>
+
+      <div class="field"><label>Email</label><input type="email" name="email" placeholder="vous@exemple.com"></div>
+
+      <div class="field"><label>Sujet</label>
+        <select name="subject">
+          <option>Support technique</option>
+          <option>Partenariat</option>
+          <option>Signaler un bug</option>
+          <option>Demande Pro / Équipe</option>
+          <option>Autre</option>
+        </select>
+      </div>
+
+      <div class="field"><label>Message</label><textarea name="message" placeholder="Décrivez votre demande..."></textarea></div>
+
+      <button type="submit" class="btn btn-primary btn-full" id="send-btn">
+        <span class="btn-label">Envoyer le message →</span>
+        <span class="spinner btn-spin"></span>
+      </button>
+    </form>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer simple et ultra-rapide.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="../login/login.html">Connexion</a><a href="../login/login.html?tab=signup">Créer un compte</a><a href="cgu.html">CGU</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("CUdTdjUKOXn_2PW2K");
+</script>
+
+<script type="module">
+  import { redirectIfAuth, buildNav, initReveal, pageFade, toast, setLoading } from './app.js';
+
+  pageFade();
+  redirectIfAuth();
+  buildNav('contact');
+  initReveal();
+
+  // --- FORMULAIRE CONTACT AVEC EMAILJS (sendForm) ---
+  document.getElementById('contact-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const btn = document.getElementById('send-btn');
+    setLoading(btn, true);
+
+    try {
+      await emailjs.sendForm(
+        "service_cyy74i2",
+        "template_v7f12m6",
+        "#contact-form"
+      );
+
+      toast("Message envoyé ! Nous vous répondrons sous 48h.", "success");
+      document.getElementById('contact-form').reset();
+
+    } catch (err) {
+      console.error(err);
+      toast("Erreur lors de l'envoi. Réessayez.", "error");
+    }
+
+    setLoading(btn, false);
+  });
+</script>
+
+</body>
+</html>
