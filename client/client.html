@@ -1283,13 +1283,23 @@ let hasUnreadNotif = true;
 
 /* ══ INIT ══ */
 async function init() {
-  const { data:{ session: s } } = await supabase.auth.getSession();
-  if (!s) { window.location.href = '/creo/login/login.html'; return; }
+  // Timeout 8s : si Supabase ne répond pas, rediriger
+  const timeout = setTimeout(() => { window.location.href = '../login/login.html'; }, 8000);
+  let s;
+  try {
+    const { data } = await supabase.auth.getSession();
+    s = data?.session;
+  } catch(e) { clearTimeout(timeout); window.location.href = '../login/login.html'; return; }
+  if (!s) { clearTimeout(timeout); window.location.href = '../login/login.html'; return; }
   session = s;
-
-  const { data: p } = await supabase.from('profiles').select('*').eq('id', s.user.id).single();
+  let p;
+  try {
+    const { data } = await supabase.from('profiles').select('*').eq('id', s.user.id).single();
+    p = data;
+  } catch(e) { /* continuer */ }
+  clearTimeout(timeout);
   if (!p?.username || !p?.client_code || !p?.type) {
-    window.location.href = '/creo/login/complete-profile.html';
+    window.location.href = '../login/complete-profile.html';
     return;
   }
   profile = p;
@@ -1297,7 +1307,7 @@ async function init() {
   if (p.lang) { currentLang = p.lang; localStorage.setItem('creo_lang', p.lang); }
 
   supabase.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_OUT') window.location.href = '/creo/login/login.html';
+    if (event === 'SIGNED_OUT') window.location.href = '../login/login.html';
   });
 
   renderSidebar();
@@ -1856,7 +1866,7 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 /* ══ SIGN OUT ══ */
 async function signOut() {
   await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
+  window.location.href = '../login/login.html';
 }
 
 /* ══ TOAST ══ */
@@ -1874,6 +1884,7 @@ window.uiToast = function(type, msg) {
 function hideLoading() {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('app-shell').style.display = 'block';
+  updateMobProfileStrip();
 }
 
 /* ══ EVENT LISTENERS ══ */
@@ -2184,7 +2195,7 @@ document.getElementById('more-analytics').addEventListener('click', () => {
 document.getElementById('more-logout').addEventListener('click', async () => {
   closeBnMore();
   await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
+  window.location.href = '../login/login.html';
 });
 
 /* ── FAB ── */
@@ -2285,14 +2296,7 @@ document.querySelector('.page-content')?.addEventListener('touchend', e => {
 }, { passive: true });
 
 /* ── Render sidebar updates also update mobile strip ── */
-const _origRenderSidebar = renderSidebar;
-// (renderSidebar is local, we re-run updateMobProfileStrip after it via patching init)
-const _origHideLoading = hideLoading;
-function hideLoading() {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('app-shell').style.display = 'block';
-  updateMobProfileStrip();
-}
+// updateMobProfileStrip est appelé dans hideLoading() ci-dessus
 </script>
 </body>
 </html>
