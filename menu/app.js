@@ -33,7 +33,7 @@ export async function redirectIfAuth() {
 }
 export async function signOut() {
   await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
+  window.location.href = '../login/login.html';
 }
 export function getDisplayName(s) {
   if (!s) return 'Invité';
@@ -158,10 +158,10 @@ export function setLoading(btn, on) {
 }
 
 /* ── NAV ───────────────────────────────── */
-export async function buildNav(activePage) {
+export function buildNav(activePage) {
   const nav = document.getElementById('nav');
   if (!nav) return;
-  const session = await getSession();
+
   const links = [
     { id:'index',    label:'Accueil',        href:'index.html' },
     { id:'features', label:'Fonctionnalités', href:'features.html' },
@@ -173,67 +173,35 @@ export async function buildNav(activePage) {
   const pill = links.map(l =>
     `<a href="${l.href}"${activePage===l.id?' class="active"':''}>${l.label}</a>`
   ).join('');
-
-  /* ── desktop right actions ── */
-  let right;
-  if (session) {
-    const av = getAvatar(session);
-    right = `
-      <span class="nav-user-name">${getDisplayName(session)}</span>
-      <div class="nav-avatar" id="nav-av">
-        ${av ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : getInitials(session)}
-      </div>`;
-  } else {
-    right = `
-      <a href="../login/login.html" class="btn btn-ghost">Connexion</a>
-      <a href="../login/login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
-  }
-
-  /* ── mobile overlay content ── */
   const mobileLinks = links.map(l =>
     `<a href="${l.href}"${activePage===l.id?' class="active"':''}>${l.label}</a>`
   ).join('');
 
-  let mobileActions;
-  if (session) {
-    const av = getAvatar(session);
-    mobileActions = `
-      <div class="nav-mobile-user">
-        <div class="nav-avatar" style="width:42px;height:42px;font-size:.9rem;flex-shrink:0;">
-          ${av ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : getInitials(session)}
-        </div>
-        <div class="nav-mobile-user-info">
-          <div class="nav-mobile-user-name">${getDisplayName(session)}</div>
-          <div class="nav-mobile-user-email">${session.user.email}</div>
-        </div>
-      </div>
-      <a href="../client/client.html" class="btn btn-ghost">⚡ Mon espace</a>
-      <a href="download.html" class="btn btn-outline-blue">↓ Télécharger</a>
-      <button class="btn btn-ghost" id="mobile-signout" style="color:var(--red);border-color:rgba(255,59,92,.25);">⏻ Se déconnecter</button>`;
-  } else {
-    mobileActions = `
-      <a href="../login/login.html" class="btn btn-ghost">Connexion</a>
-      <a href="../login/login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer gratuitement</a>`;
-  }
+  /* ── Affichage immédiat — état "non connecté" par défaut ── */
+  const rightGuest = `
+    <a href="../login/login.html" class="btn btn-ghost">Connexion</a>
+    <a href="../login/login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer</a>`;
+  const mobileActionsGuest = `
+    <a href="../login/login.html" class="btn btn-ghost">Connexion</a>
+    <a href="../login/login.html?tab=signup" class="btn btn-primary"><span class="glow-dot"></span> Commencer gratuitement</a>`;
 
   nav.innerHTML = `
     <a href="index.html" class="nav-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></a>
     <div class="nav-pill">${pill}</div>
-    <div class="nav-actions" style="display:flex;align-items:center;gap:10px;">
-      ${right}
+    <div class="nav-actions" id="nav-actions" style="display:flex;align-items:center;gap:10px;">
+      ${rightGuest}
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
     </div>`;
 
-  /* ── inject mobile overlay ── */
   const overlay = document.createElement('div');
   overlay.className = 'nav-mobile-overlay';
   overlay.id = 'nav-mobile-overlay';
   overlay.innerHTML = `
     <nav class="nav-mobile-links">${mobileLinks}</nav>
     <div class="nav-mobile-divider"></div>
-    <div class="nav-mobile-actions">${mobileActions}</div>`;
+    <div class="nav-mobile-actions" id="nav-mobile-actions">${mobileActionsGuest}</div>`;
   document.body.appendChild(overlay);
 
   /* ── hamburger toggle ── */
@@ -246,49 +214,81 @@ export async function buildNav(activePage) {
     document.body.style.overflow = isOpen ? 'hidden' : '';
   }
   hamburger.addEventListener('click', e => { e.stopPropagation(); toggleMobileMenu(); });
-
-  /* close overlay when clicking a link */
   overlay.querySelectorAll('a').forEach(a => {
     a.addEventListener('click', () => toggleMobileMenu(false));
   });
-
-  /* close on resize to desktop */
   window.addEventListener('resize', () => {
     if (window.innerWidth > 1024) toggleMobileMenu(false);
   });
 
-  /* mobile sign out */
-  const mso = document.getElementById('mobile-signout');
-  if (mso) mso.addEventListener('click', signOut);
-
-  /* ── desktop avatar dropdown ── */
-  const avBtn = document.getElementById('nav-av');
-  if (avBtn) {
-    avBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      const old = document.getElementById('nav-dropdown');
-      if (old) { old.remove(); return; }
-      const drop = document.createElement('div');
-      drop.id = 'nav-dropdown';
-      drop.className = 'nav-dropdown';
-      drop.innerHTML = `
-        <div class="nav-dropdown-head">
-          <div class="nav-dropdown-name">${getDisplayName(session)}</div>
-          <div class="nav-dropdown-email">${session.user.email}</div>
-        </div>
-        <a href="download.html">↓ Télécharger l'app</a>
-        <button class="signout-btn" id="do-signout">⏻ Se déconnecter</button>`;
-      document.body.appendChild(drop);
-      document.getElementById('do-signout').addEventListener('click', signOut);
-      setTimeout(() => document.addEventListener('click', function h(ev) {
-        if (!drop.contains(ev.target)) { drop.remove(); document.removeEventListener('click', h); }
-      }), 30);
-    });
-  }
-
   window.addEventListener('scroll', () => {
     nav.style.background = scrollY > 40 ? 'rgba(0,0,0,.95)' : 'rgba(0,0,0,.6)';
   }, { passive: true });
+
+  /* ── Mise à jour silencieuse une fois la session connue ── */
+  getSession().then(session => {
+    if (!session) return; // déjà bon par défaut
+
+    const av = getAvatar(session);
+    const actionsEl = document.getElementById('nav-actions');
+    const mobileActionsEl = document.getElementById('nav-mobile-actions');
+
+    if (actionsEl) {
+      actionsEl.innerHTML = `
+        <span class="nav-user-name">${getDisplayName(session)}</span>
+        <div class="nav-avatar" id="nav-av">
+          ${av ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : getInitials(session)}
+        </div>
+        <button class="nav-hamburger" id="nav-hamburger2" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>`;
+      const h2 = document.getElementById('nav-hamburger2');
+      if (h2) h2.addEventListener('click', e => { e.stopPropagation(); toggleMobileMenu(); });
+
+      const avBtn = document.getElementById('nav-av');
+      if (avBtn) {
+        avBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const old = document.getElementById('nav-dropdown');
+          if (old) { old.remove(); return; }
+          const drop = document.createElement('div');
+          drop.id = 'nav-dropdown';
+          drop.className = 'nav-dropdown';
+          drop.innerHTML = `
+            <div class="nav-dropdown-head">
+              <div class="nav-dropdown-name">${getDisplayName(session)}</div>
+              <div class="nav-dropdown-email">${session.user.email}</div>
+            </div>
+            <a href="../client/client.html">⚡ Mon espace</a>
+            <a href="download.html">↓ Télécharger l'app</a>
+            <button class="signout-btn" id="do-signout">⏻ Se déconnecter</button>`;
+          document.body.appendChild(drop);
+          document.getElementById('do-signout').addEventListener('click', signOut);
+          setTimeout(() => document.addEventListener('click', function h(ev) {
+            if (!drop.contains(ev.target)) { drop.remove(); document.removeEventListener('click', h); }
+          }), 30);
+        });
+      }
+    }
+
+    if (mobileActionsEl) {
+      mobileActionsEl.innerHTML = `
+        <div class="nav-mobile-user">
+          <div class="nav-avatar" style="width:42px;height:42px;font-size:.9rem;flex-shrink:0;">
+            ${av ? `<img src="${av}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : getInitials(session)}
+          </div>
+          <div class="nav-mobile-user-info">
+            <div class="nav-mobile-user-name">${getDisplayName(session)}</div>
+            <div class="nav-mobile-user-email">${session.user.email}</div>
+          </div>
+        </div>
+        <a href="../client/client.html" class="btn btn-ghost">⚡ Mon espace</a>
+        <a href="download.html" class="btn btn-outline-blue">↓ Télécharger</a>
+        <button class="btn btn-ghost" id="mobile-signout" style="color:var(--red);border-color:rgba(255,59,92,.25);">⏻ Se déconnecter</button>`;
+      const mso = document.getElementById('mobile-signout');
+      if (mso) mso.addEventListener('click', signOut);
+    }
+  }).catch(() => {}); // silencieux si réseau lent
 }
 
 /* ── SCROLL REVEAL ─────────────────────── */
