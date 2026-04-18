@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Complétez votre profil</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .step-badge{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;font-size:.75rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 14px var(--blue-glow);}
+    .divider{height:1px;background:var(--b2);margin:1.5rem 0;}
+    .readonly-field input{opacity:.4;cursor:default;pointer-events:none;}
+    .code-wrap{position:relative;}
+    .code-wrap input{text-transform:uppercase;padding-right:6rem;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+    .gen-btn{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:var(--d5);border:1px solid var(--b2);border-radius:var(--r);color:var(--t2);font-size:.72rem;padding:.28rem .65rem;transition:all .2s;cursor:pointer;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+    .gen-btn:hover{background:var(--d6);color:var(--blue2);border-color:var(--blue);}
+    .username-wrap{position:relative;}
+    .username-prefix{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.82rem;pointer-events:none;}
+    .username-wrap input{padding-left:1.6rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;}
+    .field-status{display:flex;align-items:center;gap:5px;font-size:.72rem;margin-top:.35rem;min-height:16px;}
+    .field-status.ok{color:var(--green);}
+    .field-status.error{color:var(--red);}
+    .field-status.checking{color:var(--t2);}
+    .plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.5rem;}
+    .plan-card{border:1px solid var(--b2);border-radius:var(--r-lg);padding:.9rem .75rem;text-align:center;cursor:pointer;transition:all .22s;background:var(--d3);}
+    .plan-card:hover{border-color:var(--b3);background:var(--d4);}
+    .plan-card.selected{border-color:var(--blue);background:rgba(26,111,255,.1);box-shadow:0 0 0 1px var(--blue);}
+    .plan-card .plan-name{font-size:.82rem;font-weight:600;color:var(--t1);margin-bottom:.2rem;}
+    .plan-card .plan-price{font-size:.7rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
+    .plan-card.selected .plan-name{color:var(--blue2);}
+  </style>
+</head>
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<div class="grid-bg"></div>
+
+<div class="auth-page">
+  <div class="auth-wrap" style="max-width:500px;">
+    <a href="../menu/index.html" class="auth-logo">CR<span class="logo-e-login">E</span>O</a>
+    <p class="auth-tagline">// Finalisez votre compte</p>
+
+    <div class="auth-box">
+
+      <!-- CHARGEMENT -->
+      <div id="state-loading" style="text-align:center;padding:2rem 0;">
+        <div class="spinner" style="width:2.2rem;height:2.2rem;margin:0 auto;border-width:3px;"></div>
+        <p style="color:var(--t2);margin-top:1.2rem;font-size:.85rem;">Vérification en cours…</p>
+      </div>
+
+      <!-- FORMULAIRE -->
+      <div id="state-form" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.75rem;">
+          <div class="step-badge">✓</div>
+          <span style="font-size:.82rem;color:var(--t2);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;">Email vérifié — finalisez votre profil</span>
+        </div>
+
+        <!-- Prénom / Nom modifiables -->
+        <div class="field-row">
+          <div class="field">
+            <label>Prénom</label>
+            <input type="text" id="f-firstname" placeholder="Alex">
+          </div>
+          <div class="field">
+            <label>Nom</label>
+            <input type="text" id="f-lastname" placeholder="Martin">
+          </div>
+        </div>
+
+        <!-- Email lecture seule -->
+        <div class="field readonly-field">
+          <label>Email</label>
+          <input type="email" id="f-email" readonly>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Pseudo -->
+        <div class="field">
+          <label>Pseudo <span style="color:var(--blue);">*</span></label>
+          <div class="username-wrap">
+            <span class="username-prefix">@</span>
+            <input type="text" id="f-username" placeholder="votre_pseudo" autocomplete="off" maxlength="32">
+          </div>
+          <div class="field-status" id="username-status"></div>
+          <span class="field-hint">Lettres, chiffres et _ uniquement. Min. 3 caractères.</span>
+        </div>
+
+        <!-- Code client -->
+        <div class="field">
+          <label>Code client <span style="color:var(--blue);">*</span></label>
+          <div class="code-wrap">
+            <input type="text" id="f-clientcode" placeholder="CRE-XXXXXX" autocomplete="off" maxlength="20">
+            <button class="gen-btn" id="generate-code" type="button">⟳ générer</button>
+          </div>
+          <div class="field-status" id="code-status"></div>
+          <span class="field-hint">Identifiant unique pour vos transferts.</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Plan -->
+        <div class="field">
+          <label>Forfait <span style="color:var(--blue);">*</span></label>
+          <div class="plan-grid">
+            <div class="plan-card" data-plan="free">
+              <div class="plan-name">Free</div>
+              <div class="plan-price">0 €/mois</div>
+            </div>
+            <div class="plan-card" data-plan="pro">
+              <div class="plan-name">Pro</div>
+              <div class="plan-price">9 €/mois</div>
+            </div>
+            <div class="plan-card" data-plan="equipe">
+              <div class="plan-name">Équipe</div>
+              <div class="plan-price">29 €/mois</div>
+            </div>
+          </div>
+          <input type="hidden" id="f-plan">
+          <div class="field-status" id="plan-status"></div>
+        </div>
+
+        <button class="btn btn-primary btn-full" id="saveBtn" style="margin-top:1.5rem;">
+          <span class="btn-label">Accéder à mon compte →</span>
+          <span class="spinner btn-spin"></span>
+        </button>
+      </div>
+
+      <!-- ERREUR -->
+      <div id="state-error" style="display:none;text-align:center;padding:1.5rem 0;">
+        <div class="confirm-icon">🔒</div>
+        <div class="confirm-title">Accès refusé</div>
+        <p class="confirm-text" id="error-msg">Lien invalide ou expiré.</p>
+        <a href="login.html" class="btn btn-ghost btn-full" style="margin-top:1.5rem;">← Retour à la connexion</a>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:1.5rem;">
+      <a href="../menu/index.html" style="font-size:.78rem;color:var(--t3);transition:color .2s;"
+         onmouseover="this.style.color='var(--t2)'" onmouseout="this.style.color='var(--t3)'">← Retour à l'accueil</a>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { supabase, toast, setLoading, generateTempCode } from "./app.js";
+
+const params    = new URLSearchParams(window.location.search);
+const tokenHash = params.get("token_hash");
+const tempCode  = params.get("code");
+let currentUser = null;
+
+function show(state) {
+  ["loading","form","error"].forEach(s => {
+    document.getElementById("state-"+s).style.display = s === state ? "block" : "none";
+  });
+}
+function setStatus(id, type, msg) {
+  const el = document.getElementById(id);
+  el.className = "field-status" + (type ? " "+type : "");
+  const icons = { ok:"✓", error:"✕", checking:"…" };
+  el.innerHTML = msg ? `<span>${icons[type]||""}</span> ${msg}` : "";
+}
+function generateCode() {
+  return "CRE-" + Math.random().toString(36).substring(2,8).toUpperCase();
+}
+function selectPlan(plan) {
+  document.querySelectorAll(".plan-card").forEach(c => c.classList.remove("selected"));
+  const card = document.querySelector(`.plan-card[data-plan="${plan}"]`);
+  if (card) card.classList.add("selected");
+  document.getElementById("f-plan").value = plan;
+  setStatus("plan-status","","");
+}
+
+async function init() {
+
+  // ══ BLOQUER si pas de token_hash ni de code dans l'URL ══
+  if (!tokenHash && !tempCode) {
+    document.getElementById("error-msg").textContent =
+      "Accès non autorisé. Passez par le lien de confirmation email ou connectez-vous.";
+    show("error");
+    return;
+  }
+
+  // ── CAS 1 : vient du lien email Supabase (token_hash) ──
+  if (tokenHash) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      token_hash: tokenHash,
+      type: "signup"
+    });
+    if (error) {
+      document.getElementById("error-msg").textContent =
+        "Lien de confirmation invalide ou expiré. Recréez un compte.";
+      show("error"); return;
+    }
+    currentUser = data.session?.user;
+    window.history.replaceState({}, "", "complete-profile.html");
+  }
+
+  // ── CAS 2 : vient du login avec code temp 4 chars ──
+  else if (tempCode) {
+    const { data: row, error } = await supabase
+      .from("temp_codes")
+      .select("user_id, created_at")
+      .eq("code", tempCode)
+      .single();
+
+    if (error || !row) {
+      document.getElementById("error-msg").textContent =
+        "Code invalide ou expiré. Reconnectez-vous.";
+      show("error"); return;
+    }
+
+    // Vérifier expiration 24h
+    const diffH = (Date.now() - new Date(row.created_at)) / 3600000;
+    if (diffH > 24) {
+      await supabase.from("temp_codes").delete().eq("code", tempCode);
+      document.getElementById("error-msg").textContent =
+        "Ce code a expiré (24h). Reconnectez-vous pour en obtenir un nouveau.";
+      show("error"); return;
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || session.user.id !== row.user_id) {
+      document.getElementById("error-msg").textContent =
+        "Session introuvable. Reconnectez-vous.";
+      show("error"); return;
+    }
+    currentUser = session.user;
+    window.history.replaceState({}, "", "complete-profile.html");
+  }
+
+  if (!currentUser) { show("error"); return; }
+
+  // Vérifier si profil déjà complet
+  const { data: profile } = await supabase
+    .from("profiles").select("*").eq("id", currentUser.id).single();
+
+  if (profile?.username && profile?.client_code && profile?.type) {
+    window.location.href = "../client/client.html"; return;
+  }
+
+  // Pré-remplir
+  document.getElementById("f-firstname").value =
+    profile?.first_name || currentUser.user_metadata?.first_name || "";
+  document.getElementById("f-lastname").value =
+    profile?.last_name  || currentUser.user_metadata?.last_name  || "";
+  document.getElementById("f-email").value = currentUser.email;
+  document.getElementById("f-clientcode").value = profile?.client_code || generateCode();
+  if (profile?.type) selectPlan(profile.type);
+
+  show("form");
+}
+
+// Plan
+document.querySelectorAll(".plan-card").forEach(card => {
+  card.addEventListener("click", () => selectPlan(card.dataset.plan));
+});
+
+// Génération code
+document.getElementById("generate-code").addEventListener("click", () => {
+  document.getElementById("f-clientcode").value = generateCode();
+  setStatus("code-status","","");
+});
+
+// Validation pseudo temps réel
+let usernameTimer;
+document.getElementById("f-username").addEventListener("input", function() {
+  this.value = this.value.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  clearTimeout(usernameTimer);
+  const val = this.value.trim();
+  if (!val) { setStatus("username-status","",""); return; }
+  if (val.length < 3) { setStatus("username-status","error","Trop court (min. 3 car.)"); return; }
+  setStatus("username-status","checking","Vérification…");
+  usernameTimer = setTimeout(async () => {
+    const { data } = await supabase
+      .from("profiles").select("id").eq("username", val).neq("id", currentUser?.id).maybeSingle();
+    if (data) setStatus("username-status","error","Pseudo déjà pris");
+    else      setStatus("username-status","ok","Disponible !");
+  }, 500);
+});
+
+// Sauvegarde
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const btn        = document.getElementById("saveBtn");
+  const firstName  = document.getElementById("f-firstname").value.trim();
+  const lastName   = document.getElementById("f-lastname").value.trim();
+  const username   = document.getElementById("f-username").value.trim();
+  const clientCode = document.getElementById("f-clientcode").value.trim().toUpperCase();
+  const plan       = document.getElementById("f-plan").value;
+
+  if (!firstName || !lastName) return toast("Entrez votre prénom et nom.", "warning");
+  if (!username)               return toast("Choisissez un pseudo.", "warning");
+  if (username.length < 3)     return toast("Pseudo trop court (3 car. min).", "warning");
+  if (document.getElementById("username-status").classList.contains("error"))
+                               return toast("Ce pseudo est déjà pris.", "error");
+  if (!clientCode)             return toast("Générez un code client.", "warning");
+  if (!plan)                   return toast("Choisissez un forfait.", "warning");
+
+  setLoading(btn, true);
+
+  const { error } = await supabase.from("profiles").upsert({
+    id:             currentUser.id,
+    email:          currentUser.email,
+    email_verified: true,
+    first_name:     firstName,
+    last_name:      lastName,
+    username,
+    client_code:    clientCode,
+    type:           plan
+  }, { onConflict: "id" });
+
+  if (error) {
+    setLoading(btn, false);
+    if (error.message.includes("username"))    return toast("Pseudo déjà pris.", "error");
+    if (error.message.includes("client_code")) {
+      document.getElementById("f-clientcode").value = generateCode();
+      return toast("Code déjà utilisé — un nouveau a été généré.", "warning");
+    }
+    return toast("Erreur : " + error.message, "error");
+  }
+
+  // Supprimer le code temp si utilisé
+  if (tempCode) await supabase.from("temp_codes").delete().eq("code", tempCode);
+
+  setLoading(btn, false);
+  toast("Bienvenue sur Creo ! 🚀", "success");
+  setTimeout(() => { window.location.href = "../client/client.html"; }, 1100);
+});
+
+init();
+</script>
+</body>
+</html>
