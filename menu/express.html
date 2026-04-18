@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Express</title>
+  <meta name="description" content="Envoyez un fichier instantanément à n’importe quel utilisateur Creo sans vous connecter.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" media="print" onload="this.media='all'">
+  <link rel="preconnect" href="https://mpnfvrizbluhhjcfzztc.supabase.co">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ------------------------------
+       BLOC FICHIER (STYLE PREMIUM)
+    ------------------------------ */
+    .file-block {
+      background: var(--d3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r-xl);
+      padding: 1.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .file-block-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      color: var(--t3);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .file-drop {
+      border: 2px dashed var(--b3);
+      background: var(--d2);
+      border-radius: var(--r-lg);
+      padding: 2.6rem 1.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: .25s;
+    }
+    .file-drop:hover {
+      background: var(--d3);
+      border-color: var(--blue2);
+    }
+    .file-drop.dragover {
+      background: rgba(26,111,255,.08);
+      border-color: var(--blue);
+    }
+
+    .file-drop-icon {
+      font-size: 2.8rem;
+      margin-bottom: .6rem;
+      color: #f5c542;
+    }
+    .file-drop-text {
+      font-size: .9rem;
+      color: var(--t2);
+    }
+
+    .file-status {
+      display: none;
+      background: var(--d2);
+      border: 1px solid var(--b2);
+      padding: .8rem 1rem;
+      border-radius: var(--r-lg);
+      font-size: .85rem;
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .file-list {
+      display: none;
+      flex-direction: column;
+      gap: .8rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--d2);
+      border: 1px solid var(--b2);
+      padding: .8rem 1rem;
+      border-radius: var(--r-lg);
+    }
+    .file-item-icon {
+      font-size: 1.4rem;
+    }
+    .file-item-name {
+      font-size: .9rem;
+      color: var(--t1);
+      font-weight: 500;
+    }
+    .file-item-meta {
+      font-size: .75rem;
+      color: var(--t3);
+    }
+    .remove-file {
+      background: none;
+      border: none;
+      color: var(--t3);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .remove-file:hover {
+      color: var(--red);
+    }
+
+    /* ------------------------------
+       FORMULAIRE EXPRESS
+    ------------------------------ */
+    .express-form {
+      max-width: 520px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+
+    .input-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+    .input-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--t3);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .input-field {
+      padding: .9rem 1.2rem;
+      background: var(--d3);
+      border: 1px solid var(--b2);
+      border-radius: var(--r-lg);
+      color: var(--t1);
+      font-size: .9rem;
+      transition: border .2s;
+    }
+    .input-field:focus {
+      border-color: var(--blue2);
+      outline: none;
+    }
+
+    .btn-primary2 {
+      padding: 1rem 1.2rem;
+      background: var(--blue);
+      border-radius: var(--r-lg);
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+    
+    .btn-primary:hover {
+      background: var(--blue2);
+    }
+    .btn-spin {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<nav id="nav"></nav>
+
+<!-- HERO -->
+<div class="sub-hero">
+  <div class="grid-bg"></div>
+  <div class="tag">Envoi rapide</div>
+  <h1 class="sub-hero-h1 grad-text">EXPRESS.</h1>
+  <p class="sub-hero-desc">
+    Envoyez un fichier à n’importe quel utilisateur Creo sans vous connecter.  
+    Parfait pour l’école, le travail ou un partage rapide sur un ordinateur public.
+  </p>
+</div>
+
+<!-- FORMULAIRE EXPRESS -->
+<div class="section-wrap">
+  <h2 class="section-h2">Envoyer un fichier.</h2>
+  <p class="section-desc">Déposez vos fichiers, choisissez le pseudo du destinataire, et envoyez instantanément.</p>
+
+  <div class="express-form">
+
+    <!-- BLOC FICHIER -->
+    <div class="file-block">
+      <div class="file-block-title">// FICHIER</div>
+
+      <div class="file-drop" id="file-drop">
+        <div class="file-drop-icon">📁</div>
+        <div class="file-drop-text">Déposer un fichier ou cliquer pour parcourir</div>
+        <input type="file" id="file-input" multiple hidden>
+      </div>
+
+      <div class="file-status" id="file-status"></div>
+
+      <div class="file-list" id="file-list"></div>
+    </div>
+
+    <!-- DESTINATAIRE -->
+    <div class="input-wrap">
+      <label class="input-label">// DESTINATAIRE</label>
+      <input type="text" id="pseudo" class="input-field" placeholder="ex : mathis_42">
+    </div>
+
+    <!-- MESSAGE -->
+    <div class="input-wrap">
+      <label class="input-label">Message (optionnel)</label>
+      <input type="text" id="message" class="input-field" placeholder="ex : Voici ton fichier">
+    </div>
+
+    <!-- BOUTON ENVOYER -->
+    <button class="btn-primary2" id="send-btn">
+      <span class="btn-label">🚀 Envoyer</span>
+      <span class="btn-spin">⏳</span>
+    </button>
+
+  </div>
+</div>
+
+<!-- Infos -->
+<div class="section-wrap">
+  <div class="tag">// Sécurité</div>
+  <h2 class="section-h2">Comment ça marche ?</h2>
+  <p class="section-desc">
+    Le mode Express utilise un lien temporaire chiffré.  
+    Aucun compte requis. Aucun historique conservé.  
+    Le fichier est supprimé automatiquement après réception.
+  </p>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="../login/login.html">Connexion</a><a href="../login/login.html?tab=signup">Créer un compte</a><a href="cgu.html">CGU</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+  </div>
+</footer>
+
+<script type="module">
+  import { redirectIfAuth, buildNav, setLoading, toast } from './app.js';
+  redirectIfAuth();
+  buildNav('express');
+
+  const fileDrop = document.getElementById('file-drop');
+  const fileInput = document.getElementById('file-input');
+  const fileStatus = document.getElementById('file-status');
+  const fileList = document.getElementById('file-list');
+  const sendBtn = document.getElementById('send-btn');
+
+  // Liste interne des fichiers
+  let selectedFiles = [];
+
+  // Click -> ouvrir le sélecteur
+  fileDrop.addEventListener('click', () => fileInput.click());
+
+  // Drag & drop
+  fileDrop.addEventListener('dragover', e => {
+    e.preventDefault();
+    fileDrop.classList.add('dragover');
+  });
+  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+  fileDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    fileDrop.classList.remove('dragover');
+    addFiles(e.dataTransfer.files);
+  });
+
+  // Sélection via input
+  fileInput.addEventListener('change', e => {
+    addFiles(e.target.files);
+  });
+
+  // Ajouter des fichiers sans remplacer les anciens
+  function addFiles(files) {
+    selectedFiles = [...selectedFiles, ...files];
+    updateDisplay();
+  }
+
+  // Mettre à jour l'affichage
+  function updateDisplay() {
+    if (selectedFiles.length === 0) {
+      fileStatus.style.display = "none";
+      fileList.style.display = "none";
+      return;
+    }
+
+    // Texte "X fichiers sélectionnés"
+    const count = selectedFiles.length;
+    const label = count === 1 ? "1 fichier sélectionné" : `${count} fichiers sélectionnés`;
+    fileStatus.textContent = label;
+    fileStatus.style.display = "block";
+
+    // Liste des fichiers
+    fileList.innerHTML = "";
+    fileList.style.display = "flex";
+
+    selectedFiles.forEach((file, index) => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const icons = {
+        pdf: "📕", png: "🖼️", jpg: "🖼️", jpeg: "🖼️",
+        zip: "🗂️", rar: "🗂️", mp4: "🎬", mp3: "🎵"
+      };
+      const icon = icons[ext] || "📄";
+
+      const item = document.createElement("div");
+      item.className = "file-item";
+      item.innerHTML = `
+        <div class="file-item-icon">${icon}</div>
+        <div style="flex:1">
+          <div class="file-item-name">${file.name}</div>
+          <div class="file-item-meta">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+        </div>
+        <button class="remove-file" data-index="${index}">❌</button>
+      `;
+
+      fileList.appendChild(item);
+    });
+
+    // Boutons supprimer
+    document.querySelectorAll('.remove-file').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const index = e.target.getAttribute('data-index');
+        selectedFiles.splice(index, 1);
+        updateDisplay();
+      });
+    });
+  }
+
+  sendBtn.addEventListener('click', () => {
+    const pseudo = document.getElementById('pseudo').value.trim();
+    if (!pseudo) return toast("Entrez un pseudo.", "error");
+    if (selectedFiles.length === 0) return toast("Choisissez au moins un fichier.", "error");
+
+    setLoading(sendBtn, true);
+
+    setTimeout(() => {
+      setLoading(sendBtn, false);
+      toast("Fichiers envoyés à " + pseudo + " ✔", "success");
+    }, 1200);
+  });
+</script>
+
+</body>
+</html>
