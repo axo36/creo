@@ -143,10 +143,10 @@ img{display:block;max-width:100%;}
 .st-pause{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);color:var(--amber);}
 
 /* BADGE */
-.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.57rem;font-weight:500;}
-.badge-blue{background:rgba(26,111,255,.12);border:1px solid rgba(26,111,255,.25);color:var(--blue2);}
-.badge-green{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.2);color:var(--green);}
-.badge-red{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.2);color:var(--red);}
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.58rem;font-weight:500;letter-spacing:.04em;}
+.badge-blue{background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);color:var(--blue2);}
+.badge-green{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);color:var(--green);}
+.badge-red{background:rgba(255,59,92,.1);border:1px solid rgba(255,59,92,.25);color:var(--red);}
 
 /* FILTERS TOOLBAR */
 .toolbar{display:flex;align-items:center;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
@@ -207,7 +207,7 @@ img{display:block;max-width:100%;}
 .file-card.list-view .file-card-info{flex:1;min-width:0;}
 
 /* SYNC */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:1.5rem;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:1.5rem;}
 .sync-circle{position:relative;width:120px;height:120px;margin:0 auto 1.5rem;}
 .sync-circle svg{transform:rotate(-90deg);}
 .circle-bg{fill:none;stroke:var(--d5);stroke-width:8;}
@@ -261,82 +261,102 @@ img{display:block;max-width:100%;}
 
 /* LANG */
 .lang-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:.6rem;}
-.lang-btn{padding:.42rem .9rem;border-radius:var(--r-lg);background:var(--d3);border:1px solid var(--b2);font-size:.8rem;color:var(--t2);cursor:pointer;transition:all .2s;}
+.lang-btn{padding:.45rem 1rem;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);font-size:.8rem;color:var(--t2);cursor:pointer;transition:all .2s;}
 .lang-btn:hover{border-color:var(--b3);color:var(--t1);}
 .lang-btn.active{background:rgba(26,111,255,.1);border-color:rgba(26,111,255,.3);color:var(--blue2);}
 
 /* ANALYTICS */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.6rem;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:1.5rem;}
 .kpi-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem 1.6rem;}
 .kpi-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;}
-.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--white);line-height:1;}
-.kpi-trend{font-size:.72rem;margin-top:4px;}
+.kpi-val{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--white);line-height:1.1;}
+.kpi-trend{font-size:.73rem;margin-top:4px;}
 .kpi-trend.up{color:var(--green);}
 .kpi-trend.down{color:var(--red);}
-.chart-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.4rem;}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:1rem;}
-.bar-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;}
-.bar-outer{background:var(--d4);border-radius:4px 4px 0 0;width:100%;flex:1;display:flex;align-items:flex-end;}
-.bar-inner{width:100%;background:linear-gradient(180deg,var(--blue),var(--cyan));border-radius:4px 4px 0 0;min-height:4px;transition:height .8s ease;}
+.chart-card{background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.6rem;}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:1.2rem;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;}
+.bar-outer{flex:1;width:100%;display:flex;align-items:flex-end;background:var(--d4);border-radius:4px 4px 0 0;overflow:hidden;}
+.bar-inner{width:100%;background:linear-gradient(to top,var(--blue),var(--blue2));border-radius:4px 4px 0 0;transition:height 1s ease;min-height:4px;}
 .bar-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);}
 
-/* NOTIF PANEL */
-.notif-panel{position:absolute;top:calc(var(--nav-h) + 8px);right:1.5rem;width:320px;background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);padding:0;z-index:200;display:none;box-shadow:0 20px 60px rgba(0,0,0,.6);}
-.notif-panel.open{display:block;animation:fadeIn .15s ease;}
-.notif-head{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--b2);}
-.notif-head-title{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t1);text-transform:uppercase;letter-spacing:.1em;}
-.notif-item{display:flex;align-items:flex-start;gap:10px;padding:.75rem 1.1rem;border-bottom:1px solid var(--b1);transition:background .15s;cursor:pointer;}
-.notif-item:last-child{border:none;}
-.notif-item:hover{background:var(--d4);}
-.notif-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px;}
-.notif-text{font-size:.78rem;color:var(--t2);line-height:1.4;}
-.notif-text strong{color:var(--t1);}
-.notif-time{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);margin-top:3px;}
+/* MODALS */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-bg.open{opacity:1;pointer-events:all;}
+.modal{background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-2xl);padding:2rem;width:460px;max-width:calc(100vw - 2rem);box-shadow:0 24px 80px rgba(0,0,0,.8);transform:translateY(10px);transition:transform .25s;max-height:90vh;overflow-y:auto;}
+.modal-bg.open .modal{transform:translateY(0);}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.06em;color:var(--white);margin-bottom:1.4rem;}
+.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:1.4rem;padding-top:1.2rem;border-top:1px solid var(--b1);}
 
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;}
-.modal-bg.open{display:flex;animation:fadeIn .15s ease;}
-.modal{background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-2xl);padding:2rem;width:100%;max-width:460px;box-shadow:0 40px 80px rgba(0,0,0,.8);}
-.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--white);letter-spacing:.05em;margin-bottom:1.4rem;}
-.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.4rem;}
+/* NOTIF PANEL */
+.notif-panel{position:absolute;top:calc(var(--nav-h) + 8px);right:1.5rem;width:320px;background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-xl);box-shadow:0 16px 60px rgba(0,0,0,.7);z-index:200;opacity:0;pointer-events:none;transform:translateY(-6px);transition:all .2s;}
+.notif-panel.open{opacity:1;pointer-events:all;transform:none;}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--b1);}
+.notif-head-title{font-size:.85rem;color:var(--t1);font-weight:500;}
+.notif-item{display:flex;align-items:flex-start;gap:10px;padding:.8rem 1.1rem;border-bottom:1px solid var(--b1);}
+.notif-item:last-child{border:none;}
+.notif-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.notif-text{font-size:.79rem;color:var(--t2);line-height:1.5;}
+.notif-text strong{color:var(--t1);font-weight:500;}
+.notif-time{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:2px;}
 
 /* TOAST */
-#toast-wrap{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none;align-items:center;min-width:280px;}
-.toast{background:var(--d4);border:1px solid var(--b3);border-radius:var(--r-lg);padding:.65rem 1.1rem;font-size:.8rem;color:var(--t1);display:flex;align-items:center;gap:8px;pointer-events:auto;animation:toastIn .25s ease;box-shadow:0 8px 30px rgba(0,0,0,.5);white-space:nowrap;}
-.toast.success{border-color:rgba(0,255,136,.3);} .toast.success span{color:var(--green);}
-.toast.error{border-color:rgba(255,59,92,.3);} .toast.error span{color:var(--red);}
-.toast.info{border-color:rgba(26,111,255,.3);} .toast.info span{color:var(--blue2);}
-.toast.warning{border-color:rgba(255,184,0,.3);} .toast.warning span{color:var(--amber);}
-@keyframes toastIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-@keyframes toastOut{from{opacity:1;}to{opacity:0;transform:translateY(4px);}}
-.hl{background:rgba(26,111,255,.2);border-radius:3px;color:var(--blue3);}
+#toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9000;display:flex;flex-direction:column;gap:8px;max-width:340px;}
+.toast{display:flex;align-items:center;gap:10px;padding:.75rem 1.1rem;background:var(--d4);border:1px solid var(--b3);border-radius:var(--r-lg);font-size:.8rem;color:var(--t1);box-shadow:0 8px 32px rgba(0,0,0,.6);animation:toastIn .28s ease;}
+.toast.success{border-color:rgba(0,255,136,.3);}
+.toast.error{border-color:rgba(255,59,92,.3);}
+.toast.warning{border-color:rgba(255,184,0,.3);}
+.toast.info{border-color:rgba(26,111,255,.3);}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:none;}}
+@keyframes toastOut{to{opacity:0;transform:translateX(20px);}}
 
-/* ── CLIENT CODE BANNER ── */
-.client-code-banner{
-  background:linear-gradient(135deg,rgba(26,111,255,.08),rgba(0,212,255,.06));
-  border:1px solid rgba(26,111,255,.2);
-  border-radius:var(--r-xl);
-  padding:1rem 1.4rem;
-  margin-bottom:1.8rem;
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-.ccb-icon{font-size:1.4rem;}
-.ccb-info{flex:1;}
-.ccb-label{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;}
-.ccb-code{font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:var(--blue2);font-weight:500;letter-spacing:.08em;}
-.ccb-copy{cursor:pointer;padding:.3rem .7rem;background:var(--d4);border:1px solid var(--b3);border-radius:var(--r);font-size:.7rem;color:var(--t2);transition:all .2s;}
-.ccb-copy:hover{border-color:rgba(26,111,255,.4);color:var(--blue2);}
+/* HIGHLIGHT */
+.hl{background:rgba(26,111,255,.25);color:var(--blue2);border-radius:2px;}
 
-/* MOBILE CSS */
-@media (max-width:768px) {
+/* MOBILE BOTTOM NAV */
+#bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:64px;background:var(--d2);border-top:1px solid var(--b2);z-index:200;padding:0 .5rem;align-items:center;justify-content:space-around;}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:.4rem .8rem;border-radius:var(--r-lg);cursor:pointer;position:relative;transition:all .2s;min-width:50px;}
+.bn-active-pill{position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--blue);border-radius:99px;opacity:0;transition:opacity .2s;}
+.bn-item.active .bn-active-pill{opacity:1;}
+.bn-icon{font-size:1.1rem;transition:transform .2s;}
+.bn-item.active .bn-icon{transform:scale(1.1);}
+.bn-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--t3);transition:color .2s;}
+.bn-item.active .bn-label{color:var(--blue2);}
+#bn-more-panel{display:none;position:fixed;bottom:70px;left:.8rem;right:.8rem;background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-xl);z-index:300;padding:.7rem;box-shadow:0 8px 40px rgba(0,0,0,.7);}
+#bn-more-panel.open{display:block;}
+.bn-more-overlay{display:none;position:fixed;inset:0;z-index:299;}
+.bn-more-overlay.open{display:block;}
+.bn-more-item{display:flex;align-items:center;gap:12px;padding:.75rem 1rem;border-radius:var(--r-lg);font-size:.85rem;color:var(--t2);cursor:pointer;transition:all .2s;}
+.bn-more-item:hover{background:var(--d4);color:var(--t1);}
+.bn-more-icon{font-size:1.1rem;width:24px;text-align:center;}
+
+/* FAB */
+#mobile-fab{display:none;position:fixed;bottom:80px;right:1rem;width:52px;height:52px;background:var(--blue);border-radius:50%;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 4px 20px rgba(26,111,255,.5);cursor:pointer;z-index:150;}
+
+/* MOBILE SEARCH */
+#mobile-search-overlay{display:none;position:fixed;inset:0;background:var(--d2);z-index:400;flex-direction:column;}
+#mobile-search-overlay.open{display:flex;}
+.mob-search-bar{display:flex;align-items:center;gap:12px;padding:1rem 1.2rem;border-bottom:1px solid var(--b1);}
+.mob-search-bar input{flex:1;background:none;border:none;outline:none;font-size:1rem;color:var(--t1);}
+#mob-search-results{flex:1;overflow-y:auto;padding:.8rem;}
+.mob-result-item{display:flex;align-items:center;gap:12px;padding:.85rem 1rem;border-radius:var(--r-lg);cursor:pointer;transition:background .15s;}
+.mob-result-item:hover{background:var(--d4);}
+.mob-result-icon{font-size:1.3rem;flex-shrink:0;}
+.mob-result-name{font-size:.85rem;color:var(--t1);font-weight:400;}
+.mob-result-meta{font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--t3);margin-top:1px;}
+.mob-search-empty{text-align:center;padding:2rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);}
+.mob-profile-strip{display:none;}
+
+/* RESPONSIVE */
+@media(max-width:768px){
   .sidebar{display:none;}
   .main-area{margin-left:0;}
-  .topbar{padding:0 1rem;}
-  .page-content{padding:1rem;}
+  #bottom-nav{display:flex;}
+  #mobile-fab{display:flex;}
+  #mobile-search-btn{display:flex !important;}
   .topbar-search{display:none;}
-  .page-title{font-size:1.3rem;}
+  .topbar{padding:0 1rem;}
+  .page-content{padding:1.2rem;padding-bottom:80px;}
   .stat-grid-4{grid-template-columns:repeat(2,1fr);}
   .stat-grid-3{grid-template-columns:repeat(2,1fr);}
   .kpi-grid{grid-template-columns:repeat(2,1fr);}
@@ -344,96 +364,18 @@ img{display:block;max-width:100%;}
   .files-grid{grid-template-columns:repeat(2,1fr);}
   .two-col{grid-template-columns:1fr;}
   .settings-layout{grid-template-columns:1fr;}
+  .settings-nav{display:none;}
   .field-row{grid-template-columns:1fr;}
-  .main-area{padding-bottom:75px;}
-  .topbar-right .btn-primary{display:none;}
-  .topbar-right .icon-btn:not(#notif-btn):not(#mobile-search-btn){display:none;}
-  #mobile-search-btn{display:flex!important;}
-  #bottom-nav{display:flex!important;}
-  .toast{max-width:90vw;white-space:normal;}
-  .notif-panel{right:.5rem;left:.5rem;width:auto;}
-  .modal{margin:1rem;}
-  #mobile-fab{display:flex!important;}
-  .mob-profile-strip{display:flex!important;}
-  #view-grid-btn,#view-list-btn{display:none;}
+  .toast{max-width:100%;}
+  .mob-profile-strip{display:flex;align-items:center;gap:12px;background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1rem 1.2rem;margin-bottom:1.2rem;cursor:pointer;}
   .toolbar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
   .toolbar::-webkit-scrollbar{display:none;}
   .filter-chip{flex-shrink:0;}
-  .client-code-banner{flex-wrap:wrap;gap:10px;}
 }
-
-/* BOTTOM NAV */
-#bottom-nav{
-  display:none;position:fixed;bottom:0;left:0;right:0;
-  background:rgba(8,8,8,.95);backdrop-filter:blur(20px);
-  border-top:1px solid var(--b2);z-index:100;
-  padding:.5rem 0 calc(.5rem + env(safe-area-inset-bottom));
-  display:none;
-}
-#bottom-nav{display:none;}
-.bn-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;padding:.4rem .2rem;cursor:pointer;position:relative;color:var(--t3);transition:color .2s;user-select:none;}
-.bn-item.active{color:var(--blue2);}
-.bn-active-pill{position:absolute;top:0;left:50%;transform:translateX(-50%);width:0;height:2px;background:var(--blue);border-radius:99px;transition:width .25s;}
-.bn-item.active .bn-active-pill{width:28px;}
-.bn-icon{font-size:1.2rem;}
-.bn-label{font-family:'JetBrains Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:.05em;}
-
-/* MORE PANEL (mobile) */
-#bn-more-panel{
-  display:none;position:fixed;bottom:70px;right:1rem;
-  background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);
-  padding:.8rem 0;z-index:200;min-width:180px;
-  box-shadow:0 10px 40px rgba(0,0,0,.7);
-}
-#bn-more-panel.open{display:block;animation:fadeIn .15s ease;}
-.bn-more-overlay{display:none;position:fixed;inset:0;z-index:199;}
-.bn-more-overlay.open{display:block;}
-.bn-more-item{display:flex;align-items:center;gap:10px;padding:.65rem 1.1rem;font-size:.84rem;color:var(--t2);cursor:pointer;transition:background .15s;}
-.bn-more-item:hover{background:var(--d4);color:var(--t1);}
-.bn-more-icon{font-size:1rem;}
-
-/* FAB */
-#mobile-fab{
-  display:none;position:fixed;bottom:80px;right:1rem;
-  width:52px;height:52px;background:var(--blue);border-radius:50%;
-  align-items:center;justify-content:center;font-size:1.4rem;
-  box-shadow:0 4px 20px rgba(26,111,255,.5);cursor:pointer;z-index:150;
-  transition:transform .2s,box-shadow .2s;
-}
-#mobile-fab:active{transform:scale(.92);}
-
-/* MOBILE PROFILE STRIP */
-.mob-profile-strip{display:none;align-items:center;gap:12px;background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1rem 1.2rem;margin-bottom:1.2rem;cursor:pointer;}
-.mob-profile-strip .mob-av{width:44px;height:44px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;color:#fff;overflow:hidden;flex-shrink:0;}
-.mob-profile-strip .mob-av img{width:100%;height:100%;object-fit:cover;}
-.mob-profile-strip-info{flex:1;min-width:0;}
-.mob-profile-name{font-size:.92rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mob-profile-role{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);}
-
-/* MOBILE SEARCH OVERLAY */
-#mobile-search-overlay{
-  display:none;position:fixed;inset:0;background:var(--d1);z-index:300;
-  padding:1rem;overflow-y:auto;
-}
-#mobile-search-overlay.open{display:block;}
-.mob-search-bar{display:flex;align-items:center;gap:10px;background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);padding:.7rem 1rem;margin-bottom:1rem;}
-.mob-search-bar input{flex:1;background:none;border:none;outline:none;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--t1);}
-.mob-search-bar input::placeholder{color:var(--t3);}
-.mob-result-item{display:flex;align-items:center;gap:12px;padding:.8rem .5rem;border-bottom:1px solid var(--b1);cursor:pointer;border-radius:var(--r);}
-.mob-result-item:hover{background:var(--d3);}
-.mob-result-icon{font-size:1.2rem;width:32px;text-align:center;}
-.mob-result-name{font-size:.84rem;color:var(--t1);}
-.mob-result-meta{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);margin-top:2px;}
-.mob-search-empty{text-align:center;padding:2rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);}
-
-/* Show mobile-only elements only on mobile */
-#bottom-nav{display:none;}
-#mobile-fab{display:none;}
 #mobile-search-btn{display:none;}
-#mobile-search-overlay{display:none;}
-#bn-more-panel{display:none;}
-.bn-more-overlay{display:none;}
-.mob-profile-strip{display:none;}
+
+/* Sync layout */
+.sync-stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;}
 </style>
 </head>
 <body>
@@ -490,7 +432,7 @@ img{display:block;max-width:100%;}
           <input type="text" id="search-input" placeholder="Rechercher…" autocomplete="off">
           <span id="search-clear" style="color:var(--t3);font-size:.7rem;cursor:pointer;display:none;">✕</span>
         </div>
-        <div class="icon-btn" id="mobile-search-btn" title="Rechercher">🔍</div>
+        <div class="icon-btn" id="mobile-search-btn" title="Rechercher" style="display:none;">🔍</div>
         <div class="icon-btn" id="notif-btn" title="Notifications">
           🔔<span class="badge-dot" id="notif-dot"></span>
         </div>
@@ -511,31 +453,17 @@ img{display:block;max-width:100%;}
 
       <!-- ══ TRANSFERTS ══ -->
       <div class="page active" id="page-transferts">
-        <!-- Client Code Banner -->
-        <div class="client-code-banner" id="ccb" style="display:none;">
-          <div class="ccb-icon">🔐</div>
-          <div class="ccb-info">
-            <div class="ccb-label">Code Client</div>
-            <div class="ccb-code" id="ccb-code">—</div>
-          </div>
-          <button class="ccb-copy" id="ccb-copy-btn" title="Copier le code">Copier</button>
-        </div>
-
         <div class="stat-grid stat-grid-4">
-          <div class="stat-card"><div class="stat-label">Total transféré</div><div class="stat-val" id="stat-total">0 <span class="unit">GB</span></div><div class="stat-sub" id="stat-total-sub">ce mois</div></div>
+          <div class="stat-card"><div class="stat-label">Total transféré</div><div class="stat-val" id="stat-total">0 <span class="unit">GB</span></div><div class="stat-sub">ce mois</div></div>
           <div class="stat-card"><div class="stat-label">Appareils actifs</div><div class="stat-val" id="stat-devices">0</div><div class="stat-sub">en ligne</div></div>
           <div class="stat-card"><div class="stat-label">Vitesse actuelle</div><div class="stat-val" id="stat-speed">—</div><div class="stat-sub">réseau local</div></div>
-          <div class="stat-card"><div class="stat-label">Taux de succès</div><div class="stat-val" id="stat-success">99.4 <span class="unit">%</span></div><div class="stat-sub"><span class="stat-delta up">↑ stable</span></div></div>
+          <div class="stat-card"><div class="stat-label">Taux de succès</div><div class="stat-val" id="stat-success">— <span class="unit">%</span></div><div class="stat-sub"><span class="stat-delta up" id="stat-success-sub">↑ stable</span></div></div>
         </div>
-
-        <!-- ACTIVE TRANSFERS -->
         <div class="section-header" style="margin-bottom:.8rem;">
           <div class="section-title">Transferts actifs <small id="active-count">0 en cours</small></div>
           <button class="btn btn-ghost btn-sm" id="btn-new-transfer">＋ Nouveau</button>
         </div>
         <div id="active-transfers-container" style="margin-bottom:2rem;"></div>
-
-        <!-- HISTORY -->
         <div class="section-header">
           <div class="section-title">Historique <small>aujourd'hui</small></div>
           <div class="toolbar" style="margin-bottom:0;gap:6px;">
@@ -574,7 +502,7 @@ img{display:block;max-width:100%;}
       <div class="page" id="page-appareils">
         <div class="stat-grid stat-grid-3">
           <div class="stat-card"><div class="stat-label">Connectés</div><div class="stat-val" id="dev-online">0 <span class="unit" style="color:var(--green);">en ligne</span></div><div class="stat-sub" id="dev-total">0 appareils au total</div></div>
-          <div class="stat-card"><div class="stat-label">Bande passante</div><div class="stat-val" id="dev-bw">0 <span class="unit">MB/s</span></div><div class="stat-sub">agrégée</div></div>
+          <div class="stat-card"><div class="stat-label">Bande passante</div><div class="stat-val" id="dev-bw">— <span class="unit">GB/s</span></div><div class="stat-sub">agrégée</div></div>
           <div class="stat-card"><div class="stat-label">Dernière sync</div><div class="stat-val" style="font-size:1.6rem;" id="dev-last-sync">—</div><div class="stat-sub"><span class="stat-delta up">✓</span> tous synchronisés</div></div>
         </div>
         <div class="section-header">
@@ -588,7 +516,7 @@ img{display:block;max-width:100%;}
       <div class="page" id="page-fichiers">
         <div class="stat-grid stat-grid-4">
           <div class="stat-card"><div class="stat-label">Total fichiers</div><div class="stat-val" id="files-count">0</div><div class="stat-sub"><span class="stat-delta up" id="files-delta">—</span></div></div>
-          <div class="stat-card"><div class="stat-label">Espace utilisé</div><div class="stat-val">2.8 <span class="unit">TB</span></div><div class="stat-sub">sur 12 TB total</div></div>
+          <div class="stat-card"><div class="stat-label">Espace utilisé</div><div class="stat-val" id="files-size">0 <span class="unit">MB</span></div><div class="stat-sub">total indexé</div></div>
           <div class="stat-card"><div class="stat-label">Partagés</div><div class="stat-val" id="files-shared">0</div><div class="stat-sub">avec vos appareils</div></div>
           <div class="stat-card"><div class="stat-label">Dernière modif.</div><div class="stat-val" style="font-size:1.5rem;" id="files-lastmod">—</div><div class="stat-sub" id="files-lastmod-name">—</div></div>
         </div>
@@ -616,12 +544,7 @@ img{display:block;max-width:100%;}
         <div class="data-table-wrap">
           <table class="data-table">
             <thead><tr>
-              <th data-sort="name">Nom</th>
-              <th data-sort="type">Type</th>
-              <th data-sort="size">Taille</th>
-              <th data-sort="date">Modifié</th>
-              <th data-sort="status">Statut</th>
-              <th></th>
+              <th>Nom</th><th>Type</th><th>Taille</th><th>Modifié</th><th>Statut</th><th></th>
             </tr></thead>
             <tbody id="files-tbody"></tbody>
           </table>
@@ -653,7 +576,7 @@ img{display:block;max-width:100%;}
                 <div class="sync-val-label">Sync</div>
               </div>
             </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+            <div class="sync-stats-row">
               <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--green);" id="sync-synced">0</div><div style="font-size:.73rem;color:var(--t3);">Sync</div></div>
               <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--amber);" id="sync-pending">0</div><div style="font-size:.73rem;color:var(--t3);">En attente</div></div>
               <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--red);" id="sync-conflicts">0</div><div style="font-size:.73rem;color:var(--t3);">Conflits</div></div>
@@ -675,12 +598,11 @@ img{display:block;max-width:100%;}
 
       <!-- ══ PARAMÈTRES ══ -->
       <div class="page" id="page-parametres">
-        <!-- Mobile profile strip -->
         <div class="mob-profile-strip" id="mob-profile-strip">
-          <div class="mob-av" id="mob-strip-av">?</div>
-          <div class="mob-profile-strip-info">
-            <div class="mob-profile-name" id="mob-strip-name">…</div>
-            <div class="mob-profile-role" id="mob-strip-role">…</div>
+          <div class="mob-av" id="mob-strip-av" style="width:44px;height:44px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;color:#fff;overflow:hidden;flex-shrink:0;">?</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.92rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="mob-strip-name">…</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);" id="mob-strip-role">…</div>
           </div>
           <span style="color:var(--t3);font-size:.8rem;">›</span>
         </div>
@@ -771,7 +693,7 @@ img{display:block;max-width:100%;}
               <div class="s-group">
                 <div class="s-group-title">Langue de l'interface</div>
                 <p style="font-size:.83rem;color:var(--t2);margin-bottom:1.3rem;">Choisissez la langue d'affichage. Sauvegardée automatiquement.</p>
-                <div class="lang-grid" id="lang-grid">
+                <div class="lang-grid">
                   <div class="lang-btn active" data-lang="fr">🇫🇷 Français</div>
                   <div class="lang-btn" data-lang="en">🇬🇧 English</div>
                   <div class="lang-btn" data-lang="es">🇪🇸 Español</div>
@@ -824,7 +746,7 @@ img{display:block;max-width:100%;}
               </div>
               <div class="s-group">
                 <div class="s-group-title">Cache</div>
-                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Cache local</div><div class="s-row-desc" id="cache-size">284 MB utilisés</div></div><button class="btn btn-ghost btn-sm" id="btn-clear-cache">Vider le cache</button></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Cache local</div><div class="s-row-desc" id="cache-size">0 MB utilisés</div></div><button class="btn btn-ghost btn-sm" id="btn-clear-cache">Vider le cache</button></div>
                 <div class="s-row"><div class="s-row-info"><div class="s-row-label">Nettoyage automatique</div><div class="s-row-desc">Supprimer les transferts &gt; 30 jours</div></div><div class="toggle" id="adv-autoclean"></div></div>
               </div>
               <div class="s-group">
@@ -832,7 +754,6 @@ img{display:block;max-width:100%;}
                 <div class="s-row"><div class="s-row-info"><div class="s-row-label" style="color:var(--red);">Réinitialiser les paramètres</div><div class="s-row-desc">Remettre tous les paramètres par défaut</div></div><button class="btn btn-danger btn-sm" id="btn-reset-settings">Réinitialiser</button></div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -840,10 +761,10 @@ img{display:block;max-width:100%;}
       <!-- ══ ANALYTIQUES ══ -->
       <div class="page" id="page-analytiques">
         <div class="kpi-grid">
-          <div class="kpi-card"><div class="kpi-label">Données transférées</div><div class="kpi-val" id="kpi-data">2.8 <span style="font-size:1.1rem;color:var(--blue2);">TB</span></div><div class="kpi-trend up" id="kpi-data-trend">↑ +18% vs mois dernier</div></div>
-          <div class="kpi-card"><div class="kpi-label">Transferts réussis</div><div class="kpi-val" id="kpi-success">1 847</div><div class="kpi-trend up">↑ +127 ce mois</div></div>
-          <div class="kpi-card"><div class="kpi-label">Vitesse pic</div><div class="kpi-val" id="kpi-speed">1.9 <span style="font-size:1.1rem;color:var(--blue2);">GB/s</span></div><div class="kpi-trend up">↑ Nouveau record</div></div>
-          <div class="kpi-card"><div class="kpi-label">Taux d'erreur</div><div class="kpi-val" id="kpi-error">0.6 <span style="font-size:1.1rem;color:var(--blue2);">%</span></div><div class="kpi-trend down">↓ -0.2% cette semaine</div></div>
+          <div class="kpi-card"><div class="kpi-label">Données transférées</div><div class="kpi-val" id="kpi-data">— <span style="font-size:1.1rem;color:var(--blue2);">GB</span></div><div class="kpi-trend up" id="kpi-data-trend">↑ ce mois</div></div>
+          <div class="kpi-card"><div class="kpi-label">Transferts réussis</div><div class="kpi-val" id="kpi-success">—</div><div class="kpi-trend up">↑ total</div></div>
+          <div class="kpi-card"><div class="kpi-label">Vitesse pic</div><div class="kpi-val" id="kpi-speed">— <span style="font-size:1.1rem;color:var(--blue2);">MB/s</span></div><div class="kpi-trend up">↑ réseau LAN</div></div>
+          <div class="kpi-card"><div class="kpi-label">Taux d'erreur</div><div class="kpi-val" id="kpi-error">— <span style="font-size:1.1rem;color:var(--blue2);">%</span></div><div class="kpi-trend" id="kpi-error-trend">—</div></div>
         </div>
         <div class="two-col">
           <div class="chart-card">
@@ -872,54 +793,24 @@ img{display:block;max-width:100%;}
 </div><!-- app-shell -->
 </div><!-- #app-shell -->
 
-<!-- ══ BOTTOM NAV (mobile) ══ -->
+<!-- BOTTOM NAV (mobile) -->
 <nav id="bottom-nav">
-  <div class="bn-item active" data-page="transferts">
-    <div class="bn-active-pill"></div>
-    <div class="bn-icon">⚡</div>
-    <div class="bn-label">Transferts</div>
-  </div>
-  <div class="bn-item" data-page="appareils">
-    <div class="bn-active-pill"></div>
-    <div class="bn-icon">📱</div>
-    <div class="bn-label">Appareils</div>
-  </div>
-  <div class="bn-item" data-page="fichiers">
-    <div class="bn-active-pill"></div>
-    <div class="bn-icon">📂</div>
-    <div class="bn-label">Fichiers</div>
-  </div>
-  <div class="bn-item" data-page="sync">
-    <div class="bn-active-pill"></div>
-    <div class="bn-icon">🔄</div>
-    <div class="bn-label">Sync</div>
-  </div>
-  <div class="bn-item" id="bn-more-btn">
-    <div class="bn-active-pill"></div>
-    <div class="bn-icon">⋯</div>
-    <div class="bn-label">Plus</div>
-  </div>
+  <div class="bn-item active" data-page="transferts"><div class="bn-active-pill"></div><div class="bn-icon">⚡</div><div class="bn-label">Transferts</div></div>
+  <div class="bn-item" data-page="appareils"><div class="bn-active-pill"></div><div class="bn-icon">📱</div><div class="bn-label">Appareils</div></div>
+  <div class="bn-item" data-page="fichiers"><div class="bn-active-pill"></div><div class="bn-icon">📂</div><div class="bn-label">Fichiers</div></div>
+  <div class="bn-item" data-page="sync"><div class="bn-active-pill"></div><div class="bn-icon">🔄</div><div class="bn-label">Sync</div></div>
+  <div class="bn-item" id="bn-more-btn"><div class="bn-active-pill"></div><div class="bn-icon">⋯</div><div class="bn-label">Plus</div></div>
 </nav>
-
-<!-- ══ MORE PANEL (mobile) ══ -->
 <div class="bn-more-overlay" id="bn-more-overlay"></div>
 <div id="bn-more-panel">
   <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:.3rem 1rem .7rem;border-bottom:1px solid var(--b1);margin-bottom:.5rem;">Navigation</div>
-  <div class="bn-more-item" data-page="parametres" id="more-settings">
-    <span class="bn-more-icon">⚙️</span> Paramètres
-  </div>
-  <div class="bn-more-item" data-page="analytiques" id="more-analytics">
-    <span class="bn-more-icon">📊</span> Analytiques
-  </div>
-  <div class="bn-more-item" id="more-logout" style="color:var(--red);margin-top:.3rem;border-top:1px solid var(--b1);padding-top:.8rem;">
-    <span class="bn-more-icon">⎋</span> Déconnexion
-  </div>
+  <div class="bn-more-item" id="more-settings"><span class="bn-more-icon">⚙️</span> Paramètres</div>
+  <div class="bn-more-item" id="more-analytics"><span class="bn-more-icon">📊</span> Analytiques</div>
+  <div class="bn-more-item" id="more-logout" style="color:var(--red);margin-top:.3rem;border-top:1px solid var(--b1);padding-top:.8rem;"><span class="bn-more-icon">⎋</span> Déconnexion</div>
 </div>
-
-<!-- ══ FAB (mobile) ══ -->
 <div id="mobile-fab">＋</div>
 
-<!-- ══ SEARCH OVERLAY (mobile) ══ -->
+<!-- MOBILE SEARCH -->
 <div id="mobile-search-overlay">
   <div class="mob-search-bar">
     <span style="color:var(--t3);font-size:1rem;">🔍</span>
@@ -939,7 +830,7 @@ img{display:block;max-width:100%;}
     </div>
     <div class="field-row">
       <div class="field">
-        <label>Taille</label>
+        <label>Taille estimée</label>
         <input type="text" id="mt-size" placeholder="ex: 4.2 GB">
       </div>
       <div class="field">
@@ -1002,112 +893,76 @@ img{display:block;max-width:100%;}
   </div>
 </div>
 
+<!-- MODAL AJOUT RÈGLE SYNC -->
+<div class="modal-bg" id="modal-rule">
+  <div class="modal">
+    <div class="modal-title">Nouvelle règle de sync</div>
+    <div class="field"><label>Nom de la règle</label><input type="text" id="mr-name" placeholder="ex: Sync Photos"></div>
+    <div class="field-row">
+      <div class="field"><label>Source</label><select id="mr-source"><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option><option>NAS Home</option></select></div>
+      <div class="field"><label>Destination</label><select id="mr-dest"><option>NAS Home</option><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option></select></div>
+    </div>
+    <div class="field">
+      <label>Fréquence</label>
+      <select id="mr-freq">
+        <option value="realtime">Temps réel</option>
+        <option value="hourly">Toutes les heures</option>
+        <option value="daily">Quotidien 03:00</option>
+        <option value="manual">Manuel</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="mr-cancel">Annuler</button>
+      <button class="btn btn-primary" id="mr-confirm">Créer la règle</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast-wrap"></div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 /* ══ SUPABASE ══ */
-const SUPABASE_URL = "https://mpnfvrizbluhhjcfzztc.supabase.co";
-const SUPABASE_KEY = "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr";
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(
+  "https://mpnfvrizbluhhjcfzztc.supabase.co",
+  "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
+);
 
 /* ══ STATE ══ */
 let session = null, profile = null;
 let currentPage = 'transferts';
 let currentLang = localStorage.getItem('creo_lang') || 'fr';
 let fileView = 'grid';
+let fileFilter = 'all';
+let fileSort = 'date-desc';
+let transferFilter = 'all';
+let transferSort = 'date-desc';
 let notifSettings = { done: true, error: true, start: false, device: true, disk: true };
 
-/* ══ DONNÉES SIMULÉES (liées au profil connecté) ══ */
+/* In-memory active transfers */
+let activeTransfers = [];
+let nextTransferId = 100;
+
+/* DB data (loaded from Supabase) */
 let TRANSFER_HISTORY = [];
 let DEVICES = [];
 let FILES = [];
 let SYNC_RULES = [];
 let syncLog = [];
-let activeTransfers = [];
-let nextTransferId = 100;
-
-function buildUserData() {
-  const now = Date.now();
-  TRANSFER_HISTORY = [
-    { id:1, name:'montage_final.mp4',       icon:'🎬', size:'4.2 GB', sizeB:4.2e9, type:'video',   dest:'PC Bureau',    speed:'1.4 GB/s', status:'done',  dir:'sent',     date:'14:32', ts: now-5*60000 },
-    { id:2, name:'backup_janvier.zip',      icon:'📦', size:'12.8 GB',sizeB:12.8e9,type:'archive', dest:'NAS Home',     speed:'980 MB/s', status:'done',  dir:'sent',     date:'13:14', ts: now-62*60000 },
-    { id:3, name:'rapport_annuel.pdf',      icon:'📄', size:'1.4 MB', sizeB:1.4e6, type:'doc',     dest:'PC Bureau',    speed:'—',        status:'wait',  dir:'sent',     date:'—',     ts: now-90*60000 },
-    { id:4, name:'photos_vacances.tar',     icon:'🖼️', size:'23.1 GB',sizeB:23.1e9,type:'archive', dest:'NAS Home',     speed:'1.2 GB/s', status:'done',  dir:'sent',     date:'11:08', ts: now-200*60000 },
-    { id:5, name:'studio_session_03.aiff',  icon:'🎵', size:'2.7 GB', sizeB:2.7e9, type:'audio',   dest:'MacBook Pro',  speed:'—',        status:'error', dir:'sent',     date:'09:51', ts: now-290*60000 },
-    { id:6, name:'maquettes_brand.fig',     icon:'🎨', size:'340 MB', sizeB:340e6, type:'design',  dest:'PC Bureau',    speed:'810 MB/s', status:'done',  dir:'received', date:'08:22', ts: now-370*60000 },
-    { id:7, name:'plans_archi_v3.dwg',      icon:'📐', size:'890 MB', sizeB:890e6, type:'doc',     dest:'PC Bureau',    speed:'1.1 GB/s', status:'done',  dir:'sent',     date:'09:22', ts: now-300*60000 },
-    { id:8, name:'assets_brand_2025.zip',   icon:'📦', size:'5.4 GB', sizeB:5.4e9, type:'archive', dest:'NAS Home',     speed:'920 MB/s', status:'done',  dir:'sent',     date:'07:10', ts: now-420*60000 },
-  ];
-
-  DEVICES = [
-    { id:1, name:'PC Bureau',     icon:'🖥️', os:'Windows 11 · x86_64', online:true,  speed:'1.4 GB/s', network:'LAN',   free:'2.1 TB', version:'v4.2.1' },
-    { id:2, name:'MacBook Air M3',icon:'💻', os:'macOS 15.2 · ARM64',   online:true,  speed:'1.1 GB/s', network:'LAN',   free:'412 GB', version:'v4.2.1' },
-    { id:3, name:'NAS Home',      icon:'📦', os:'Synology DS923+',       online:true,  speed:'980 MB/s', network:'LAN',   free:'8.2 TB', version:'v4.1.8', warning:'78%' },
-    { id:4, name:'iPhone 16 Pro', icon:'📱', os:'iOS 18.3 · ARM64',     online:true,  speed:'340 MB/s', network:'Wi-Fi', free:'156 GB', version:'v4.2.0' },
-    { id:5, name:'MacBook Pro 16',icon:'💻', os:'macOS 14.6 · ARM64',   online:false, speed:'—',         network:'—',     free:'1.1 TB', version:'v4.1.9' },
-    { id:6, name:'PC Travail',    icon:'🖥️', os:'Windows 10 · x86_64',  online:false, speed:'—',         network:'—',     free:'780 GB', version:'v4.0.2', outdated:true },
-  ];
-
-  FILES = [
-    { id:1, name:'montage_final.mp4',      icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'4.2 GB', sizeB:4.2e9,   date:'14 avr. 14:32', ts:now-5*60000,   status:'done',  statusLabel:'✓ Sync' },
-    { id:2, name:'maquettes_v8.fig',       icon:'🎨', type:'design',  typeLabel:'FIGMA',   size:'210 MB', sizeB:210e6,   date:'14 avr. 13:55', ts:now-60*60000,  status:'send',  statusLabel:'↑ Envoi' },
-    { id:3, name:'backup_janvier.zip',     icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'12.8 GB',sizeB:12.8e9,  date:'14 avr. 13:14', ts:now-90*60000,  status:'done',  statusLabel:'✓ Sync' },
-    { id:4, name:'rapport_annuel.pdf',     icon:'📄', type:'doc',     typeLabel:'PDF',     size:'1.4 MB', sizeB:1.4e6,   date:'14 avr. 12:00', ts:now-130*60000, status:'wait',  statusLabel:'⏳ Attente' },
-    { id:5, name:'photos_vacances.tar',    icon:'🖼️', type:'archive', typeLabel:'ARCHIVE', size:'23.1 GB',sizeB:23.1e9,  date:'14 avr. 11:08', ts:now-190*60000, status:'done',  statusLabel:'✓ Sync' },
-    { id:6, name:'studio_session_03.aiff', icon:'🎵', type:'audio',   typeLabel:'AUDIO',   size:'2.7 GB', sizeB:2.7e9,   date:'14 avr. 09:51', ts:now-290*60000, status:'error', statusLabel:'✕ Erreur' },
-    { id:7, name:'plans_archi_v3.dwg',     icon:'📐', type:'doc',     typeLabel:'CAD',     size:'890 MB', sizeB:890e6,   date:'14 avr. 09:22', ts:now-310*60000, status:'done',  statusLabel:'✓ Sync' },
-    { id:8, name:'assets_brand_2025.zip',  icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'5.4 GB', sizeB:5.4e9,   date:'13 avr. 07:10', ts:now-420*60000, status:'done',  statusLabel:'✓ Sync' },
-    { id:9, name:'logo_creo_v2.svg',       icon:'🎨', type:'design',  typeLabel:'SVG',     size:'28 KB',  sizeB:28e3,    date:'12 avr. 16:45', ts:now-500*60000, status:'done',  statusLabel:'✓ Sync' },
-    { id:10,name:'cours_react.mp4',        icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'1.8 GB', sizeB:1.8e9,   date:'11 avr. 10:00', ts:now-700*60000, status:'done',  statusLabel:'✓ Sync' },
-  ];
-
-  SYNC_RULES = [
-    { name:'Sync Photos',   source:'iPhone 16 Pro', dest:'NAS Home',     freq:'Temps réel',        active:true },
-    { name:'Backup Docs',   source:'PC Bureau',     dest:'NAS Home',     freq:'Toutes les heures', active:true },
-    { name:'Sync Projets',  source:'MacBook Air M3',dest:'PC Bureau',    freq:'Quotidien 03:00',   active:true },
-    { name:'Archive Vidéos',source:'PC Bureau',     dest:'NAS Home',     freq:'Manuel',            active:false },
-  ];
-
-  syncLog = [
-    { color:'var(--green)', text:'<strong>backup_janvier.zip</strong> synchronisé sur NAS Home', time:'14:32' },
-    { color:'var(--blue)',  text:'Démarrage sync <strong>maquettes_v8.fig</strong>',              time:'14:28' },
-    { color:'var(--red)',   text:'Conflit détecté — <strong>studio_session_03.aiff</strong>',     time:'13:51' },
-    { color:'var(--amber)', text:'NAS Home — espace disque à <strong>78%</strong>',               time:'12:10' },
-    { color:'var(--green)', text:'<strong>1 247 fichiers</strong> synchronisés avec succès',      time:'11:02' },
-  ];
-}
-
-/* ══ NOTIFICATIONS ══ */
 let NOTIFS = [];
-let hasUnreadNotif = true;
-
-function buildNotifs() {
-  NOTIFS = [
-    { color:'var(--green)', text:'<strong>montage_final.mp4</strong> transféré avec succès', time:'Il y a 3 min' },
-    { color:'var(--blue)',  text:'MacBook Air <strong>connecté</strong> sur réseau LAN',       time:'Il y a 12 min' },
-    { color:'var(--amber)', text:'NAS Home — espace à <strong>78%</strong>',                  time:'Il y a 1h' },
-    { color:'var(--blue2)', text:'Sync terminée — <strong>1 247 fichiers</strong> mis à jour', time:'Il y a 2h' },
-  ];
-}
 
 /* ══ INIT ══ */
 async function init() {
-  document.getElementById('loading-txt').textContent = 'Vérification de la session…';
+  setLoadingText('Vérification de la session…');
   const { data:{ session: s } } = await supabase.auth.getSession();
-  if (!s) {
-    document.getElementById('loading-txt').textContent = 'Redirection vers la connexion…';
-    setTimeout(() => { window.location.href = '/creo/login/login.html'; }, 800);
-    return;
-  }
+  if (!s) { window.location.href = '/creo/login/login.html'; return; }
   session = s;
 
-  document.getElementById('loading-txt').textContent = 'Chargement du profil…';
+  setLoadingText('Chargement du profil…');
   const { data: p } = await supabase.from('profiles').select('*').eq('id', s.user.id).single();
   if (!p?.username || !p?.client_code || !p?.type) {
-    document.getElementById('loading-txt').textContent = 'Complétion du profil requise…';
-    setTimeout(() => { window.location.href = '/creo/login/complete-profile.html'; }, 800);
+    window.location.href = '/creo/login/complete-profile.html';
     return;
   }
   profile = p;
@@ -1118,8 +973,15 @@ async function init() {
     if (event === 'SIGNED_OUT') window.location.href = '/creo/login/login.html';
   });
 
-  buildUserData();
-  buildNotifs();
+  setLoadingText('Chargement des données…');
+  await Promise.all([
+    loadTransfers(),
+    loadDevices(),
+    loadFiles(),
+    loadSyncRules(),
+    loadSyncLog(),
+    loadNotifs(),
+  ]);
 
   renderSidebar();
   renderSettings();
@@ -1133,6 +995,178 @@ async function init() {
   hideLoading();
   startLiveStats();
   setupEventListeners();
+
+  // Realtime subscriptions
+  setupRealtime();
+}
+
+function setLoadingText(txt) {
+  const el = document.getElementById('loading-txt');
+  if (el) el.textContent = txt;
+}
+
+/* ══ SUPABASE DATA LOADERS ══ */
+async function loadTransfers() {
+  const { data, error } = await supabase
+    .from('transfers')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false })
+    .limit(100);
+  if (!error && data) {
+    TRANSFER_HISTORY = data.map(dbToTransfer);
+  }
+}
+
+async function loadDevices() {
+  const { data, error } = await supabase
+    .from('devices')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false });
+  if (!error && data) {
+    DEVICES = data.map(dbToDevice);
+  }
+}
+
+async function loadFiles() {
+  const { data, error } = await supabase
+    .from('files')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false });
+  if (!error && data) {
+    FILES = data.map(dbToFile);
+  }
+}
+
+async function loadSyncRules() {
+  const { data, error } = await supabase
+    .from('sync_rules')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false });
+  if (!error && data) {
+    SYNC_RULES = data;
+  }
+}
+
+async function loadSyncLog() {
+  const { data, error } = await supabase
+    .from('sync_log')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  if (!error && data) {
+    syncLog = data;
+  }
+}
+
+async function loadNotifs() {
+  const { data, error } = await supabase
+    .from('notifications')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .order('created_at', { ascending: false })
+    .limit(20);
+  if (!error && data) {
+    NOTIFS = data;
+  } else {
+    // Fallback default notifs
+    NOTIFS = [
+      { color:'var(--blue2)', text:'Bienvenue sur CREO Dashboard !', time_ago:'Maintenant' },
+    ];
+  }
+}
+
+/* ══ DB MAPPERS ══ */
+const TYPE_ICONS = { video:'🎬', archive:'📦', doc:'📄', image:'🖼️', audio:'🎵', design:'🎨', other:'📁' };
+const DEVICE_ICONS = { desktop:'🖥️', laptop:'💻', phone:'📱', nas:'📦' };
+
+function dbToTransfer(row) {
+  return {
+    id: row.id,
+    name: row.name || 'fichier.dat',
+    icon: TYPE_ICONS[row.type] || '📁',
+    size: row.size_label || formatBytes(row.size_bytes || 0),
+    sizeB: row.size_bytes || 0,
+    type: row.type || 'other',
+    dest: row.dest || '—',
+    source: row.source || '—',
+    speed: row.speed || '—',
+    status: row.status || 'done',
+    dir: row.direction || 'sent',
+    date: row.created_at ? new Date(row.created_at).toTimeString().slice(0,5) : '—',
+    ts: row.created_at ? new Date(row.created_at).getTime() : 0,
+  };
+}
+
+function dbToDevice(row) {
+  return {
+    id: row.id,
+    name: row.name || 'Appareil',
+    icon: DEVICE_ICONS[row.type] || '🖥️',
+    os: row.os || '—',
+    online: row.online || false,
+    speed: row.speed || '—',
+    network: row.network || '—',
+    free: row.free_space || '—',
+    version: row.creo_version || 'v4.2.1',
+    warning: row.disk_warning || null,
+    outdated: row.outdated || false,
+  };
+}
+
+function dbToFile(row) {
+  const stMap = { done:'✓ Sync', send:'↑ Envoi', wait:'⏳ Attente', error:'✕ Erreur' };
+  return {
+    id: row.id,
+    name: row.name || 'fichier',
+    icon: TYPE_ICONS[row.type] || '📁',
+    type: row.type || 'other',
+    typeLabel: (row.type || 'other').toUpperCase(),
+    size: row.size_label || formatBytes(row.size_bytes || 0),
+    sizeB: row.size_bytes || 0,
+    date: row.created_at ? new Date(row.created_at).toLocaleDateString('fr-FR', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '—',
+    ts: row.created_at ? new Date(row.created_at).getTime() : 0,
+    status: row.status || 'done',
+    statusLabel: stMap[row.status] || '✓ Sync',
+  };
+}
+
+function formatBytes(bytes) {
+  if (bytes >= 1e12) return (bytes/1e12).toFixed(1)+' TB';
+  if (bytes >= 1e9)  return (bytes/1e9).toFixed(1)+' GB';
+  if (bytes >= 1e6)  return (bytes/1e6).toFixed(1)+' MB';
+  if (bytes >= 1e3)  return (bytes/1e3).toFixed(0)+' KB';
+  return bytes+' B';
+}
+
+/* ══ REALTIME ══ */
+function setupRealtime() {
+  supabase.channel('transfers-changes')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'transfers', filter: `user_id=eq.${session.user.id}` }, (payload) => {
+      const t = dbToTransfer(payload.new);
+      TRANSFER_HISTORY.unshift(t);
+      renderTransfersTable(document.getElementById('search-input').value.trim());
+      updateTransfersStats();
+    })
+    .subscribe();
+
+  supabase.channel('devices-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'devices', filter: `user_id=eq.${session.user.id}` }, async () => {
+      await loadDevices();
+      renderDevicesPage();
+    })
+    .subscribe();
+
+  supabase.channel('files-changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'files', filter: `user_id=eq.${session.user.id}` }, async () => {
+      await loadFiles();
+      renderFilesPage(document.getElementById('search-input').value.trim());
+    })
+    .subscribe();
 }
 
 /* ══ SIDEBAR ══ */
@@ -1145,6 +1179,21 @@ function renderSidebar() {
   document.getElementById('sidebar-role').textContent = profile?.type
     ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1)
     : 'Utilisateur';
+  updateMobProfileStrip();
+}
+
+function updateMobProfileStrip() {
+  if (!session || !profile) return;
+  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
+  const avEl = document.getElementById('mob-strip-av');
+  if (avEl) {
+    if (av) avEl.innerHTML = `<img src="${av}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    else avEl.textContent = initials();
+  }
+  const nameEl = document.getElementById('mob-strip-name');
+  const roleEl = document.getElementById('mob-strip-role');
+  if (nameEl) nameEl.textContent = displayName();
+  if (roleEl) roleEl.textContent = profile?.type ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1) : 'Utilisateur';
 }
 
 function displayName() {
@@ -1153,41 +1202,26 @@ function displayName() {
   return session?.user?.email?.split('@')[0] || 'Utilisateur';
 }
 function initials() {
-  return displayName().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase() || '?';
-}
-
-/* ══ CLIENT CODE BANNER ══ */
-function renderClientCodeBanner() {
-  if (!profile?.client_code) return;
-  const banner = document.getElementById('ccb');
-  document.getElementById('ccb-code').textContent = profile.client_code;
-  banner.style.display = 'flex';
-  document.getElementById('ccb-copy-btn').onclick = () => {
-    navigator.clipboard.writeText(profile.client_code).then(() => {
-      uiToast('success', '✓ Code client copié !');
-    });
-  };
+  return displayName().split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase() || '?';
 }
 
 /* ══ SETTINGS ══ */
 function renderSettings() {
   document.getElementById('settings-code').textContent = profile?.client_code || '—';
   document.getElementById('settings-plan').textContent = profile?.type
-    ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1)
-    : '—';
-  document.getElementById('s-firstname').value  = profile?.first_name || '';
-  document.getElementById('s-lastname').value   = profile?.last_name  || '';
-  document.getElementById('s-email').value      = profile?.email || session?.user?.email || '';
-  document.getElementById('s-username').value   = profile?.username   || '';
+    ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1) : '—';
+  document.getElementById('s-firstname').value = profile?.first_name || '';
+  document.getElementById('s-lastname').value = profile?.last_name || '';
+  document.getElementById('s-email').value = profile?.email || session?.user?.email || '';
+  document.getElementById('s-username').value = profile?.username || '';
   document.getElementById('s-session-email').textContent = session?.user?.email || '';
 
   const av = profile?.avatar_url;
   const avEl = document.getElementById('settings-avatar');
-  const initEl = document.getElementById('settings-avatar-initials');
   if (av) {
     avEl.innerHTML = `<img src="${av}" alt=""><div class="avatar-overlay">📷</div>`;
   } else {
-    if (!avEl.querySelector('img')) initEl.textContent = initials();
+    avEl.innerHTML = `<span id="settings-avatar-initials">${initials()}</span><div class="avatar-overlay">📷</div>`;
   }
 
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
@@ -1196,20 +1230,31 @@ function renderSettings() {
 /* ══ NOTIFICATIONS ══ */
 function renderNotifs() {
   const list = document.getElementById('notif-list');
-  list.innerHTML = NOTIFS.map(n => `
+  if (!NOTIFS.length) {
+    list.innerHTML = `<div style="padding:1.2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucune notification</div>`;
+    return;
+  }
+  list.innerHTML = NOTIFS.slice(0, 8).map(n => `
     <div class="notif-item">
-      <div class="notif-dot" style="background:${n.color};"></div>
-      <div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>
+      <div class="notif-dot" style="background:${n.color || 'var(--blue)'};"></div>
+      <div><div class="notif-text">${n.text || n.message || ''}</div><div class="notif-time">${n.time_ago || formatTimeAgo(n.created_at)}</div></div>
     </div>`).join('');
-  document.getElementById('notif-dot').style.display = hasUnreadNotif ? 'block' : 'none';
+  document.getElementById('notif-dot').style.display = NOTIFS.some(n => !n.read) ? 'block' : 'none';
+}
+
+function formatTimeAgo(ts) {
+  if (!ts) return '—';
+  const diff = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(diff/60000);
+  if (m < 1) return 'À l\'instant';
+  if (m < 60) return `Il y a ${m} min`;
+  const h = Math.floor(m/60);
+  if (h < 24) return `Il y a ${h}h`;
+  return `Il y a ${Math.floor(h/24)}j`;
 }
 
 /* ══ TRANSFERS PAGE ══ */
-let transferFilter = 'all';
-let transferSort   = 'date-desc';
-
 function renderTransfersPage() {
-  renderClientCodeBanner();
   renderActiveTransfers();
   renderTransfersTable();
   updateTransfersStats();
@@ -1223,7 +1268,7 @@ function renderActiveTransfers() {
     return;
   }
   container.innerHTML = activeTransfers.map(t => `
-    <div class="transfer-card ${t.status === 'done' ? 'transfer-done' : t.status === 'error' ? 'transfer-err' : 'active-transfer'}" id="tc-${t.id}">
+    <div class="transfer-card ${t.status==='done'?'transfer-done':t.status==='error'?'transfer-err':'active-transfer'}" id="tc-${t.id}">
       <div class="tc-header">
         <div class="tc-name">
           <span>${t.icon}</span>
@@ -1250,18 +1295,13 @@ function renderActiveTransfers() {
 
 function renderTransfersTable(searchQuery = '') {
   let data = [...TRANSFER_HISTORY];
-
-  if (transferFilter !== 'all') {
-    if (transferFilter === 'sent')     data = data.filter(t => t.dir === 'sent');
-    if (transferFilter === 'received') data = data.filter(t => t.dir === 'received');
-    if (transferFilter === 'error')    data = data.filter(t => t.status === 'error');
-  }
-
+  if (transferFilter === 'sent')     data = data.filter(t => t.dir === 'sent');
+  if (transferFilter === 'received') data = data.filter(t => t.dir === 'received');
+  if (transferFilter === 'error')    data = data.filter(t => t.status === 'error');
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     data = data.filter(t => t.name.toLowerCase().includes(q) || t.dest.toLowerCase().includes(q));
   }
-
   data.sort((a, b) => {
     if (transferSort === 'date-desc') return b.ts - a.ts;
     if (transferSort === 'date-asc')  return a.ts - b.ts;
@@ -1273,10 +1313,9 @@ function renderTransfersTable(searchQuery = '') {
 
   const tbody = document.getElementById('transfers-tbody');
   if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">Aucun résultat</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">Aucun résultat — créez votre premier transfert !</td></tr>`;
     return;
   }
-
   const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err', pause:'st-pause' };
   const stLbl = { done:'✓ Envoyé', send:'↑ Envoi', wait:'⏳ Attente', error:'✕ Erreur', pause:'⏸ Pause' };
 
@@ -1289,28 +1328,32 @@ function renderTransfersTable(searchQuery = '') {
       <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.speed}</td>
       <td><span class="status ${stMap[t.status]||'st-wait'}">${stLbl[t.status]||'—'}</span></td>
       <td class="font-mono" style="font-size:.66rem;color:var(--t3);">${t.date}</td>
-      <td><button class="btn btn-ghost btn-xs" onclick="retryTransfer(${t.id})" title="Réessayer" style="${t.status!=='error'?'opacity:.3;pointer-events:none;':''}">↺</button></td>
+      <td><button class="btn btn-ghost btn-xs" onclick="retryTransfer('${t.id}')" title="Réessayer" style="${t.status!=='error'?'opacity:.3;pointer-events:none;':''}">↺</button></td>
     </tr>`;
   }).join('');
 }
 
 function updateTransfersStats() {
-  const total = TRANSFER_HISTORY.filter(t=>t.status==='done').reduce((s,t)=>s+t.sizeB,0);
+  const done = TRANSFER_HISTORY.filter(t => t.status === 'done');
+  const total = done.reduce((s,t) => s + t.sizeB, 0);
   const gb = total / 1e9;
   document.getElementById('stat-total').innerHTML = gb >= 1000
     ? `${(gb/1000).toFixed(1)} <span class="unit">TB</span>`
     : `${gb.toFixed(1)} <span class="unit">GB</span>`;
-  const online = DEVICES.filter(d=>d.online).length;
+  const online = DEVICES.filter(d => d.online).length;
   document.getElementById('stat-devices').innerHTML = `${online} <span class="unit" style="color:var(--green);">●</span>`;
+  const total2 = TRANSFER_HISTORY.length;
+  const errors = TRANSFER_HISTORY.filter(t => t.status === 'error').length;
+  const rate = total2 ? (((total2 - errors) / total2) * 100).toFixed(1) : '—';
+  document.getElementById('stat-success').innerHTML = total2 ? `${rate} <span class="unit">%</span>` : `— <span class="unit">%</span>`;
 }
 
 /* ══ ACTIVE TRANSFERS ENGINE ══ */
-function addActiveTransfer(data) {
-  const icons = { video:'🎬', archive:'📦', doc:'📄', image:'🖼️', audio:'🎵', design:'🎨', other:'📁' };
+async function addActiveTransfer(data) {
   const t = {
     id: nextTransferId++,
     name: data.name || 'fichier.dat',
-    icon: icons[data.type] || '📁',
+    icon: TYPE_ICONS[data.type] || '📁',
     size: data.size || '—',
     source: data.source || 'PC Bureau',
     dest: data.dest || 'NAS Home',
@@ -1320,17 +1363,20 @@ function addActiveTransfer(data) {
   };
   activeTransfers.push(t);
   renderActiveTransfers();
-  const interval = setInterval(() => {
+
+  const interval = setInterval(async () => {
     const idx = activeTransfers.findIndex(x => x.id === t.id);
     if (idx === -1) { clearInterval(interval); return; }
     if (activeTransfers[idx].status === 'paused') return;
+
     const inc = 0.8 + Math.random() * 2.5;
     activeTransfers[idx].progress = Math.min(100, activeTransfers[idx].progress + inc);
     const spd = (400 + Math.random() * 1200).toFixed(0);
     activeTransfers[idx].speedLabel = `↑ ${spd} MB/s`;
+
     const prog = document.getElementById(`tc-prog-${t.id}`);
     const pct  = document.getElementById(`tc-pct-${t.id}`);
-    const spdEl= document.getElementById(`tc-speed-${t.id}`);
+    const spdEl = document.getElementById(`tc-speed-${t.id}`);
     if (prog) prog.style.width = activeTransfers[idx].progress + '%';
     if (pct)  pct.textContent  = Math.round(activeTransfers[idx].progress) + '% · ' + t.size;
     if (spdEl) spdEl.textContent = activeTransfers[idx].speedLabel;
@@ -1341,18 +1387,66 @@ function addActiveTransfer(data) {
       activeTransfers[idx].speedLabel = '✓ Terminé';
       renderActiveTransfers();
       if (notifSettings.done) uiToast('success', `✓ ${t.name} transféré !`);
-      TRANSFER_HISTORY.unshift({
-        id: Date.now(), name: t.name, icon: t.icon,
-        size: t.size, sizeB: 1e9, type: data.type || 'other',
-        dest: t.dest, speed: spd + ' MB/s', status: 'done',
-        dir: 'sent', date: new Date().toTimeString().slice(0,5), ts: Date.now()
+
+      // Save to Supabase
+      const { data: newT, error } = await supabase.from('transfers').insert({
+        user_id: session.user.id,
+        name: t.name,
+        type: data.type || 'other',
+        size_label: t.size,
+        size_bytes: parseSizeToBytes(t.size),
+        dest: t.dest,
+        source: t.source,
+        speed: spd + ' MB/s',
+        status: 'done',
+        direction: 'sent',
+      }).select().single();
+
+      if (!error && newT) {
+        TRANSFER_HISTORY.unshift(dbToTransfer(newT));
+      }
+
+      // Also add as file record
+      await supabase.from('files').insert({
+        user_id: session.user.id,
+        name: t.name,
+        type: data.type || 'other',
+        size_label: t.size,
+        size_bytes: parseSizeToBytes(t.size),
+        status: 'done',
       });
+
+      // Add sync log entry
+      await addSyncLogEntry('var(--green)', `<strong>${t.name}</strong> transféré vers ${t.dest}`, new Date().toTimeString().slice(0,5));
+
+      // Add notification
+      await supabase.from('notifications').insert({
+        user_id: session.user.id,
+        text: `<strong>${t.name}</strong> transféré avec succès`,
+        color: 'var(--green)',
+        read: false,
+      });
+
       renderTransfersTable(document.getElementById('search-input').value.trim());
       updateTransfersStats();
-      addSyncLogEntry('var(--green)', `<strong>${t.name}</strong> transféré vers ${t.dest}`, new Date().toTimeString().slice(0,5));
+      renderFilesPage(document.getElementById('search-input').value.trim());
     }
   }, 300);
+
   if (notifSettings.start) uiToast('info', `⚡ Démarrage : ${t.name}`);
+}
+
+function parseSizeToBytes(str) {
+  if (!str) return 0;
+  const m = str.match(/([\d.]+)\s*(TB|GB|MB|KB|B)?/i);
+  if (!m) return 0;
+  const n = parseFloat(m[1]);
+  const u = (m[2]||'B').toUpperCase();
+  if (u==='TB') return n*1e12;
+  if (u==='GB') return n*1e9;
+  if (u==='MB') return n*1e6;
+  if (u==='KB') return n*1e3;
+  return n;
 }
 
 window.pauseTransfer = function(id) {
@@ -1363,18 +1457,28 @@ window.removeTransfer = function(id) {
   activeTransfers = activeTransfers.filter(x => x.id !== id);
   renderActiveTransfers();
 };
-window.retryTransfer = function(id) {
+window.retryTransfer = async function(id) {
   const t = TRANSFER_HISTORY.find(x => x.id === id);
-  if (t) { addActiveTransfer({ name: t.name, type: t.type, size: t.size, dest: t.dest }); showPage('transferts', document.querySelector('[data-page="transferts"]')); }
+  if (t) {
+    // Mark old as pending
+    await supabase.from('transfers').update({ status: 'send' }).eq('id', id);
+    addActiveTransfer({ name: t.name, type: t.type, size: t.size, dest: t.dest, source: t.source });
+    showPage('transferts', document.querySelector('[data-page="transferts"]'));
+  }
 };
 
 /* ══ DEVICES PAGE ══ */
 function renderDevicesPage() {
-  const online = DEVICES.filter(d=>d.online).length;
+  const online = DEVICES.filter(d => d.online).length;
   document.getElementById('dev-online').innerHTML = `${online} <span class="unit" style="color:var(--green);">en ligne</span>`;
   document.getElementById('dev-total').textContent = `${DEVICES.length} appareils au total`;
-  document.getElementById('dev-bw').innerHTML = `3.4 <span class="unit">GB/s</span>`;
-  document.getElementById('dev-last-sync').textContent = '14:32';
+  document.getElementById('dev-bw').innerHTML = online > 0 ? `${(online * 0.8 + Math.random()).toFixed(1)} <span class="unit">GB/s</span>` : `— <span class="unit">GB/s</span>`;
+  document.getElementById('dev-last-sync').textContent = DEVICES.length > 0 ? new Date().toTimeString().slice(0,5) : '—';
+
+  if (DEVICES.length === 0) {
+    document.getElementById('devices-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);">Aucun appareil — ajoutez votre premier appareil !</div>`;
+    return;
+  }
 
   document.getElementById('devices-grid').innerHTML = DEVICES.map(d => `
     <div class="device-card ${d.online ? 'online' : 'offline'}">
@@ -1387,36 +1491,53 @@ function renderDevicesPage() {
       <div class="dc-stats">
         <div class="dc-stat"><div class="dc-stat-val">${d.speed}</div><div class="dc-stat-key">Vitesse max</div></div>
         <div class="dc-stat"><div class="dc-stat-val">${d.network}</div><div class="dc-stat-key">Réseau</div></div>
-        <div class="dc-stat"><div class="dc-stat-val" style="${d.warning?'color:var(--amber)':d.outdated?'color:var(--amber)':''}">${d.free}</div><div class="dc-stat-key">Espace libre</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="${d.warning||d.outdated?'color:var(--amber)':''}">${d.free}</div><div class="dc-stat-key">Espace libre</div></div>
         <div class="dc-stat"><div class="dc-stat-val" style="${d.outdated?'color:var(--amber)':''}">${d.version}</div><div class="dc-stat-key">${d.outdated?'⚠ Mise à jour':'Version CREO'}</div></div>
       </div>
       <div class="dc-actions">
         ${d.online
-          ? `<button class="btn btn-primary btn-sm" onclick="startTransferTo('${d.name}')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button>`
-          : `<button class="btn btn-ghost btn-sm" disabled style="opacity:.35;">Hors ligne</button><button class="btn btn-ghost btn-sm">Infos</button>`
+          ? `<button class="btn btn-primary btn-sm" onclick="startTransferTo('${d.name}')">Transférer</button><button class="btn btn-ghost btn-sm" onclick="toggleDeviceOnline('${d.id}',false)">Hors ligne</button>`
+          : `<button class="btn btn-ghost btn-sm" onclick="toggleDeviceOnline('${d.id}',true)">Connecter</button><button class="btn btn-danger btn-xs" onclick="deleteDevice('${d.id}')">Supprimer</button>`
         }
       </div>
     </div>`).join('');
 }
 
-window.startTransferTo = function(destName) {
-  document.getElementById('mt-dest').value = destName;
+window.startTransferTo = function(deviceName) {
+  document.getElementById('mt-dest').value = deviceName;
   openModal('modal-transfer');
 };
 
-/* ══ FILES PAGE ══ */
-let fileFilter = 'all';
-let fileSort   = 'date-desc';
+window.toggleDeviceOnline = async function(id, online) {
+  await supabase.from('devices').update({ online }).eq('id', id);
+  const dev = DEVICES.find(d => d.id === id);
+  if (dev) {
+    dev.online = online;
+    renderDevicesPage();
+    updateTransfersStats();
+    uiToast(online?'success':'info', online ? `✓ ${dev.name} connecté` : `${dev.name} déconnecté`);
+    if (online && notifSettings.device) {
+      await supabase.from('notifications').insert({ user_id: session.user.id, text: `<strong>${dev.name}</strong> connecté au réseau`, color: 'var(--blue)', read: false });
+    }
+  }
+};
 
+window.deleteDevice = async function(id) {
+  if (!confirm('Supprimer cet appareil ?')) return;
+  await supabase.from('devices').delete().eq('id', id);
+  DEVICES = DEVICES.filter(d => d.id !== id);
+  renderDevicesPage();
+  uiToast('info', 'Appareil supprimé');
+};
+
+/* ══ FILES PAGE ══ */
 function renderFilesPage(searchQuery = '') {
   let data = [...FILES];
-
   if (fileFilter !== 'all') data = data.filter(f => f.type === fileFilter);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     data = data.filter(f => f.name.toLowerCase().includes(q));
   }
-
   data.sort((a, b) => {
     if (fileSort === 'date-desc') return b.ts - a.ts;
     if (fileSort === 'date-asc')  return a.ts - b.ts;
@@ -1425,133 +1546,239 @@ function renderFilesPage(searchQuery = '') {
     return 0;
   });
 
-  document.getElementById('files-count').textContent = FILES.length.toLocaleString();
-  document.getElementById('files-delta').textContent = '↑ +127 cette semaine';
-  document.getElementById('files-shared').textContent = '43';
-  document.getElementById('files-lastmod').textContent = '14:32';
-  document.getElementById('files-lastmod-name').textContent = FILES[0]?.name || '—';
+  // Stats
+  document.getElementById('files-count').textContent = data.length;
+  const totalSizeB = data.reduce((s,f)=>s+f.sizeB,0);
+  document.getElementById('files-size').innerHTML = formatBytes(totalSizeB).replace(' ', ' <span class="unit">').replace(/\s*$/, '</span>');
+  document.getElementById('files-shared').textContent = data.filter(f=>f.status==='done').length;
+  if (data.length > 0) {
+    const last = data[0];
+    document.getElementById('files-lastmod').textContent = last.date.split(' ')[0];
+    document.getElementById('files-lastmod-name').textContent = last.name.length > 14 ? last.name.slice(0,14)+'…' : last.name;
+  }
 
+  // Grid (recent = first 8)
+  const recent = data.slice(0, 8);
   const grid = document.getElementById('files-grid');
-  const recent = data.slice(0, 6);
-  const isListView = fileView === 'list';
-  grid.className = isListView ? 'files-grid list-view' : 'files-grid';
-  grid.innerHTML = recent.map(f => {
-    const name = searchQuery ? f.name.replace(new RegExp(searchQuery.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
-    return `<div class="file-card${isListView?' list-view':''}" onclick="uiToast('info','${f.name}')">
-      <div class="file-card-icon">${f.icon}</div>
-      <div class="${isListView?'file-card-info':''}">
-        <div class="file-card-name">${name}</div>
-        <div class="file-card-meta">${f.size} · ${f.date.split(' ')[2]||f.date}</div>
-      </div>
-    </div>`;
-  }).join('');
+  grid.className = `files-grid${fileView==='list'?' list-view':''}`;
 
+  if (fileView === 'list') {
+    grid.innerHTML = recent.map(f => `
+      <div class="file-card list-view">
+        <div class="file-card-icon">${f.icon}</div>
+        <div class="file-card-info">
+          <div class="file-card-name">${f.name}</div>
+          <div class="file-card-meta">${f.typeLabel} · ${f.size}</div>
+        </div>
+        <span class="status ${f.status==='done'?'st-done':f.status==='send'?'st-send':f.status==='error'?'st-err':'st-wait'}">${f.statusLabel}</span>
+      </div>`).join('');
+  } else {
+    grid.innerHTML = recent.map(f => `
+      <div class="file-card">
+        <div class="file-card-icon">${f.icon}</div>
+        <div class="file-card-name">${f.name}</div>
+        <div class="file-card-meta">${f.typeLabel} · ${f.size}</div>
+      </div>`).join('');
+  }
+
+  if (data.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);">Aucun fichier — lancez un transfert pour les voir apparaître.</div>`;
+  }
+
+  // Table (all)
   const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err' };
-  document.getElementById('files-tbody').innerHTML = data.map(f => {
-    const name = searchQuery ? f.name.replace(new RegExp(searchQuery.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
-    return `<tr>
-      <td><div class="td-name"><span class="td-icon">${f.icon}</span><div><div class="td-fname">${name}</div></div></div></td>
-      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${f.typeLabel}</td>
+  document.getElementById('files-tbody').innerHTML = data.length === 0
+    ? `<tr><td colspan="6" class="table-empty">Aucun fichier</td></tr>`
+    : data.map(f => `<tr>
+      <td><div class="td-name"><span class="td-icon">${f.icon}</span><div><div class="td-fname">${f.name}</div><div class="td-fmeta">${f.typeLabel}</div></div></div></td>
+      <td><span class="status st-wait" style="font-size:.58rem;">${f.typeLabel}</span></td>
       <td class="font-mono" style="font-size:.76rem;">${f.size}</td>
-      <td style="font-size:.76rem;color:var(--t3);">${f.date}</td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${f.date}</td>
       <td><span class="status ${stMap[f.status]||'st-wait'}">${f.statusLabel}</span></td>
-      <td><button class="btn btn-ghost btn-xs" onclick="uiToast('info','Options pour ${f.name}')">···</button></td>
-    </tr>`;
-  }).join('');
+      <td><button class="btn btn-ghost btn-xs" onclick="deleteFile('${f.id}')">✕</button></td>
+    </tr>`).join('');
 }
+
+window.deleteFile = async function(id) {
+  if (!confirm('Supprimer ce fichier de l\'index ?')) return;
+  await supabase.from('files').delete().eq('id', id);
+  FILES = FILES.filter(f => f.id !== id);
+  renderFilesPage(document.getElementById('search-input').value.trim());
+  uiToast('info', 'Fichier supprimé de l\'index');
+};
 
 /* ══ SYNC PAGE ══ */
 function renderSyncPage() {
-  document.getElementById('sync-synced').textContent   = '1 247';
-  document.getElementById('sync-pending').textContent  = '312';
-  document.getElementById('sync-conflicts').textContent = '4';
-  document.getElementById('sync-last-update').textContent = 'Dernière MAJ il y a 3 min';
+  const done = TRANSFER_HISTORY.filter(t => t.status === 'done').length;
+  const wait = TRANSFER_HISTORY.filter(t => t.status === 'wait').length;
+  const errs = TRANSFER_HISTORY.filter(t => t.status === 'error').length;
+  const total = done + wait + errs;
+  const pct = total ? Math.round((done / total) * 100) : 75;
+  document.getElementById('sync-pct').textContent = pct + '%';
+  const offset = 339.29 * (1 - pct / 100);
+  document.getElementById('sync-circle-prog').style.strokeDashoffset = offset;
+  document.getElementById('sync-synced').textContent = done;
+  document.getElementById('sync-pending').textContent = wait;
+  document.getElementById('sync-conflicts').textContent = errs;
+  document.getElementById('sync-last-update').textContent = `Dernière MAJ ${new Date().toTimeString().slice(0,5)}`;
   renderSyncLog();
   renderSyncRules();
 }
 
 function renderSyncLog() {
-  document.getElementById('sync-log').innerHTML = syncLog.slice(0, 6).map(l => `
+  const container = document.getElementById('sync-log');
+  if (!syncLog.length) {
+    container.innerHTML = `<div style="text-align:center;padding:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Journal vide</div>`;
+    return;
+  }
+  container.innerHTML = syncLog.slice(0, 8).map(l => `
     <div class="feed-item">
-      <div class="feed-dot" style="background:${l.color};"></div>
-      <div style="flex:1;"><div class="feed-text">${l.text}</div><div class="feed-time">${l.time}</div></div>
+      <div class="feed-dot" style="background:${l.color || 'var(--blue)'};"></div>
+      <div style="flex:1;"><div class="feed-text">${l.text || l.message || ''}</div><div class="feed-time">${l.time || formatTimeAgo(l.created_at)}</div></div>
     </div>`).join('');
 }
 
-function addSyncLogEntry(color, text, time) {
-  syncLog.unshift({ color, text, time });
-  if (document.getElementById('page-sync').classList.contains('active')) renderSyncLog();
+async function addSyncLogEntry(color, text, time) {
+  const { data } = await supabase.from('sync_log').insert({
+    user_id: session.user.id,
+    color, text, time,
+  }).select().single();
+  if (data) {
+    syncLog.unshift(data);
+    if (document.getElementById('page-sync').classList.contains('active')) renderSyncLog();
+  }
 }
 
 function renderSyncRules() {
-  document.getElementById('sync-rules-tbody').innerHTML = SYNC_RULES.map((r, i) => `
+  const tbody = document.getElementById('sync-rules-tbody');
+  if (!SYNC_RULES.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="table-empty">Aucune règle — ajoutez votre première règle de sync !</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = SYNC_RULES.map(r => `
     <tr>
       <td style="color:var(--t1);font-weight:500;">${r.name}</td>
       <td style="color:var(--t2);">${r.source}</td>
       <td style="color:var(--t2);">${r.dest}</td>
-      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${r.freq}</td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${r.freq || r.frequency || 'Manuel'}</td>
       <td><span class="status ${r.active?'st-done':'st-pause'}">${r.active?'● Actif':'⏸ Pausé'}</span></td>
       <td style="display:flex;gap:6px;">
-        <button class="btn btn-ghost btn-xs" onclick="toggleRule(${i})">${r.active?'Pause':'Reprendre'}</button>
-        <button class="btn btn-ghost btn-xs" onclick="uiToast('info','Édition de ${r.name}')">Éditer</button>
+        <button class="btn btn-ghost btn-xs" onclick="toggleRule('${r.id}',${!r.active})">${r.active?'Pause':'Reprendre'}</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteRule('${r.id}')">✕</button>
       </td>
     </tr>`).join('');
 }
 
-window.toggleRule = function(i) {
-  SYNC_RULES[i].active = !SYNC_RULES[i].active;
-  renderSyncRules();
-  uiToast('success', `Règle "${SYNC_RULES[i].name}" ${SYNC_RULES[i].active ? 'activée' : 'mise en pause'}`);
+window.toggleRule = async function(id, active) {
+  await supabase.from('sync_rules').update({ active }).eq('id', id);
+  const r = SYNC_RULES.find(x => x.id === id);
+  if (r) { r.active = active; renderSyncRules(); }
+  uiToast('success', `Règle ${active ? 'activée' : 'mise en pause'}`);
 };
+
+window.deleteRule = async function(id) {
+  if (!confirm('Supprimer cette règle ?')) return;
+  await supabase.from('sync_rules').delete().eq('id', id);
+  SYNC_RULES = SYNC_RULES.filter(r => r.id !== id);
+  renderSyncRules();
+  uiToast('info', 'Règle supprimée');
+};
+
+function launchSync() {
+  const btn = document.getElementById('btn-launch-sync');
+  btn.classList.add('btn-loading');
+  btn.textContent = '↺ Sync…';
+  setTimeout(async () => {
+    btn.classList.remove('btn-loading');
+    btn.textContent = '▶ Lancer';
+    await addSyncLogEntry('var(--green)', `<strong>${TRANSFER_HISTORY.filter(t=>t.status==='done').length} fichiers</strong> vérifiés avec succès`, new Date().toTimeString().slice(0,5));
+    renderSyncPage();
+    uiToast('success', '✓ Synchronisation terminée');
+  }, 2500);
+}
 
 /* ══ ANALYTICS PAGE ══ */
 function renderAnalyticsPage() {
-  document.getElementById('analytics-devices-tbody').innerHTML = [
-    { icon:'🖥️', name:'PC Bureau',     sent:'1.4 TB',  recv:'240 GB', total:'1.64 TB' },
-    { icon:'📦', name:'NAS Home',       sent:'45 GB',   recv:'890 GB', total:'935 GB'  },
-    { icon:'💻', name:'MacBook Air',    sent:'180 GB',  recv:'120 GB', total:'300 GB'  },
-    { icon:'📱', name:'iPhone 16 Pro',  sent:'12 GB',   recv:'48 GB',  total:'60 GB'   },
-  ].map(d => `<tr>
-    <td style="color:var(--t1);">${d.icon} ${d.name}</td>
-    <td class="font-mono" style="font-size:.76rem;color:var(--green);">${d.sent}</td>
-    <td class="font-mono" style="font-size:.76rem;color:var(--blue2);">${d.recv}</td>
-    <td class="font-mono" style="font-size:.76rem;">${d.total}</td>
-  </tr>`).join('');
+  const done = TRANSFER_HISTORY.filter(t => t.status === 'done');
+  const errs = TRANSFER_HISTORY.filter(t => t.status === 'error');
+  const totalB = done.reduce((s,t)=>s+t.sizeB,0);
+  const gb = totalB/1e9;
+  document.getElementById('kpi-data').innerHTML = gb >= 1000
+    ? `${(gb/1000).toFixed(1)} <span style="font-size:1.1rem;color:var(--blue2);">TB</span>`
+    : `${gb.toFixed(1)} <span style="font-size:1.1rem;color:var(--blue2);">GB</span>`;
+  document.getElementById('kpi-success').textContent = done.length;
+  const rate = TRANSFER_HISTORY.length ? ((errs.length / TRANSFER_HISTORY.length) * 100).toFixed(1) : '0.0';
+  document.getElementById('kpi-error').innerHTML = `${rate} <span style="font-size:1.1rem;color:var(--blue2);">%</span>`;
 
+  // Devices breakdown
+  const devMap = {};
+  TRANSFER_HISTORY.forEach(t => {
+    if (!devMap[t.dest]) devMap[t.dest] = { sent:0, recv:0 };
+    if (t.dir === 'sent') devMap[t.dest].sent += t.sizeB;
+    else devMap[t.dest].recv += t.sizeB;
+  });
+  const devArr = Object.entries(devMap).map(([name, d]) => ({ name, sent: d.sent, recv: d.recv, total: d.sent + d.recv })).sort((a,b)=>b.total-a.total);
+
+  if (DEVICES.length > 0) {
+    document.getElementById('analytics-devices-tbody').innerHTML = DEVICES.slice(0,5).map(d => {
+      const stats = devMap[d.name] || { sent:0, recv:0 };
+      return `<tr>
+        <td style="color:var(--t1);">${d.icon} ${d.name}</td>
+        <td class="font-mono" style="font-size:.76rem;color:var(--green);">${formatBytes(stats.sent)}</td>
+        <td class="font-mono" style="font-size:.76rem;color:var(--blue2);">${formatBytes(stats.recv)}</td>
+        <td class="font-mono" style="font-size:.76rem;">${formatBytes(stats.sent+stats.recv)}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    document.getElementById('analytics-devices-tbody').innerHTML = `<tr><td colspan="4" class="table-empty">Aucun appareil</td></tr>`;
+  }
+
+  // Feed
   document.getElementById('analytics-feed').innerHTML = TRANSFER_HISTORY.slice(0, 5).map(t => `
     <div class="feed-item">
       <div class="feed-dot" style="background:${t.status==='done'?'var(--green)':t.status==='error'?'var(--red)':'var(--blue)'};"></div>
-      <div style="flex:1;"><div class="feed-text"><strong>${t.name}</strong> → ${t.dest} · ${t.size}</div><div class="feed-time">Aujourd'hui ${t.date}</div></div>
-    </div>`).join('');
+      <div style="flex:1;"><div class="feed-text"><strong>${t.name}</strong> → ${t.dest} · ${t.size}</div><div class="feed-time">${t.date}</div></div>
+    </div>`).join('') || `<div style="padding:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucune activité</div>`;
 }
 
 /* ══ CHARTS ══ */
 function buildCharts() {
+  // Daily chart — based on real data
   const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
-  const vals = [62, 85, 44, 91, 73, 38, 55];
-  const max  = Math.max(...vals);
+  const vals = [0,0,0,0,0,0,0];
+  const now = new Date();
+  TRANSFER_HISTORY.forEach(t => {
+    const d = new Date(t.ts);
+    const diff = Math.floor((now - d) / 86400000);
+    if (diff >= 0 && diff < 7) vals[6 - diff]++;
+  });
+  // Pad with at least 1 bar for visual if empty
+  const max = Math.max(...vals, 1);
   document.getElementById('chart-daily').innerHTML = days.map((d, i) => `
     <div class="bar-wrap">
-      <div class="bar-outer"><div class="bar-inner" style="height:${(vals[i]/max*100)}%;"></div></div>
+      <div class="bar-outer"><div class="bar-inner" style="height:${(vals[i]/max*100)||4}%;"></div></div>
       <span class="bar-label">${d}</span>
     </div>`).join('');
 
-  document.getElementById('chart-types').innerHTML = [
-    { label:'🎬 Vidéos',  pct:43, color:'var(--blue)' },
-    { label:'📦 Archives',pct:30, color:'var(--purple)' },
-    { label:'🖼️ Images',  pct:16, color:'var(--cyan)' },
-    { label:'🎨 Design',  pct: 8, color:'var(--amber)' },
-    { label:'📄 Docs',    pct: 3, color:'var(--green)' },
-  ].map(t => `
-    <div>
+  // Types chart
+  const typeCounts = {};
+  FILES.forEach(f => { typeCounts[f.type] = (typeCounts[f.type]||0) + f.sizeB; });
+  const typeColors = { video:'var(--blue)', archive:'var(--purple)', image:'var(--cyan)', design:'var(--amber)', doc:'var(--green)', audio:'var(--red)', other:'var(--t3)' };
+  const typeLabels = { video:'🎬 Vidéos', archive:'📦 Archives', image:'🖼️ Images', design:'🎨 Design', doc:'📄 Docs', audio:'🎵 Audio', other:'📁 Autre' };
+  const totalSize = Object.values(typeCounts).reduce((a,b)=>a+b,0) || 1;
+  const typeArr = Object.entries(typeCounts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  document.getElementById('chart-types').innerHTML = (typeArr.length ? typeArr : [['other',1]]).map(([type, size]) => {
+    const pct = Math.round((size/totalSize)*100);
+    return `<div>
       <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.78rem;">
-        <span style="color:var(--t2);">${t.label}</span>
-        <span class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.pct}%</span>
+        <span style="color:var(--t2);">${typeLabels[type]||type}</span>
+        <span class="font-mono" style="font-size:.7rem;color:var(--t3);">${pct}%</span>
       </div>
       <div style="height:4px;background:var(--d5);border-radius:99px;overflow:hidden;">
-        <div style="width:${t.pct}%;height:100%;background:${t.color};border-radius:99px;transition:width 1s ease;"></div>
+        <div style="width:${pct}%;height:100%;background:${typeColors[type]||'var(--blue)'};border-radius:99px;transition:width 1s ease;"></div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 /* ══ LIVE STATS ══ */
@@ -1559,6 +1786,7 @@ function startLiveStats() {
   setInterval(() => {
     const spd = (800 + Math.random() * 600).toFixed(0);
     document.getElementById('stat-speed').innerHTML = `${spd} <span class="unit">MB/s</span>`;
+    document.getElementById('kpi-speed').innerHTML = `${(parseInt(spd)/1000).toFixed(1)} <span style="font-size:1.1rem;color:var(--blue2);">GB/s</span>`;
   }, 1200);
 }
 
@@ -1583,35 +1811,30 @@ const PAGE_META = {
 window.showPage = function(id, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('.bn-item').forEach(l => l.classList.remove('active'));
   const page = document.getElementById('page-' + id);
   if (!page) return;
   page.classList.add('active');
   if (el) el.classList.add('active');
   currentPage = id;
   const m = PAGE_META[id];
-  if (m) {
-    document.getElementById('topbar-title').textContent = m.title;
-    document.getElementById('topbar-bc').textContent    = m.bc;
-    document.getElementById('action-btn').textContent   = m.btn;
-  }
+  document.getElementById('topbar-title').textContent = m.title;
+  document.getElementById('topbar-bc').textContent    = m.bc;
+  document.getElementById('action-btn').textContent   = m.btn;
   document.getElementById('notif-panel').classList.remove('open');
-  if (id === 'parametres') { renderSettings(); updateMobProfileStrip(); }
+  if (id === 'parametres') renderSettings();
   if (id === 'transferts') renderTransfersPage();
-  // Sync bottom nav
-  document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(b => {
-    b.classList.toggle('active', b.dataset.page === id);
-  });
-  closeBnMore();
-  const pc = document.querySelector('.page-content');
-  if (pc && window.innerWidth <= 768) pc.scrollTop = 0;
+  if (id === 'sync') renderSyncPage();
+  if (id === 'analytiques') { renderAnalyticsPage(); buildCharts(); }
 };
 
 /* ══ SETTINGS TABS ══ */
 function switchTab(tabId) {
   document.querySelectorAll('.s-nav-item').forEach(i => i.classList.remove('active'));
   document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
-  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-  document.getElementById(tabId).style.display = 'block';
+  document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+  const panel = document.getElementById(tabId);
+  if (panel) panel.style.display = 'block';
 }
 
 /* ══ SAVE PROFILE ══ */
@@ -1626,13 +1849,12 @@ async function saveProfile() {
   const { error } = await supabase.from('profiles').update({
     first_name: first,
     last_name: last,
-    username: uname || profile.username
+    username: uname || profile.username,
   }).eq('id', session.user.id);
   btn.classList.remove('btn-loading');
   if (error) return uiToast('error', error.message.includes('username') ? 'Pseudo déjà pris.' : error.message);
   profile = { ...profile, first_name: first, last_name: last, username: uname || profile.username };
   renderSidebar();
-  updateMobProfileStrip();
   uiToast('success', '✓ Profil sauvegardé !');
 }
 
@@ -1675,7 +1897,6 @@ async function uploadAvatar(file) {
   setTimeout(() => { prog.style.display='none'; fill.style.width='0%'; }, 600);
   renderSidebar();
   renderSettings();
-  updateMobProfileStrip();
   uiToast('success', '✓ Avatar mis à jour !');
 }
 
@@ -1684,7 +1905,6 @@ async function removeAvatar() {
   profile.avatar_url = null;
   renderSidebar();
   renderSettings();
-  updateMobProfileStrip();
   uiToast('success', 'Avatar supprimé.');
 }
 
@@ -1722,25 +1942,6 @@ window.uiToast = function(type, msg) {
 function hideLoading() {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('app-shell').style.display = 'block';
-  updateMobProfileStrip();
-}
-
-/* ══ LAUNCH SYNC ══ */
-function launchSync() {
-  uiToast('success', '▶ Synchronisation lancée !');
-  addSyncLogEntry('var(--blue)', 'Synchronisation <strong>démarrée manuellement</strong>', new Date().toTimeString().slice(0,5));
-  let pct = 75;
-  const iv = setInterval(() => {
-    pct = Math.min(100, pct + Math.random() * 3);
-    document.getElementById('sync-pct').textContent = Math.round(pct) + '%';
-    const offset = 339.29 * (1 - pct / 100);
-    document.getElementById('sync-circle-prog').style.strokeDashoffset = offset;
-    if (pct >= 100) {
-      clearInterval(iv);
-      uiToast('success', '✓ Synchronisation terminée');
-      addSyncLogEntry('var(--green)', '<strong>Synchronisation complète</strong>', new Date().toTimeString().slice(0,5));
-    }
-  }, 200);
 }
 
 /* ══ EVENT LISTENERS ══ */
@@ -1761,18 +1962,28 @@ function setupEventListeners() {
 
   /* ACTION BTN */
   document.getElementById('action-btn').addEventListener('click', () => {
-    if (currentPage === 'transferts') openModal('modal-transfer');
+    if (currentPage === 'transferts' || currentPage === 'fichiers') openModal('modal-transfer');
     else if (currentPage === 'appareils') openModal('modal-device');
     else if (currentPage === 'parametres') saveProfile();
     else if (currentPage === 'sync') launchSync();
-    else if (currentPage === 'analytiques') uiToast('info', 'Export CSV téléchargé');
+    else if (currentPage === 'analytiques') {
+      // Export CSV
+      const rows = ['Nom,Type,Taille,Destination,Statut,Date'];
+      TRANSFER_HISTORY.forEach(t => rows.push(`"${t.name}",${t.type},${t.size},${t.dest},${t.status},${t.date}`));
+      const blob = new Blob([rows.join('\n')], { type:'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'creo_transfers.csv';
+      a.click();
+      uiToast('success', '✓ Export CSV téléchargé');
+    }
     else openModal('modal-transfer');
   });
 
   /* TRANSFERS FILTERS */
   document.querySelectorAll('#page-transferts .filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
-      document.querySelectorAll('#page-transferts .filter-chip').forEach(c=>c.classList.remove('active'));
+      document.querySelectorAll('#page-transferts .filter-chip').forEach(c => c.classList.remove('active'));
       this.classList.add('active');
       transferFilter = this.dataset.filter;
       renderTransfersTable(document.getElementById('search-input').value.trim());
@@ -1785,19 +1996,10 @@ function setupEventListeners() {
     renderTransfersTable(document.getElementById('search-input').value.trim());
   });
 
-  /* TABLE HEADER SORT */
-  document.querySelectorAll('.data-table thead th[data-sort]').forEach(th => {
-    th.addEventListener('click', function() {
-      const isAsc = this.classList.contains('sort-asc');
-      document.querySelectorAll('.data-table thead th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
-      this.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
-    });
-  });
-
   /* FILES FILTERS */
   document.querySelectorAll('#page-fichiers .filter-chip').forEach(chip => {
     chip.addEventListener('click', function() {
-      document.querySelectorAll('#page-fichiers .filter-chip').forEach(c=>c.classList.remove('active'));
+      document.querySelectorAll('#page-fichiers .filter-chip').forEach(c => c.classList.remove('active'));
       this.classList.add('active');
       fileFilter = this.dataset.filter;
       renderFilesPage(document.getElementById('search-input').value.trim());
@@ -1835,11 +2037,12 @@ function setupEventListeners() {
   });
 
   /* NOTIF */
-  document.getElementById('notif-btn').addEventListener('click', e => {
+  document.getElementById('notif-btn').addEventListener('click', async e => {
     e.stopPropagation();
     document.getElementById('notif-panel').classList.toggle('open');
-    hasUnreadNotif = false;
     document.getElementById('notif-dot').style.display = 'none';
+    // Mark all as read
+    await supabase.from('notifications').update({ read: true }).eq('user_id', session.user.id);
   });
   document.getElementById('notif-read-all').addEventListener('click', () => {
     document.getElementById('notif-panel').classList.remove('open');
@@ -1856,10 +2059,8 @@ function setupEventListeners() {
 
   /* SAVE PROFILE */
   document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
-
   /* CHANGE PW */
   document.getElementById('btn-change-pw').addEventListener('click', changePassword);
-
   /* SIGN OUT ALL */
   document.getElementById('btn-signout-all').addEventListener('click', signOut);
 
@@ -1932,15 +2133,27 @@ function setupEventListeners() {
   document.getElementById('modal-transfer').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal('modal-transfer');
   });
+  document.getElementById('mt-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('modal-confirm').click(); });
 
   /* MODAL DEVICE */
   document.getElementById('btn-add-device').addEventListener('click', () => openModal('modal-device'));
   document.getElementById('md-cancel').addEventListener('click', () => closeModal('modal-device'));
-  document.getElementById('md-confirm').addEventListener('click', () => {
+  document.getElementById('md-confirm').addEventListener('click', async () => {
     const name = document.getElementById('md-name').value.trim();
+    const type = document.getElementById('md-type').value;
+    const os   = document.getElementById('md-os').value.trim();
     if (!name) { uiToast('warning', 'Donnez un nom à l\'appareil.'); return; }
-    const icons = { desktop:'🖥️', laptop:'💻', phone:'📱', nas:'📦' };
-    DEVICES.push({ id: Date.now(), name, icon: icons[document.getElementById('md-type').value]||'🖥️', os: document.getElementById('md-os').value || '—', online: false, speed:'—', network:'—', free:'—', version:'v4.2.1' });
+    const btn = document.getElementById('md-confirm');
+    btn.classList.add('btn-loading');
+    const { data: newDev, error } = await supabase.from('devices').insert({
+      user_id: session.user.id,
+      name, type, os: os || '—',
+      online: false, speed: '—', network: '—', free_space: '—',
+      creo_version: 'v4.2.1',
+    }).select().single();
+    btn.classList.remove('btn-loading');
+    if (error) { uiToast('error', error.message); return; }
+    DEVICES.push(dbToDevice(newDev));
     closeModal('modal-device');
     document.getElementById('md-name').value = '';
     document.getElementById('md-os').value = '';
@@ -1950,41 +2163,77 @@ function setupEventListeners() {
   document.getElementById('modal-device').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal('modal-device');
   });
+  document.getElementById('md-name').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('md-confirm').click(); });
 
   /* SYNC BUTTONS */
   document.getElementById('btn-launch-sync').addEventListener('click', launchSync);
-  document.getElementById('btn-clear-log').addEventListener('click', () => {
+  document.getElementById('btn-clear-log').addEventListener('click', async () => {
+    await supabase.from('sync_log').delete().eq('user_id', session.user.id);
     syncLog = [];
     renderSyncLog();
     uiToast('info', 'Journal effacé');
   });
-  document.getElementById('btn-add-rule').addEventListener('click', () => uiToast('info', 'Bientôt disponible'));
+  document.getElementById('btn-add-rule').addEventListener('click', () => openModal('modal-rule'));
 
-  /* ENTER KEY on modals */
-  document.getElementById('mt-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('modal-confirm').click(); });
-  document.getElementById('md-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('md-confirm').click(); });
+  /* MODAL RULE */
+  document.getElementById('mr-cancel').addEventListener('click', () => closeModal('modal-rule'));
+  document.getElementById('mr-confirm').addEventListener('click', async () => {
+    const name = document.getElementById('mr-name').value.trim();
+    if (!name) { uiToast('warning', 'Donnez un nom à la règle.'); return; }
+    const freqMap = { realtime:'Temps réel', hourly:'Toutes les heures', daily:'Quotidien 03:00', manual:'Manuel' };
+    const freqVal = document.getElementById('mr-freq').value;
+    const btn = document.getElementById('mr-confirm');
+    btn.classList.add('btn-loading');
+    const { data: newRule, error } = await supabase.from('sync_rules').insert({
+      user_id: session.user.id,
+      name,
+      source: document.getElementById('mr-source').value,
+      dest: document.getElementById('mr-dest').value,
+      freq: freqMap[freqVal] || 'Manuel',
+      frequency: freqVal,
+      active: true,
+    }).select().single();
+    btn.classList.remove('btn-loading');
+    if (error) { uiToast('error', error.message); return; }
+    SYNC_RULES.unshift(newRule);
+    closeModal('modal-rule');
+    document.getElementById('mr-name').value = '';
+    renderSyncRules();
+    uiToast('success', `✓ Règle "${name}" créée`);
+  });
+  document.getElementById('modal-rule').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal('modal-rule');
+  });
 
-  /* ── BOTTOM NAV ── */
-  document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(item => {
+  /* MOB PROFILE STRIP → profil tab */
+  document.getElementById('mob-profile-strip')?.addEventListener('click', () => {
+    showPage('parametres', document.querySelector('[data-page="parametres"]'));
+    setTimeout(() => switchTab('st-profil'), 100);
+  });
+
+  /* BOTTOM NAV */
+  document.querySelectorAll('.bn-item[data-page]').forEach(item => {
     item.addEventListener('click', () => {
-      const page = item.dataset.page;
-      const sidebarLink = document.querySelector(`.nav-link[data-page="${page}"]`);
-      showPage(page, sidebarLink);
+      showPage(item.dataset.page, document.querySelector(`[data-page="${item.dataset.page}"].nav-link`));
+      document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+      item.classList.add('active');
     });
   });
 
-  /* ── MORE PANEL ── */
-  document.getElementById('bn-more-btn').addEventListener('click', () => {
-    const panel = document.getElementById('bn-more-panel');
-    if (panel.classList.contains('open')) closeBnMore();
-    else openBnMore();
-  });
-  document.getElementById('bn-more-overlay').addEventListener('click', closeBnMore);
-
+  /* MORE PANEL */
+  const bnMoreBtn     = document.getElementById('bn-more-btn');
+  const bnMorePanel   = document.getElementById('bn-more-panel');
+  const bnMoreOverlay = document.getElementById('bn-more-overlay');
+  function openBnMore()  { bnMorePanel.classList.add('open'); bnMoreOverlay.classList.add('open'); }
+  function closeBnMore() { bnMorePanel.classList.remove('open'); bnMoreOverlay.classList.remove('open'); }
+  bnMoreBtn.addEventListener('click', () => bnMorePanel.classList.contains('open') ? closeBnMore() : openBnMore());
+  bnMoreOverlay.addEventListener('click', closeBnMore);
   document.getElementById('more-settings').addEventListener('click', () => {
+    closeBnMore();
     showPage('parametres', document.querySelector('[data-page="parametres"]'));
   });
   document.getElementById('more-analytics').addEventListener('click', () => {
+    closeBnMore();
     showPage('analytiques', document.querySelector('[data-page="analytiques"]'));
   });
   document.getElementById('more-logout').addEventListener('click', async () => {
@@ -1993,15 +2242,14 @@ function setupEventListeners() {
     window.location.href = '/creo/login/login.html';
   });
 
-  /* ── FAB ── */
+  /* FAB */
   document.getElementById('mobile-fab').addEventListener('click', () => {
-    if (currentPage === 'transferts' || currentPage === 'fichiers') openModal('modal-transfer');
-    else if (currentPage === 'appareils') openModal('modal-device');
+    if (currentPage === 'appareils') openModal('modal-device');
     else if (currentPage === 'sync') launchSync();
     else openModal('modal-transfer');
   });
 
-  /* ── MOBILE SEARCH ── */
+  /* MOBILE SEARCH */
   const mobSearchOverlay = document.getElementById('mobile-search-overlay');
   const mobSearchInput   = document.getElementById('mob-search-input');
   const mobSearchResults = document.getElementById('mob-search-results');
@@ -2010,31 +2258,28 @@ function setupEventListeners() {
     mobSearchOverlay.classList.add('open');
     setTimeout(() => mobSearchInput.focus(), 100);
   });
-
-  document.getElementById('mob-search-close').addEventListener('click', () => {
+  function closeMobileSearch() {
     mobSearchOverlay.classList.remove('open');
     mobSearchInput.value = '';
     mobSearchResults.innerHTML = '';
-  });
+  }
+  document.getElementById('mob-search-close').addEventListener('click', closeMobileSearch);
+  window.closeMobileSearch = closeMobileSearch;
 
   mobSearchInput.addEventListener('input', function() {
     const q = this.value.trim();
     if (!q) { mobSearchResults.innerHTML = ''; return; }
-
     const allItems = [
       ...TRANSFER_HISTORY.map(t => ({ icon: t.icon, name: t.name, meta: `${t.size} · ${t.dest}`, page: 'transferts' })),
       ...FILES.map(f => ({ icon: f.icon, name: f.name, meta: `${f.size} · ${f.typeLabel}`, page: 'fichiers' })),
     ].filter(item => item.name.toLowerCase().includes(q.toLowerCase()));
-
-    if (allItems.length === 0) {
+    if (!allItems.length) {
       mobSearchResults.innerHTML = `<div class="mob-search-empty">Aucun résultat pour « ${q} »</div>`;
       return;
     }
-
     const hl = str => str.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi'), m => `<span class="hl">${m}</span>`);
-
     mobSearchResults.innerHTML = allItems.slice(0, 12).map(item => `
-      <div class="mob-result-item" onclick="closeMobSearch();showPage('${item.page}',document.querySelector('[data-page=${item.page}]'))">
+      <div class="mob-result-item" onclick="closeMobileSearch();showPage('${item.page}',document.querySelector('[data-page=${item.page}]'))">
         <div class="mob-result-icon">${item.icon}</div>
         <div>
           <div class="mob-result-name">${hl(item.name)}</div>
@@ -2043,20 +2288,13 @@ function setupEventListeners() {
       </div>`).join('');
   });
 
-  /* MOBILE PROFILE STRIP */
-  document.getElementById('mob-profile-strip')?.addEventListener('click', () => {
-    document.querySelector('[data-tab="st-profil"]')?.click();
-  });
-
-  /* SWIPE to navigate (mobile) */
+  /* SWIPE navigation (mobile) */
   let touchStartX = 0, touchStartY = 0;
   const swipePages = ['transferts','appareils','fichiers','sync'];
-
   document.querySelector('.page-content')?.addEventListener('touchstart', e => {
     touchStartX = e.touches[0].clientX;
     touchStartY = e.touches[0].clientY;
   }, { passive: true });
-
   document.querySelector('.page-content')?.addEventListener('touchend', e => {
     if (window.innerWidth > 768) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
@@ -2066,49 +2304,21 @@ function setupEventListeners() {
     if (cur === -1) return;
     if (dx < -60 && cur < swipePages.length - 1) {
       const next = swipePages[cur + 1];
-      showPage(next, document.querySelector(`[data-page="${next}"]`));
+      showPage(next, document.querySelector(`[data-page="${next}"].nav-link`));
+      const bnItem = document.querySelector(`.bn-item[data-page="${next}"]`);
+      document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+      if (bnItem) bnItem.classList.add('active');
     } else if (dx > 60 && cur > 0) {
       const prev = swipePages[cur - 1];
-      showPage(prev, document.querySelector(`[data-page="${prev}"]`));
+      showPage(prev, document.querySelector(`[data-page="${prev}"].nav-link`));
+      const bnItem = document.querySelector(`.bn-item[data-page="${prev}"]`);
+      document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
+      if (bnItem) bnItem.classList.add('active');
     }
   }, { passive: true });
 }
 
-/* ── MORE PANEL HELPERS ── */
-function openBnMore() {
-  document.getElementById('bn-more-panel').classList.add('open');
-  document.getElementById('bn-more-overlay').classList.add('open');
-}
-function closeBnMore() {
-  document.getElementById('bn-more-panel').classList.remove('open');
-  document.getElementById('bn-more-overlay').classList.remove('open');
-}
-
-/* ── MOB SEARCH CLOSE (global) ── */
-window.closeMobSearch = function() {
-  document.getElementById('mobile-search-overlay').classList.remove('open');
-  document.getElementById('mob-search-input').value = '';
-  document.getElementById('mob-search-results').innerHTML = '';
-};
-
-/* ── MOBILE PROFILE STRIP UPDATE ── */
-function updateMobProfileStrip() {
-  if (!session) return;
-  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
-  const avEl = document.getElementById('mob-strip-av');
-  if (avEl) {
-    if (av) avEl.innerHTML = `<img src="${av}" alt="">`;
-    else avEl.textContent = initials();
-  }
-  const nameEl = document.getElementById('mob-strip-name');
-  const roleEl = document.getElementById('mob-strip-role');
-  if (nameEl) nameEl.textContent = displayName();
-  if (roleEl) roleEl.textContent = profile?.type
-    ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1)
-    : 'Utilisateur';
-}
-
-/* ══ START ══ */
+/* ══ BOOTSTRAP ══ */
 init();
 </script>
 </body>
