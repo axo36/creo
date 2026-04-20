@@ -1650,15 +1650,18 @@ function renderTransfersPage() {
 
 function updateTransfersStats() {
   const done = FILES.filter(f => f.status === 'done');
-  document.getElementById('stat-total').innerHTML = `${done.length} <span class="unit">fichiers</span>`;
+  const totalEl = document.getElementById('stat-total');
+  if (totalEl) totalEl.innerHTML = `${done.length} <span class="unit">fichiers</span>`;
   const totalB = done.reduce((s, f) => s + (f.size_bytes || 0), 0);
   const fmtd = formatBytes(totalB).split(' ');
-  document.getElementById('stat-size').innerHTML = `${fmtd[0]} <span class="unit">${fmtd[1]||''}</span>`;
+  const sizeEl = document.getElementById('stat-size');
+  if (sizeEl) sizeEl.innerHTML = `${fmtd[0]} <span class="unit">${fmtd[1]||''}</span>`;
   const onlineDev = DEVICES.length;
-  document.getElementById('stat-devices').innerHTML = `${onlineDev} <span class="unit" style="color:var(--green);">●</span>`;
+  const devEl = document.getElementById('stat-devices');
+  if (devEl) devEl.innerHTML = `${onlineDev} <span class="unit" style="color:var(--green);">●</span>`;
   const codes = FILES.filter(f => f.share_code).length;
-  document.getElementById('stat-success').innerHTML = `${codes} <span class="unit">%</span>`;
-  document.getElementById('stat-success').innerHTML = codes > 0 ? `${codes} <span class="unit">codes</span>` : `0 <span class="unit">codes</span>`;
+  const successEl = document.getElementById('stat-success');
+  if (successEl) successEl.innerHTML = codes > 0 ? `${codes} <span class="unit">codes</span>` : `0 <span class="unit">codes</span>`;
 }
 
 function renderTransfersTable(q = '') {
