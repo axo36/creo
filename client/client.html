@@ -1776,14 +1776,19 @@ function renderFilesPage(q = '') {
     if (fileSort === 'name-asc')  return a.name.localeCompare(b.name);
     return 0;
   });
-  document.getElementById('files-count').textContent = data.length;
+  const filesCountEl = document.getElementById('files-count');
+  if (filesCountEl) filesCountEl.textContent = data.length;
   const totalB = data.reduce((s, f) => s + (f.size_bytes || 0), 0);
   const fmtd = formatBytes(totalB).split(' ');
-  document.getElementById('files-size').innerHTML = `${fmtd[0]} <span class="unit">${fmtd[1]||''}</span>`;
-  document.getElementById('files-shared').textContent = data.filter(f => f.share_code).length;
+  const filesSizeEl = document.getElementById('files-size');
+  if (filesSizeEl) filesSizeEl.innerHTML = `${fmtd[0]} <span class="unit">${fmtd[1]||''}</span>`;
+  const filesSharedEl = document.getElementById('files-shared');
+  if (filesSharedEl) filesSharedEl.textContent = data.filter(f => f.share_code).length;
   if (data.length) {
-    document.getElementById('files-lastmod').textContent = new Date(data[0].created_at).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
-    document.getElementById('files-lastmod-name').textContent = data[0].name.length > 16 ? data[0].name.slice(0,16)+'…' : data[0].name;
+    const lastmodEl = document.getElementById('files-lastmod');
+    if (lastmodEl) lastmodEl.textContent = new Date(data[0].created_at).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    const lastmodNameEl = document.getElementById('files-lastmod-name');
+    if (lastmodNameEl) lastmodNameEl.textContent = data[0].name.length > 16 ? data[0].name.slice(0,16)+'…' : data[0].name;
   }
   // Grid (recent 8)
   const grid = document.getElementById('files-grid');
