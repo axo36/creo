@@ -1747,9 +1747,7 @@ function renderDevicesPage() {
 window.sendToDevice = function(devId) {
   updateDeviceSelect();
   document.getElementById('mt-dest').value = devId;
-  document.getElementById('file-input-hidden').click();
-};
-window.downloadAll = function(devId) {
+  document.getElementById('file-input-hidden')?.click(); = function(devId) {
   FILES.filter(f => f.target_device_id === devId && f.public_url).forEach(f => {
     const a = document.createElement('a'); a.href = f.public_url; a.download = f.name; a.target = '_blank'; a.click();
   });
@@ -2128,22 +2126,30 @@ function setupEventListeners() {
   document.getElementById('user-card').addEventListener('click', () => showPage('parametres', document.querySelector('[data-page="parametres"]') ));
   document.getElementById('logout-btn').addEventListener('click', signOut);
 
+  // Ensure hidden file input exists in DOM
+  if (!document.getElementById('file-input-hidden')) {
+    const inp = document.createElement('input');
+    inp.type = 'file'; inp.id = 'file-input-hidden'; inp.multiple = true; inp.style.display = 'none';
+    document.body.appendChild(inp);
+  }
+  const fileInputHidden = document.getElementById('file-input-hidden');
+
   document.getElementById('action-btn').addEventListener('click', () => {
-    if (currentPage === 'transferts' || currentPage === 'fichiers') document.getElementById('file-input-hidden').click();
+    if (currentPage === 'transferts' || currentPage === 'fichiers') fileInputHidden?.click();
     else if (currentPage === 'appareils') openRenameModal();
     else if (currentPage === 'parametres') saveProfile();
     else if (currentPage === 'sync') launchSync();
     else if (currentPage === 'analytiques') exportCSV();
-    else document.getElementById('file-input-hidden').click();
+    else fileInputHidden?.click();
   });
 
   // Upload zone
   const zone = document.getElementById('upload-zone');
-  zone?.addEventListener('click', () => document.getElementById('file-input-hidden').click());
+  zone?.addEventListener('click', () => fileInputHidden?.click());
   zone?.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
   zone?.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
   zone?.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); startUpload(e.dataTransfer.files); });
-  document.getElementById('file-input-hidden').addEventListener('change', function() { if (this.files.length) startUpload(this.files); this.value = ''; });
+  fileInputHidden?.addEventListener('change', function() { if (this.files.length) startUpload(this.files); this.value = ''; });
 
   // Modal transfer (now used as destination chooser)
   document.getElementById('modal-cancel').addEventListener('click', () => { closeModal('modal-transfer'); pendingFiles = []; });
@@ -2255,7 +2261,7 @@ function setupEventListeners() {
   document.getElementById('more-settings')?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); showPage('parametres', document.querySelector('[data-page="parametres"]') ); });
   document.getElementById('more-analytics')?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); showPage('analytiques', document.querySelector('[data-page="analytiques"]') ); });
   document.getElementById('more-logout')?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); signOut(); });
-  document.getElementById('mobile-fab')?.addEventListener('click', () => document.getElementById('file-input-hidden').click());
+  document.getElementById('mobile-fab')?.addEventListener('click', () => document.getElementById('file-input-hidden')?.click());
 
   // Mobile search
   const mobOverlay = document.getElementById('mobile-search-overlay');
