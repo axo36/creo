@@ -1131,42 +1131,13 @@ img{display:block;max-width:100%;}
 <!-- MODAL NOUVEAU TRANSFERT -->
 <div class="modal-bg" id="modal-transfer">
   <div class="modal">
-    <div class="modal-title">Nouveau transfert</div>
-    <div class="field">
-      <label>Nom du fichier / description</label>
-      <input type="text" id="mt-name" placeholder="ex: video_projet.mp4">
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Taille</label>
-        <input type="text" id="mt-size" placeholder="ex: 4.2 GB">
-      </div>
-      <div class="field">
-        <label>Type</label>
-        <select id="mt-type">
-          <option value="video">🎬 Vidéo</option>
-          <option value="archive">📦 Archive</option>
-          <option value="doc">📄 Document</option>
-          <option value="image">🖼️ Image</option>
-          <option value="audio">🎵 Audio</option>
-          <option value="design">🎨 Design</option>
-          <option value="other">📁 Autre</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-row">
-      <div class="field">
-        <label>Source</label>
-        <select id="mt-source"><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option><option>NAS Home</option></select>
-      </div>
-      <div class="field">
-        <label>Destination</label>
-        <select id="mt-dest"><option>NAS Home</option><option>PC Bureau</option><option>MacBook Air M3</option><option>iPhone 16 Pro</option></select>
-      </div>
-    </div>
+    <div class="modal-title">Envoyer vers…</div>
+    <div id="modal-dest-preview" style="margin-bottom:1rem;max-height:180px;overflow-y:auto;"></div><div class="field"><label>Destination</label><select id="mt-dest"><option value="__storage__">☁ Mon stockage (lien de téléchargement)</option></select></div>
+    
+    
     <div class="modal-footer">
       <button class="btn btn-ghost" id="modal-cancel">Annuler</button>
-      <button class="btn btn-primary" id="modal-confirm">⚡ Lancer le transfert</button>
+      <button class="btn btn-primary" id="modal-confirm">⬆ Envoyer</button>
     </div>
   </div>
 </div>
@@ -1201,12 +1172,51 @@ img{display:block;max-width:100%;}
   </div>
 </div>
 
+
+<!-- MODAL FICHIER -->
+<div class="modal-bg" id="modal-file">
+  <div class="modal">
+    <div class="modal-title" id="modal-file-title">Fichier</div>
+    <div id="modal-file-preview" style="margin-bottom:1.2rem;text-align:center;"></div>
+    <div id="modal-code-section">
+      <div style="background:var(--d3);border:1px solid rgba(255,184,0,.2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:1rem;display:flex;align-items:center;gap:1.2rem;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:4px;">Code de partage</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--white);letter-spacing:.3em;line-height:1;" id="modal-share-code">——</div>
+        </div>
+        <div style="flex:1;font-size:.8rem;color:var(--t2);">N'importe qui avec ce code peut récupérer le fichier depuis la page <strong style="color:var(--t1);">Récupérer</strong>.<br><button id="modal-copy-code" class="btn btn-ghost btn-sm" style="margin-top:.5rem;">Copier le code</button></div>
+      </div>
+    </div>
+    <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.9rem 1rem;margin-bottom:1rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;margin-bottom:.4rem;">Lien direct</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--blue2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="modal-file-url">—</div>
+        <button class="btn btn-ghost btn-xs" id="modal-copy-link">Copier</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost">Fermer</button>
+      <a class="btn btn-primary" id="modal-download-btn" href="#" download target="_blank">⬇ Télécharger</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RENOMMER APPAREIL -->
+<div class="modal-bg" id="modal-rename">
+  <div class="modal">
+    <div class="modal-title">Renommer cet appareil</div>
+    <div class="field"><label>Nom de l'appareil</label><input type="text" id="rename-input" placeholder="ex: Mon iPhone, PC Bureau…"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="rename-cancel">Annuler</button>
+      <button class="btn btn-primary" id="rename-confirm">✓ Renommer</button>
+    </div>
+  </div>
+</div>
 <div id="toast-wrap"></div>
 
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-/* ══ SUPABASE ══ */
 const supabase = createClient(
   "https://mpnfvrizbluhhjcfzztc.supabase.co",
   "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
@@ -1216,561 +1226,743 @@ const supabase = createClient(
 let session = null, profile = null;
 let currentPage = 'transferts';
 let currentLang = localStorage.getItem('creo_lang') || 'fr';
-let fileView = 'grid'; // 'grid' | 'list'
-let notifSettings = { done: true, error: true, start: false, device: true, disk: true };
+let fileView = 'grid';
+let fileFilter = 'all';
+let fileSort = 'date-desc';
+let transferFilter = 'all';
+let transferSort = 'date-desc';
+let FILES = [];
+let DEVICES = [];
+let SYNC_RULES = [];
+let SYNC_LOG = [];
+let currentDeviceId = localStorage.getItem('creo_device_id') || null;
+let notifSettings = { done: true, error: true, start: false, device: true };
+let pendingFiles = [];
+let activeUploads = {};
+let nextId = 100;
 
-/* ══ DONNÉES SIMULÉES ══ */
-const TRANSFER_HISTORY = [
-  { id:1, name:'montage_final.mp4',       icon:'🎬', size:'4.2 GB', sizeB:4.2e9, type:'video',   dest:'PC Bureau',    speed:'1.4 GB/s', status:'done',   dir:'sent',     date:'14:32', ts: Date.now()-5*60000 },
-  { id:2, name:'backup_janvier.zip',      icon:'📦', size:'12.8 GB',sizeB:12.8e9,type:'archive', dest:'NAS Home',     speed:'980 MB/s', status:'done',   dir:'sent',     date:'13:14', ts: Date.now()-62*60000 },
-  { id:3, name:'rapport_annuel.pdf',      icon:'📄', size:'1.4 MB', sizeB:1.4e6, type:'doc',     dest:'PC Bureau',    speed:'—',        status:'wait',   dir:'sent',     date:'—',     ts: Date.now()-90*60000 },
-  { id:4, name:'photos_vacances.tar',     icon:'🖼️', size:'23.1 GB',sizeB:23.1e9,type:'archive', dest:'NAS Home',     speed:'1.2 GB/s', status:'done',   dir:'sent',     date:'11:08', ts: Date.now()-200*60000 },
-  { id:5, name:'studio_session_03.aiff',  icon:'🎵', size:'2.7 GB', sizeB:2.7e9, type:'audio',   dest:'MacBook Pro',  speed:'—',        status:'error',  dir:'sent',     date:'09:51', ts: Date.now()-290*60000 },
-  { id:6, name:'maquettes_brand.fig',     icon:'🎨', size:'340 MB', sizeB:340e6, type:'design',  dest:'PC Bureau',    speed:'810 MB/s', status:'done',   dir:'received', date:'08:22', ts: Date.now()-370*60000 },
-  { id:7, name:'plans_archi_v3.dwg',      icon:'📐', size:'890 MB', sizeB:890e6, type:'doc',     dest:'PC Bureau',    speed:'1.1 GB/s', status:'done',   dir:'sent',     date:'09:22', ts: Date.now()-300*60000 },
-  { id:8, name:'assets_brand_2025.zip',   icon:'📦', size:'5.4 GB', sizeB:5.4e9, type:'archive', dest:'NAS Home',     speed:'920 MB/s', status:'done',   dir:'sent',     date:'07:10', ts: Date.now()-420*60000 },
-];
+/* ══ FILE TYPE UTILS ══ */
+const TYPE_MAP = {
+  image: ['jpg','jpeg','png','gif','webp','svg','bmp','heic','avif','tiff'],
+  video: ['mp4','mov','avi','mkv','webm','flv','m4v','wmv'],
+  audio: ['mp3','wav','flac','aac','ogg','m4a','opus','aiff'],
+  doc:   ['pdf','doc','docx','txt','rtf','xls','xlsx','ppt','pptx','csv','md'],
+  archive: ['zip','rar','tar','gz','7z','bz2'],
+};
+const TYPE_ICONS = { image:'🖼️', video:'🎬', audio:'🎵', doc:'📄', archive:'📦', other:'📁' };
 
-const DEVICES = [
-  { id:1, name:'PC Bureau',     icon:'🖥️', os:'Windows 11 · x86_64', online:true,  speed:'1.4 GB/s', network:'LAN',   free:'2.1 TB', version:'v4.2.1' },
-  { id:2, name:'MacBook Air M3',icon:'💻', os:'macOS 15.2 · ARM64',   online:true,  speed:'1.1 GB/s', network:'LAN',   free:'412 GB', version:'v4.2.1' },
-  { id:3, name:'NAS Home',      icon:'📦', os:'Synology DS923+',       online:true,  speed:'980 MB/s', network:'LAN',   free:'8.2 TB', version:'v4.1.8', warning:'78%' },
-  { id:4, name:'iPhone 16 Pro', icon:'📱', os:'iOS 18.3 · ARM64',     online:true,  speed:'340 MB/s', network:'Wi-Fi', free:'156 GB', version:'v4.2.0' },
-  { id:5, name:'MacBook Pro 16',icon:'💻', os:'macOS 14.6 · ARM64',   online:false, speed:'—',         network:'—',     free:'1.1 TB', version:'v4.1.9' },
-  { id:6, name:'PC Travail',    icon:'🖥️', os:'Windows 10 · x86_64',  online:false, speed:'—',         network:'—',     free:'780 GB', version:'v4.0.2', outdated:true },
-];
+function detectFileType(name='', mime='') {
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  for (const [t, exts] of Object.entries(TYPE_MAP)) if (exts.includes(ext)) return t;
+  if (mime.startsWith('image/')) return 'image';
+  if (mime.startsWith('video/')) return 'video';
+  if (mime.startsWith('audio/')) return 'audio';
+  return 'other';
+}
+function fileIcon(name) {
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  for (const [t, exts] of Object.entries(TYPE_MAP)) if (exts.includes(ext)) return TYPE_ICONS[t];
+  return '📁';
+}
+function formatBytes(b = 0) {
+  if (b >= 1e12) return (b/1e12).toFixed(2) + ' TB';
+  if (b >= 1e9)  return (b/1e9).toFixed(2)  + ' GB';
+  if (b >= 1e6)  return (b/1e6).toFixed(1)  + ' MB';
+  if (b >= 1e3)  return (b/1e3).toFixed(0)  + ' KB';
+  return (b || 0) + ' B';
+}
+function timeAgo(ts) {
+  if (!ts) return '—';
+  const d = Math.floor((Date.now() - new Date(ts)) / 1000);
+  if (d < 60)    return 'À l\'instant';
+  if (d < 3600)  return `Il y a ${Math.floor(d/60)} min`;
+  if (d < 86400) return `Il y a ${Math.floor(d/3600)}h`;
+  return `Il y a ${Math.floor(d/86400)}j`;
+}
+function genCode() {
+  return Math.random().toString(36).slice(2,8).toUpperCase();
+}
 
-const FILES = [
-  { id:1, name:'montage_final.mp4',      icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'4.2 GB', sizeB:4.2e9,   date:'14 avr. 14:32', ts:Date.now()-5*60000,   status:'done',  statusLabel:'✓ Sync' },
-  { id:2, name:'maquettes_v8.fig',       icon:'🎨', type:'design',  typeLabel:'FIGMA',   size:'210 MB', sizeB:210e6,   date:'14 avr. 13:55', ts:Date.now()-60*60000,  status:'send',  statusLabel:'↑ Envoi' },
-  { id:3, name:'backup_janvier.zip',     icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'12.8 GB',sizeB:12.8e9,  date:'14 avr. 13:14', ts:Date.now()-90*60000,  status:'done',  statusLabel:'✓ Sync' },
-  { id:4, name:'rapport_annuel.pdf',     icon:'📄', type:'doc',     typeLabel:'PDF',     size:'1.4 MB', sizeB:1.4e6,   date:'14 avr. 12:00', ts:Date.now()-130*60000, status:'wait',  statusLabel:'⏳ Attente' },
-  { id:5, name:'photos_vacances.tar',    icon:'🖼️', type:'archive', typeLabel:'ARCHIVE', size:'23.1 GB',sizeB:23.1e9,  date:'14 avr. 11:08', ts:Date.now()-190*60000, status:'done',  statusLabel:'✓ Sync' },
-  { id:6, name:'studio_session_03.aiff', icon:'🎵', type:'audio',   typeLabel:'AUDIO',   size:'2.7 GB', sizeB:2.7e9,   date:'14 avr. 09:51', ts:Date.now()-290*60000, status:'error', statusLabel:'✕ Erreur' },
-  { id:7, name:'plans_archi_v3.dwg',     icon:'📐', type:'doc',     typeLabel:'CAD',     size:'890 MB', sizeB:890e6,   date:'14 avr. 09:22', ts:Date.now()-310*60000, status:'done',  statusLabel:'✓ Sync' },
-  { id:8, name:'assets_brand_2025.zip',  icon:'📦', type:'archive', typeLabel:'ARCHIVE', size:'5.4 GB', sizeB:5.4e9,   date:'13 avr. 07:10', ts:Date.now()-420*60000, status:'done',  statusLabel:'✓ Sync' },
-  { id:9, name:'logo_creo_v2.svg',       icon:'🎨', type:'design',  typeLabel:'SVG',     size:'28 KB',  sizeB:28e3,    date:'12 avr. 16:45', ts:Date.now()-500*60000, status:'done',  statusLabel:'✓ Sync' },
-  { id:10,name:'cours_react.mp4',        icon:'🎬', type:'video',   typeLabel:'VIDEO',   size:'1.8 GB', sizeB:1.8e9,   date:'11 avr. 10:00', ts:Date.now()-700*60000, status:'done',  statusLabel:'✓ Sync' },
-];
-
-const SYNC_RULES = [
-  { name:'Sync Photos',   source:'iPhone 16 Pro', dest:'NAS Home',     freq:'Temps réel',        active:true },
-  { name:'Backup Docs',   source:'PC Bureau',     dest:'NAS Home',     freq:'Toutes les heures', active:true },
-  { name:'Sync Projets',  source:'MacBook Air M3',dest:'PC Bureau',    freq:'Quotidien 03:00',   active:true },
-  { name:'Archive Vidéos',source:'PC Bureau',     dest:'NAS Home',     freq:'Manuel',            active:false },
-];
-
-let syncLog = [
-  { color:'var(--green)', text:'<strong>backup_janvier.zip</strong> synchronisé sur NAS Home', time:'14:32' },
-  { color:'var(--blue)',  text:'Démarrage sync <strong>maquettes_v8.fig</strong>',              time:'14:28' },
-  { color:'var(--red)',   text:'Conflit détecté — <strong>studio_session_03.aiff</strong>',     time:'13:51' },
-  { color:'var(--amber)', text:'NAS Home — espace disque à <strong>78%</strong>',               time:'12:10' },
-  { color:'var(--green)', text:'<strong>1 247 fichiers</strong> synchronisés avec succès',      time:'11:02' },
-];
-
-/* Active transfers list */
-let activeTransfers = [];
-let nextTransferId = 100;
-
-/* ══ NOTIFICATIONS ══ */
-const NOTIFS = [
-  { color:'var(--green)', text:'<strong>montage_final.mp4</strong> transféré avec succès', time:'Il y a 3 min' },
-  { color:'var(--blue)',  text:'MacBook Air <strong>connecté</strong> sur réseau LAN',       time:'Il y a 12 min' },
-  { color:'var(--amber)', text:'NAS Home — espace à <strong>78%</strong>',                  time:'Il y a 1h' },
-  { color:'var(--blue2)', text:'Sync terminée — <strong>1 247 fichiers</strong> mis à jour', time:'Il y a 2h' },
-];
-let hasUnreadNotif = true;
+/* ══ DEVICE DETECTION ══ */
+function detectDevice() {
+  const ua = navigator.userAgent;
+  let type = 'desktop', icon = '🖥️', os = 'Inconnu';
+  if (/iPhone/i.test(ua))               { type='phone';   icon='📱'; os='iOS'; }
+  else if (/iPad/i.test(ua))            { type='tablet';  icon='📟'; os='iPadOS'; }
+  else if (/Android.*Mobile/i.test(ua)) { type='phone';   icon='📱'; os='Android'; }
+  else if (/Android/i.test(ua))         { type='tablet';  icon='📟'; os='Android Tablet'; }
+  else if (/Mac/i.test(ua))             { type='laptop';  icon='💻'; os='macOS'; }
+  else if (/Windows/i.test(ua))         { type='desktop'; icon='🖥️'; os='Windows'; }
+  else if (/Linux/i.test(ua))           { type='desktop'; icon='🖥️'; os='Linux'; }
+  let browser = 'Navigateur';
+  if (/Chrome/i.test(ua) && !/Edg/i.test(ua)) browser = 'Chrome';
+  else if (/Firefox/i.test(ua)) browser = 'Firefox';
+  else if (/Safari/i.test(ua) && !/Chrome/i.test(ua)) browser = 'Safari';
+  else if (/Edg/i.test(ua)) browser = 'Edge';
+  return { type, icon, os, browser, screen: `${screen.width}×${screen.height}` };
+}
 
 /* ══ INIT ══ */
 async function init() {
-  const { data:{ session: s } } = await supabase.auth.getSession();
+  setLoadTxt('Vérification de la session…');
+  const { data: { session: s } } = await supabase.auth.getSession();
   if (!s) { window.location.href = '/creo/login/login.html'; return; }
   session = s;
 
+  setLoadTxt('Chargement du profil…');
   const { data: p } = await supabase.from('profiles').select('*').eq('id', s.user.id).single();
   if (!p?.username || !p?.client_code || !p?.type) {
     window.location.href = '/creo/login/complete-profile.html';
     return;
   }
   profile = p;
+  currentLang = p.lang || currentLang;
+  if (p.notif_settings) {
+    try { notifSettings = { ...notifSettings, ...JSON.parse(p.notif_settings) }; } catch(e) {}
+  }
 
-  if (p.lang) { currentLang = p.lang; localStorage.setItem('creo_lang', p.lang); }
-
-  supabase.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_OUT') window.location.href = '/creo/login/login.html';
+  supabase.auth.onAuthStateChange(ev => {
+    if (ev === 'SIGNED_OUT') window.location.href = '/creo/login/login.html';
   });
+
+  setLoadTxt('Enregistrement de l\'appareil…');
+  await ensureDeviceRegistered();
+
+  setLoadTxt('Chargement des données…');
+  await Promise.all([loadFiles(), loadDevices(), loadSyncRules(), loadSyncLog()]);
 
   renderSidebar();
   renderSettings();
-  renderNotifs();
   renderTransfersPage();
   renderDevicesPage();
   renderFilesPage();
   renderSyncPage();
   renderAnalyticsPage();
-  buildCharts();
+  applyNotifToggles();
+  updateDeviceSelect();
   hideLoading();
-  startLiveStats();
   setupEventListeners();
+  setupRealtime();
 }
+
+function setLoadTxt(t) {
+  const el = document.getElementById('loading-txt');
+  if (el) el.textContent = t;
+}
+
+/* ══ ENSURE DEVICE REGISTERED ══ */
+async function ensureDeviceRegistered() {
+  const info = detectDevice();
+  if (currentDeviceId) {
+    const { data } = await supabase.from('devices')
+      .update({ last_seen: new Date().toISOString(), online: true, browser: info.browser, os: info.os, screen: info.screen })
+      .eq('id', currentDeviceId).eq('user_id', session.user.id)
+      .select().single();
+    if (data) return; // already registered and updated
+  }
+  // Auto-register silently as "appareil non nommé" — user can rename later
+  const defaultName = `${info.browser} · ${info.os}`;
+  const { data: dev } = await supabase.from('devices').insert({
+    user_id: session.user.id,
+    name: defaultName,
+    type: info.type, icon: info.icon, os: info.os,
+    browser: info.browser, screen: info.screen,
+    online: true, last_seen: new Date().toISOString(),
+  }).select().single();
+  if (dev) {
+    currentDeviceId = dev.id;
+    localStorage.setItem('creo_device_id', dev.id);
+  }
+}
+
+/* ══ DATA LOADERS ══ */
+async function loadFiles() {
+  const { data } = await supabase.from('files').select('*')
+    .eq('user_id', session.user.id).order('created_at', { ascending: false });
+  FILES = data || [];
+}
+async function loadDevices() {
+  const { data } = await supabase.from('devices').select('*')
+    .eq('user_id', session.user.id).order('last_seen', { ascending: false });
+  DEVICES = data || [];
+}
+async function loadSyncRules() {
+  const { data } = await supabase.from('sync_rules').select('*')
+    .eq('user_id', session.user.id).order('created_at', { ascending: false });
+  SYNC_RULES = data || [];
+}
+async function loadSyncLog() {
+  const { data } = await supabase.from('sync_log').select('*')
+    .eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(20);
+  SYNC_LOG = data || [];
+}
+
+/* ══ REALTIME ══ */
+function setupRealtime() {
+  supabase.channel('rt-files')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'files', filter: `user_id=eq.${session.user.id}` }, async () => {
+      await loadFiles();
+      renderTransfersPage(); renderFilesPage(); updateTransfersStats();
+    }).subscribe();
+
+  supabase.channel('rt-devices')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'devices', filter: `user_id=eq.${session.user.id}` }, async () => {
+      await loadDevices();
+      renderDevicesPage(); updateDeviceSelect();
+    }).subscribe();
+}
+
+/* ══ UPLOAD FLOW ══ */
+function startUpload(files) {
+  if (!files || !files.length) return;
+  pendingFiles = Array.from(files);
+  // Build destination select options
+  updateDeviceSelect();
+  // Show preview of files to send
+  const preview = document.getElementById('modal-dest-preview');
+  if (preview) {
+    preview.innerHTML = pendingFiles.map(f => `
+      <div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;border-bottom:1px solid var(--b1);">
+        <span>${fileIcon(f.name)}</span>
+        <span style="flex:1;font-size:.82rem;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t3);">${formatBytes(f.size)}</span>
+      </div>`).join('');
+  }
+  openModal('modal-transfer');
+}
+
+async function confirmUploadAndSend() {
+  const destVal = document.getElementById('mt-dest').value;
+  closeModal('modal-transfer');
+  // Reset modal name field
+  const nameField = document.getElementById('mt-name');
+  if (nameField) nameField.value = '';
+  for (const file of pendingFiles) {
+    await doUpload(file, destVal === '__storage__' ? null : destVal);
+  }
+  pendingFiles = [];
+}
+
+async function doUpload(file, targetDeviceId) {
+  if (file.size > 50 * 1024 * 1024) { uiToast('error', `${file.name} trop grand (max 50 MB)`); return; }
+  const uid = 'up_' + (nextId++);
+  activeUploads[uid] = { name: file.name, progress: 0, status: 'uploading', size: file.size };
+  renderActiveTransfers();
+  if (notifSettings.start) uiToast('info', `⬆ Envoi de ${file.name}…`);
+
+  try {
+    const ext  = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : 'bin';
+    const path = `${session.user.id}/${uid}.${ext}`;
+    const type = detectFileType(file.name, file.type);
+    const code = genCode();
+
+    // Fake progress for UX
+    let fp = 0;
+    const iv = setInterval(() => {
+      fp = Math.min(fp + 4 + Math.random() * 14, 90);
+      activeUploads[uid].progress = Math.round(fp);
+      updateUpCard(uid, Math.round(fp));
+    }, 180);
+
+    const { error } = await supabase.storage.from('creo-files')
+      .upload(path, file, { upsert: true, contentType: file.type || 'application/octet-stream' });
+    clearInterval(iv);
+    if (error) throw error;
+
+    updateUpCard(uid, 100);
+    const { data: ud } = supabase.storage.from('creo-files').getPublicUrl(path);
+
+    await supabase.from('files').insert({
+      user_id: session.user.id,
+      name: file.name, type,
+      size_bytes: file.size, size_label: formatBytes(file.size),
+      storage_path: path, public_url: ud.publicUrl,
+      mime_type: file.type || 'application/octet-stream',
+      status: 'done', share_code: code,
+      target_device_id: targetDeviceId || null,
+    });
+
+    activeUploads[uid].status = 'done';
+    activeUploads[uid].code   = code;
+    activeUploads[uid].url    = ud.publicUrl;
+    renderActiveTransfers();
+
+    await loadFiles();
+    renderTransfersPage(); renderFilesPage(); updateTransfersStats();
+
+    const dest = targetDeviceId
+      ? (DEVICES.find(d => d.id === targetDeviceId)?.name || 'Appareil')
+      : 'Stockage';
+    if (notifSettings.done) uiToast('success', `✓ ${file.name} → ${dest} · Code: ${code}`);
+
+    setTimeout(() => { delete activeUploads[uid]; renderActiveTransfers(); }, 8000);
+  } catch (err) {
+    console.error(err);
+    activeUploads[uid].status = 'error';
+    renderActiveTransfers();
+    if (notifSettings.error) uiToast('error', `✕ Erreur upload : ${file.name}`);
+    setTimeout(() => { delete activeUploads[uid]; renderActiveTransfers(); }, 8000);
+  }
+}
+
+function updateUpCard(uid, pct) {
+  const bar   = document.getElementById(`tc-prog-${uid}`);
+  const pctEl = document.getElementById(`tc-pct-${uid}`);
+  if (bar) bar.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+function renderActiveTransfers() {
+  const container = document.getElementById('active-transfers-container');
+  document.getElementById('active-count').textContent = Object.keys(activeUploads).length + ' en cours';
+  const entries = Object.entries(activeUploads);
+  if (!entries.length) {
+    container.innerHTML = `<div style="text-align:center;padding:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Glisse des fichiers ici ou clique "+ Nouveau"</div>`;
+    return;
+  }
+  container.innerHTML = entries.map(([uid, u]) => `
+    <div class="transfer-card ${u.status === 'done' ? 'transfer-done' : u.status === 'error' ? 'transfer-err' : 'active-transfer'}" id="tc-${uid}">
+      <div class="tc-header">
+        <div class="tc-name">
+          <span>${fileIcon(u.name)}</span>
+          <span class="fname">${u.name}</span>
+          <span class="badge ${u.status==='done'?'badge-green':u.status==='error'?'badge-red':'badge-blue'}">${u.status==='done'?'TERMINÉ':u.status==='error'?'ERREUR':'ENVOI…'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${u.status==='done'&&u.code?`<span style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--amber);letter-spacing:.15em;">Code: ${u.code}</span><button onclick="copyText('${u.code}')" style="font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:2px 7px;background:var(--d4);border:1px solid var(--b3);border-radius:4px;color:var(--t2);cursor:pointer;">📋</button>`:''}
+          <button class="btn btn-ghost btn-xs" onclick="removeUpload('${uid}')" title="Fermer">✕</button>
+        </div>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill ${u.status==='done'?'done':u.status==='error'?'err':''}" id="tc-prog-${uid}" style="width:${u.progress}%;"></div>
+      </div>
+      <div class="tc-footer">
+        <span>${formatBytes(u.size)}</span>
+        <span id="tc-pct-${uid}">${u.progress}%</span>
+      </div>
+    </div>`).join('');
+}
+window.removeUpload = uid => { delete activeUploads[uid]; renderActiveTransfers(); };
+
+/* ══ DEVICE SELECT in modal ══ */
+function updateDeviceSelect() {
+  const sel = document.getElementById('mt-dest');
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '<option value="__storage__">☁ Mon stockage (lien de téléchargement)</option>';
+  DEVICES.forEach(d => {
+    const isCur = d.id === currentDeviceId;
+    const opt = document.createElement('option');
+    opt.value = d.id;
+    opt.textContent = `${d.icon || '📱'} ${d.name}${isCur ? ' (cet appareil)' : ''}`;
+    sel.appendChild(opt);
+  });
+  if (cur) { const o = sel.querySelector(`option[value="${cur}"]`); if (o) sel.value = cur; }
+}
+
+/* ══ REDEEM CODE ══ */
+async function redeemCode() {
+  const input = document.getElementById('code-input');
+  if (!input) return;
+  const code = input.value.trim().toUpperCase();
+  if (code.length < 4) { uiToast('warning', 'Entre un code valide (6 caractères).'); return; }
+  const btn = document.getElementById('btn-redeem-code');
+  if (btn) btn.classList.add('btn-loading');
+  const { data } = await supabase.from('files').select('*').eq('share_code', code).maybeSingle();
+  if (btn) btn.classList.remove('btn-loading');
+  const result = document.getElementById('code-result');
+  if (!result) return;
+  if (!data) {
+    result.innerHTML = `<div style="background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.2);border-radius:var(--r-xl);padding:1rem 1.4rem;font-size:.82rem;color:var(--red);">❌ Aucun fichier trouvé pour le code <strong>${code}</strong>.</div>`;
+    return;
+  }
+  result.innerHTML = `
+    <div style="background:var(--d3);border:1px solid rgba(0,255,136,.2);border-radius:var(--r-xl);padding:1.4rem;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1rem;">
+        <span style="font-size:2rem;">${TYPE_ICONS[data.type]||'📁'}</span>
+        <div>
+          <div style="font-size:.95rem;font-weight:500;color:var(--t1);">${data.name}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t3);">${data.size_label||formatBytes(data.size_bytes)} · ${(data.type||'other').toUpperCase()}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="${data.public_url}" target="_blank" download class="btn btn-primary btn-sm">⬇ Télécharger</a>
+        <button onclick="copyText('${data.public_url}')" class="btn btn-ghost btn-sm">🔗 Copier le lien</button>
+      </div>
+    </div>`;
+}
+window.redeemCode = redeemCode;
 
 /* ══ SIDEBAR ══ */
 function renderSidebar() {
-  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
+  const av = profile?.avatar_url;
   const el = document.getElementById('sidebar-avatar');
   if (av) el.innerHTML = `<img src="${av}" alt="">`;
   else el.textContent = initials();
   document.getElementById('sidebar-name').textContent = displayName();
-  document.getElementById('sidebar-role').textContent = profile?.type ? profile.type.charAt(0).toUpperCase()+profile.type.slice(1) : 'Utilisateur';
+  document.getElementById('sidebar-role').textContent = capitalize(profile?.type || 'utilisateur');
+  updateMobProfileStrip();
 }
-
+function updateMobProfileStrip() {
+  const av = profile?.avatar_url;
+  const avEl = document.getElementById('mob-strip-av');
+  if (avEl) {
+    if (av) avEl.innerHTML = `<img src="${av}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="">`;
+    else avEl.textContent = initials();
+  }
+  const n = document.getElementById('mob-strip-name');
+  const r = document.getElementById('mob-strip-role');
+  if (n) n.textContent = displayName();
+  if (r) r.textContent = capitalize(profile?.type || 'utilisateur');
+}
 function displayName() {
   if (profile?.first_name && profile?.last_name) return `${profile.first_name} ${profile.last_name}`;
   if (profile?.username) return `@${profile.username}`;
   return session?.user?.email?.split('@')[0] || 'Utilisateur';
 }
 function initials() {
-  return displayName().split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  return displayName().split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || '?';
 }
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 
 /* ══ SETTINGS ══ */
 function renderSettings() {
   document.getElementById('settings-code').textContent = profile?.client_code || '—';
-  document.getElementById('settings-plan').textContent = profile?.type ? profile.type.charAt(0).toUpperCase()+profile.type.slice(1) : '—';
+  document.getElementById('settings-plan').textContent = capitalize(profile?.type) || '—';
   document.getElementById('s-firstname').value  = profile?.first_name || '';
   document.getElementById('s-lastname').value   = profile?.last_name  || '';
   document.getElementById('s-email').value      = profile?.email || session?.user?.email || '';
-  document.getElementById('s-username').value   = profile?.username   || '';
+  document.getElementById('s-username').value   = profile?.username || '';
   document.getElementById('s-session-email').textContent = session?.user?.email || '';
-
-  // Avatar
   const av = profile?.avatar_url;
   const avEl = document.getElementById('settings-avatar');
   if (av) avEl.innerHTML = `<img src="${av}" alt=""><div class="avatar-overlay">📷</div>`;
-  else    document.getElementById('settings-avatar-initials').textContent = initials();
-
-  // Lang
+  else avEl.innerHTML = `<span id="settings-avatar-initials">${initials()}</span><div class="avatar-overlay">📷</div>`;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
 }
 
-/* ══ NOTIFICATIONS ══ */
-function renderNotifs() {
-  const list = document.getElementById('notif-list');
-  list.innerHTML = NOTIFS.map(n => `
-    <div class="notif-item">
-      <div class="notif-dot" style="background:${n.color};"></div>
-      <div><div class="notif-text">${n.text}</div><div class="notif-time">${n.time}</div></div>
-    </div>`).join('');
-  document.getElementById('notif-dot').style.display = hasUnreadNotif ? 'block' : 'none';
-}
-
 /* ══ TRANSFERS PAGE ══ */
-let transferFilter = 'all';
-let transferSort   = 'date-desc';
-
 function renderTransfersPage() {
   renderActiveTransfers();
   renderTransfersTable();
   updateTransfersStats();
 }
 
-function renderActiveTransfers() {
-  const container = document.getElementById('active-transfers-container');
-  document.getElementById('active-count').textContent = activeTransfers.length + ' en cours';
-  if (activeTransfers.length === 0) {
-    container.innerHTML = `<div style="text-align:center;padding:1.5rem;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucun transfert actif</div>`;
-    return;
-  }
-  container.innerHTML = activeTransfers.map(t => `
-    <div class="transfer-card ${t.status === 'done' ? 'transfer-done' : t.status === 'error' ? 'transfer-err' : 'active-transfer'}" id="tc-${t.id}">
-      <div class="tc-header">
-        <div class="tc-name">
-          <span>${t.icon}</span>
-          <span class="fname">${t.name}</span>
-          <span class="badge ${t.status==='done'?'badge-green':t.status==='error'?'badge-red':'badge-blue'}">${t.status==='done'?'TERMINÉ':t.status==='error'?'ERREUR':'EN COURS'}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="tc-speed" id="tc-speed-${t.id}">${t.speedLabel||'—'}</span>
-          <div class="tc-actions">
-            ${t.status==='active'?`<button class="btn btn-ghost btn-xs" onclick="pauseTransfer(${t.id})">⏸</button>`:''}
-            <button class="btn btn-ghost btn-xs" onclick="removeTransfer(${t.id})" title="Fermer">✕</button>
-          </div>
-        </div>
-      </div>
-      <div class="prog-bar">
-        <div class="prog-fill ${t.status==='done'?'done':t.status==='error'?'err':''}" id="tc-prog-${t.id}" style="width:${t.progress}%;"></div>
-      </div>
-      <div class="tc-footer">
-        <span>${t.source} → ${t.dest}</span>
-        <span id="tc-pct-${t.id}">${Math.round(t.progress)}% · ${t.size}</span>
-      </div>
-    </div>`).join('');
+function updateTransfersStats() {
+  const done = FILES.filter(f => f.status === 'done');
+  document.getElementById('stat-total').innerHTML = `${done.length} <span class="unit">fichiers</span>`;
+  const totalB = done.reduce((s, f) => s + (f.size_bytes || 0), 0);
+  const fmtd = formatBytes(totalB).split(' ');
+  document.getElementById('stat-size').innerHTML = `${fmtd[0]} <span class="unit">${fmtd[1]||''}</span>`;
+  const onlineDev = DEVICES.length;
+  document.getElementById('stat-devices').innerHTML = `${onlineDev} <span class="unit" style="color:var(--green);">●</span>`;
+  const codes = FILES.filter(f => f.share_code).length;
+  document.getElementById('stat-success').innerHTML = `${codes} <span class="unit">%</span>`;
+  document.getElementById('stat-success').innerHTML = codes > 0 ? `${codes} <span class="unit">codes</span>` : `0 <span class="unit">codes</span>`;
 }
 
-function renderTransfersTable(searchQuery = '') {
-  let data = [...TRANSFER_HISTORY];
-
-  // filter by category
-  if (transferFilter !== 'all') {
-    if (transferFilter === 'sent')     data = data.filter(t => t.dir === 'sent');
-    if (transferFilter === 'received') data = data.filter(t => t.dir === 'received');
-    if (transferFilter === 'error')    data = data.filter(t => t.status === 'error');
-  }
-
-  // search
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    data = data.filter(t => t.name.toLowerCase().includes(q) || t.dest.toLowerCase().includes(q));
-  }
-
-  // sort
+function renderTransfersTable(q = '') {
+  let data = [...FILES];
+  if (transferFilter === 'sent')     data = data.filter(f => f.status === 'done');
+  if (transferFilter === 'received') data = data.filter(f => f.target_device_id === currentDeviceId);
+  if (transferFilter === 'error')    data = data.filter(f => f.status === 'error');
+  if (q) { const ql = q.toLowerCase(); data = data.filter(f => f.name.toLowerCase().includes(ql)); }
   data.sort((a, b) => {
-    if (transferSort === 'date-desc') return b.ts - a.ts;
-    if (transferSort === 'date-asc')  return a.ts - b.ts;
-    if (transferSort === 'size-desc') return b.sizeB - a.sizeB;
-    if (transferSort === 'size-asc')  return a.sizeB - b.sizeB;
+    if (transferSort === 'date-desc') return new Date(b.created_at) - new Date(a.created_at);
+    if (transferSort === 'date-asc')  return new Date(a.created_at) - new Date(b.created_at);
+    if (transferSort === 'size-desc') return (b.size_bytes||0) - (a.size_bytes||0);
+    if (transferSort === 'size-asc')  return (a.size_bytes||0) - (b.size_bytes||0);
     if (transferSort === 'name-asc')  return a.name.localeCompare(b.name);
     return 0;
   });
-
   const tbody = document.getElementById('transfers-tbody');
-  if (data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">Aucun résultat</td></tr>`;
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="table-empty">Glisse tes fichiers dans la zone d'upload pour commencer !</td></tr>`;
     return;
   }
-
-  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err', pause:'st-pause' };
-  const stLbl = { done:'✓ Envoyé', send:'↑ Envoi', wait:'⏳ Attente', error:'✕ Erreur', pause:'⏸ Pause' };
-
+  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err' };
   tbody.innerHTML = data.map(t => {
-    const name = searchQuery ? t.name.replace(new RegExp(searchQuery, 'gi'), m => `<span class="hl">${m}</span>`) : t.name;
+    const hl = q ? t.name.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m => `<span class="hl">${m}</span>`) : t.name;
+    const date = t.created_at ? new Date(t.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    const destDev = t.target_device_id ? DEVICES.find(d => d.id === t.target_device_id) : null;
+    const destLabel = destDev ? `${destDev.icon||'📱'} ${destDev.name}` : '☁ Stockage';
     return `<tr>
-      <td><div class="td-name"><span class="td-icon">${t.icon}</span><div><div class="td-fname">${name}</div><div class="td-fmeta">${t.type}</div></div></div></td>
-      <td class="font-mono" style="font-size:.76rem;">${t.size}</td>
-      <td style="color:var(--t2);">${t.dest}</td>
-      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.speed}</td>
-      <td><span class="status ${stMap[t.status]||'st-wait'}">${stLbl[t.status]||'—'}</span></td>
-      <td class="font-mono" style="font-size:.66rem;color:var(--t3);">${t.date}</td>
-      <td><button class="btn btn-ghost btn-xs" onclick="retryTransfer(${t.id})" title="Réessayer" style="${t.status!=='error'?'opacity:.3;pointer-events:none;':''}">↺</button></td>
+      <td><div class="td-name"><span class="td-icon">${fileIcon(t.name)}</span><div><div class="td-fname">${hl}</div><div class="td-fmeta">${t.type||'other'}</div></div></div></td>
+      <td class="font-mono" style="font-size:.76rem;">${t.size_label||formatBytes(t.size_bytes)}</td>
+      <td style="font-size:.78rem;">${destLabel}</td>
+      <td><span style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--amber);letter-spacing:.12em;">${t.share_code||'—'}</span></td>
+      <td><span class="status ${stMap[t.status]||'st-wait'}">${t.status==='done'?'✓ OK':t.status==='error'?'✕ Erreur':'⏳ Attente'}</span></td>
+      <td class="font-mono" style="font-size:.66rem;color:var(--t3);">${date}</td>
+      <td style="display:flex;gap:5px;align-items:center;">
+        ${t.share_code?`<button onclick="copyText('${t.share_code}')" class="btn btn-ghost btn-xs" title="Copier le code">📋 ${t.share_code}</button>`:''} 
+        ${t.public_url?`<a href="${t.public_url}" target="_blank" download class="btn btn-ghost btn-xs">⬇</a>`:''}
+        <button class="btn btn-danger btn-xs" onclick="deleteFile('${t.id}','${t.storage_path||''}')">✕</button>
+      </td>
     </tr>`;
   }).join('');
 }
-
-function updateTransfersStats() {
-  const total = TRANSFER_HISTORY.filter(t=>t.status==='done').reduce((s,t)=>s+t.sizeB,0);
-  const gb = total / 1e9;
-  document.getElementById('stat-total').innerHTML = gb >= 1000
-    ? `${(gb/1000).toFixed(1)} <span class="unit">TB</span>`
-    : `${gb.toFixed(1)} <span class="unit">GB</span>`;
-  const online = DEVICES.filter(d=>d.online).length;
-  document.getElementById('stat-devices').innerHTML = `${online} <span class="unit" style="color:var(--green);">●</span>`;
-}
-
-/* ══ ACTIVE TRANSFERS ENGINE ══ */
-function addActiveTransfer(data) {
-  const icons = { video:'🎬', archive:'📦', doc:'📄', image:'🖼️', audio:'🎵', design:'🎨', other:'📁' };
-  const t = {
-    id: nextTransferId++,
-    name: data.name || 'fichier.dat',
-    icon: icons[data.type] || '📁',
-    size: data.size || '—',
-    source: data.source || 'PC Bureau',
-    dest: data.dest || 'NAS Home',
-    progress: 0,
-    status: 'active',
-    speedLabel: '↑ 0 MB/s',
-  };
-  activeTransfers.push(t);
-  renderActiveTransfers();
-  // Start progress
-  const interval = setInterval(() => {
-    const idx = activeTransfers.findIndex(x => x.id === t.id);
-    if (idx === -1) { clearInterval(interval); return; }
-    const inc = 0.8 + Math.random() * 2.5;
-    activeTransfers[idx].progress = Math.min(100, activeTransfers[idx].progress + inc);
-    const spd = (400 + Math.random() * 1200).toFixed(0);
-    activeTransfers[idx].speedLabel = `↑ ${spd} MB/s`;
-    // Update DOM directly for performance
-    const prog = document.getElementById(`tc-prog-${t.id}`);
-    const pct  = document.getElementById(`tc-pct-${t.id}`);
-    const spdEl= document.getElementById(`tc-speed-${t.id}`);
-    if (prog) prog.style.width = activeTransfers[idx].progress + '%';
-    if (pct)  pct.textContent  = Math.round(activeTransfers[idx].progress) + '% · ' + t.size;
-    if (spdEl) spdEl.textContent = activeTransfers[idx].speedLabel;
-
-    if (activeTransfers[idx].progress >= 100) {
-      clearInterval(interval);
-      activeTransfers[idx].status = 'done';
-      activeTransfers[idx].speedLabel = '✓ Terminé';
-      renderActiveTransfers();
-      if (notifSettings.done) uiToast('success', `✓ ${t.name} transféré !`);
-      // Add to history
-      TRANSFER_HISTORY.unshift({
-        id: Date.now(), name: t.name, icon: t.icon,
-        size: t.size, sizeB: 1e9, type: data.type || 'other',
-        dest: t.dest, speed: spd + ' MB/s', status: 'done',
-        dir: 'sent', date: new Date().toTimeString().slice(0,5), ts: Date.now()
-      });
-      renderTransfersTable(document.getElementById('search-input').value.trim());
-      updateTransfersStats();
-      addSyncLogEntry('var(--green)', `<strong>${t.name}</strong> transféré vers ${t.dest}`, new Date().toTimeString().slice(0,5));
-    }
-  }, 300);
-  if (notifSettings.start) uiToast('info', `⚡ Démarrage : ${t.name}`);
-}
-
-window.pauseTransfer = function(id) {
-  const t = activeTransfers.find(x => x.id === id);
-  if (t) { t.status = t.status === 'paused' ? 'active' : 'paused'; renderActiveTransfers(); }
-};
-window.removeTransfer = function(id) {
-  activeTransfers = activeTransfers.filter(x => x.id !== id);
-  renderActiveTransfers();
-};
-window.retryTransfer = function(id) {
-  const t = TRANSFER_HISTORY.find(x => x.id === id);
-  if (t) { addActiveTransfer({ name: t.name, type: t.type, size: t.size, dest: t.dest }); showPage('transferts', document.querySelector('[data-page="transferts"]')); }
-};
 
 /* ══ DEVICES PAGE ══ */
 function renderDevicesPage() {
-  const online = DEVICES.filter(d=>d.online).length;
-  document.getElementById('dev-online').innerHTML = `${online} <span class="unit" style="color:var(--green);">en ligne</span>`;
-  document.getElementById('dev-total').textContent = `${DEVICES.length} appareils au total`;
-  document.getElementById('dev-bw').innerHTML = `3.4 <span class="unit">GB/s</span>`;
-  document.getElementById('dev-last-sync').textContent = '14:32';
+  const info = detectDevice();
+  const curDev = DEVICES.find(d => d.id === currentDeviceId);
+  document.getElementById('dev-online').innerHTML = `${DEVICES.length} <span class="unit" style="color:var(--green);">appareils</span>`;
+  document.getElementById('dev-total').textContent = curDev?.name || `${info.browser} · ${info.os}`;
+  document.getElementById('dev-bw').innerHTML = `${FILES.filter(f=>f.target_device_id===currentDeviceId).length} <span class="unit">reçus</span>`;
+  document.getElementById('dev-last-sync').textContent = curDev?.last_seen ? new Date(curDev.last_seen).toTimeString().slice(0,5) : '—';
 
-  document.getElementById('devices-grid').innerHTML = DEVICES.map(d => `
-    <div class="device-card ${d.online ? 'online' : 'offline'}">
-      <div class="dc-head">
-        <div class="dc-icon" style="${!d.online?'opacity:.45':''}">${d.icon}</div>
-        <div class="dc-dot ${d.online ? 'on' : 'off'}"></div>
-      </div>
-      <div class="dc-name" style="${!d.online?'color:var(--t2)':''}">${d.name}</div>
-      <div class="dc-type">${d.os}</div>
-      <div class="dc-stats">
-        <div class="dc-stat"><div class="dc-stat-val">${d.speed}</div><div class="dc-stat-key">Vitesse max</div></div>
-        <div class="dc-stat"><div class="dc-stat-val">${d.network}</div><div class="dc-stat-key">Réseau</div></div>
-        <div class="dc-stat"><div class="dc-stat-val" style="${d.warning?'color:var(--amber)':d.outdated?'color:var(--amber)':''}">${d.free}</div><div class="dc-stat-key">Espace libre</div></div>
-        <div class="dc-stat"><div class="dc-stat-val" style="${d.outdated?'color:var(--amber)':''}">${d.version}</div><div class="dc-stat-key">${d.outdated?'⚠ Mise à jour':'Version CREO'}</div></div>
-      </div>
-      <div class="dc-actions">
-        ${d.online
-          ? `<button class="btn btn-primary btn-sm" onclick="startTransferTo('${d.name}')">Transférer</button><button class="btn btn-ghost btn-sm">Détails</button>`
-          : `<button class="btn btn-ghost btn-sm" disabled style="opacity:.35;">Hors ligne</button><button class="btn btn-ghost btn-sm">Infos</button>`
-        }
-      </div>
-    </div>`).join('');
-}
-
-window.startTransferTo = function(destName) {
-  document.getElementById('mt-dest').value = destName;
-  openModal('modal-transfer');
-};
-
-/* ══ FILES PAGE ══ */
-let fileFilter = 'all';
-let fileSort   = 'date-desc';
-
-function renderFilesPage(searchQuery = '') {
-  let data = [...FILES];
-
-  if (fileFilter !== 'all') data = data.filter(f => f.type === fileFilter);
-  if (searchQuery) {
-    const q = searchQuery.toLowerCase();
-    data = data.filter(f => f.name.toLowerCase().includes(q));
+  if (!DEVICES.length) {
+    document.getElementById('devices-grid').innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.75rem;">Aucun appareil — actualise la page pour enregistrer cet appareil automatiquement.</div>`;
+    return;
   }
 
-  data.sort((a, b) => {
-    if (fileSort === 'date-desc') return b.ts - a.ts;
-    if (fileSort === 'date-asc')  return a.ts - b.ts;
-    if (fileSort === 'size-desc') return b.sizeB - a.sizeB;
-    if (fileSort === 'name-asc')  return a.name.localeCompare(b.name);
-    return 0;
-  });
-
-  document.getElementById('files-count').textContent = FILES.length.toLocaleString();
-  document.getElementById('files-delta').textContent = '↑ +127 cette semaine';
-  document.getElementById('files-shared').textContent = '43';
-  document.getElementById('files-lastmod').textContent = '14:32';
-  document.getElementById('files-lastmod-name').textContent = FILES[0].name;
-
-  // Grid (top 6)
-  const grid = document.getElementById('files-grid');
-  const recent = data.slice(0, 6);
-  const isListView = fileView === 'list';
-  grid.className = isListView ? 'files-grid list-view' : 'files-grid';
-  grid.innerHTML = recent.map(f => {
-    const name = searchQuery ? f.name.replace(new RegExp(searchQuery,'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
-    return `<div class="file-card${isListView?' list-view':''}" onclick="uiToast('info','${f.name}')">
-      <div class="file-card-icon">${f.icon}</div>
-      <div class="${isListView?'file-card-info':''}">
-        <div class="file-card-name">${name}</div>
-        <div class="file-card-meta">${f.size} · ${f.date.split(' ')[2]||f.date}</div>
+  document.getElementById('devices-grid').innerHTML = DEVICES.map(d => {
+    const isCur = d.id === currentDeviceId;
+    const isRecent = d.last_seen && (Date.now() - new Date(d.last_seen)) < 600000;
+    const myFiles = FILES.filter(f => f.target_device_id === d.id);
+    return `<div class="device-card ${isCur ? 'online' : isRecent ? 'online' : 'offline'}">
+      <div class="dc-head">
+        <div class="dc-icon" style="${!isRecent&&!isCur?'opacity:.5':''}">${d.icon||'🖥️'}</div>
+        <div class="dc-dot ${isRecent||isCur ? 'on' : 'off'}"></div>
+      </div>
+      <div class="dc-name">${d.name}</div>
+      <div class="dc-type">${d.os||''} · ${d.browser||''}</div>
+      <div class="dc-stats">
+        <div class="dc-stat"><div class="dc-stat-val">${d.screen||'—'}</div><div class="dc-stat-key">Résolution</div></div>
+        <div class="dc-stat"><div class="dc-stat-val">${timeAgo(d.last_seen)}</div><div class="dc-stat-key">Vu</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="${myFiles.length?'color:var(--amber)':''}">${myFiles.length}</div><div class="dc-stat-key">Fichiers reçus</div></div>
+        <div class="dc-stat"><div class="dc-stat-val" style="font-size:.65rem;">${isCur?'● Cet appareil':isRecent?'● Actif':'○ Inactif'}</div><div class="dc-stat-key">Statut</div></div>
+      </div>
+      ${myFiles.length && isCur ? `<div style="background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);border-radius:var(--r);padding:.5rem .8rem;margin-bottom:.8rem;font-size:.78rem;color:var(--amber);display:flex;align-items:center;justify-content:space-between;">📥 ${myFiles.length} fichier(s) en attente<button onclick="downloadAll('${d.id}')" class="btn btn-xs" style="background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.25);">Tout télécharger</button></div>` : ''}
+      <div class="dc-actions">
+        <button class="btn btn-primary btn-sm" onclick="sendToDevice('${d.id}')">⬆ Envoyer ici</button>
+        ${isCur ? `<button class="btn btn-ghost btn-sm" onclick="openRenameModal()">✏ Renommer</button>` : `<button class="btn btn-ghost btn-sm" onclick="deleteDeviceById('${d.id}')">Supprimer</button>`}
       </div>
     </div>`;
   }).join('');
-
-  // Table
-  const stMap = { done:'st-done', send:'st-send', wait:'st-wait', error:'st-err' };
-  document.getElementById('files-tbody').innerHTML = data.map(f => {
-    const name = searchQuery ? f.name.replace(new RegExp(searchQuery,'gi'), m=>`<span class="hl">${m}</span>`) : f.name;
-    return `<tr>
-      <td><div class="td-name"><span class="td-icon">${f.icon}</span><div><div class="td-fname">${name}</div></div></div></td>
-      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${f.typeLabel}</td>
-      <td class="font-mono" style="font-size:.76rem;">${f.size}</td>
-      <td style="font-size:.76rem;color:var(--t3);">${f.date}</td>
-      <td><span class="status ${stMap[f.status]||'st-wait'}">${f.statusLabel}</span></td>
-      <td><button class="btn btn-ghost btn-xs" onclick="uiToast('info','Options pour ${f.name}')">···</button></td>
-    </tr>`;
-  }).join('');
 }
+window.sendToDevice = function(devId) {
+  updateDeviceSelect();
+  document.getElementById('mt-dest').value = devId;
+  document.getElementById('file-input-hidden').click();
+};
+window.downloadAll = function(devId) {
+  FILES.filter(f => f.target_device_id === devId && f.public_url).forEach(f => {
+    const a = document.createElement('a'); a.href = f.public_url; a.download = f.name; a.target = '_blank'; a.click();
+  });
+  uiToast('success', '⬇ Téléchargements démarrés');
+};
+window.deleteDeviceById = async function(id) {
+  if (!confirm('Supprimer cet appareil ?')) return;
+  await supabase.from('devices').delete().eq('id', id);
+  DEVICES = DEVICES.filter(d => d.id !== id);
+  renderDevicesPage(); updateDeviceSelect();
+  uiToast('info', 'Appareil supprimé');
+};
+
+/* ══ FILES PAGE ══ */
+let fileFilter2 = 'all', fileSort2 = 'date-desc';
+function renderFilesPage(q = '') {
+  let data = [...FILES];
+  if (fileFilter !== 'all') data = data.filter(f => f.type === fileFilter);
+  if (q) { const ql = q.toLowerCase(); data = data.filter(f => f.name.toLowerCase().includes(ql)); }
+  data.sort((a, b) => {
+    if (fileSort === 'date-desc') return new Date(b.created_at) - new Date(a.created_at);
+    if (fileSort === 'date-asc')  return new Date(a.created_at) - new Date(b.created_at);
+    if (fileSort === 'size-desc') return (b.size_bytes||0) - (a.size_bytes||0);
+    if (fileSort === 'name-asc')  return a.name.localeCompare(b.name);
+    return 0;
+  });
+  document.getElementById('files-count').textContent = data.length;
+  const totalB = data.reduce((s, f) => s + (f.size_bytes || 0), 0);
+  const fmtd = formatBytes(totalB).split(' ');
+  document.getElementById('files-size').innerHTML = `${fmtd[0]} <span class="unit">${fmtd[1]||''}</span>`;
+  document.getElementById('files-shared').textContent = data.filter(f => f.share_code).length;
+  if (data.length) {
+    document.getElementById('files-lastmod').textContent = new Date(data[0].created_at).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('files-lastmod-name').textContent = data[0].name.length > 16 ? data[0].name.slice(0,16)+'…' : data[0].name;
+  }
+  // Grid (recent 8)
+  const grid = document.getElementById('files-grid');
+  if (!data.length) { grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);">Aucun fichier — upload depuis la page Transferts !</div>`; return; }
+  grid.className = fileView === 'list' ? 'files-grid list-view' : 'files-grid';
+  if (fileView === 'list') {
+    grid.innerHTML = data.slice(0,12).map(f => `
+      <div class="file-card list-view" onclick="openFileModal('${f.id}')">
+        <div class="file-card-icon">${TYPE_ICONS[f.type]||'📁'}</div>
+        <div class="file-card-info" style="flex:1;min-width:0;">
+          <div class="file-card-name">${f.name}</div>
+          <div class="file-card-meta">${(f.type||'other').toUpperCase()} · ${f.size_label||formatBytes(f.size_bytes)}</div>
+        </div>
+        ${f.share_code?`<span style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--amber);letter-spacing:.1em;flex-shrink:0;">${f.share_code}</span>`:''}
+        <div style="display:flex;gap:5px;" onclick="event.stopPropagation()">
+          ${f.public_url?`<a href="${f.public_url}" download target="_blank" class="btn btn-ghost btn-xs">⬇</a>`:''}
+          <button class="btn btn-danger btn-xs" onclick="deleteFile('${f.id}','${f.storage_path||''}')">✕</button>
+        </div>
+      </div>`).join('');
+  } else {
+    grid.innerHTML = data.slice(0,12).map(f => `
+      <div class="file-card" onclick="openFileModal('${f.id}')">
+        <div class="file-actions">
+          ${f.public_url?`<a href="${f.public_url}" download target="_blank" class="btn btn-ghost btn-xs" onclick="event.stopPropagation()">⬇</a>`:''}
+          <button class="btn btn-danger btn-xs" onclick="event.stopPropagation();deleteFile('${f.id}','${f.storage_path||''}')">✕</button>
+        </div>
+        <div class="file-card-icon">${TYPE_ICONS[f.type]||'📁'}</div>
+        <div class="file-card-name" title="${f.name}">${f.name}</div>
+        <div class="file-card-meta">${(f.type||'other').toUpperCase()} · ${f.size_label||formatBytes(f.size_bytes)}</div>
+        ${f.share_code?`<div style="font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--amber);margin-top:4px;letter-spacing:.1em;">${f.share_code}</div>`:''}
+      </div>`).join('');
+  }
+  // Also fill table in files page
+  const tbody = document.getElementById('files-tbody');
+  if (tbody) {
+    tbody.innerHTML = data.map(f => `<tr onclick="openFileModal('${f.id}')" style="cursor:pointer;">
+      <td><div class="td-name"><span style="font-size:1rem;">${TYPE_ICONS[f.type]||'📁'}</span><div><div class="td-fname">${f.name}</div><div class="td-fmeta">${f.mime_type||''}</div></div></div></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:2px 6px;border-radius:99px;background:var(--d4);border:1px solid var(--b2);color:var(--t2);">${(f.type||'other').toUpperCase()}</span></td>
+      <td class="font-mono" style="font-size:.76rem;">${f.size_label||formatBytes(f.size_bytes)}</td>
+      <td><span style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--amber);letter-spacing:.1em;">${f.share_code||'—'}</span></td>
+      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${timeAgo(f.created_at)}</td>
+      <td onclick="event.stopPropagation();" style="display:flex;gap:5px;">
+        ${f.public_url?`<a href="${f.public_url}" class="btn btn-ghost btn-xs" target="_blank" download>⬇</a>`:''}
+        <button class="btn btn-danger btn-xs" onclick="deleteFile('${f.id}','${f.storage_path||''}')">✕</button>
+      </td>
+    </tr>`).join('');
+  }
+}
+
+window.openFileModal = function(id) {
+  const f = FILES.find(x => x.id === id); if (!f) return;
+  document.getElementById('modal-file-title').textContent = f.name;
+  const prev = document.getElementById('modal-file-preview');
+  if (f.type === 'image' && f.public_url) prev.innerHTML = `<img src="${f.public_url}" style="max-height:200px;max-width:100%;border-radius:var(--r-lg);object-fit:contain;" onerror="this.style.display='none'">`;
+  else if (f.type === 'video' && f.public_url) prev.innerHTML = `<video src="${f.public_url}" controls style="max-height:180px;max-width:100%;border-radius:var(--r-lg);" preload="metadata"></video>`;
+  else if (f.type === 'audio' && f.public_url) prev.innerHTML = `<audio src="${f.public_url}" controls style="width:100%;"></audio>`;
+  else prev.innerHTML = `<div style="font-size:3rem;margin:1rem 0;">${TYPE_ICONS[f.type]||'📁'}</div><div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">${f.size_label||formatBytes(f.size_bytes)}</div>`;
+  // Code
+  const codeEl = document.getElementById('modal-share-code');
+  const codeSection = document.getElementById('modal-code-section');
+  if (f.share_code) { codeEl.textContent = f.share_code; codeSection.style.display = 'block'; }
+  else { codeSection.style.display = 'none'; }
+  document.getElementById('modal-copy-code').onclick = () => copyText(f.share_code || '');
+  document.getElementById('modal-file-url').textContent = f.public_url || '—';
+  document.getElementById('modal-copy-link').onclick = () => copyText(f.public_url || '');
+  const dlBtn = document.getElementById('modal-download-btn');
+  if (dlBtn) { dlBtn.href = f.public_url || '#'; }
+  openModal('modal-file');
+};
+
+window.deleteFile = async function(id, path) {
+  if (!confirm('Supprimer ce fichier définitivement ?')) return;
+  if (path) await supabase.storage.from('creo-files').remove([path]);
+  await supabase.from('files').delete().eq('id', id);
+  FILES = FILES.filter(f => f.id !== id);
+  renderTransfersPage(); renderFilesPage(); updateTransfersStats();
+  uiToast('info', 'Fichier supprimé');
+};
 
 /* ══ SYNC PAGE ══ */
 function renderSyncPage() {
-  document.getElementById('sync-synced').textContent   = '1 247';
-  document.getElementById('sync-pending').textContent  = '312';
-  document.getElementById('sync-conflicts').textContent = '4';
-  document.getElementById('sync-last-update').textContent = 'Dernière MAJ il y a 3 min';
+  const done  = FILES.filter(f => f.status === 'done').length;
+  const errs  = FILES.filter(f => f.status === 'error').length;
+  const total = done + errs;
+  const pct   = total ? Math.round((done / total) * 100) : 100;
+  document.getElementById('sync-pct').textContent = pct + '%';
+  document.getElementById('sync-circle-prog').style.strokeDashoffset = 339.29 * (1 - pct / 100);
+  document.getElementById('sync-synced').textContent = done;
+  document.getElementById('sync-pending').textContent = Object.values(activeUploads).filter(u => u.status === 'uploading').length;
+  document.getElementById('sync-conflicts').textContent = errs;
+  document.getElementById('sync-last-update').textContent = 'Dernière MAJ ' + new Date().toTimeString().slice(0,5);
   renderSyncLog();
   renderSyncRules();
 }
-
 function renderSyncLog() {
-  document.getElementById('sync-log').innerHTML = syncLog.slice(0, 6).map(l => `
+  const c = document.getElementById('sync-log');
+  if (!SYNC_LOG.length) { c.innerHTML = `<div style="padding:1.5rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Journal vide</div>`; return; }
+  c.innerHTML = SYNC_LOG.slice(0, 8).map(l => `
     <div class="feed-item">
-      <div class="feed-dot" style="background:${l.color};"></div>
-      <div style="flex:1;"><div class="feed-text">${l.text}</div><div class="feed-time">${l.time}</div></div>
+      <div class="feed-dot" style="background:${l.color||'var(--blue)'};"></div>
+      <div style="flex:1;"><div class="feed-text">${l.text}</div><div class="feed-time">${l.time||timeAgo(l.created_at)}</div></div>
     </div>`).join('');
 }
-
-function addSyncLogEntry(color, text, time) {
-  syncLog.unshift({ color, text, time });
-  if (document.getElementById('page-sync').classList.contains('active')) renderSyncLog();
-}
-
 function renderSyncRules() {
-  document.getElementById('sync-rules-tbody').innerHTML = SYNC_RULES.map((r, i) => `
-    <tr>
-      <td style="color:var(--t1);font-weight:500;">${r.name}</td>
-      <td style="color:var(--t2);">${r.source}</td>
-      <td style="color:var(--t2);">${r.dest}</td>
-      <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${r.freq}</td>
-      <td><span class="status ${r.active?'st-done':'st-pause'}">${r.active?'● Actif':'⏸ Pausé'}</span></td>
-      <td style="display:flex;gap:6px;">
-        <button class="btn btn-ghost btn-xs" onclick="toggleRule(${i})">${r.active?'Pause':'Reprendre'}</button>
-        <button class="btn btn-ghost btn-xs" onclick="uiToast('info','Édition de ${r.name}')">Éditer</button>
-      </td>
-    </tr>`).join('');
-}
-
-window.toggleRule = function(i) {
-  SYNC_RULES[i].active = !SYNC_RULES[i].active;
-  renderSyncRules();
-  uiToast('success', `Règle "${SYNC_RULES[i].name}" ${SYNC_RULES[i].active ? 'activée' : 'mise en pause'}`);
-};
-
-/* ══ ANALYTICS PAGE ══ */
-function renderAnalyticsPage() {
-  // Devices table
-  document.getElementById('analytics-devices-tbody').innerHTML = [
-    { icon:'🖥️', name:'PC Bureau',     sent:'1.4 TB',  recv:'240 GB', total:'1.64 TB' },
-    { icon:'📦', name:'NAS Home',       sent:'45 GB',   recv:'890 GB', total:'935 GB'  },
-    { icon:'💻', name:'MacBook Air',    sent:'180 GB',  recv:'120 GB', total:'300 GB'  },
-    { icon:'📱', name:'iPhone 16 Pro',  sent:'12 GB',   recv:'48 GB',  total:'60 GB'   },
-  ].map(d => `<tr>
-    <td style="color:var(--t1);">${d.icon} ${d.name}</td>
-    <td class="font-mono" style="font-size:.76rem;color:var(--green);">${d.sent}</td>
-    <td class="font-mono" style="font-size:.76rem;color:var(--blue2);">${d.recv}</td>
-    <td class="font-mono" style="font-size:.76rem;">${d.total}</td>
+  const tbody = document.getElementById('sync-rules-tbody');
+  if (!SYNC_RULES.length) { tbody.innerHTML = `<tr><td colspan="6" class="table-empty">Aucune règle — cliquez "+ Ajouter"</td></tr>`; return; }
+  tbody.innerHTML = SYNC_RULES.map(r => `<tr>
+    <td style="color:var(--t1);font-weight:500;">${r.name}</td>
+    <td style="color:var(--t2);">${r.source||'—'}</td>
+    <td style="color:var(--t2);">${r.dest||'—'}</td>
+    <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${r.freq||'Manuel'}</td>
+    <td><span class="status ${r.active?'st-done':'st-pause'}">${r.active?'● Actif':'⏸ Pausé'}</span></td>
+    <td style="display:flex;gap:6px;">
+      <button class="btn btn-ghost btn-xs" onclick="toggleRule('${r.id}',${!r.active})">${r.active?'Pause':'Activer'}</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteRule('${r.id}')">✕</button>
+    </td>
   </tr>`).join('');
-
-  // Feed
-  document.getElementById('analytics-feed').innerHTML = TRANSFER_HISTORY.slice(0, 5).map(t => `
-    <div class="feed-item">
-      <div class="feed-dot" style="background:${t.status==='done'?'var(--green)':t.status==='error'?'var(--red)':'var(--blue)'};"></div>
-      <div style="flex:1;"><div class="feed-text"><strong>${t.name}</strong> → ${t.dest} · ${t.size}</div><div class="feed-time">Aujourd'hui ${t.date}</div></div>
-    </div>`).join('');
+}
+window.toggleRule = async function(id, active) {
+  await supabase.from('sync_rules').update({ active }).eq('id', id);
+  const r = SYNC_RULES.find(x => x.id === id); if (r) r.active = active;
+  renderSyncRules(); uiToast('success', `Règle ${active?'activée':'pausée'}`);
+};
+window.deleteRule = async function(id) {
+  if (!confirm('Supprimer cette règle ?')) return;
+  await supabase.from('sync_rules').delete().eq('id', id);
+  SYNC_RULES = SYNC_RULES.filter(r => r.id !== id);
+  renderSyncRules(); uiToast('info', 'Règle supprimée');
+};
+async function launchSync() {
+  const btn = document.getElementById('btn-launch-sync');
+  btn.classList.add('btn-loading'); btn.textContent = '↺ Sync…';
+  await loadFiles();
+  setTimeout(() => { btn.classList.remove('btn-loading'); btn.textContent = '▶ Lancer'; renderSyncPage(); uiToast('success', '✓ Sync vérifiée'); }, 1800);
 }
 
-/* ══ CHARTS ══ */
+/* ══ ANALYTICS ══ */
+function renderAnalyticsPage() {
+  const done  = FILES.filter(f => f.status === 'done');
+  const errs  = FILES.filter(f => f.status === 'error');
+  const totalB = done.reduce((s, f) => s + (f.size_bytes || 0), 0);
+  const fmtd  = formatBytes(totalB).split(' ');
+  document.getElementById('kpi-data').innerHTML = `${fmtd[0]} <span style="font-size:1.1rem;color:var(--blue2);">${fmtd[1]||''}</span>`;
+  document.getElementById('kpi-success').textContent = done.length;
+  document.getElementById('kpi-speed').innerHTML = `${DEVICES.length} <span style="font-size:1.1rem;color:var(--blue2);">appareils</span>`;
+  const rate = FILES.length ? Math.round((done.length / FILES.length) * 100) : 100;
+  document.getElementById('kpi-error').innerHTML = `${rate} <span style="font-size:1.1rem;color:var(--blue2);">%</span>`;
+  document.getElementById('analytics-devices-tbody').innerHTML = DEVICES.length
+    ? DEVICES.map(d => `<tr>
+        <td style="color:var(--t1);">${d.icon||'🖥️'} ${d.name}</td>
+        <td style="color:var(--t2);">${d.browser||'—'}</td>
+        <td style="color:var(--t2);">${d.os||'—'}</td>
+        <td class="font-mono" style="font-size:.7rem;color:var(--t3);">${timeAgo(d.last_seen)}</td>
+      </tr>`).join('')
+    : `<tr><td colspan="4" class="table-empty">Aucun appareil</td></tr>`;
+  document.getElementById('analytics-feed').innerHTML = FILES.slice(0, 5).map(f => `
+    <div class="feed-item">
+      <div class="feed-dot" style="background:${f.status==='done'?'var(--green)':'var(--red)'};"></div>
+      <div style="flex:1;"><div class="feed-text"><strong>${f.name}</strong> · ${f.size_label||formatBytes(f.size_bytes)}</div><div class="feed-time">${timeAgo(f.created_at)}</div></div>
+    </div>`).join('') || `<div style="padding:1rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucune activité</div>`;
+  buildCharts();
+}
+
 function buildCharts() {
   const days = ['LUN','MAR','MER','JEU','VEN','SAM','DIM'];
-  const vals = [62, 85, 44, 91, 73, 38, 55];
-  const max  = Math.max(...vals);
+  const vals = [0,0,0,0,0,0,0];
+  const now = new Date();
+  FILES.forEach(f => { const diff = Math.floor((now - new Date(f.created_at)) / 86400000); if (diff >= 0 && diff < 7) vals[6 - diff]++; });
+  const max = Math.max(...vals, 1);
   document.getElementById('chart-daily').innerHTML = days.map((d, i) => `
     <div class="bar-wrap">
-      <div class="bar-outer"><div class="bar-inner" style="height:${(vals[i]/max*100)}%;"></div></div>
+      <div class="bar-outer"><div class="bar-inner" style="height:${(vals[i]/max*100)||3}%;"></div></div>
       <span class="bar-label">${d}</span>
     </div>`).join('');
-
-  document.getElementById('chart-types').innerHTML = [
-    { label:'🎬 Vidéos',  pct:43, color:'var(--blue)' },
-    { label:'📦 Archives',pct:30, color:'var(--purple)' },
-    { label:'🖼️ Images',  pct:16, color:'var(--cyan)' },
-    { label:'🎨 Design',  pct: 8, color:'var(--amber)' },
-    { label:'📄 Docs',    pct: 3, color:'var(--green)' },
-  ].map(t => `
-    <div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.78rem;">
-        <span style="color:var(--t2);">${t.label}</span>
-        <span class="font-mono" style="font-size:.7rem;color:var(--t3);">${t.pct}%</span>
-      </div>
-      <div style="height:4px;background:var(--d5);border-radius:99px;overflow:hidden;">
-        <div style="width:${t.pct}%;height:100%;background:${t.color};border-radius:99px;transition:width 1s ease;"></div>
-      </div>
-    </div>`).join('');
-}
-
-/* ══ LIVE STATS ══ */
-function startLiveStats() {
-  setInterval(() => {
-    const spd = (800 + Math.random() * 600).toFixed(0);
-    document.getElementById('stat-speed').innerHTML = `${spd} <span class="unit">MB/s</span>`;
-  }, 1200);
-}
-
-/* ══ SEARCH ══ */
-function handleSearch(q) {
-  const clear = document.getElementById('search-clear');
-  clear.style.display = q ? 'block' : 'none';
-  if (currentPage === 'transferts') renderTransfersTable(q);
-  if (currentPage === 'fichiers')   renderFilesPage(q);
-}
-
-/* ══ NAV ══ */
-const PAGE_META = {
-  transferts:  { title:'TRANSFERTS',  bc:'// récents',        btn:'＋ Nouveau transfert' },
-  appareils:   { title:'APPAREILS',   bc:'// mes appareils',  btn:'＋ Ajouter' },
-  fichiers:    { title:'FICHIERS',    bc:'// tous',           btn:'＋ Importer' },
-  sync:        { title:'SYNC',        bc:'// état',           btn:'▶ Lancer' },
-  parametres:  { title:'PARAMÈTRES',  bc:'// compte',         btn:'✓ Sauvegarder' },
-  analytiques: { title:'ANALYTIQUES', bc:'// ce mois',        btn:'↓ Exporter' },
-};
-
-window.showPage = function(id, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-  const page = document.getElementById('page-' + id);
-  if (!page) return;
-  page.classList.add('active');
-  el.classList.add('active');
-  currentPage = id;
-  const m = PAGE_META[id];
-  document.getElementById('topbar-title').textContent = m.title;
-  document.getElementById('topbar-bc').textContent    = m.bc;
-  document.getElementById('action-btn').textContent   = m.btn;
-  document.getElementById('notif-panel').classList.remove('open');
-  if (id === 'parametres') renderSettings();
-  if (id === 'transferts') renderTransfersPage();
-};
-
-/* ══ SETTINGS TABS ══ */
-function switchTab(tabId) {
-  document.querySelectorAll('.s-nav-item').forEach(i => i.classList.remove('active'));
-  document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
-  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-  document.getElementById(tabId).style.display = 'block';
+  const tc = {};
+  FILES.forEach(f => { tc[f.type||'other'] = (tc[f.type||'other']||0) + 1; });
+  const tot = Object.values(tc).reduce((a,b) => a+b, 0) || 1;
+  const colors = { image:'var(--blue)',video:'var(--purple)',audio:'var(--cyan)',doc:'var(--green)',archive:'var(--amber)',other:'var(--t3)' };
+  document.getElementById('chart-types').innerHTML = Object.entries(tc).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([t,n]) => {
+    const pct = Math.round((n/tot)*100);
+    return `<div><div style="display:flex;justify-content:space-between;margin-bottom:3px;font-size:.78rem;"><span style="color:var(--t2);">${TYPE_ICONS[t]||'📁'} ${t}</span><span style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);">${pct}%</span></div><div style="height:4px;background:var(--d5);border-radius:99px;overflow:hidden;"><div style="width:${pct}%;height:100%;background:${colors[t]||'var(--blue)'};border-radius:99px;"></div></div></div>`;
+  }).join('') || '<div style="text-align:center;font-family:JetBrains Mono,monospace;font-size:.72rem;color:var(--t3);">Aucune donnée</div>';
 }
 
 /* ══ SAVE PROFILE ══ */
@@ -1782,517 +1974,331 @@ async function saveProfile() {
   if (!first || !last) return uiToast('warning', 'Prénom et nom requis.');
   if (uname && uname.length < 3) return uiToast('warning', 'Pseudo trop court (min 3 car.)');
   btn.classList.add('btn-loading');
-  const { error } = await supabase.from('profiles').update({ first_name: first, last_name: last, username: uname || profile.username }).eq('id', session.user.id);
+  const { error } = await supabase.from('profiles').update({ first_name:first, last_name:last, username:uname||profile.username }).eq('id', session.user.id);
   btn.classList.remove('btn-loading');
-  if (error) return uiToast('error', error.message.includes('username') ? 'Pseudo déjà pris.' : error.message);
-  profile = { ...profile, first_name: first, last_name: last, username: uname || profile.username };
-  renderSidebar();
-  uiToast('success', '✓ Profil sauvegardé !');
+  if (error) return uiToast('error', error.message.includes('username')?'Pseudo déjà pris.':error.message);
+  profile = { ...profile, first_name:first, last_name:last, username:uname||profile.username };
+  renderSidebar(); uiToast('success', '✓ Profil sauvegardé !');
 }
 
-/* ══ CHANGE PASSWORD ══ */
 async function changePassword() {
   const np = document.getElementById('s-pw-new').value;
   const cp = document.getElementById('s-pw-confirm').value;
-  if (!np || np.length < 6) return uiToast('warning', 'Mot de passe trop court (min 6 car.)');
+  if (!np || np.length < 6) return uiToast('warning', 'Min 6 caractères.');
   if (np !== cp) return uiToast('error', 'Les mots de passe ne correspondent pas.');
-  const btn = document.getElementById('btn-change-pw');
-  btn.classList.add('btn-loading');
+  const btn = document.getElementById('btn-change-pw'); btn.classList.add('btn-loading');
   const { error } = await supabase.auth.updateUser({ password: np });
   btn.classList.remove('btn-loading');
   if (error) return uiToast('error', error.message);
   uiToast('success', '✓ Mot de passe modifié !');
-  document.getElementById('s-pw-new').value = '';
-  document.getElementById('s-pw-confirm').value = '';
+  document.getElementById('s-pw-new').value = ''; document.getElementById('s-pw-confirm').value = '';
 }
 
-/* ══ AVATAR UPLOAD ══ */
 async function uploadAvatar(file) {
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { uiToast('error', 'Fichier trop grand (max 2 MB)'); return; }
-  const prog = document.querySelector('.avatar-prog');
-  const fill = document.getElementById('avatar-prog-fill');
-  prog.style.display = 'block';
-  fill.style.width = '20%';
+  if (file.size > 2*1024*1024) { uiToast('error', 'Max 2 MB'); return; }
   const ext = file.name.split('.').pop();
   const path = `${session.user.id}/avatar.${ext}`;
   await supabase.storage.from('avatars').remove([path]);
-  fill.style.width = '50%';
-  const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true, contentType: file.type });
-  if (upErr) { prog.style.display='none'; return uiToast('error', upErr.message); }
-  fill.style.width = '80%';
-  const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
-  const url = urlData.publicUrl + '?t=' + Date.now();
+  const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert:true, contentType:file.type });
+  if (error) return uiToast('error', error.message);
+  const { data: ud } = supabase.storage.from('avatars').getPublicUrl(path);
+  const url = ud.publicUrl + '?t=' + Date.now();
   await supabase.from('profiles').update({ avatar_url: url }).eq('id', session.user.id);
-  profile.avatar_url = url;
-  fill.style.width = '100%';
-  setTimeout(() => { prog.style.display='none'; fill.style.width='0%'; }, 600);
-  renderSidebar();
-  renderSettings();
+  profile.avatar_url = url; renderSidebar(); renderSettings();
   uiToast('success', '✓ Avatar mis à jour !');
 }
 
-async function removeAvatar() {
-  await supabase.from('profiles').update({ avatar_url: null }).eq('id', session.user.id);
-  profile.avatar_url = null;
-  renderSidebar();
-  renderSettings();
-  uiToast('success', 'Avatar supprimé.');
-}
-
-/* ══ LANG ══ */
 async function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('creo_lang', lang);
+  currentLang = lang; localStorage.setItem('creo_lang', lang);
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   await supabase.from('profiles').update({ lang }).eq('id', session.user.id);
   uiToast('success', '✓ Langue sauvegardée');
 }
 
-/* ══ MODAL HELPERS ══ */
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-/* ══ SIGN OUT ══ */
-async function signOut() {
-  await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
+async function saveNotifSettings() {
+  notifSettings.done   = document.getElementById('notif-done').classList.contains('on');
+  notifSettings.error  = document.getElementById('notif-error').classList.contains('on');
+  notifSettings.start  = document.getElementById('notif-start').classList.contains('on');
+  notifSettings.device = document.getElementById('notif-device').classList.contains('on');
+  await supabase.from('profiles').update({ notif_settings: JSON.stringify(notifSettings) }).eq('id', session.user.id);
+  uiToast('success', '✓ Notifications sauvegardées');
+}
+function applyNotifToggles() {
+  if (notifSettings.done)   document.getElementById('notif-done')?.classList.add('on');
+  if (notifSettings.error)  document.getElementById('notif-error')?.classList.add('on');
+  if (notifSettings.start)  document.getElementById('notif-start')?.classList.add('on');
+  if (notifSettings.device) document.getElementById('notif-device')?.classList.add('on');
 }
 
-/* ══ TOAST ══ */
+/* ══ RENAME DEVICE ══ */
+function openRenameModal() {
+  const d = DEVICES.find(x => x.id === currentDeviceId);
+  document.getElementById('rename-input').value = d?.name || '';
+  openModal('modal-rename');
+}
+window.openRenameModal = openRenameModal;
+async function renameDevice() {
+  const name = document.getElementById('rename-input').value.trim();
+  if (!name) return uiToast('warning', 'Entre un nom.');
+  await supabase.from('devices').update({ name }).eq('id', currentDeviceId);
+  const d = DEVICES.find(x => x.id === currentDeviceId); if (d) d.name = name;
+  closeModal('modal-rename'); renderDevicesPage(); updateDeviceSelect();
+  renderSettings(); uiToast('success', `✓ Renommé : "${name}"`);
+}
+
+/* ══ MODALS / TOAST / UTILS ══ */
+function openModal(id)  { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+
+window.copyText = function(text) {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => uiToast('success', 'Copié !'))
+    .catch(() => { const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); uiToast('success', 'Copié !'); });
+};
+
 window.uiToast = function(type, msg) {
   const wrap = document.getElementById('toast-wrap');
   const icons = { success:'✓', error:'✕', info:'ℹ', warning:'⚠' };
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
+  const el = document.createElement('div'); el.className = `toast ${type}`;
   el.innerHTML = `<span>${icons[type]||'ℹ'}</span> ${msg}`;
   wrap.appendChild(el);
   setTimeout(() => { el.style.animation = 'toastOut .28s ease forwards'; setTimeout(() => el.remove(), 280); }, 3800);
 };
 
-/* ══ HIDE LOADING ══ */
-function hideLoading() {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.getElementById('app-shell').style.display = 'block';
-}
-
-/* ══ EVENT LISTENERS ══ */
-function setupEventListeners() {
-
-  /* NAV LINKS */
-  document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', () => showPage(link.dataset.page, link));
-  });
-
-  /* USER CARD → settings */
-  document.getElementById('user-card').addEventListener('click', () => {
-    showPage('parametres', document.querySelector('[data-page="parametres"]'));
-  });
-
-  /* LOGOUT */
-  document.getElementById('logout-btn').addEventListener('click', signOut);
-
-  /* ACTION BTN */
-  document.getElementById('action-btn').addEventListener('click', () => {
-    if (currentPage === 'transferts') openModal('modal-transfer');
-    else if (currentPage === 'appareils') openModal('modal-device');
-    else if (currentPage === 'parametres') saveProfile();
-    else if (currentPage === 'sync') launchSync();
-    else if (currentPage === 'analytiques') uiToast('info', 'Export CSV téléchargé');
-    else openModal('modal-transfer');
-  });
-
-  /* TRANSFERS FILTERS */
-  document.querySelectorAll('#page-transferts .filter-chip').forEach(chip => {
-    chip.addEventListener('click', function() {
-      document.querySelectorAll('#page-transferts .filter-chip').forEach(c=>c.classList.remove('active'));
-      this.classList.add('active');
-      transferFilter = this.dataset.filter;
-      renderTransfersTable(document.getElementById('search-input').value.trim());
-    });
-  });
-
-  /* TRANSFERS SORT */
-  document.getElementById('transfers-sort').addEventListener('change', function() {
-    transferSort = this.value;
-    renderTransfersTable(document.getElementById('search-input').value.trim());
-  });
-
-  /* TABLE HEADER SORT */
-  document.querySelectorAll('.data-table thead th[data-sort]').forEach(th => {
-    th.addEventListener('click', function() {
-      const col = this.dataset.sort;
-      const isAsc = this.classList.contains('sort-asc');
-      document.querySelectorAll('.data-table thead th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
-      this.classList.add(isAsc ? 'sort-desc' : 'sort-asc');
-    });
-  });
-
-  /* FILES FILTERS */
-  document.querySelectorAll('#page-fichiers .filter-chip').forEach(chip => {
-    chip.addEventListener('click', function() {
-      document.querySelectorAll('#page-fichiers .filter-chip').forEach(c=>c.classList.remove('active'));
-      this.classList.add('active');
-      fileFilter = this.dataset.filter;
-      renderFilesPage(document.getElementById('search-input').value.trim());
-    });
-  });
-
-  /* FILES SORT */
-  document.getElementById('files-sort').addEventListener('change', function() {
-    fileSort = this.value;
-    renderFilesPage(document.getElementById('search-input').value.trim());
-  });
-
-  /* VIEW TOGGLE */
-  document.getElementById('view-grid-btn').addEventListener('click', function() {
-    fileView = 'grid';
-    this.classList.add('active');
-    document.getElementById('view-list-btn').classList.remove('active');
-    renderFilesPage(document.getElementById('search-input').value.trim());
-  });
-  document.getElementById('view-list-btn').addEventListener('click', function() {
-    fileView = 'list';
-    this.classList.add('active');
-    document.getElementById('view-grid-btn').classList.remove('active');
-    renderFilesPage(document.getElementById('search-input').value.trim());
-  });
-
-  /* SEARCH */
-  document.getElementById('search-input').addEventListener('input', function() {
-    handleSearch(this.value.trim());
-  });
-  document.getElementById('search-clear').addEventListener('click', function() {
-    document.getElementById('search-input').value = '';
-    this.style.display = 'none';
-    handleSearch('');
-  });
-
-  /* NOTIF */
-  document.getElementById('notif-btn').addEventListener('click', e => {
-    e.stopPropagation();
-    document.getElementById('notif-panel').classList.toggle('open');
-    hasUnreadNotif = false;
-    document.getElementById('notif-dot').style.display = 'none';
-  });
-  document.getElementById('notif-read-all').addEventListener('click', () => {
-    document.getElementById('notif-panel').classList.remove('open');
-  });
-  document.addEventListener('click', e => {
-    const p = document.getElementById('notif-panel');
-    if (p && !p.contains(e.target) && !e.target.closest('#notif-btn')) p.classList.remove('open');
-  });
-
-  /* SETTINGS TABS */
-  document.querySelectorAll('.s-nav-item').forEach(item => {
-    item.addEventListener('click', () => switchTab(item.dataset.tab));
-  });
-
-  /* SAVE PROFILE */
-  document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
-
-  /* CHANGE PW */
-  document.getElementById('btn-change-pw').addEventListener('click', changePassword);
-
-  /* SIGN OUT ALL */
-  document.getElementById('btn-signout-all').addEventListener('click', signOut);
-
-  /* AVATAR */
-  document.getElementById('avatar-input').addEventListener('change', function() {
-    if (this.files[0]) uploadAvatar(this.files[0]);
-    this.value = '';
-  });
-  document.getElementById('btn-remove-avatar').addEventListener('click', removeAvatar);
-
-  /* LANG */
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    b.addEventListener('click', () => setLang(b.dataset.lang));
-  });
-
-  /* TOGGLES */
-  document.querySelectorAll('.toggle').forEach(t => {
-    t.addEventListener('click', function() { this.classList.toggle('on'); });
-  });
-
-  /* SAVE NOTIF */
-  document.getElementById('btn-save-notif').addEventListener('click', () => {
-    notifSettings.done   = document.getElementById('notif-done').classList.contains('on');
-    notifSettings.error  = document.getElementById('notif-error').classList.contains('on');
-    notifSettings.start  = document.getElementById('notif-start').classList.contains('on');
-    notifSettings.device = document.getElementById('notif-device').classList.contains('on');
-    notifSettings.disk   = document.getElementById('notif-disk').classList.contains('on');
-    uiToast('success', '✓ Notifications sauvegardées');
-  });
-
-  /* SAVE NETWORK */
-  document.getElementById('btn-save-network').addEventListener('click', () => {
-    const port = document.getElementById('net-port').value;
-    uiToast('success', `✓ Réseau appliqué (port ${port})`);
-  });
-
-  /* CACHE */
-  document.getElementById('btn-clear-cache').addEventListener('click', () => {
-    document.getElementById('cache-size').textContent = '0 MB utilisés';
-    uiToast('success', '✓ Cache vidé');
-  });
-
-  /* RESET SETTINGS */
-  document.getElementById('btn-reset-settings').addEventListener('click', () => {
-    if (confirm('Réinitialiser tous les paramètres ?')) {
-      document.querySelectorAll('.toggle').forEach(t => t.classList.remove('on'));
-      uiToast('info', 'Paramètres réinitialisés');
-    }
-  });
-
-  /* MODAL TRANSFER */
-  document.getElementById('btn-new-transfer').addEventListener('click', () => openModal('modal-transfer'));
-  document.getElementById('modal-cancel').addEventListener('click', () => closeModal('modal-transfer'));
-  document.getElementById('modal-confirm').addEventListener('click', () => {
-    const name = document.getElementById('mt-name').value.trim();
-    if (!name) { uiToast('warning', 'Donnez un nom au fichier.'); return; }
-    addActiveTransfer({
-      name,
-      size:   document.getElementById('mt-size').value || '—',
-      type:   document.getElementById('mt-type').value,
-      source: document.getElementById('mt-source').value,
-      dest:   document.getElementById('mt-dest').value,
-    });
-    closeModal('modal-transfer');
-    document.getElementById('mt-name').value = '';
-    document.getElementById('mt-size').value = '';
-    showPage('transferts', document.querySelector('[data-page="transferts"]'));
-    uiToast('info', '⚡ Transfert démarré !');
-  });
-  document.getElementById('modal-transfer').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeModal('modal-transfer');
-  });
-
-  /* MODAL DEVICE */
-  document.getElementById('btn-add-device').addEventListener('click', () => openModal('modal-device'));
-  document.getElementById('md-cancel').addEventListener('click', () => closeModal('modal-device'));
-  document.getElementById('md-confirm').addEventListener('click', () => {
-    const name = document.getElementById('md-name').value.trim();
-    if (!name) { uiToast('warning', 'Donnez un nom à l\'appareil.'); return; }
-    const icons = { desktop:'🖥️', laptop:'💻', phone:'📱', nas:'📦' };
-    DEVICES.push({ id: Date.now(), name, icon: icons[document.getElementById('md-type').value]||'🖥️', os: document.getElementById('md-os').value || '—', online: false, speed:'—', network:'—', free:'—', version:'v4.2.1' });
-    closeModal('modal-device');
-    document.getElementById('md-name').value = '';
-    document.getElementById('md-os').value = '';
-    renderDevicesPage();
-    uiToast('success', `✓ Appareil "${name}" ajouté`);
-  });
-  document.getElementById('modal-device').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeModal('modal-device');
-  });
-
-  /* SYNC BUTTONS */
-  document.getElementById('btn-launch-sync').addEventListener('click', launchSync);
-  document.getElementById('btn-clear-log').addEventListener('click', () => {
-    syncLog = [];
-    renderSyncLog();
-    uiToast('info', 'Journal effacé');
-  });
-  document.getElementById('btn-add-rule').addEventListener('click', () => uiToast('info', 'Bientôt disponible'));
-
-  /* ENTER KEY on modals */
-  document.getElementById('mt-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('modal-confirm').click(); });
-  document.getElementById('md-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('md-confirm').click(); });
-}
-
-function launchSync() {
-  uiToast('success', '▶ Synchronisation lancée !');
-  addSyncLogEntry('var(--blue)', 'Synchronisation <strong>démarrée manuellement</strong>', new Date().toTimeString().slice(0,5));
-  let pct = 75;
-  const iv = setInterval(() => {
-    pct = Math.min(100, pct + Math.random() * 3);
-    document.getElementById('sync-pct').textContent = Math.round(pct) + '%';
-    const offset = 339.29 * (1 - pct / 100);
-    document.getElementById('sync-circle-prog').style.strokeDashoffset = offset;
-    if (pct >= 100) {
-      clearInterval(iv);
-      uiToast('success', '✓ Synchronisation terminée');
-      addSyncLogEntry('var(--green)', '<strong>Synchronisation complète</strong>', new Date().toTimeString().slice(0,5));
-    }
-  }, 200);
-}
-
-/* ══ START ══ */
-init();
-
-/* ══════════════════════════════════════════
-   MOBILE JS
-══════════════════════════════════════════ */
-
-/* ── BOTTOM NAV ── */
-document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(item => {
-  item.addEventListener('click', () => {
-    const page = item.dataset.page;
-    const sidebarLink = document.querySelector(`.nav-link[data-page="${page}"]`);
-    if (sidebarLink) {
-      showPage(page, sidebarLink);
-    }
-    // Sync bottom nav active state
-    document.querySelectorAll('#bottom-nav .bn-item').forEach(b => b.classList.remove('active'));
-    item.classList.add('active');
-    closeBnMore();
-  });
-});
-
-// Override showPage to also sync bottom nav
-const _origShowPage = window.showPage;
-window.showPage = function(id, el) {
-  _origShowPage(id, el);
-  // sync bottom nav
-  document.querySelectorAll('#bottom-nav .bn-item[data-page]').forEach(b => {
-    b.classList.toggle('active', b.dataset.page === id);
-  });
-  // Hide more panel
-  closeBnMore();
-  // Scroll page-content to top on mobile
-  const pc = document.querySelector('.page-content');
-  if (pc && window.innerWidth <= 768) pc.scrollTop = 0;
-  // Update mobile profile strip in settings
-  if (id === 'parametres') updateMobProfileStrip();
-};
-
-/* ── MORE PANEL ── */
-const bnMoreBtn = document.getElementById('bn-more-btn');
-const bnMorePanel = document.getElementById('bn-more-panel');
-const bnMoreOverlay = document.getElementById('bn-more-overlay');
-
-function openBnMore() {
-  bnMorePanel.classList.add('open');
-  bnMoreOverlay.classList.add('open');
-}
-function closeBnMore() {
-  bnMorePanel.classList.remove('open');
-  bnMoreOverlay.classList.remove('open');
-}
-
-bnMoreBtn.addEventListener('click', () => {
-  if (bnMorePanel.classList.contains('open')) closeBnMore();
-  else openBnMore();
-});
-bnMoreOverlay.addEventListener('click', closeBnMore);
-
-document.getElementById('more-settings').addEventListener('click', () => {
-  showPage('parametres', document.querySelector('[data-page="parametres"]'));
-});
-document.getElementById('more-analytics').addEventListener('click', () => {
-  showPage('analytiques', document.querySelector('[data-page="analytiques"]'));
-});
-document.getElementById('more-logout').addEventListener('click', async () => {
-  closeBnMore();
-  await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
-});
-
-/* ── FAB ── */
-document.getElementById('mobile-fab').addEventListener('click', () => {
-  if (currentPage === 'transferts' || currentPage === 'fichiers') openModal('modal-transfer');
-  else if (currentPage === 'appareils') openModal('modal-device');
-  else if (currentPage === 'sync') launchSync();
-  else openModal('modal-transfer');
-});
-
-/* ── MOBILE SEARCH ── */
-const mobSearchOverlay = document.getElementById('mobile-search-overlay');
-const mobSearchInput   = document.getElementById('mob-search-input');
-const mobSearchResults = document.getElementById('mob-search-results');
-
-window.openMobileSearch = function() {
-  mobSearchOverlay.classList.add('open');
-  setTimeout(() => mobSearchInput.focus(), 100);
-};
-document.getElementById('mobile-search-btn').addEventListener('click', window.openMobileSearch);
-
-function closeMobileSearch() {
-  mobSearchOverlay.classList.remove('open');
-  mobSearchInput.value = '';
-  mobSearchResults.innerHTML = '';
-}
-document.getElementById('mob-search-close').addEventListener('click', closeMobileSearch);
-
-mobSearchInput.addEventListener('input', function() {
-  const q = this.value.trim();
-  if (!q) { mobSearchResults.innerHTML = ''; return; }
-
-  // Search in transfers + files
-  const allItems = [
-    ...TRANSFER_HISTORY.map(t => ({ icon: t.icon, name: t.name, meta: `${t.size} · ${t.dest}`, page: 'transferts' })),
-    ...FILES.map(f => ({ icon: f.icon, name: f.name, meta: `${f.size} · ${f.typeLabel}`, page: 'fichiers' })),
-  ].filter(item => item.name.toLowerCase().includes(q.toLowerCase()));
-
-  if (allItems.length === 0) {
-    mobSearchResults.innerHTML = `<div class="mob-search-empty">Aucun résultat pour « ${q} »</div>`;
-    return;
-  }
-
-  const hl = str => str.replace(new RegExp(q, 'gi'), m => `<span class="hl">${m}</span>`);
-
-  mobSearchResults.innerHTML = allItems.slice(0, 12).map(item => `
-    <div class="mob-result-item" onclick="closeMobileSearch();showPage('${item.page}',document.querySelector('[data-page=${item.page}]'))">
-      <div class="mob-result-icon">${item.icon}</div>
-      <div>
-        <div class="mob-result-name">${hl(item.name)}</div>
-        <div class="mob-result-meta">${item.meta}</div>
-      </div>
-    </div>`).join('');
-});
-window.closeMobileSearch = closeMobileSearch;
-
-/* ── MOBILE PROFILE STRIP ── */
-function updateMobProfileStrip() {
-  if (!session || !profile) return;
-  const av = profile?.avatar_url || session?.user?.user_metadata?.avatar_url;
-  const avEl = document.getElementById('mob-strip-av');
-  if (avEl) {
-    if (av) avEl.innerHTML = `<img src="${av}" alt="">`;
-    else avEl.textContent = (profile?.first_name?.[0]||'') + (profile?.last_name?.[0]||'') || session.user.email?.[0]?.toUpperCase() || '?';
-  }
-  const nameEl = document.getElementById('mob-strip-name');
-  const roleEl = document.getElementById('mob-strip-role');
-  if (nameEl) nameEl.textContent = (profile?.first_name && profile?.last_name) ? `${profile.first_name} ${profile.last_name}` : (profile?.username ? `@${profile.username}` : session.user.email?.split('@')[0]);
-  if (roleEl) roleEl.textContent = profile?.type ? profile.type.charAt(0).toUpperCase() + profile.type.slice(1) : 'Utilisateur';
-}
-document.getElementById('mob-profile-strip')?.addEventListener('click', () => {
-  document.querySelector('[data-tab="st-profil"]')?.click();
-});
-
-/* ── SWIPE to navigate (mobile) ── */
-let touchStartX = 0, touchStartY = 0;
-const pages = ['transferts','appareils','fichiers','sync'];
-
-document.querySelector('.page-content')?.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
-
-document.querySelector('.page-content')?.addEventListener('touchend', e => {
-  if (window.innerWidth > 768) return;
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return; // not a horizontal swipe
-  const cur = pages.indexOf(currentPage);
-  if (cur === -1) return;
-  if (dx < -60 && cur < pages.length - 1) {
-    const next = pages[cur + 1];
-    showPage(next, document.querySelector(`[data-page="${next}"]`));
-  } else if (dx > 60 && cur > 0) {
-    const prev = pages[cur - 1];
-    showPage(prev, document.querySelector(`[data-page="${prev}"]`));
-  }
-}, { passive: true });
-
-/* ── Render sidebar updates also update mobile strip ── */
-const _origRenderSidebar = renderSidebar;
-// (renderSidebar is local, we re-run updateMobProfileStrip after it via patching init)
-const _origHideLoading = hideLoading;
 function hideLoading() {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('app-shell').style.display = 'block';
   updateMobProfileStrip();
 }
+
+async function signOut() {
+  if (currentDeviceId) await supabase.from('devices').update({ online: false }).eq('id', currentDeviceId);
+  await supabase.auth.signOut();
+  window.location.href = '/creo/login/login.html';
+}
+
+/* ══ NAV ══ */
+const PAGE_META = {
+  transferts:  { title:'TRANSFERTS',  bc:'// envoyer des fichiers',  btn:'⬆ Envoyer' },
+  appareils:   { title:'APPAREILS',   bc:'// mes appareils',         btn:'✏ Renommer cet appareil' },
+  fichiers:    { title:'FICHIERS',    bc:'// tous mes fichiers',      btn:'⬆ Uploader' },
+  sync:        { title:'SYNC',        bc:'// état',                  btn:'▶ Lancer' },
+  parametres:  { title:'PARAMÈTRES',  bc:'// compte',               btn:'✓ Sauvegarder' },
+  analytiques: { title:'ANALYTIQUES', bc:'// ce mois',              btn:'↓ Exporter CSV' },
+};
+
+window.showPage = function(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link,.bn-item').forEach(l => l.classList.remove('active'));
+  const page = document.getElementById('page-' + id); if (!page) return;
+  page.classList.add('active');
+  if (el) el.classList.add('active');
+  currentPage = id;
+  const m = PAGE_META[id] || { title:id.toUpperCase(), bc:'', btn:'' };
+  document.getElementById('topbar-title').textContent = m.title;
+  document.getElementById('topbar-bc').textContent    = m.bc;
+  document.getElementById('action-btn').textContent   = m.btn;
+  document.getElementById('notif-panel').classList.remove('open');
+  if (id === 'parametres') renderSettings();
+  if (id === 'transferts') renderTransfersPage();
+  if (id === 'sync') renderSyncPage();
+  if (id === 'analytiques') renderAnalyticsPage();
+  if (id === 'appareils') renderDevicesPage();
+};
+
+function switchTab(tabId) {
+  document.querySelectorAll('.s-nav-item').forEach(i => i.classList.remove('active'));
+  document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
+  document.querySelector(`[data-tab="${tabId}"]`)?.classList.add('active');
+  const p = document.getElementById(tabId); if (p) p.style.display = 'block';
+}
+
+/* ══ EVENT LISTENERS ══ */
+function setupEventListeners() {
+  document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => showPage(l.dataset.page, l)));
+  document.getElementById('user-card').addEventListener('click', () => showPage('parametres', document.querySelector('[data-page="parametres"]') ));
+  document.getElementById('logout-btn').addEventListener('click', signOut);
+
+  document.getElementById('action-btn').addEventListener('click', () => {
+    if (currentPage === 'transferts' || currentPage === 'fichiers') document.getElementById('file-input-hidden').click();
+    else if (currentPage === 'appareils') openRenameModal();
+    else if (currentPage === 'parametres') saveProfile();
+    else if (currentPage === 'sync') launchSync();
+    else if (currentPage === 'analytiques') exportCSV();
+    else document.getElementById('file-input-hidden').click();
+  });
+
+  // Upload zone
+  const zone = document.getElementById('upload-zone');
+  zone?.addEventListener('click', () => document.getElementById('file-input-hidden').click());
+  zone?.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone?.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone?.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); startUpload(e.dataTransfer.files); });
+  document.getElementById('file-input-hidden').addEventListener('change', function() { if (this.files.length) startUpload(this.files); this.value = ''; });
+
+  // Modal transfer (now used as destination chooser)
+  document.getElementById('modal-cancel').addEventListener('click', () => { closeModal('modal-transfer'); pendingFiles = []; });
+  document.getElementById('modal-confirm').addEventListener('click', confirmUploadAndSend);
+  document.getElementById('modal-transfer').addEventListener('click', e => { if (e.target === e.currentTarget) { closeModal('modal-transfer'); pendingFiles = []; } });
+
+  // Filters transfers
+  document.querySelectorAll('#page-transferts .filter-chip').forEach(c => {
+    c.addEventListener('click', function() {
+      document.querySelectorAll('#page-transferts .filter-chip').forEach(x => x.classList.remove('active'));
+      this.classList.add('active'); transferFilter = this.dataset.filter;
+      renderTransfersTable(document.getElementById('search-input').value.trim());
+    });
+  });
+  document.getElementById('transfers-sort').addEventListener('change', function() { transferSort = this.value; renderTransfersTable(); });
+
+  // Filters files
+  document.querySelectorAll('#page-fichiers .filter-chip').forEach(c => {
+    c.addEventListener('click', function() {
+      document.querySelectorAll('#page-fichiers .filter-chip').forEach(x => x.classList.remove('active'));
+      this.classList.add('active'); fileFilter = this.dataset.filter; renderFilesPage();
+    });
+  });
+  document.getElementById('files-sort').addEventListener('change', function() { fileSort = this.value; renderFilesPage(); });
+  document.getElementById('view-grid-btn').addEventListener('click', function() { fileView='grid'; this.classList.add('active'); document.getElementById('view-list-btn').classList.remove('active'); renderFilesPage(); });
+  document.getElementById('view-list-btn').addEventListener('click', function() { fileView='list'; this.classList.add('active'); document.getElementById('view-grid-btn').classList.remove('active'); renderFilesPage(); });
+
+  // Search
+  document.getElementById('search-input').addEventListener('input', function() {
+    const q = this.value.trim();
+    document.getElementById('search-clear').style.display = q ? 'block' : 'none';
+    if (currentPage === 'transferts') renderTransfersTable(q);
+    if (currentPage === 'fichiers')   renderFilesPage(q);
+  });
+  document.getElementById('search-clear').addEventListener('click', function() { document.getElementById('search-input').value = ''; this.style.display = 'none'; renderTransfersTable(); renderFilesPage(); });
+
+  // Notifications
+  document.getElementById('notif-btn').addEventListener('click', async e => {
+    e.stopPropagation();
+    document.getElementById('notif-panel').classList.toggle('open');
+    const { data } = await supabase.from('notifications').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(8);
+    const list = document.getElementById('notif-list');
+    if (!data?.length) { list.innerHTML = `<div style="padding:1.2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);">Aucune notification</div>`; return; }
+    list.innerHTML = data.map(n => `<div class="notif-item"><div class="notif-dot" style="background:${n.color||'var(--blue)'};;width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;"></div><div><div class="notif-text">${n.text}</div><div class="notif-time">${timeAgo(n.created_at)}</div></div></div>`).join('');
+    document.getElementById('notif-dot').style.display = 'none';
+    await supabase.from('notifications').update({ read: true }).eq('user_id', session.user.id);
+  });
+  document.getElementById('notif-read-all').addEventListener('click', () => document.getElementById('notif-panel').classList.remove('open'));
+  document.addEventListener('click', e => { const p = document.getElementById('notif-panel'); if (p && !p.contains(e.target) && !e.target.closest('#notif-btn')) p.classList.remove('open'); });
+
+  // Settings tabs
+  document.querySelectorAll('.s-nav-item').forEach(i => i.addEventListener('click', () => switchTab(i.dataset.tab)));
+  document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
+  document.getElementById('btn-change-pw').addEventListener('click', changePassword);
+  document.getElementById('btn-signout-all').addEventListener('click', signOut);
+  document.getElementById('avatar-input').addEventListener('change', function() { if (this.files[0]) uploadAvatar(this.files[0]); this.value = ''; });
+  document.getElementById('btn-remove-avatar').addEventListener('click', async () => { await supabase.from('profiles').update({ avatar_url: null }).eq('id', session.user.id); profile.avatar_url = null; renderSidebar(); renderSettings(); uiToast('success', 'Avatar supprimé.'); });
+  document.querySelectorAll('.lang-btn').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', function() { this.classList.toggle('on'); }));
+  document.getElementById('btn-save-notif').addEventListener('click', saveNotifSettings);
+  document.getElementById('btn-save-network').addEventListener('click', () => uiToast('success', '✓ Réseau appliqué'));
+  document.getElementById('btn-clear-cache').addEventListener('click', () => { document.getElementById('cache-size').textContent = '0 MB utilisés'; uiToast('success', '✓ Cache vidé'); });
+  document.getElementById('btn-reset-settings').addEventListener('click', () => { if (confirm('Réinitialiser tous les paramètres ?')) { document.querySelectorAll('.toggle').forEach(t => t.classList.remove('on')); uiToast('info', 'Paramètres réinitialisés'); } });
+
+  // Rename device
+  document.getElementById('rename-input').addEventListener('keydown', e => { if (e.key === 'Enter') renameDevice(); });
+
+  // Sync
+  document.getElementById('btn-launch-sync').addEventListener('click', launchSync);
+  document.getElementById('btn-clear-log').addEventListener('click', async () => { await supabase.from('sync_log').delete().eq('user_id', session.user.id); SYNC_LOG = []; renderSyncLog(); uiToast('info', 'Journal effacé'); });
+  document.getElementById('btn-add-rule').addEventListener('click', () => openModal('modal-device'));
+  document.getElementById('btn-add-device').addEventListener('click', () => openModal('modal-device'));
+  document.getElementById('md-cancel').addEventListener('click', () => closeModal('modal-device'));
+  document.getElementById('md-confirm').addEventListener('click', async () => {
+    const name = document.getElementById('md-name').value.trim();
+    if (!name) return uiToast('warning', 'Donne un nom à la règle.');
+    const btn = document.getElementById('md-confirm'); btn.classList.add('btn-loading');
+    const { data } = await supabase.from('sync_rules').insert({ user_id: session.user.id, name, source: 'Cet appareil', dest: 'Supabase Storage', freq: document.getElementById('md-os').value||'Manuel', active: true }).select().single();
+    btn.classList.remove('btn-loading');
+    if (data) { SYNC_RULES.unshift(data); renderSyncRules(); }
+    closeModal('modal-device'); document.getElementById('md-name').value = '';
+    uiToast('success', `✓ Règle "${name}" créée`);
+  });
+  document.getElementById('modal-device').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('modal-device'); });
+
+  // File modal
+  document.getElementById('modal-cancel')?.removeEventListener && null;
+  document.querySelector('#modal-file .modal-footer .btn-ghost')?.addEventListener('click', () => closeModal('modal-file'));
+  document.getElementById('modal-file')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('modal-file'); });
+
+  // Rename modal
+  document.getElementById('rename-confirm')?.addEventListener('click', renameDevice);
+  document.getElementById('rename-cancel')?.addEventListener('click', () => closeModal('modal-rename'));
+  document.getElementById('modal-rename')?.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal('modal-rename'); });
+
+  // Mobile bottom nav
+  document.querySelectorAll('.bn-item[data-page]').forEach(item => {
+    item.addEventListener('click', () => {
+      showPage(item.dataset.page, document.querySelector(`[data-page="${item.dataset.page}"].nav-link`));
+      document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active')); item.classList.add('active');
+    });
+  });
+
+  const bnMore = document.getElementById('bn-more-btn');
+  const bnPanel = document.getElementById('bn-more-panel');
+  const bnOvl  = document.getElementById('bn-more-overlay');
+  bnMore?.addEventListener('click', () => { bnPanel.classList.toggle('open'); bnOvl.classList.toggle('open'); });
+  bnOvl?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); });
+  document.getElementById('more-settings')?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); showPage('parametres', document.querySelector('[data-page="parametres"]') ); });
+  document.getElementById('more-analytics')?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); showPage('analytiques', document.querySelector('[data-page="analytiques"]') ); });
+  document.getElementById('more-logout')?.addEventListener('click', () => { bnPanel.classList.remove('open'); bnOvl.classList.remove('open'); signOut(); });
+  document.getElementById('mobile-fab')?.addEventListener('click', () => document.getElementById('file-input-hidden').click());
+
+  // Mobile search
+  const mobOverlay = document.getElementById('mobile-search-overlay');
+  const mobInput   = document.getElementById('mob-search-input');
+  const mobResults = document.getElementById('mob-search-results');
+  document.getElementById('mobile-search-btn')?.addEventListener('click', () => { mobOverlay.classList.add('open'); setTimeout(() => mobInput.focus(), 100); });
+  document.getElementById('mob-search-close')?.addEventListener('click', () => { mobOverlay.classList.remove('open'); mobInput.value = ''; mobResults.innerHTML = ''; });
+  mobInput?.addEventListener('input', function() {
+    const q = this.value.trim();
+    if (!q) { mobResults.innerHTML = ''; return; }
+    const ql = q.toLowerCase();
+    const results = FILES.filter(f => f.name.toLowerCase().includes(ql)).slice(0, 10);
+    const hl = str => str.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'), m => `<span class="hl">${m}</span>`);
+    mobResults.innerHTML = results.length
+      ? results.map(f => `<div class="mob-result-item" onclick="openFileModal('${f.id}');document.getElementById('mobile-search-overlay').classList.remove('open')"><div class="mob-result-icon">${TYPE_ICONS[f.type]||'📁'}</div><div><div class="mob-result-name">${hl(f.name)}</div><div class="mob-result-meta">${f.size_label||formatBytes(f.size_bytes)} · ${f.type||'other'}</div></div></div>`).join('')
+      : `<div style="padding:2rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);">Aucun résultat pour « ${q} »</div>`;
+  });
+
+  // Profile strip mobile
+  document.getElementById('mob-profile-strip')?.addEventListener('click', () => showPage('parametres', document.querySelector('[data-page="parametres"]') ));
+
+  // Swipe
+  let tx = 0, ty = 0;
+  const sp = ['transferts','appareils','fichiers','sync'];
+  document.querySelector('.page-content')?.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+  document.querySelector('.page-content')?.addEventListener('touchend', e => {
+    if (window.innerWidth > 768) return;
+    const dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx)) return;
+    const cur = sp.indexOf(currentPage); if (cur === -1) return;
+    if (dx < -60 && cur < sp.length-1) { const next = sp[cur+1]; showPage(next, document.querySelector(`[data-page="${next}"].nav-link`)); document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active')); document.querySelector(`.bn-item[data-page="${next}"]`)?.classList.add('active'); }
+    else if (dx > 60 && cur > 0) { const prev = sp[cur-1]; showPage(prev, document.querySelector(`[data-page="${prev}"].nav-link`)); document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active')); document.querySelector(`.bn-item[data-page="${prev}"]`)?.classList.add('active'); }
+  }, { passive: true });
+
+  // Live speed stat
+  setInterval(() => {
+    const spd = (800 + Math.random() * 600).toFixed(0);
+    document.getElementById('stat-speed')?.innerHTML && (document.getElementById('stat-speed').innerHTML = `${spd} <span class="unit">MB/s</span>`);
+  }, 1200);
+}
+
+function exportCSV() {
+  const rows = ['Nom,Type,Taille,Code,Statut,Date,URL'];
+  FILES.forEach(f => rows.push(`"${f.name}",${f.type},${f.size_label||formatBytes(f.size_bytes)},${f.share_code||''},${f.status},"${f.created_at}","${f.public_url||''}"`));
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'creo_fichiers.csv'; a.click();
+  uiToast('success', '✓ CSV téléchargé');
+}
+
+/* ══ BOOTSTRAP ══ */
+init();
 </script>
 </body>
 </html>
