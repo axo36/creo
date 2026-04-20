@@ -1874,7 +1874,6 @@ window.uiToast = function(type, msg) {
 function hideLoading() {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('app-shell').style.display = 'block';
-  updateMobProfileStrip();
 }
 
 /* ══ EVENT LISTENERS ══ */
@@ -2286,7 +2285,14 @@ document.querySelector('.page-content')?.addEventListener('touchend', e => {
 }, { passive: true });
 
 /* ── Render sidebar updates also update mobile strip ── */
-// hideLoading already calls updateMobProfileStrip() — no duplicate needed here
+const _origRenderSidebar = renderSidebar;
+// (renderSidebar is local, we re-run updateMobProfileStrip after it via patching init)
+const _origHideLoading = hideLoading;
+function hideLoading() {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.getElementById('app-shell').style.display = 'block';
+  updateMobProfileStrip();
+}
 </script>
 </body>
 </html>
