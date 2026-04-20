@@ -1747,7 +1747,9 @@ function renderDevicesPage() {
 window.sendToDevice = function(devId) {
   updateDeviceSelect();
   document.getElementById('mt-dest').value = devId;
-  document.getElementById('file-input-hidden')?.click(); = function(devId) {
+  document.getElementById('file-input-hidden')?.click();
+};
+window.downloadAll = function(devId) {
   FILES.filter(f => f.target_device_id === devId && f.public_url).forEach(f => {
     const a = document.createElement('a'); a.href = f.public_url; a.download = f.name; a.target = '_blank'; a.click();
   });
