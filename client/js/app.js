@@ -11,8 +11,10 @@ import { loadFiles, loadDevices, loadSyncRules,
 import { ensureDeviceRegistered, renderDevicesPage,
          updateDeviceSelect, renameDevice,
          addDeviceManually }                                from './devices.js';
-import { doUpload, renderActiveTransfers,
-         renderTransfersTable, updateTransfersStats }       from './transfers.js';
+import { doUpload, startUpload, confirmUploadAndSend,
+         renderActiveUploads, renderTransfersTable,
+         updateTransfersStats, downloadFile, deleteFile as deleteFileTransfer,
+         showShareOptions, showShareSheet, cleanExpiredFiles }             from './transfers.js';
 import { renderFilesPage, openFileModal, deleteFile }       from './files.js';
 import { redeemCode, redeemLink, generateQR,
          renderReceivedFiles }                              from './recuperer.js';
@@ -26,10 +28,22 @@ import { renderSettings, saveProfile, changePassword,
 
 /* ══ Exposition globale pour les onclick HTML ══ */
 window.creo = {
-  copyText, openFileModal, deleteFile,
+  copyText,
+  openFileModal,
+  deleteFile: deleteFileTransfer,
   sendToDevice, downloadAll, deleteDeviceById, openRenameModal,
-  toggleRule, deleteRule, removeUpload,
+  toggleRule, deleteRule,
+  removeUpload: (uid) => { delete state.activeUploads[uid]; renderActiveUploads(); },
   redeemCode, redeemLink,
+  downloadFile,
+  showShareOptions,
+  showShareSheet,
+  switchShareTab(btn, mode) {
+    document.querySelectorAll('.share-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.share-panel').forEach(p => p.style.display = 'none');
+    btn.classList.add('active');
+    document.querySelectorAll(`.share-panel[data-mode="${mode}"]`).forEach(p => p.style.display = 'block');
+  },
 };
 
 /* ══ INIT ══ */
@@ -74,6 +88,9 @@ async function init() {
   updateDeviceSelect();
   hideLoading();
   setupEvents();
+
+  // Nettoyer les fichiers expirés (> 7 jours)
+  await cleanExpiredFiles();
 
   setupRealtime(
     () => { renderTransfersPage(); renderFilesPage(); renderReceivedFiles(); renderAnalyticsPage(); },
@@ -134,7 +151,7 @@ function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 
 /* ══ RENDER TRANSFERS PAGE ══ */
 function renderTransfersPage() {
-  renderActiveTransfers();
+  renderActiveUploads();
   renderTransfersTable(document.getElementById('search-input')?.value?.trim() || '');
   updateTransfersStats();
 }
@@ -172,8 +189,8 @@ window.showPage = function (id, el) {
   if (id === 'recuperer')   { renderReceivedFiles(); }
 };
 
-/* ══ UPLOAD FLOW ══ */
-function startUpload(files) {
+/* ══ UPLOAD FLOW — géré dans transfers.js ══ */
+function _startUpload_UNUSED(files) {
   if (!files || !files.length) return;
   state.pendingFiles = Array.from(files);
   updateDeviceSelect();
@@ -314,7 +331,7 @@ function setupEvents() {
 
   /* Modal transfer (destination chooser) */
   document.getElementById('modal-cancel')?.addEventListener('click', () => { closeModal('modal-transfer'); state.pendingFiles = []; });
-  document.getElementById('modal-confirm')?.addEventListener('click', confirmUpload);
+  document.getElementById('modal-confirm')?.addEventListener('click', confirmUploadAndSend);
   document.getElementById('modal-transfer')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) { closeModal('modal-transfer'); state.pendingFiles = []; }
   });
