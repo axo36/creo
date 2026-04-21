@@ -6,6 +6,59 @@
 <title>CREO — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+
+/* ── Boutons partage pills ── */
+.btn-share-pill {
+  display: inline-flex; align-items: center; padding: 3px 10px;
+  border-radius: 99px; font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; cursor: pointer; border: 1px solid; transition: all .18s;
+  background: transparent;
+}
+.btn-share-pill.code  { border-color: rgba(255,184,0,.3); color: var(--amber); }
+.btn-share-pill.code:hover  { background: rgba(255,184,0,.1); }
+.btn-share-pill.link  { border-color: rgba(26,111,255,.3); color: var(--blue2); }
+.btn-share-pill.link:hover  { background: rgba(26,111,255,.1); }
+.btn-share-pill.qr    { border-color: rgba(0,212,255,.3); color: var(--cyan); }
+.btn-share-pill.qr:hover    { background: rgba(0,212,255,.08); }
+
+/* ── Share tab active ── */
+.share-tab.active {
+  background: rgba(26,111,255,.12) !important;
+  border-color: rgba(26,111,255,.3) !important;
+  color: var(--blue2) !important;
+}
+
+/* ── SVG icon in table ── */
+.td-svg-icon { display: flex; align-items: center; flex-shrink: 0; }
+.td-svg-icon svg { display: block; }
+
+</style>
+<style>
+/* ── Boutons partage pills ── */
+.btn-share-pill {
+  display: inline-flex; align-items: center; padding: 3px 10px;
+  border-radius: 99px; font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; cursor: pointer; border: 1px solid; transition: all .18s;
+  background: transparent;
+}
+.btn-share-pill.code  { border-color: rgba(255,184,0,.3); color: var(--amber); }
+.btn-share-pill.code:hover  { background: rgba(255,184,0,.1); }
+.btn-share-pill.link  { border-color: rgba(26,111,255,.3); color: var(--blue2); }
+.btn-share-pill.link:hover  { background: rgba(26,111,255,.1); }
+.btn-share-pill.qr    { border-color: rgba(0,212,255,.3); color: var(--cyan); }
+.btn-share-pill.qr:hover    { background: rgba(0,212,255,.08); }
+
+/* ── Share tab active ── */
+.share-tab.active {
+  background: rgba(26,111,255,.12) !important;
+  border-color: rgba(26,111,255,.3) !important;
+  color: var(--blue2) !important;
+}
+
+/* ── SVG icon in table ── */
+.td-svg-icon { display: flex; align-items: center; flex-shrink: 0; }
+.td-svg-icon svg { display: block; }
+</style>
 </head>
 <body>
 
@@ -82,16 +135,26 @@
 
       <!-- ══ TRANSFERTS ══ -->
       <div class="page active" id="page-transferts">
+
+        <!-- Alerte quota -->
+        <div id="quota-alert" style="display:none;background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.2);
+             border-radius:var(--r-xl);padding:.9rem 1.2rem;margin-bottom:1.5rem;font-size:.82rem;
+             color:var(--red);align-items:center;gap:10px;"></div>
+
+        <!-- Stats -->
         <div class="stat-grid stat-grid-4">
           <div class="stat-card">
-            <div class="stat-label">Total uploadé</div>
+            <div class="stat-label">Envoyés cette semaine</div>
             <div class="stat-val" id="stat-total">0 <span class="unit">fichiers</span></div>
-            <div class="stat-sub">tous les envois</div>
+            <div class="stat-sub">sur 7 jours glissants</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Taille totale</div>
-            <div class="stat-val" id="stat-size">0 <span class="unit">MB</span></div>
-            <div class="stat-sub">stocké</div>
+            <div class="stat-label">Stockage utilisé</div>
+            <div id="stat-size">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);">0 B</div>
+              <div style="margin-top:.4rem;height:4px;background:var(--d5);border-radius:99px;"><div style="width:0%;height:100%;background:var(--green);border-radius:99px;"></div></div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--green);margin-top:3px;">0% de 1 GB</div>
+            </div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Appareils en ligne</div>
@@ -99,32 +162,39 @@
             <div class="stat-sub">vus dans les 10 min</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Codes actifs</div>
-            <div class="stat-val" id="stat-success">0 <span class="unit">codes</span></div>
-            <div class="stat-sub">partages en cours</div>
+            <div class="stat-label">Taux de succès</div>
+            <div class="stat-val" id="stat-success">100 <span class="unit">%</span></div>
+            <div class="stat-sub">uploads réussis</div>
           </div>
         </div>
 
         <!-- Zone upload -->
         <div class="upload-zone" id="upload-zone">
-          <div class="upload-zone-icon">⬆</div>
+          <div style="color:var(--t3);margin-bottom:.6rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17,8 12,3 7,8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
           <div class="upload-zone-title">Glisse tes fichiers ici ou clique pour choisir</div>
-          <div class="upload-zone-sub">Tous formats · Max 50 MB par fichier · Stocké sur Supabase</div>
+          <div class="upload-zone-sub">Tous formats · Max 50 MB · Stocké 7 jours · Forfait free 1 GB</div>
         </div>
 
-        <!-- Transferts actifs -->
+        <!-- Uploads actifs -->
         <div class="section-header" style="margin-bottom:.8rem;">
-          <div class="section-title">Uploads actifs <small id="active-count">0 en cours</small></div>
+          <div class="section-title">En cours <small id="active-count">0 en cours</small></div>
           <button class="btn btn-ghost btn-sm" id="btn-new-transfer">＋ Nouveau</button>
         </div>
         <div id="active-transfers-container" style="margin-bottom:2rem;"></div>
 
-        <!-- Historique -->
+        <!-- Historique 7 jours -->
         <div class="section-header">
-          <div class="section-title">Historique</div>
+          <div class="section-title">Historique <small>7 jours</small></div>
           <div class="toolbar" style="margin-bottom:0;gap:6px;">
             <div class="filter-chip active" data-filter="all">Tous</div>
-            <div class="filter-chip" data-filter="sent">Envoyés</div>
+            <div class="filter-chip" data-filter="sent">Liens publics</div>
+            <div class="filter-chip" data-filter="device">Vers appareils</div>
             <div class="filter-chip" data-filter="received">Reçus</div>
             <div class="filter-chip" data-filter="error">Erreurs</div>
             <select class="sort-select" id="transfers-sort">
@@ -139,8 +209,12 @@
         <div class="data-table-wrap">
           <table class="data-table">
             <thead><tr>
-              <th>Fichier</th><th>Taille</th><th>Destination</th>
-              <th>Code</th><th>Statut</th><th>Date</th><th>Actions</th>
+              <th>Fichier</th>
+              <th>Destination</th>
+              <th>Statut</th>
+              <th>Date</th>
+              <th>Partager</th>
+              <th>Action</th>
             </tr></thead>
             <tbody id="transfers-tbody"></tbody>
           </table>
@@ -619,6 +693,65 @@
     <div class="modal-footer">
       <button class="btn btn-ghost" id="modal-file-close">Fermer</button>
       <a class="btn btn-primary" id="modal-download-btn" href="#" download target="_blank">⬇ Télécharger</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- MODAL PARTAGE -->
+<div class="modal-bg" id="modal-share">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">Partager</div>
+    <div style="font-size:.82rem;color:var(--t2);margin-bottom:1.2rem;" id="share-file-name">—</div>
+
+    <!-- Onglets -->
+    <div style="display:flex;gap:6px;margin-bottom:1.4rem;">
+      <button class="share-tab active" data-mode="code"
+        style="flex:1;padding:.55rem;border-radius:var(--r-lg);font-family:'JetBrains Mono',monospace;
+               font-size:.72rem;cursor:pointer;border:1px solid var(--b3);background:var(--d4);color:var(--t2);transition:all .2s;"
+        onclick="window.creo.switchShareTab(this,'code')">🔑 Code</button>
+      <button class="share-tab" data-mode="link"
+        style="flex:1;padding:.55rem;border-radius:var(--r-lg);font-family:'JetBrains Mono',monospace;
+               font-size:.72rem;cursor:pointer;border:1px solid var(--b3);background:var(--d4);color:var(--t2);transition:all .2s;"
+        onclick="window.creo.switchShareTab(this,'link')">🔗 Lien</button>
+      <button class="share-tab" data-mode="qr"
+        style="flex:1;padding:.55rem;border-radius:var(--r-lg);font-family:'JetBrains Mono',monospace;
+               font-size:.72rem;cursor:pointer;border:1px solid var(--b3);background:var(--d4);color:var(--t2);transition:all .2s;"
+        onclick="window.creo.switchShareTab(this,'qr')">📷 QR</button>
+    </div>
+
+    <!-- Panel Code -->
+    <div class="share-panel" data-mode="code">
+      <div style="background:var(--d3);border:1px solid rgba(255,184,0,.2);border-radius:var(--r-xl);padding:1.5rem;text-align:center;margin-bottom:1rem;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.5rem;">Code de partage</div>
+        <div id="share-code-big" style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--white);letter-spacing:.4em;line-height:1;">——</div>
+        <div style="font-size:.78rem;color:var(--t2);margin-top:.7rem;">Entre ce code sur la page <strong style="color:var(--t1);">Récupérer</strong> de CREO pour télécharger le fichier.</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="share-btn-copy-code">📋 Copier le code</button>
+    </div>
+
+    <!-- Panel Lien -->
+    <div class="share-panel" data-mode="link" style="display:none;">
+      <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:1rem;margin-bottom:1rem;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;margin-bottom:.4rem;">Lien de téléchargement direct</div>
+        <div id="share-link-value" style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--blue2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary" style="flex:1;justify-content:center;" id="share-btn-copy-link">📋 Copier le lien</button>
+        <a class="btn btn-ghost" id="share-recv-link" href="#" target="_blank" style="flex:1;justify-content:center;">Page de téléchargement →</a>
+      </div>
+    </div>
+
+    <!-- Panel QR -->
+    <div class="share-panel" data-mode="qr" style="display:none;">
+      <div style="text-align:center;padding:1rem;">
+        <img id="share-qr-img" src="" alt="QR Code" style="border-radius:var(--r-lg);border:1px solid var(--b2);max-width:200px;">
+        <div style="font-size:.78rem;color:var(--t2);margin-top:.8rem;">Scanne ce QR avec ton téléphone pour télécharger le fichier directement.</div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-share').classList.remove('open')">Fermer</button>
     </div>
   </div>
 </div>
