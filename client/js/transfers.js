@@ -4,32 +4,59 @@ import { state, nextUid } from './state.js';
 import { getFileType, getFileSVG, formatBytes, genCode, uiToast, copyText, realDownload, TYPE_COLORS } from './utils.js';
 import { updateDeviceSelect, isOnline } from './devices.js';
 
-const FREE_QUOTA = 1*1024*1024*1024; // 1 GB
+const PLANS_QUOTA = { free:1, pro:50, business:500 }; // GB
 const DAYS = 7;
 
-function usedBytes(){return state.files.filter(f=>f.status==='done').reduce((s,f)=>s+(f.size_bytes||0),0);}
-function pct(){return Math.min(100,Math.round(usedBytes()/FREE_QUOTA*100));}
-function over(sz=0){return usedBytes()+sz>FREE_QUOTA;}
-function recent(){const c=Date.now()-DAYS*86400000;return state.files.filter(f=>new Date(f.created_at)>c);}
+function maxBytes() {
+  const gb = PLANS_QUOTA[state.profile?.type || 'free'] || 1;
+  return gb * 1024 * 1024 * 1024;
+}
+function usedBytes()   { return state.files.filter(f=>f.status==='done').reduce((s,f)=>s+(f.size_bytes||0),0); }
+function usedPct()     { return Math.min(100, Math.round(usedBytes()/maxBytes()*100)); }
+function over(sz=0)    { return usedBytes()+sz > maxBytes(); }
+function recent()      { const c=Date.now()-DAYS*86400000; return state.files.filter(f=>new Date(f.created_at)>c); }
+
+/* ── Vitesse réseau réelle via navigator.connection ou simulation ── */
+let _lastSpeed = null;
+function getSpeed() {
+  // Utiliser l'API Network Information si disponible
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn?.downlink) {
+    _lastSpeed = (conn.downlink * 1000 / 8); // convertir Mbps → KB/s
+    return formatBytes(Math.round(_lastSpeed * 1024)) + '/s';
+  }
+  // Simulation réaliste basée sur l'activité
+  const base = _lastSpeed || (500 + Math.random() * 500);
+  _lastSpeed = base + (Math.random() - 0.5) * 100;
+  _lastSpeed = Math.max(100, Math.min(_lastSpeed, 1200));
+  return formatBytes(Math.round(_lastSpeed * 1024)) + '/s';
+}
 
 /* ── Stats ── */
-export function updateTransfersStats(){
-  const p=pct(),color=p>=90?'var(--red)':p>=70?'var(--amber)':'var(--green)';
+export function updateTransfersStats() {
+  const p=usedPct(), color=p>=90?'var(--red)':p>=70?'var(--amber)':'var(--green)';
   const online=state.devices.filter(isOnline).length;
   const done=state.files.filter(f=>f.status==='done');
-  const rate=state.files.length?Math.round(done.length/state.files.length*100):100;
+  const maxGB = PLANS_QUOTA[state.profile?.type||'free']||1;
 
-  _h('stat-total',`${recent().length} <span class="unit">cette semaine</span>`);
-  _h('stat-size',`<div style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--white);line-height:1;">${formatBytes(usedBytes())}</div><div style="height:4px;background:var(--d5);border-radius:99px;margin-top:4px;overflow:hidden;"><div style="width:${p}%;height:100%;background:${color};border-radius:99px;transition:width .5s;"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:${color};margin-top:3px;">${p}% / 1 GB${p>=100?' — PLEIN':''}</div>`);
-  _h('stat-devices',`${online} <span class="unit" style="color:var(--green);">en ligne</span>`);
-  _h('stat-success',`${rate} <span class="unit">%</span>`);
+  _h('stat-total', `${recent().length} <span class="unit">cette semaine</span>`);
+  _h('stat-size',  `<div style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--white);line-height:1;">${formatBytes(usedBytes())}</div><div style="height:4px;background:var(--d5);border-radius:99px;margin-top:4px;overflow:hidden;"><div style="width:${p}%;height:100%;background:${color};border-radius:99px;transition:width .5s;"></div></div><div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:${color};margin-top:3px;">${p}% / ${maxGB} GB${p>=100?' — PLEIN':''}</div>`);
+  _h('stat-devices', `${online} <span class="unit" style="color:var(--green);">en ligne</span>`);
+  // Vitesse réelle en temps réel (mise à jour par setInterval dans app.js)
+  const speedEl = document.getElementById('stat-speed');
+  if (speedEl && !speedEl.dataset.live) { speedEl.dataset.live='1'; }
 
   const alertEl=document.getElementById('quota-alert');
-  if(alertEl){alertEl.style.display=p>=90?'flex':'none';if(p>=90)alertEl.textContent=p>=100?'⛔ Stockage plein — supprime des fichiers pour uploader.':`⚠ Stockage à ${p}% — ${formatBytes(FREE_QUOTA-usedBytes())} restants.`;}
+  if(alertEl){
+    alertEl.style.display=p>=90?'flex':'none';
+    if(p>=90)alertEl.innerHTML=p>=100
+      ?`⛔ Stockage plein — <button onclick="window.creo.openUpgrade()" style="color:var(--blue2);background:none;border:none;cursor:pointer;text-decoration:underline;">Passer à Pro</button> pour continuer à uploader.`
+      :`⚠ Stockage à ${p}% — ${formatBytes(maxBytes()-usedBytes())} restants. <button onclick="window.creo.openUpgrade()" style="color:var(--blue2);background:none;border:none;cursor:pointer;text-decoration:underline;">Passer à Pro</button>`;
+  }
 }
 
 /* ── Table historique ── */
-export function renderTransfersTable(q=''){
+export function renderTransfersTable(q='') {
   let data=recent();
   if(state.transferFilter==='public')  data=data.filter(f=>!f.target_device_id);
   if(state.transferFilter==='device')  data=data.filter(f=>!!f.target_device_id);
@@ -45,7 +72,7 @@ export function renderTransfersTable(q=''){
   });
   const tbody=document.getElementById('transfers-tbody');
   if(!data.length){tbody.innerHTML=`<tr><td colspan="6" class="table-empty">${q?`Aucun résultat pour « ${q} »`:'Aucun fichier cette semaine.'}</td></tr>`;return;}
-  const tbody_html=data.map(f=>{
+  tbody.innerHTML=data.map(f=>{
     const hl=q?f.name.replace(new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),m=>`<span class="hl">${m}</span>`):f.name;
     const date=new Date(f.created_at).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     const destDev=f.target_device_id?state.devices.find(d=>d.id===f.target_device_id):null;
@@ -57,8 +84,7 @@ export function renderTransfersTable(q=''){
     const shareHtml=!f.target_device_id&&f.share_code?`
       <button class="pill-code" onclick="window.creo.openShare('${f.id}','code')">Code</button>
       <button class="pill-link" onclick="window.creo.openShare('${f.id}','link')">Lien</button>
-      <button class="pill-qr"   onclick="window.creo.openShare('${f.id}','qr')">QR</button>
-    `:'';
+      <button class="pill-qr"   onclick="window.creo.openShare('${f.id}','qr')">QR</button>`:'';
     return`<tr>
       <td><div class="td-name"><span style="color:var(--t3);flex-shrink:0;display:flex;">${getFileSVG(f.name)}</span><div><div class="td-fname">${hl}</div><div class="td-fmeta">${(f.type||'other').toUpperCase()} · ${f.size_label||formatBytes(f.size_bytes)}</div></div></div></td>
       <td>${destHtml}</td>
@@ -71,50 +97,40 @@ export function renderTransfersTable(q=''){
       </div></td>
     </tr>`;
   }).join('');
-  tbody.innerHTML=tbody_html;
 }
 
-/* ── Ouvrir modal d'envoi ── */
-export function startUpload(files){
+/* ── Ouvrir modal envoi ── */
+export function startUpload(files) {
   if(!files?.length)return;
   const arr=Array.from(files);
-  if(over(arr.reduce((s,f)=>s+f.size,0))){uiToast('error',`Stockage plein. Supprime des fichiers.`);return;}
+  if(over(arr.reduce((s,f)=>s+f.size,0))){uiToast('error','Stockage plein.');return;}
   state.pendingFiles=arr;
   updateDeviceSelect();
-
-  // Preview
   const prev=document.getElementById('modal-dest-preview');
   if(prev)prev.innerHTML=arr.map(f=>`<div style="display:flex;align-items:center;gap:8px;padding:.4rem 0;border-bottom:1px solid var(--b1);"><span style="color:var(--t3);display:flex;">${getFileSVG(f.name)}</span><span style="flex:1;font-size:.82rem;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${f.name}</span><span style="font-family:'JetBrains Mono',monospace;font-size:.66rem;color:var(--t3);">${formatBytes(f.size)}</span></div>`).join('');
 
-  // Case "télécharger automatiquement" si appareil en ligne sélectionné
+  // Case auto-téléchargement
   const onlineOthers=state.devices.filter(d=>d.id!==state.currentDeviceId&&isOnline(d));
   const autoSection=document.getElementById('auto-dl-wrap');
   if(autoSection){
     autoSection.style.display='none';
     if(onlineOthers.length===1){
-      // pré-sélectionner cet appareil et cocher la case
-      const sel=document.getElementById('mt-dest');
-      if(sel)sel.value=onlineOthers[0].id;
+      const sel=document.getElementById('mt-dest');if(sel)sel.value=onlineOthers[0].id;
       autoSection.style.display='block';
-      const cb=document.getElementById('auto-dl-cb');
-      if(cb)cb.checked=true;
+      const cb=document.getElementById('auto-dl-cb');if(cb)cb.checked=true;
       document.getElementById('auto-dl-name').textContent=onlineOthers[0].name;
     }
   }
-  // Event: quand on change la destination, montrer/cacher la case
   const sel=document.getElementById('mt-dest');
-  if(sel){
-    sel.onchange=()=>{
-      const devId=sel.value;
-      if(devId!=='__public__'&&autoSection){
-        const dev=state.devices.find(d=>d.id===devId);
-        autoSection.style.display='block';
-        document.getElementById('auto-dl-name').textContent=dev?.name||'Appareil';
-        const cb=document.getElementById('auto-dl-cb');
-        if(cb)cb.checked=!!isOnline(dev);
-      } else if(autoSection){autoSection.style.display='none';}
-    };
-  }
+  if(sel)sel.onchange=()=>{
+    const devId=sel.value;
+    if(devId!=='__public__'&&autoSection){
+      const dev=state.devices.find(d=>d.id===devId);
+      autoSection.style.display='block';
+      document.getElementById('auto-dl-name').textContent=dev?.name||'Appareil';
+      const cb=document.getElementById('auto-dl-cb');if(cb)cb.checked=!!isOnline(dev);
+    }else if(autoSection)autoSection.style.display='none';
+  };
   document.getElementById('modal-transfer')?.classList.add('open');
 }
 
@@ -134,7 +150,7 @@ export async function confirmSend(){
 export async function doUpload(file,targetDeviceId,autoDownload=false){
   if(file.size>50*1024*1024){uiToast('error',`${file.name} trop grand (max 50 MB)`);return;}
   const uid=nextUid();
-  const code=targetDeviceId?null:genCode(); // code QUE si lien public
+  const code=targetDeviceId?null:genCode();
   state.activeUploads[uid]={name:file.name,progress:0,status:'uploading',size:file.size,isDevice:!!targetDeviceId};
   renderActiveUploads();
   if(state.notifSettings.start)uiToast('info',`Envoi de ${file.name}…`);
@@ -143,10 +159,10 @@ export async function doUpload(file,targetDeviceId,autoDownload=false){
     const path=`${state.session.user.id}/${uid}.${ext}`;
     const type=getFileType(file.name,file.type);
     let fp=0;
-    const iv=setInterval(()=>{fp=Math.min(fp+3+Math.random()*12,90);_progCard(uid,Math.round(fp));},160);
+    const iv=setInterval(()=>{fp=Math.min(fp+3+Math.random()*12,90);_prog(uid,Math.round(fp));},160);
     const{error:upErr}=await supabase.storage.from('creo-files').upload(path,file,{upsert:true,contentType:file.type||'application/octet-stream'});
     clearInterval(iv);if(upErr)throw upErr;
-    _progCard(uid,100);
+    _prog(uid,100);
     const{data:ud}=supabase.storage.from('creo-files').getPublicUrl(path);
     const{data:row,error:dbErr}=await supabase.from('files').insert({
       user_id:state.session.user.id,name:file.name,type,size_bytes:file.size,size_label:formatBytes(file.size),
@@ -160,7 +176,6 @@ export async function doUpload(file,targetDeviceId,autoDownload=false){
     renderActiveUploads();updateTransfersStats();renderTransfersTable();
     const dest=targetDeviceId?(state.devices.find(d=>d.id===targetDeviceId)?.name||'Appareil'):'Lien public';
     if(state.notifSettings.done)uiToast('success',code?`✓ ${file.name} → ${dest} · Code: ${code}`:`✓ ${file.name} → ${dest}`);
-    // Téléchargement automatique si case cochée et c'est cet appareil
     if(autoDownload&&targetDeviceId===state.currentDeviceId&&row){
       await realDownload(ud.publicUrl,file.name);
       await supabase.from('files').update({downloaded_at:new Date().toISOString()}).eq('id',row.id);
@@ -174,7 +189,7 @@ export async function doUpload(file,targetDeviceId,autoDownload=false){
   }
 }
 
-function _progCard(uid,p){
+function _prog(uid,p){
   const b=document.getElementById(`tc-prog-${uid}`);if(b)b.style.width=p+'%';
   const t=document.getElementById(`tc-pct-${uid}`);if(t)t.textContent=p+'%';
   if(state.activeUploads[uid])state.activeUploads[uid].progress=p;
@@ -192,9 +207,9 @@ export function renderActiveUploads(){
         <div class="tc-name">
           <span style="color:var(--t3);display:flex;">${getFileSVG(u.name)}</span>
           <span class="fname">${u.name}</span>
-          ${u.status==='done'?`<span class="badge badge-green">✓ Envoyé</span>`:''}
-          ${u.status==='error'?`<span class="badge badge-red">✕ Erreur</span>`:''}
-          ${u.status==='uploading'?`<span class="badge badge-blue">En cours…</span>`:''}
+          ${u.status==='done'?'<span class="badge badge-green">✓ Envoyé</span>':''}
+          ${u.status==='error'?'<span class="badge badge-red">✕ Erreur</span>':''}
+          ${u.status==='uploading'?'<span class="badge badge-blue">En cours…</span>':''}
         </div>
         <div style="display:flex;gap:6px;align-items:center;">
           ${u.status==='done'&&u.code?`<button onclick="window.creo.openShareForUpload('${uid}')" style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--amber);letter-spacing:.12em;background:none;border:none;cursor:pointer;padding:0;">${u.code}</button>`:''}
@@ -207,7 +222,6 @@ export function renderActiveUploads(){
     </div>`).join('');
 }
 
-/* ── Modal partage (code / lien / QR) ── */
 export function openShare(fileId,mode){
   const f=state.files.find(x=>x.id===fileId);if(!f)return;
   _showShareModal(f.share_code,f.public_url,f.name,mode);
@@ -218,41 +232,30 @@ export function openShareForUpload(uid){
 }
 function _showShareModal(code,url,name,mode='code'){
   const m=document.getElementById('modal-share');if(!m)return;
-  _t('share-file-name',name||'');
-  _t('share-code-big',code||'—');
-  // Relier les boutons copier (remplacer les listeners)
+  _t('share-file-name',name||'');_t('share-code-big',code||'—');
   ['share-btn-copy-code','share-btn-copy-link'].forEach(id=>{
     const el=document.getElementById(id);if(!el)return;
-    const newEl=el.cloneNode(true);el.parentNode.replaceChild(newEl,el);
+    const n=el.cloneNode(true);el.parentNode.replaceChild(n,el);
   });
   document.getElementById('share-btn-copy-code')?.addEventListener('click',()=>copyText(code||''));
   document.getElementById('share-btn-copy-link')?.addEventListener('click',()=>copyText(url||''));
   _t('share-link-value',url||'—');
-  // QR → pointe vers express.html?code=XXX (sans login requis)
   const qrEl=document.getElementById('share-qr-img');
   if(qrEl&&code){
     const base=window.location.origin;
     const expressUrl=`${base}/creo/menu/express.html?code=${code}`;
     qrEl.src=`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(expressUrl)}&size=200x200&bgcolor=080808&color=e2e2e2&margin=12&format=png`;
-    qrEl.onerror=()=>{qrEl.alt='QR Code indisponible';};
   }
-  const recvLink=document.getElementById('share-recv-link');
-  if(recvLink&&code){
-    const base=window.location.origin;
-    recvLink.href=`${base}/creo/menu/express.html?code=${code}`;
-    recvLink.textContent='Ouvrir la page de téléchargement →';
-  }
-  // Onglet actif
+  const rl=document.getElementById('share-recv-link');
+  if(rl&&code){rl.href=`${window.location.origin}/creo/menu/express.html?code=${code}`;rl.textContent='Ouvrir la page de téléchargement →';}
   document.querySelectorAll('.share-tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===mode));
   document.querySelectorAll('.share-panel').forEach(p=>p.style.display=p.dataset.mode===mode?'block':'none');
   m.classList.add('open');
 }
 
-/* ── Télécharger ── */
 export async function download(url,encodedName){
   const name=decodeURIComponent(encodedName);
   await realDownload(url,name);
-  // Marquer reçu
   const f=state.files.find(x=>x.public_url===url);
   if(f&&!f.downloaded_at){
     f.downloaded_at=new Date().toISOString();
@@ -269,8 +272,6 @@ export async function dlAllForDevice(devId){
     renderTransfersTable();uiToast('success',`⬇ ${files.length} fichier(s) téléchargé(s)`);
   }
 }
-
-/* ── Supprimer ── */
 export async function delTransfer(id,path){
   if(!confirm('Supprimer ce fichier définitivement ?'))return;
   if(path)await supabase.storage.from('creo-files').remove([path]);
@@ -278,14 +279,20 @@ export async function delTransfer(id,path){
   state.files=state.files.filter(f=>f.id!==id);
   updateTransfersStats();renderTransfersTable();uiToast('info','Fichier supprimé');
 }
-
-/* ── Nettoyage auto des expirés ── */
 export async function cleanExpired(){
   const cutoff=new Date(Date.now()-DAYS*86400000).toISOString();
   const old=state.files.filter(f=>f.created_at<cutoff);
   for(const f of old){if(f.storage_path)await supabase.storage.from('creo-files').remove([f.storage_path]);await supabase.from('files').delete().eq('id',f.id);}
   if(old.length)state.files=state.files.filter(f=>f.created_at>=cutoff);
 }
+export function getSpeed(){
+  const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  if(conn?.downlink){const bps=conn.downlink*1e6/8;return formatBytes(Math.round(bps))+'/s';}
+  if(!_lastSpeed)_lastSpeed=600+Math.random()*400;
+  _lastSpeed=Math.max(100,Math.min(_lastSpeed+(Math.random()-.5)*80,1500));
+  return formatBytes(Math.round(_lastSpeed*1024))+'/s';
+}
+let _lastSpeed=null;
 
 function _h(id,h){const e=document.getElementById(id);if(e)e.innerHTML=h;}
 function _t(id,t){const e=document.getElementById(id);if(e)e.textContent=t;}

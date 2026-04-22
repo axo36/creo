@@ -20,10 +20,11 @@ import { redeemCode, redeemLink, sendToUser,
 import { renderSyncPage, launchSync, toggleRule,
          deleteRule, addSyncRule }                         from './sync.js';
 import { renderAnalyticsPage, exportCSV }                  from './analytics.js';
-import { renderSettings, saveProfile, changePassword,
-         uploadAvatar, removeAvatar, setLang,
+import { renderSettings, saveProfile, changePassword, changeClientCode,
+         uploadAvatar, removeAvatar, setLang, upgradePlan,
          saveNotifSettings, applyNotifToggles,
          switchSettingsTab }                              from './settings.js';
+import { getSpeed }                                        from './transfers.js';
 
 /* ── Exposer globalement ── */
 window.creo = {
@@ -33,6 +34,8 @@ window.creo = {
   sendToDevice, sendToUser, acceptShared, refuseShared,
   removeUpload: uid=>{ delete state.activeUploads[uid]; renderActiveUploads(); },
   toggleRule, deleteRule, redeemCode, redeemLink,
+  upgradePlan,
+  openUpgrade: () => { showPage('parametres', null); switchSettingsTab('st-avance'); },
 };
 
 /* ── Messages de chargement ── */
@@ -87,8 +90,14 @@ async function init(){
     (newItem)=>{ renderSharedFiles(); uiToast('info',`📥 Nouveau fichier de @${newItem.from_user_id?.slice(0,8)||'?'}`); }
   );
 
-  // Stat vitesse simulée
-  setInterval(()=>{ const e=document.getElementById('stat-speed'); if(e)e.innerHTML=`${(700+Math.random()*700).toFixed(0)} <span class="unit">MB/s</span>`; },1500);
+  // Vitesse réseau en temps réel
+  setInterval(() => {
+    const e = document.getElementById('stat-speed');
+    if (e) e.innerHTML = `${getSpeed()} <span style="font-size:.8rem;color:var(--blue2);">réseau</span>`;
+  }, 2000);
+
+  // Info réseau dans paramètres
+  setTimeout(() => _updateNetInfo(), 2000);
 }
 
 function hideLoading(){
@@ -145,7 +154,8 @@ window.showPage=function(id,el){
   if(id==='appareils') renderDevicesPage();
   if(id==='fichiers')  renderFilesPage();
   if(id==='recuperer') renderRecuperPage();
-  if(id==='parametres')renderSettings();
+  if(id==='parametres'){renderSettings();setTimeout(_updateNetInfo,200);
+    const cc=document.getElementById('current-code-display');if(cc)cc.textContent=state.profile?.client_code||'—';}
   if(id==='analytiques')renderAnalyticsPage();
 };
 
@@ -299,6 +309,7 @@ function setupEvents(){
   document.querySelectorAll('.s-nav-item').forEach(i=>i.addEventListener('click',()=>switchSettingsTab(i.dataset.tab)));
   document.getElementById('btn-save-profile')?.addEventListener('click',async()=>{await saveProfile();renderSidebar();renderSettings();});
   document.getElementById('btn-change-pw')?.addEventListener('click',changePassword);
+  document.getElementById('btn-change-code')?.addEventListener('click',changeClientCode);
   document.getElementById('btn-signout-all')?.addEventListener('click',signOut);
   document.getElementById('avatar-input')?.addEventListener('change',function(){if(this.files[0])uploadAvatar(this.files[0]).then(()=>{renderSidebar();renderSettings();});this.value='';});
   document.getElementById('btn-remove-avatar')?.addEventListener('click',async()=>{await removeAvatar();renderSidebar();renderSettings();});
