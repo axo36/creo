@@ -111,7 +111,7 @@
 </div>
 
 <script type="module">
-import { supabase, emailLogin, emailSignup, oauthLogin, resetPassword, toast, generateTempCode, setLoading } from './app.js';
+import { supabase, emailLogin, emailSignup, oauthLogin, resetPassword, toast, generateTempCode, setLoading, redirectByRole } from './app.js';
 
 /* ── Tabs ── */
 const tabs      = document.querySelectorAll('.auth-tab');
@@ -157,7 +157,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
     const code = await generateTempCode(session.user.id);
     window.location.href = 'complete-profile.html?code=' + code;
   } else {
-    window.location.href = '../client/client.html';
+    await redirectByRole(session);
   }
 });
 

@@ -19,7 +19,7 @@
   </div>
 </div>
 <script type="module">
-import { supabase, generateTempCode } from "./app.js";
+import { supabase, generateTempCode, redirectByRole } from "./app.js";
 
 async function handleOAuth() {
   const { data: { session } } = await supabase.auth.getSession();
@@ -57,7 +57,8 @@ async function handleOAuth() {
     const code = await generateTempCode(user.id);
     window.location.href = "complete-profile.html?code=" + code;
   } else {
-    window.location.href = "../client/client.html";
+    const { data: { session } } = await supabase.auth.getSession();
+    await redirectByRole(session);
   }
 }
 
