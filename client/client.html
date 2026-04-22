@@ -247,9 +247,9 @@
             <div class="stat-sub">vus dans les 10 min</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Taux de succès</div>
-            <div class="stat-val" id="stat-success">100 <span class="unit">%</span></div>
-            <div class="stat-sub">uploads réussis</div>
+            <div class="stat-label">Vitesse réseau</div>
+            <div class="stat-val" id="stat-speed">— <span class="unit">MB/s</span></div>
+            <div class="stat-sub">en temps réel</div>
           </div>
         </div>
 
@@ -511,7 +511,7 @@
             <div class="s-nav-item" data-tab="st-langue"><span>🌐</span> Langue</div>
             <div class="s-nav-item" data-tab="st-notifications"><span>🔔</span> Notifications</div>
             <div class="s-nav-item" data-tab="st-reseau"><span>📡</span> Réseau</div>
-            <div class="s-nav-item" data-tab="st-avance"><span>⚙️</span> Avancé</div>
+            <div class="s-nav-item" data-tab="st-avance"><span>💎</span> Forfait</div>
           </div>
           <div>
             <!-- PROFIL -->
@@ -554,6 +554,7 @@
                 <div class="field"><label>Email</label><input type="email" id="s-email" disabled></div>
                 <div class="field"><label>Nom d'utilisateur</label><input type="text" id="s-username" placeholder="@pseudo"></div>
               </div>
+              <div id="storage-bar-section" style="margin-bottom:1.2rem;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:1rem;"></div>
               <button class="btn btn-primary" id="btn-save-profile">✓ Enregistrer</button>
             </div>
 
@@ -564,6 +565,18 @@
                 <div class="field"><label>Nouveau mot de passe</label><input type="password" id="s-pw-new" placeholder="••••••••"></div>
                 <div class="field"><label>Confirmer</label><input type="password" id="s-pw-confirm" placeholder="••••••••"></div>
                 <button class="btn btn-primary" id="btn-change-pw">Changer</button>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Changer le code client</div>
+                <p style="font-size:.8rem;color:var(--t2);margin-bottom:.9rem;">Ton code client est utilisé comme identifiant de partage. Le changer met à jour tous tes fichiers automatiquement.</p>
+                <div style="display:flex;gap:8px;align-items:flex-end;">
+                  <div class="field" style="flex:1;margin:0;">
+                    <label>Nouveau code</label>
+                    <input type="text" id="s-new-code" placeholder="ex: MONCODE42" style="text-transform:uppercase;">
+                  </div>
+                  <button class="btn btn-primary btn-sm" id="btn-change-code" style="flex-shrink:0;margin-bottom:1px;">Changer</button>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:5px;">Code actuel : <span id="current-code-display" style="color:var(--blue2);">—</span></div>
               </div>
               <div class="s-group">
                 <div class="s-group-title">Session active</div>
@@ -620,18 +633,44 @@
             <!-- RÉSEAU -->
             <div class="settings-panel" id="st-reseau" style="display:none;">
               <div class="s-group">
-                <div class="s-group-title">Réseau</div>
-                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Découverte automatique</div><div class="s-row-desc">Détecter les appareils CREO sur le réseau</div></div><div class="toggle on" id="net-discovery"></div></div>
-                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Port d'écoute</div><div class="s-row-desc">Port pour les connexions entrantes</div></div>
-                  <input type="number" value="42000" id="net-port" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:80px;text-align:center;">
+                <div class="s-group-title">Connexion &amp; Upload</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Notifier après réception</div>
+                    <div class="s-row-desc">Affiche une notification quand un fichier est bien reçu par l'autre appareil</div>
+                  </div>
+                  <div class="toggle on" id="net-notify-recv"></div>
                 </div>
-                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Chiffrement AES-256</div><div class="s-row-desc">Chiffrer tous les transferts</div></div><div class="toggle on" id="net-encrypt"></div></div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Upload en arrière-plan</div>
+                    <div class="s-row-desc">Continue l'envoi si tu changes de page</div>
+                  </div>
+                  <div class="toggle on" id="net-bg-upload"></div>
+                </div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Taille max d'upload</div>
+                    <div class="s-row-desc">Limite la taille des fichiers envoyés (0 = illimité)</div>
+                  </div>
+                  <input type="number" value="50" id="net-max-size" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:70px;text-align:center;"> <span style="font-size:.72rem;color:var(--t3);margin-left:4px;">MB</span>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Informations réseau</div>
+                <div id="net-info-box" style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t2);line-height:1.8;">
+                  Chargement…
+                </div>
               </div>
               <button class="btn btn-primary btn-sm" id="btn-save-network">Appliquer</button>
             </div>
 
             <!-- AVANCÉ -->
             <div class="settings-panel" id="st-avance" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Forfait &amp; stockage</div>
+                <div id="plan-upgrade-section"></div>
+              </div>
               <div class="s-group">
                 <div class="s-group-title">Cache</div>
                 <div class="s-row">
@@ -673,7 +712,7 @@
           <div class="chart-card">
             <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Appareils</div></div>
             <table class="data-table">
-              <thead><tr><th>Appareil</th><th>Navigateur</th><th>OS</th><th>Vu</th></tr></thead>
+              <thead><tr><th>Appareil</th><th>Navigateur</th><th>OS</th><th>Volume</th><th>Vu</th></tr></thead>
               <tbody id="analytics-devices-tbody"></tbody>
             </table>
           </div>
