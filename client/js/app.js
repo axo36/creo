@@ -7,7 +7,7 @@ import { loadFiles, loadDevices, loadSharedFiles,
          loadSyncRules, loadSyncLog, setupRealtime }       from './data.js';
 import { checkDevice, addThisDevice, addOtherDevice,
          renameDevice, removeDevice, renderDevicesPage,
-         updateDeviceSelect, dlAllForDevice }              from './devices.js';
+         updateDeviceSelect }                             from './devices.js';
 import { startUpload, confirmSend, doUpload,
          renderActiveUploads, renderTransfersTable,
          updateTransfersStats, openShare, openShareForUpload,
