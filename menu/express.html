@@ -1,147 +1,224 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CREO Express</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<style>
-.express-wrap { max-width: 520px; margin: 0 auto; padding: 2rem 1rem 4rem; }
-.expr-logo { font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:.1em; color:var(--white); margin-bottom:2rem; text-align:center; }
-.expr-logo span { background:linear-gradient(135deg,var(--blue),var(--cyan)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-.expr-card { background:var(--d2); border:1px solid var(--b2); border-radius:var(--r-xl); padding:1.8rem; margin-bottom:1.5rem; }
-.expr-title { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:.05em; color:var(--white); margin-bottom:.3rem; }
-.expr-sub { font-size:.8rem; color:var(--t2); margin-bottom:1.2rem; }
-.file-drop { border:2px dashed var(--b3); background:var(--d3); border-radius:var(--r-lg); padding:2.2rem 1.2rem; text-align:center; cursor:pointer; transition:.25s; }
-.file-drop:hover, .file-drop.dragover { border-color:var(--blue); background:rgba(26,111,255,.06); }
-.file-drop-icon { font-size:2rem; margin-bottom:.5rem; color:var(--t3); }
-.file-drop-text { font-size:.85rem; color:var(--t2); }
-.file-item { display:flex; align-items:center; gap:10px; padding:.6rem .8rem; background:var(--d3); border:1px solid var(--b2); border-radius:var(--r-lg); margin-top:.5rem; }
-.file-item-name { flex:1; font-size:.82rem; color:var(--t1); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.file-item-size { font-family:'JetBrains Mono',monospace; font-size:.65rem; color:var(--t3); }
-.file-item-del { background:none; border:none; color:var(--t3); cursor:pointer; font-size:1rem; padding:0 4px; }
-.file-item-del:hover { color:var(--red); }
-.download-card { background:var(--d2); border:1px solid rgba(0,255,136,.2); border-radius:var(--r-xl); padding:1.8rem; text-align:center; }
-.download-icon { font-size:3rem; margin-bottom:1rem; }
-.download-fname { font-size:1rem; font-weight:500; color:var(--t1); margin-bottom:.3rem; word-break:break-all; }
-.download-meta { font-family:'JetBrains Mono',monospace; font-size:.7rem; color:var(--t3); margin-bottom:1.2rem; }
-.prog-bar { height:4px; background:var(--d5); border-radius:99px; overflow:hidden; margin:1rem 0; }
-.prog-fill { height:100%; background:linear-gradient(90deg,var(--blue),var(--cyan)); border-radius:99px; transition:width .4s; }
-.toast-fixed { position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%); z-index:999; padding:.75rem 1.2rem; border-radius:var(--r-lg); font-size:.85rem; display:none; box-shadow:0 8px 32px rgba(0,0,0,.5); max-width:90vw; text-align:center; }
-.toast-fixed.success { background:rgba(0,255,136,.12); border:1px solid rgba(0,255,136,.3); color:#e2fef2; display:block; }
-.toast-fixed.error   { background:rgba(255,59,92,.12); border:1px solid rgba(255,59,92,.3); color:#ffe0e6; display:block; }
-</style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Express</title>
+  <meta name="description" content="Envoyez un fichier instantanément à n'importe quel utilisateur Creo sans vous connecter.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" media="print" onload="this.media='all'">
+  <link rel="preconnect" href="https://mpnfvrizbluhhjcfzztc.supabase.co">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Styles originaux Express ── */
+    .file-block{background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.8rem;display:flex;flex-direction:column;gap:1.2rem;}
+    .file-block-title{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;}
+    .file-drop{border:2px dashed var(--b3);background:var(--d2);border-radius:var(--r-lg);padding:2.6rem 1.4rem;text-align:center;cursor:pointer;transition:.25s;}
+    .file-drop:hover{background:var(--d3);border-color:var(--blue2);}
+    .file-drop.dragover{background:rgba(26,111,255,.08);border-color:var(--blue);}
+    .file-drop-icon{font-size:2.8rem;margin-bottom:.6rem;}
+    .file-drop-text{font-size:.9rem;color:var(--t2);}
+    .file-status{display:none;background:var(--d2);border:1px solid var(--b2);padding:.8rem 1rem;border-radius:var(--r-lg);font-size:.85rem;color:var(--green);font-weight:600;}
+    .file-list{display:none;flex-direction:column;gap:.8rem;}
+    .file-item{display:flex;align-items:center;gap:12px;background:var(--d2);border:1px solid var(--b2);padding:.8rem 1rem;border-radius:var(--r-lg);}
+    .file-item-icon{font-size:1.4rem;}
+    .file-item-name{font-size:.9rem;color:var(--t1);font-weight:500;}
+    .file-item-meta{font-size:.75rem;color:var(--t3);}
+    .remove-file{background:none;border:none;color:var(--t3);font-size:1.2rem;cursor:pointer;transition:.2s;}
+    .remove-file:hover{color:var(--red);}
+    .express-form{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:1.4rem;}
+    .input-wrap{display:flex;flex-direction:column;gap:.4rem;}
+    .input-label{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;}
+    .input-field{padding:.9rem 1.2rem;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);color:var(--t1);font-size:.9rem;transition:border .2s;}
+    .input-field:focus{border-color:var(--blue2);outline:none;}
+    .btn-primary2{padding:1rem 1.2rem;background:var(--blue);border-radius:var(--r-lg);border:none;color:white;font-size:1rem;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:.5rem;font-family:'Outfit',sans-serif;}
+    .btn-primary2:hover{background:var(--blue2);}
+    .btn-primary2:disabled{opacity:.5;cursor:not-allowed;}
+    /* ── Prog bar upload ── */
+    .upload-prog-wrap{display:none;height:4px;background:var(--d5);border-radius:99px;overflow:hidden;margin-top:.5rem;}
+    .upload-prog{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;width:0%;transition:width .3s;}
+    /* ── Download card (si ?code=) ── */
+    .dl-card{max-width:480px;margin:0 auto;background:var(--d2);border:1px solid rgba(0,255,136,.2);border-radius:var(--r-2xl);padding:2.4rem;text-align:center;}
+    .dl-icon{font-size:3.5rem;margin-bottom:.8rem;}
+    .dl-name{font-size:1.1rem;font-weight:500;color:var(--t1);margin-bottom:.3rem;word-break:break-all;}
+    .dl-meta{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);margin-bottom:1.5rem;}
+    .dl-prog-wrap{height:4px;background:var(--d5);border-radius:99px;overflow:hidden;margin:1rem 0;display:none;}
+    .dl-prog{height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;width:0%;transition:width .3s;}
+    .not-found-card{max-width:380px;margin:0 auto;background:rgba(255,59,92,.05);border:1px solid rgba(255,59,92,.2);border-radius:var(--r-xl);padding:2rem;text-align:center;}
+  </style>
 </head>
-<body style="background:var(--black);min-height:100vh;">
+<body>
+<div class="bg-orbs"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
+<nav id="nav"></nav>
 
-<div class="express-wrap">
-  <div class="expr-logo">CR<span>E</span>O Express</div>
-
-  <!-- Section téléchargement (si ?code= dans l'URL) -->
-  <div id="download-section" style="display:none;">
-    <div id="loading-dl" style="text-align:center;padding:3rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.8rem;">Recherche du fichier…</div>
-    <div id="download-card" class="download-card" style="display:none;">
-      <div class="download-icon">📥</div>
-      <div class="download-fname" id="dl-fname">Fichier</div>
-      <div class="download-meta" id="dl-meta">—</div>
-      <div class="prog-bar" id="dl-prog-wrap" style="display:none;"><div class="prog-fill" id="dl-prog" style="width:0%;"></div></div>
-      <div id="dl-status" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);margin-bottom:1rem;"></div>
-      <button class="btn btn-primary" id="dl-btn" style="font-size:1rem;padding:.8rem 2rem;">⬇ Télécharger</button>
-      <div style="margin-top:1rem;font-size:.76rem;color:var(--t3);">
-        Tu as un compte CREO ? <a href="/creo/login/login.html" style="color:var(--blue2);">Se connecter</a>
-      </div>
-    </div>
-    <div id="download-not-found" style="display:none;background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.2);border-radius:var(--r-xl);padding:1.5rem;text-align:center;">
-      <div style="font-size:1.5rem;margin-bottom:.7rem;">🔍</div>
-      <div style="font-size:.9rem;color:var(--t1);margin-bottom:.4rem;">Code introuvable</div>
-      <div style="font-size:.8rem;color:var(--t2);">Vérifie le code et réessaie, ou demande un nouveau lien.</div>
-    </div>
+<!-- ═══ SI ?code= DANS L'URL : PAGE DE TÉLÉCHARGEMENT ═══ -->
+<div id="dl-section" style="display:none;">
+  <div class="sub-hero">
+    <div class="grid-bg"></div>
+    <div class="tag">Téléchargement</div>
+    <h1 class="sub-hero-h1 grad-text">FICHIER PARTAGÉ.</h1>
+    <p class="sub-hero-desc">Un fichier t'a été envoyé via CREO Express.</p>
   </div>
-
-  <!-- Section envoi Express (sans compte) -->
-  <div id="send-section">
-    <div class="expr-card">
-      <div class="expr-title">Envoyer un fichier</div>
-      <div class="expr-sub">Sans compte — le destinataire récupère avec son code ou lien CREO.</div>
-
-      <!-- Fichiers -->
-      <div class="file-drop" id="file-drop">
-        <div class="file-drop-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        </div>
-        <div class="file-drop-text">Glisse tes fichiers ici ou clique pour choisir</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);margin-top:.3rem;">Max 50 MB · Tous formats</div>
-        <input type="file" id="file-input" multiple style="display:none;">
-      </div>
-      <div id="file-list"></div>
-    </div>
-
-    <div class="expr-card">
-      <div class="expr-title">Destinataire</div>
-      <div class="expr-sub">Pseudo du compte CREO qui va recevoir.</div>
-      <div class="field">
-        <label>Pseudo</label>
-        <input type="text" id="pseudo" placeholder="@pseudo" style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.68rem .9rem;color:var(--t1);font-size:.85rem;outline:none;width:100%;transition:border-color .2s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--b2)'">
+  <div class="section-wrap">
+    <div id="dl-loading" style="text-align:center;padding:3rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.8rem;">Recherche du fichier…</div>
+    <div class="dl-card" id="dl-card" style="display:none;">
+      <div class="dl-icon">📥</div>
+      <div class="dl-name" id="dl-fname">Fichier</div>
+      <div class="dl-meta" id="dl-meta">—</div>
+      <div class="dl-prog-wrap" id="dl-prog-wrap"><div class="dl-prog" id="dl-prog"></div></div>
+      <div id="dl-status" style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);margin-bottom:1rem;"></div>
+      <button class="btn-primary2" id="dl-btn" style="justify-content:center;width:100%;font-size:1rem;">⬇ Télécharger</button>
+      <div style="margin-top:1.2rem;font-size:.76rem;color:var(--t3);">
+        Tu as un compte CREO ? <a href="../login/login.html" style="color:var(--blue2);">Se connecter</a> pour voir tes fichiers reçus directement dans le dashboard.
       </div>
     </div>
-
-    <button class="btn btn-primary" id="send-btn" style="width:100%;justify-content:center;padding:1rem;font-size:.95rem;">
-      Envoyer maintenant
-    </button>
-
-    <div style="text-align:center;margin-top:1.2rem;font-size:.78rem;color:var(--t3);">
-      Tu as un compte ? <a href="/creo/login/login.html" style="color:var(--blue2);">Se connecter</a> pour plus de fonctionnalités.
+    <div class="not-found-card" id="dl-notfound" style="display:none;">
+      <div style="font-size:2rem;margin-bottom:.8rem;">🔍</div>
+      <div style="font-size:.95rem;color:var(--t1);margin-bottom:.4rem;">Fichier introuvable</div>
+      <div style="font-size:.8rem;color:var(--t2);">Ce code est invalide ou le fichier a expiré (7 jours). Demande un nouveau lien.</div>
     </div>
   </div>
 </div>
 
-<div class="toast-fixed" id="toast-fixed"></div>
+<!-- ═══ PAGE ENVOI EXPRESS (originale + Supabase réel) ═══ -->
+<div id="send-section">
+  <!-- HERO -->
+  <div class="sub-hero">
+    <div class="grid-bg"></div>
+    <div class="tag">Envoi rapide</div>
+    <h1 class="sub-hero-h1 grad-text">EXPRESS.</h1>
+    <p class="sub-hero-desc">
+      Envoyez un fichier à n'importe quel utilisateur Creo sans vous connecter.<br>
+      Parfait pour l'école, le travail ou un partage rapide sur un ordinateur public.
+    </p>
+  </div>
+
+  <!-- FORMULAIRE EXPRESS -->
+  <div class="section-wrap">
+    <h2 class="section-h2">Envoyer un fichier.</h2>
+    <p class="section-desc">Déposez vos fichiers, choisissez le pseudo du destinataire, et envoyez instantanément.</p>
+
+    <div class="express-form">
+      <!-- BLOC FICHIER -->
+      <div class="file-block">
+        <div class="file-block-title">// FICHIER</div>
+        <div class="file-drop" id="file-drop">
+          <div class="file-drop-icon">📁</div>
+          <div class="file-drop-text">Déposer un fichier ou cliquer pour parcourir</div>
+          <input type="file" id="file-input" multiple hidden>
+        </div>
+        <div class="file-status" id="file-status"></div>
+        <div class="file-list" id="file-list"></div>
+        <div class="upload-prog-wrap" id="upload-prog-wrap">
+          <div class="upload-prog" id="upload-prog"></div>
+        </div>
+        <div id="upload-status" style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);display:none;"></div>
+      </div>
+
+      <!-- DESTINATAIRE -->
+      <div class="input-wrap">
+        <label class="input-label">// DESTINATAIRE</label>
+        <input type="text" id="pseudo" class="input-field" placeholder="ex : mathis_42">
+      </div>
+
+      <!-- MESSAGE -->
+      <div class="input-wrap">
+        <label class="input-label">Message (optionnel)</label>
+        <input type="text" id="message" class="input-field" placeholder="ex : Voici ton fichier">
+      </div>
+
+      <!-- BOUTON -->
+      <button class="btn-primary2" id="send-btn">
+        <span class="btn-label">🚀 Envoyer</span>
+      </button>
+
+      <div style="text-align:center;font-size:.78rem;color:var(--t3);">
+        Tu as un compte ? <a href="../login/login.html" style="color:var(--blue2);">Se connecter</a> pour plus de fonctionnalités (7 jours d'historique, QR code, partage avancé).
+      </div>
+    </div>
+  </div>
+
+  <!-- Infos -->
+  <div class="section-wrap">
+    <div class="tag">// Comment ça marche</div>
+    <h2 class="section-h2">Simple et rapide.</h2>
+    <p class="section-desc">
+      Le destinataire reçoit une notification dans son dashboard CREO et peut accepter ou refuser.<br>
+      Le fichier est stocké 7 jours sur nos serveurs sécurisés.
+    </p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div><div class="footer-logo">CR<span>E</span>O</div><p class="footer-tagline">Transfer Without Limits.</p></div>
+    <div class="footer-col"><h5>Produit</h5><a href="features.html">Fonctionnalités</a><a href="download.html">Télécharger</a><a href="pricing.html">Tarifs</a></div>
+    <div class="footer-col"><h5>Entreprise</h5><a href="about.html">À propos</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Compte</h5><a href="../login/login.html">Connexion</a><a href="../login/login.html?tab=signup">Créer un compte</a><a href="cgu.html">CGU</a></div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy font-mono">© 2025 Creo. All rights reserved.</div>
+    <div class="footer-socials"><div class="social-btn">𝕏</div><div class="social-btn">⌥</div><div class="social-btn">◈</div><div class="social-btn">in</div></div>
+  </div>
+</footer>
 
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-const supabase = createClient('https://mpnfvrizbluhhjcfzztc.supabase.co','sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr');
+import { buildNav, toast } from './app.js';
 
-function toast(msg, type='success') {
-  const el = document.getElementById('toast-fixed');
-  el.textContent = msg; el.className = `toast-fixed ${type}`;
-  setTimeout(() => el.style.display='none', 3500);
-}
+const supabase = createClient(
+  'https://mpnfvrizbluhhjcfzztc.supabase.co',
+  'sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr'
+);
+
+buildNav('express');
 
 function formatBytes(b) {
-  if(b>=1e9) return (b/1e9).toFixed(2)+' GB';
-  if(b>=1e6) return (b/1e6).toFixed(1)+' MB';
-  if(b>=1e3) return (b/1e3).toFixed(0)+' KB';
+  if(b>=1e9)return(b/1e9).toFixed(2)+' GB';
+  if(b>=1e6)return(b/1e6).toFixed(1)+' MB';
+  if(b>=1e3)return(b/1e3).toFixed(0)+' KB';
   return b+' B';
 }
 
-/* ── Téléchargement par code depuis URL ── */
+// ═══ DÉTECTION ?code= : MODE TÉLÉCHARGEMENT ═══
 const params = new URLSearchParams(window.location.search);
 const urlCode = params.get('code');
 
 if (urlCode) {
-  document.getElementById('download-section').style.display = 'block';
+  document.getElementById('dl-section').style.display = 'block';
   document.getElementById('send-section').style.display = 'none';
 
-  async function fetchByCode() {
-    const { data, error } = await supabase.from('files').select('*').eq('share_code', urlCode.toUpperCase()).maybeSingle();
-    document.getElementById('loading-dl').style.display = 'none';
+  (async () => {
+    const code = urlCode.toUpperCase();
+    const { data, error } = await supabase
+      .from('files').select('*').eq('share_code', code).maybeSingle();
+
+    document.getElementById('dl-loading').style.display = 'none';
+
     if (error || !data) {
-      document.getElementById('download-not-found').style.display = 'block';
+      document.getElementById('dl-notfound').style.display = 'block';
       return;
     }
-    document.getElementById('download-card').style.display = 'block';
+
+    const card = document.getElementById('dl-card');
+    card.style.display = 'block';
     document.getElementById('dl-fname').textContent = data.name;
-    document.getElementById('dl-meta').textContent = `${data.size_label || formatBytes(data.size_bytes)} · ${(data.type||'other').toUpperCase()} · Code: ${urlCode.toUpperCase()}`;
+    document.getElementById('dl-meta').textContent =
+      `${data.size_label || formatBytes(data.size_bytes)} · ${(data.type||'other').toUpperCase()} · Code: ${code}`;
 
     const dlBtn = document.getElementById('dl-btn');
     dlBtn.addEventListener('click', async () => {
-      dlBtn.disabled = true; dlBtn.textContent = 'Téléchargement…';
+      dlBtn.disabled = true;
+      dlBtn.textContent = 'Téléchargement…';
       const progWrap = document.getElementById('dl-prog-wrap');
-      const prog = document.getElementById('dl-prog');
+      const prog     = document.getElementById('dl-prog');
+      const status   = document.getElementById('dl-status');
       progWrap.style.display = 'block';
-      // Simulate progress while fetching
-      let p = 0; const iv = setInterval(() => { p = Math.min(p+4+Math.random()*10, 90); prog.style.width=p+'%'; }, 200);
+
+      let p = 0;
+      const iv = setInterval(() => { p = Math.min(p+5+Math.random()*10, 90); prog.style.width=p+'%'; }, 200);
+
       try {
         const r = await fetch(data.public_url);
         if (!r.ok) throw new Error();
@@ -151,90 +228,138 @@ if (urlCode) {
         a.href = URL.createObjectURL(blob); a.download = data.name;
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         URL.revokeObjectURL(a.href);
-        document.getElementById('dl-status').textContent = '✓ Téléchargement démarré !';
+        status.textContent = '✓ Téléchargé dans ton dossier Téléchargements !';
         dlBtn.textContent = '✓ Téléchargé';
-        toast('✓ Fichier téléchargé dans vos Téléchargements !', 'success');
         // Marquer comme téléchargé
-        await supabase.from('files').update({downloaded_at: new Date().toISOString()}).eq('id', data.id);
+        await supabase.from('files').update({ downloaded_at: new Date().toISOString() }).eq('id', data.id);
       } catch {
         clearInterval(iv);
-        // Fallback
-        const a = document.createElement('a'); a.href = data.public_url; a.download = data.name; a.target = '_blank';
+        // Fallback navigateur
+        const a = document.createElement('a');
+        a.href = data.public_url; a.download = data.name; a.target = '_blank';
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        status.textContent = '✓ Téléchargement lancé';
         dlBtn.textContent = '✓ Ouvert';
-        toast('Téléchargement lancé', 'success');
       }
     });
-  }
-  fetchByCode();
+  })();
+
 } else {
-  /* ── Envoi Express (sans compte) ── */
-  const drop = document.getElementById('file-drop');
-  const input = document.getElementById('file-input');
-  let files = [];
+  // ═══ MODE ENVOI EXPRESS ═══
+  const fileDrop   = document.getElementById('file-drop');
+  const fileInput  = document.getElementById('file-input');
+  const fileStatus = document.getElementById('file-status');
+  const fileList   = document.getElementById('file-list');
+  const sendBtn    = document.getElementById('send-btn');
+  let selectedFiles = [];
 
-  drop.addEventListener('click', () => input.click());
-  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
-  drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
-  input.addEventListener('change', e => addFiles(e.target.files));
+  fileDrop.addEventListener('click', () => fileInput.click());
+  fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('dragover'); });
+  fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('dragover'));
+  fileDrop.addEventListener('drop', e => { e.preventDefault(); fileDrop.classList.remove('dragover'); addFiles(e.dataTransfer.files); });
+  fileInput.addEventListener('change', e => addFiles(e.target.files));
 
-  function addFiles(newFiles) {
-    files = [...files, ...Array.from(newFiles)];
-    renderFiles();
+  function addFiles(files) {
+    selectedFiles = [...selectedFiles, ...Array.from(files)];
+    updateDisplay();
   }
-  function renderFiles() {
-    const list = document.getElementById('file-list');
-    list.innerHTML = files.map((f,i) => `
-      <div class="file-item">
-        <div class="file-item-name">${f.name}</div>
-        <div class="file-item-size">${formatBytes(f.size)}</div>
-        <button class="file-item-del" data-i="${i}">✕</button>
-      </div>`).join('');
-    list.querySelectorAll('.file-item-del').forEach(btn => btn.addEventListener('click', () => {
-      files.splice(+btn.dataset.i, 1); renderFiles();
+
+  function updateDisplay() {
+    if (!selectedFiles.length) {
+      fileStatus.style.display = 'none'; fileList.style.display = 'none'; return;
+    }
+    const count = selectedFiles.length;
+    fileStatus.textContent = count === 1 ? '1 fichier sélectionné' : `${count} fichiers sélectionnés`;
+    fileStatus.style.display = 'block';
+    fileList.innerHTML = '';
+    fileList.style.display = 'flex';
+
+    selectedFiles.forEach((file, index) => {
+      const ext = file.name.split('.').pop().toLowerCase();
+      const icons = { pdf:'📕', png:'🖼️', jpg:'🖼️', jpeg:'🖼️', gif:'🖼️', webp:'🖼️',
+                      zip:'🗂️', rar:'🗂️', mp4:'🎬', mov:'🎬', mp3:'🎵', wav:'🎵', doc:'📄', docx:'📄', pdf:'📕' };
+      const icon = icons[ext] || '📄';
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML = `
+        <div class="file-item-icon">${icon}</div>
+        <div style="flex:1">
+          <div class="file-item-name">${file.name}</div>
+          <div class="file-item-meta">${formatBytes(file.size)}</div>
+        </div>
+        <button class="remove-file" data-index="${index}">✕</button>`;
+      fileList.appendChild(item);
+    });
+
+    fileList.querySelectorAll('.remove-file').forEach(btn => btn.addEventListener('click', e => {
+      selectedFiles.splice(+e.target.getAttribute('data-index'), 1);
+      updateDisplay();
     }));
   }
 
-  document.getElementById('send-btn').addEventListener('click', async () => {
-    const pseudo = document.getElementById('pseudo').value.trim().replace(/^@/,'');
-    if (!pseudo) { toast('Entre un pseudo CREO.', 'error'); return; }
-    if (!files.length) { toast('Ajoute au moins un fichier.', 'error'); return; }
+  sendBtn.addEventListener('click', async () => {
+    const pseudo = document.getElementById('pseudo').value.trim().replace(/^@/, '');
+    const msg    = document.getElementById('message').value.trim();
+    if (!pseudo) return toast('Entrez un pseudo.', 'error');
+    if (!selectedFiles.length) return toast('Choisissez au moins un fichier.', 'error');
 
-    // Cherche le user destinataire
-    const { data: target } = await supabase.from('profiles').select('id,username').eq('username', pseudo).maybeSingle();
-    if (!target) { toast(`Utilisateur @${pseudo} introuvable.`, 'error'); return; }
+    // Vérifier que le user existe
+    const { data: target } = await supabase.from('profiles')
+      .select('id,username,first_name').eq('username', pseudo).maybeSingle();
+    if (!target) return toast(`Utilisateur @${pseudo} introuvable.`, 'error');
 
-    const btn = document.getElementById('send-btn');
-    btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Envoi en cours…';
+    const progWrap   = document.getElementById('upload-prog-wrap');
+    const prog       = document.getElementById('upload-prog');
+    const statusEl   = document.getElementById('upload-status');
+    progWrap.style.display = 'block';
+    statusEl.style.display = 'block';
 
     let sent = 0;
-    for (const file of files) {
-      if (file.size > 50*1024*1024) { toast(`${file.name} trop grand (max 50 MB)`, 'error'); continue; }
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+      statusEl.textContent = `Envoi de ${file.name}… (${i+1}/${selectedFiles.length})`;
+      if (file.size > 50 * 1024 * 1024) { toast(`${file.name} trop grand (max 50 MB)`, 'error'); continue; }
       try {
-        const uid = 'exp_' + Math.random().toString(36).slice(2,10);
-        const ext = (file.name.split('.').pop()||'bin').toLowerCase();
+        const uid  = 'exp_' + Math.random().toString(36).slice(2,12);
+        const ext  = (file.name.split('.').pop() || 'bin').toLowerCase();
         const path = `express/${uid}.${ext}`;
-        const { error: upErr } = await supabase.storage.from('creo-files').upload(path, file, { contentType: file.type||'application/octet-stream' });
+        let p = 0;
+        const iv = setInterval(() => { p = Math.min(p+5+Math.random()*10, 85); prog.style.width=p+'%'; }, 200);
+        const { error: upErr } = await supabase.storage.from('creo-files')
+          .upload(path, file, { contentType: file.type || 'application/octet-stream' });
+        clearInterval(iv);
         if (upErr) { toast(`Erreur : ${file.name}`, 'error'); continue; }
+        prog.style.width = '90%';
         const { data: ud } = supabase.storage.from('creo-files').getPublicUrl(path);
-        // Créer une shared_file vers le user
         await supabase.from('shared_files').insert({
-          from_user_id: null, // pas de compte
-          to_user_id: target.id,
-          file_name: file.name, file_url: ud.publicUrl,
-          file_size: file.size, status: 'pending',
-          express: true,
+          from_user_id: null,
+          to_user_id:   target.id,
+          file_name:    file.name,
+          file_url:     ud.publicUrl,
+          file_size:    file.size,
+          status:       'pending',
+          express:      true,
+          message:      msg || null,
         });
+        prog.style.width = ((i+1) / selectedFiles.length * 100) + '%';
         sent++;
-      } catch(e) { console.error(e); }
+      } catch(e) { console.error(e); toast(`Erreur réseau`, 'error'); }
     }
 
-    btn.disabled = false; btn.textContent = 'Envoyer maintenant';
+    prog.style.width = '100%';
+    sendBtn.disabled = false;
+    sendBtn.textContent = '🚀 Envoyer';
+    progWrap.style.display = 'none';
+    statusEl.style.display = 'none';
+
     if (sent > 0) {
-      toast(`✓ ${sent} fichier(s) envoyé(s) à @${pseudo} !`, 'success');
-      files = []; renderFiles();
+      const name = target.first_name || `@${target.username}`;
+      toast(`✓ ${sent} fichier(s) envoyé(s) à ${name} !`, 'success');
+      selectedFiles = []; updateDisplay();
       document.getElementById('pseudo').value = '';
+      document.getElementById('message').value = '';
     }
   });
 }
