@@ -162,16 +162,16 @@
   <aside class="sidebar">
     <div class="sidebar-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></div>
     <div class="sidebar-section">
-      <div class="sidebar-label">Principal</div>
-      <div class="nav-link active" data-page="transferts"><span class="n-icon">⚡</span> Transferts</div>
-      <div class="nav-link" data-page="appareils"><span class="n-icon">📱</span> Appareils</div>
-      <div class="nav-link" data-page="fichiers"><span class="n-icon">📂</span> Fichiers</div>
-      <div class="nav-link" data-page="recuperer"><span class="n-icon">🔑</span> Récupérer <span id="recup-badge" style="display:none;background:var(--red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:1px 6px;border-radius:99px;"></span></div>
+      <div class="sidebar-label" data-i18n="section_principal">Principal</div>
+      <div class="nav-link active" data-page="transferts"><span class="n-icon">⚡</span> <span data-i18n="nav_transfers">Transferts</span></div>
+      <div class="nav-link" data-page="appareils"><span class="n-icon">📱</span> <span data-i18n="nav_devices">Appareils</span></div>
+      <div class="nav-link" data-page="fichiers"><span class="n-icon">📂</span> <span data-i18n="nav_files">Fichiers</span></div>
+      <div class="nav-link" data-page="recuperer"><span class="n-icon">🔑</span> <span data-i18n="nav_recover">Récupérer</span> <span id="recup-badge" style="display:none;background:var(--red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:1px 6px;border-radius:99px;"></span></div>
     </div>
     <div class="sidebar-section">
-      <div class="sidebar-label">Compte</div>
-      <div class="nav-link" data-page="parametres"><span class="n-icon">⚙️</span> Paramètres</div>
-      <div class="nav-link" data-page="analytiques"><span class="n-icon">📊</span> Analytiques</div>
+      <div class="sidebar-label" data-i18n="section_account">Compte</div>
+      <div class="nav-link" data-page="parametres"><span class="n-icon">⚙️</span> <span data-i18n="nav_settings">Paramètres</span></div>
+      <div class="nav-link" data-page="analytiques"><span class="n-icon">📊</span> <span data-i18n="nav_analytics">Analytiques</span></div>
     </div>
     <div class="sidebar-footer">
       <div class="user-card" id="user-card">
@@ -182,7 +182,7 @@
         </div>
         <span style="color:var(--t3);font-size:.7rem;flex-shrink:0;">›</span>
       </div>
-      <div class="logout-link" id="logout-btn">⎋ &nbsp;Déconnexion</div>
+      <div class="logout-link" id="logout-btn" data-i18n="logout">⎋ &nbsp;Déconnexion</div>
     </div>
   </aside>
 
@@ -741,7 +741,7 @@
   <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:.3rem 1rem .7rem;border-bottom:1px solid var(--b1);margin-bottom:.5rem;">Navigation</div>
   <div class="bn-more-item" id="more-settings"><span class="bn-more-icon">⚙️</span> Paramètres</div>
   <div class="bn-more-item" id="more-analytics"><span class="bn-more-icon">📊</span> Analytiques</div>
-  <div class="bn-more-item" id="more-logout" style="color:var(--red);margin-top:.3rem;border-top:1px solid var(--b1);padding-top:.8rem;"><span class="bn-more-icon">⎋</span> Déconnexion</div>
+  <div class="bn-more-item" id="more-logout" style="color:var(--red);margin-top:.3rem;border-top:1px solid var(--b1);padding-top:.8rem;"><span class="bn-more-icon">⎋</span> <span data-i18n="more_logout">Déconnexion</span></div>
 </div>
 <div id="mobile-fab">＋</div>
 <div id="mobile-search-overlay">
