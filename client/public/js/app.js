@@ -59,16 +59,16 @@ function startLoadMsgs(){
 async function init(){
   const iv=startLoadMsgs();
   const{data:{session:s}}=await supabase.auth.getSession();
-  if(!s){clearInterval(iv);window.location.href='/creo/login/login.html';return;}
+  if(!s){clearInterval(iv);window.location.href='../../../login/login.html';return;}
   state.session=s;
 
   const{data:p}=await supabase.from('profiles').select('*').eq('id',s.user.id).single();
-  if(!p?.username||!p?.client_code||!p?.type){clearInterval(iv);window.location.href='/creo/login/complete-profile.html';return;}
+  if(!p?.username||!p?.client_code||!p?.type){clearInterval(iv);window.location.href='../../../login/complete-profile.html';return;}
   state.profile=p;
   state.currentLang=p.lang||state.currentLang;
   if(p.notif_settings)try{state.notifSettings={...state.notifSettings,...JSON.parse(p.notif_settings)};}catch{}
 
-  supabase.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT')window.location.href='/creo/login/login.html';});
+  supabase.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT')window.location.href='../../../login/login.html';});
 
   // Vérifier si cet appareil est déjà enregistré (empreinte / localStorage)
   await checkDevice();
@@ -453,7 +453,7 @@ function _updateNetInfo() {
 
 async function signOut(){
   if(state.currentDeviceId)await supabase.from('devices').update({online:false}).eq('id',state.currentDeviceId);
-  await supabase.auth.signOut();window.location.href='/creo/login/login.html';
+  await supabase.auth.signOut();window.location.href='../../../login/login.html';
 }
 function _t(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 init();

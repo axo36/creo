@@ -67,17 +67,17 @@ export async function sendToUser(){
   if(!username){uiToast('warning','Entre un pseudo @utilisateur.');return;}
   // Recherche par username exact (insensible casse), puis par email en fallback
   let target = null;
-  const{data:byUser}=await supabase.from('profiles')
+  const{data:byUserArr}=await supabase.from('profiles')
     .select('id,username,first_name,last_name')
     .ilike('username', username)
-    .maybeSingle();
-  if(byUser){ target=byUser; }
+    .limit(1);
+  if(byUserArr && byUserArr.length>0){ target=byUserArr[0]; }
   else{
-    const{data:byEmail}=await supabase.from('profiles')
+    const{data:byEmailArr}=await supabase.from('profiles')
       .select('id,username,first_name,last_name')
       .ilike('email', username)
-      .maybeSingle();
-    target=byEmail||null;
+      .limit(1);
+    target=(byEmailArr && byEmailArr.length>0) ? byEmailArr[0] : null;
   }
   if(!target){uiToast('error',`Utilisateur "${username}" introuvable. Entre le pseudo exact, sans @.`);return;}
   const f=state.files.find(x=>x.id===fileId);
