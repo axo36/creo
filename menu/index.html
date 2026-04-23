@@ -281,10 +281,11 @@
 </footer>
 
 <script type="module">
-  import { redirectIfAuth, buildNav, initReveal, initDemo, initFeatureGlow, initCountUp, initMarquee, initSidebar, downloadApp, initFAQ } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, initDemo, initFeatureGlow, initCountUp, initMarquee, initSidebar, downloadApp, initFAQ, trackPageVisit } from './app.js';
   // Lance la vérif auth ET le reste en parallèle (ne bloque plus le rendu)
   redirectIfAuth();
   buildNav('index');
+  trackPageVisit();
   initReveal();
   initFeatureGlow();
   initCountUp('.hero-stats');

@@ -93,9 +93,10 @@
 </footer>
 
 <script type="module">
-  import { redirectIfAuth, buildNav, initReveal } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal } from './app.js' /* trackPageVisit ajouté */;
   redirectIfAuth();
   buildNav('about');
+  if(typeof trackPageVisit==='function')trackPageVisit();
   initReveal();
 </script>
 </body>

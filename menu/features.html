@@ -105,9 +105,10 @@
 </footer>
 
 <script type="module">
-  import { redirectIfAuth, buildNav, initReveal, initFeatureGlow } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, initFeatureGlow } from './app.js' /* trackPageVisit ajouté */;
   redirectIfAuth();
   buildNav('features');
+  if(typeof trackPageVisit==='function')trackPageVisit();
   initReveal();
   initFeatureGlow();
 </script>

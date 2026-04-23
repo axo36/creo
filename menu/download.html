@@ -78,9 +78,10 @@
 </footer>
 
 <script type="module">
-  import { redirectIfAuth, buildNav, initReveal, toast } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, toast } from './app.js' /* trackPageVisit ajouté */;
   redirectIfAuth();
   buildNav('download');
+  if(typeof trackPageVisit==='function')trackPageVisit();
   initReveal();
 
   ['dl-mac','dl-win','dl-linux','dl-mobile'].forEach(id => {

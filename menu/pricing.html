@@ -88,9 +88,10 @@
 </footer>
 
 <script type="module">
-  import { redirectIfAuth, buildNav, initReveal, initFAQ } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, initFAQ } from './app.js' /* trackPageVisit ajouté */;
   redirectIfAuth();
   buildNav('pricing');
+  if(typeof trackPageVisit==='function')trackPageVisit();
   initReveal();
   initFAQ();
 </script>

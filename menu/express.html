@@ -304,9 +304,16 @@ if (urlCode) {
     if (!selectedFiles.length) return toast('Choisissez au moins un fichier.', 'error');
 
     // Vérifier que le user existe
-    const { data: target } = await supabase.from('profiles')
-      .select('id,username,first_name').or(`username.ilike.${pseudo},email.ilike.${pseudo}`).maybeSingle();
-    if (!target) return toast(`Utilisateur @${pseudo} introuvable. Vérifie le pseudo exact.`, 'error');
+    let target = null;
+    const{data:byUser}=await supabase.from('profiles')
+      .select('id,username,first_name').ilike('username',pseudo).maybeSingle();
+    if(byUser){ target=byUser; }
+    else{
+      const{data:byEmail}=await supabase.from('profiles')
+        .select('id,username,first_name').ilike('email',pseudo).maybeSingle();
+      target=byEmail||null;
+    }
+    if (!target) return toast(`Utilisateur "${pseudo}" introuvable. Entre le pseudo exact, sans @.`, 'error');
 
     sendBtn.disabled = true;
     sendBtn.textContent = 'Envoi en cours…';

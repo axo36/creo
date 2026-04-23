@@ -100,10 +100,11 @@
 </script>
 
 <script type="module">
-  import { redirectIfAuth, buildNav, initReveal, toast, setLoading } from './app.js';
+  import { redirectIfAuth, buildNav, initReveal, toast, setLoading } from './app.js' /* trackPageVisit ajouté */;
 
   redirectIfAuth();
   buildNav('contact');
+  if(typeof trackPageVisit==='function')trackPageVisit();
   initReveal();
 
   // --- FORMULAIRE CONTACT AVEC EMAILJS (sendForm) ---

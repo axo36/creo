@@ -395,7 +395,28 @@ export function pageFade() {
   // Remplacé par une animation CSS légère (voir style.css body fadeIn)
 }
 
-/* ── DOWNLOAD ──────────────────────────── */
+/* ── TRACKER DE VISITES ─────────────────── */
+export async function trackPageVisit() {
+  try {
+    // Fingerprint simple côté client (sans infos personnelles)
+    const fp = btoa([
+      navigator.language, screen.width+'x'+screen.height,
+      navigator.hardwareConcurrency, new Date().getTimezoneOffset()
+    ].join('|')).slice(0,32);
+
+    const referrer = document.referrer ? new URL(document.referrer).hostname : '';
+
+    await supabase.from('site_visits').insert({
+      page: window.location.pathname,
+      fingerprint: fp,
+      lang: navigator.language,
+      referrer,
+      country: null, // géolocalisation optionnelle (pas de données perso)
+    });
+  } catch(e) { /* silencieux si la table n'existe pas encore */ }
+}
+
+
 export function downloadApp(platform) {
   const links = {
     windows:'downloads/creo-win.exe', mac:'downloads/creo-mac.dmg',
