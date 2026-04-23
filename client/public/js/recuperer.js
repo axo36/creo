@@ -56,8 +56,12 @@ export async function sendToUser(){
   const username=(usernameEl?.value||'').trim().replace(/^@/,'');
   if(!fileId){uiToast('warning','Choisis un fichier à envoyer.');return;}
   if(!username){uiToast('warning','Entre un pseudo @utilisateur.');return;}
-  const{data:target}=await supabase.from('profiles').select('id,username,first_name,last_name').eq('username',username).maybeSingle();
-  if(!target){uiToast('error',`Utilisateur @${username} introuvable.`);return;}
+  // Cherche par username exact (insensible à la casse) ou par email
+  const{data:target}=await supabase.from('profiles')
+    .select('id,username,first_name,last_name')
+    .or(`username.ilike.${username},email.ilike.${username}`)
+    .maybeSingle();
+  if(!target){uiToast('error',`Utilisateur @${username} introuvable. Vérifie le pseudo exact.`);return;}
   const f=state.files.find(x=>x.id===fileId);
   if(!f){uiToast('error','Fichier introuvable.');return;}
   const btn=document.getElementById('btn-send-to-user');btn?.classList.add('btn-loading');

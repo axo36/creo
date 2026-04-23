@@ -22,7 +22,7 @@ import { renderSyncPage, launchSync, toggleRule,
 import { renderAnalyticsPage, exportCSV }                  from './analytics.js';
 import { renderSettings, saveProfile, changePassword, changeClientCode,
          uploadAvatar, removeAvatar, setLang, upgradePlan,
-         saveNotifSettings, applyNotifToggles,
+         saveNotifSettings, applyNotifToggles, applyTranslations,
          switchSettingsTab }                              from './settings.js';
 import { getSpeed }                                        from './transfers.js';
 
@@ -82,6 +82,7 @@ async function init(){
   applyNotifToggles();updateDeviceSelect();
   hideLoading();
   setupEvents();
+  applyTranslations();
 
   // Realtime auto-refresh
   setupRealtime(
@@ -136,6 +137,25 @@ const META={
   recuperer:  {title:'RÉCUPÉRER',  bc:'// code · user · express', btn:'↺ Actualiser'},
   parametres: {title:'PARAMÈTRES', bc:'// compte',             btn:'✓ Sauvegarder'},
   analytiques:{title:'ANALYTIQUES',bc:'// statistiques',       btn:'↓ Exporter CSV'},
+  admin:      {title:'ADMINISTRATION',bc:'// gestion du site', btn:'↺ Actualiser'},
+};
+// Exposer pour applyTranslations
+window._creoMeta = META;
+window._updateNavMeta = function() {
+  const lang = state.currentLang || 'fr';
+  const L = window._creoLangs?.(lang) || {};
+  if (L.topbar_transfers) {
+    META.transferts = {title:L.topbar_transfers, bc:L.bc_transfers||'', btn:L.btn_send||'⬆ Envoyer'};
+    META.appareils  = {title:L.topbar_devices,  bc:L.bc_devices||'',   btn:L.btn_add||'＋ Ajouter'};
+    META.fichiers   = {title:L.topbar_files,    bc:L.bc_files||'',     btn:L.btn_upload||'⬆ Uploader'};
+    META.recuperer  = {title:L.topbar_recover,  bc:L.bc_recover||'',   btn:L.btn_refresh||'↺ Actualiser'};
+    META.parametres = {title:L.topbar_settings, bc:L.bc_settings||'',  btn:L.btn_save||'✓ Sauvegarder'};
+    META.analytiques= {title:L.topbar_analytics,bc:L.bc_analytics||'', btn:L.btn_export||'↓ Exporter CSV'};
+    META.admin      = {title:L.topbar_admin||'ADMINISTRATION',bc:L.bc_admin||'',btn:L.btn_refresh||'↺ Actualiser'};
+    // Re-render topbar si page courante
+    const m = META[state.currentPage];
+    if (m) { _t('topbar-title', m.title); _t('topbar-bc', m.bc); }
+  }
 };
 
 window.showPage=function(id,el){
