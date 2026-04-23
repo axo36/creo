@@ -78,11 +78,18 @@ async function init(){
 
   clearInterval(iv);
   renderSidebar();renderSettings();
-  showPage('transferts',null);
+  // Restaurer la page depuis le hash URL (rechargement = même page)
+  const hashPage = window.location.hash.replace('#','').trim();
+  const validPages = Object.keys(META);
+  const startPage = validPages.includes(hashPage) ? hashPage : 'transferts';
+  const startEl = document.querySelector(`[data-page="${startPage}"].nav-link`);
+  showPage(startPage, startEl);
   applyNotifToggles();updateDeviceSelect();
   hideLoading();
   setupEvents();
   applyTranslations();
+  // Vérifier si l'admin a activé une bannière globale
+  _checkBanner();
 
   // Realtime auto-refresh
   setupRealtime(
@@ -165,6 +172,8 @@ window.showPage=function(id,el){
   page.classList.add('active');
   if(el)el.classList.add('active');
   state.currentPage=id;
+  // Persister la page dans le hash URL
+  history.replaceState(null,'','#'+id);
   const m=META[id]||{title:id.toUpperCase(),bc:'',btn:''};
   _t('topbar-title',m.title);_t('topbar-bc',m.bc);
   const ab=document.getElementById('action-btn');if(ab)ab.textContent=m.btn;
@@ -397,6 +406,49 @@ function setupEvents(){
     document.querySelectorAll('.bn-item').forEach(b=>b.classList.remove('active'));
     document.querySelector(`.bn-item[data-page="${next}"]`)?.classList.add('active');}
   },{passive:true});
+}
+
+/* ── Bannière globale admin ── */
+async function _checkBanner() {
+  try {
+    const{data}=await supabase.from('site_config').select('value').eq('key','banner').maybeSingle();
+    if(!data?.value)return;
+    const cfg=JSON.parse(data.value);
+    if(!cfg.active||!cfg.text)return;
+    // Vérifier que l'user ne l'a pas déjà fermée (session)
+    const dismissKey='creo_banner_'+btoa(cfg.text).slice(0,16);
+    if(sessionStorage.getItem(dismissKey))return;
+    // Créer et injecter la bannière
+    const bar=document.createElement('div');
+    bar.id='global-banner';
+    bar.style.cssText=`position:fixed;top:0;left:0;right:0;z-index:9999;
+      padding:.55rem 1.2rem;display:flex;align-items:center;justify-content:space-between;
+      background:${cfg.color||'var(--blue)'}22;
+      border-bottom:1px solid ${cfg.color||'var(--blue)'}55;
+      backdrop-filter:blur(8px);font-size:.8rem;color:var(--t1);`;
+    bar.innerHTML=`<span>🚨 ${cfg.text}</span>
+      <button onclick="sessionStorage.setItem('${dismissKey}','1');this.parentElement.remove();"
+        style="background:none;border:none;color:var(--t2);cursor:pointer;font-size:1.1rem;line-height:1;padding:0 4px;">✕</button>`;
+    document.body.prepend(bar);
+    // Pousser le shell vers le bas
+    const shell=document.getElementById('app-shell');
+    if(shell)shell.style.paddingTop='36px';
+  } catch(e){/* silencieux */}
+}
+
+/* ── Info réseau dans paramètres ── */
+function _updateNetInfo() {
+  const box = document.getElementById('net-info-box');
+  if (!box) return;
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const type = conn?.effectiveType || conn?.type || 'inconnu';
+  const dl   = conn?.downlink != null ? conn.downlink + ' Mbps' : '—';
+  const rtt  = conn?.rtt != null ? conn.rtt + ' ms' : '—';
+  box.innerHTML = `
+    <div>🌐 Type : <strong>${type}</strong></div>
+    <div>⬇ Débit estimé : <strong>${dl}</strong></div>
+    <div>⏱ Latence (RTT) : <strong>${rtt}</strong></div>
+    <div>🖥 Plateforme : <strong>${navigator.platform || 'inconnu'}</strong></div>`;
 }
 
 async function signOut(){

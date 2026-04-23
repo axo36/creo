@@ -11,8 +11,23 @@ export async function loadDevices(){
   state.devices=data||[];
 }
 export async function loadSharedFiles(){
-  const{data}=await supabase.from('shared_files').select('*,sender:from_user_id(username,first_name,last_name)').eq('to_user_id',state.session.user.id).order('created_at',{ascending:false});
-  state.sharedFiles=data||[];
+  // Requête simple sans join FK (évite le 400 si la relation n'est pas déclarée dans Supabase)
+  const{data,error}=await supabase.from('shared_files')
+    .select('*')
+    .eq('to_user_id',state.session.user.id)
+    .order('created_at',{ascending:false});
+  if(error||!data?.length){state.sharedFiles=[];return;}
+
+  // Enrichir avec les profils des expéditeurs
+  const senderIds=[...new Set(data.map(f=>f.from_user_id).filter(Boolean))];
+  let profilesMap={};
+  if(senderIds.length){
+    const{data:profiles}=await supabase.from('profiles')
+      .select('id,username,first_name,last_name')
+      .in('id',senderIds);
+    (profiles||[]).forEach(p=>{profilesMap[p.id]=p;});
+  }
+  state.sharedFiles=data.map(f=>({...f,sender:profilesMap[f.from_user_id]||null}));
 }
 export async function loadSyncRules(){
   const{data}=await supabase.from('sync_rules').select('*').eq('user_id',state.session.user.id).order('created_at',{ascending:false});

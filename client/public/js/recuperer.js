@@ -10,7 +10,16 @@ export async function redeemCode(){
   const btn=document.getElementById('btn-redeem-code');btn?.classList.add('btn-loading');
   const{data,error}=await supabase.from('files').select('*').eq('share_code',code).maybeSingle();
   btn?.classList.remove('btn-loading');
-  _showCodeResult(data,error,code);
+  if(error||!data){
+    const el=document.getElementById('code-result');
+    if(el)el.innerHTML=`<div class="result-err">❌ Code <strong>${code}</strong> introuvable.</div>`;
+    return;
+  }
+  // Sécurité : vérifier que le fichier est public ou appartient à l'utilisateur
+  if(data.user_id !== state.session.user.id && !data.public_url && !data.share_code){
+    uiToast('error','Accès refusé à ce fichier.');return;
+  }
+  _showCodeResult(data,null,code);
 }
 function _showCodeResult(data,error,code){
   const el=document.getElementById('code-result');if(!el)return;
@@ -56,12 +65,21 @@ export async function sendToUser(){
   const username=(usernameEl?.value||'').trim().replace(/^@/,'');
   if(!fileId){uiToast('warning','Choisis un fichier à envoyer.');return;}
   if(!username){uiToast('warning','Entre un pseudo @utilisateur.');return;}
-  // Cherche par username exact (insensible à la casse) ou par email
-  const{data:target}=await supabase.from('profiles')
+  // Recherche par username exact (insensible casse), puis par email en fallback
+  let target = null;
+  const{data:byUser}=await supabase.from('profiles')
     .select('id,username,first_name,last_name')
-    .or(`username.ilike.${username},email.ilike.${username}`)
+    .ilike('username', username)
     .maybeSingle();
-  if(!target){uiToast('error',`Utilisateur @${username} introuvable. Vérifie le pseudo exact.`);return;}
+  if(byUser){ target=byUser; }
+  else{
+    const{data:byEmail}=await supabase.from('profiles')
+      .select('id,username,first_name,last_name')
+      .ilike('email', username)
+      .maybeSingle();
+    target=byEmail||null;
+  }
+  if(!target){uiToast('error',`Utilisateur "${username}" introuvable. Entre le pseudo exact, sans @.`);return;}
   const f=state.files.find(x=>x.id===fileId);
   if(!f){uiToast('error','Fichier introuvable.');return;}
   const btn=document.getElementById('btn-send-to-user');btn?.classList.add('btn-loading');
