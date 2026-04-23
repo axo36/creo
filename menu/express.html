@@ -305,15 +305,19 @@ if (urlCode) {
 
     // Vérifier que le user existe
     let target = null;
-    const{data:byUser}=await supabase.from('profiles')
-      .select('id,username,first_name').ilike('username',pseudo).maybeSingle();
-    if(byUser){ target=byUser; }
-    else{
-      const{data:byEmail}=await supabase.from('profiles')
-        .select('id,username,first_name').ilike('email',pseudo).maybeSingle();
-      target=byEmail||null;
+    try {
+      const{data:byUserArr, error:e1}=await supabase.from('profiles')
+        .select('id,username,first_name').ilike('username',pseudo).limit(1);
+      if(byUserArr && byUserArr.length>0){ target=byUserArr[0]; }
+      else{
+        const{data:byEmailArr}=await supabase.from('profiles')
+          .select('id,username,first_name').ilike('email',pseudo).limit(1);
+        target=(byEmailArr && byEmailArr.length>0) ? byEmailArr[0] : null;
+      }
+    } catch(err) {
+      return toast('Erreur lors de la recherche. Réessaie.', 'error');
     }
-    if (!target) return toast(`Utilisateur "${pseudo}" introuvable. Entre le pseudo exact, sans @.`, 'error');
+    if (!target) return toast(`Utilisateur "${pseudo}" introuvable. Vérifie le pseudo exact (sans @).`, 'error');
 
     sendBtn.disabled = true;
     sendBtn.textContent = 'Envoi en cours…';
