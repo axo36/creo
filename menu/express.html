@@ -305,8 +305,8 @@ if (urlCode) {
 
     // Vérifier que le user existe
     const { data: target } = await supabase.from('profiles')
-      .select('id,username,first_name').eq('username', pseudo).maybeSingle();
-    if (!target) return toast(`Utilisateur @${pseudo} introuvable.`, 'error');
+      .select('id,username,first_name').or(`username.ilike.${pseudo},email.ilike.${pseudo}`).maybeSingle();
+    if (!target) return toast(`Utilisateur @${pseudo} introuvable. Vérifie le pseudo exact.`, 'error');
 
     sendBtn.disabled = true;
     sendBtn.textContent = 'Envoi en cours…';
