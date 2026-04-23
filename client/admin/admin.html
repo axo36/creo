@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CREO — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ── Boutons partage pills ── */
+.btn-share-pill {
+  display: inline-flex; align-items: center; padding: 3px 10px;
+  border-radius: 99px; font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; cursor: pointer; border: 1px solid; transition: all .18s;
+  background: transparent;
+}
+.btn-share-pill.code  { border-color: rgba(255,184,0,.3); color: var(--amber); }
+.btn-share-pill.code:hover  { background: rgba(255,184,0,.1); }
+.btn-share-pill.link  { border-color: rgba(26,111,255,.3); color: var(--blue2); }
+.btn-share-pill.link:hover  { background: rgba(26,111,255,.1); }
+.btn-share-pill.qr    { border-color: rgba(0,212,255,.3); color: var(--cyan); }
+.btn-share-pill.qr:hover    { background: rgba(0,212,255,.08); }
+
+/* ── Share tab active ── */
+.share-tab.active {
+  background: rgba(26,111,255,.12) !important;
+  border-color: rgba(26,111,255,.3) !important;
+  color: var(--blue2) !important;
+}
+
+/* ── SVG icon in table ── */
+.td-svg-icon { display: flex; align-items: center; flex-shrink: 0; }
+.td-svg-icon svg { display: block; }
+</style>
+
+<style>
+/* ── Pills partage ── */
+.pill-code,.pill-link,.pill-qr{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-family:'JetBrains Mono',monospace;font-size:.62rem;cursor:pointer;border:1px solid;transition:all .18s;background:transparent;white-space:nowrap;}
+.pill-code{border-color:rgba(255,184,0,.3);color:var(--amber);}
+.pill-code:hover{background:rgba(255,184,0,.1);}
+.pill-link{border-color:rgba(26,111,255,.3);color:var(--blue2);}
+.pill-link:hover{background:rgba(26,111,255,.1);}
+.pill-qr{border-color:rgba(0,212,255,.3);color:var(--cyan);}
+.pill-qr:hover{background:rgba(0,212,255,.08);}
+/* ── Share tab active ── */
+.share-tab.active{background:rgba(26,111,255,.12)!important;border-color:rgba(26,111,255,.3)!important;color:var(--blue2)!important;}
+/* ── Result boxes ── */
+.result-err{background:rgba(255,59,92,.04);border:1px solid rgba(255,59,92,.2);border-radius:var(--r-xl);padding:1rem 1.4rem;font-size:.82rem;color:var(--red);}
+/* ── Device cur-device ── */
+.device-card.cur-device{border-color:rgba(26,111,255,.3)!important;}
+/* ── Toast ── */
+.toast{display:flex;align-items:center;gap:8px;padding:.75rem 1rem;border-radius:var(--r-lg);font-size:.82rem;pointer-events:all;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.5);transition:opacity .3s;}
+.toast.success{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:#e2fef2;}
+.toast.error{background:rgba(255,59,92,.08);border:1px solid rgba(255,59,92,.2);color:#ffe0e6;}
+.toast.info{background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.2);color:#deeeff;}
+.toast.warning{background:rgba(255,184,0,.08);border:1px solid rgba(255,184,0,.2);color:#fff6d8;}
+/* ── Auto-download checkbox ── */
+#auto-dl-cb{accent-color:var(--blue);}
+/* ── Mobile ── */
+@media(max-width:768px){
+  .sidebar{display:none!important;}
+  .main-area{margin-left:0!important;}
+  body{padding-bottom:68px;}
+  .page-content{padding:1rem!important;}
+  .topbar{padding:0 .8rem!important;height:52px!important;}
+  .page-title{font-size:1.1rem!important;}
+  .breadcrumb{display:none!important;}
+  .topbar-search{display:none!important;}
+  #action-btn{padding:.38rem .7rem!important;font-size:.74rem!important;}
+  .icon-btn{width:30px!important;height:30px!important;}
+  /* Bottom nav */
+  #bottom-nav{display:flex!important;position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(6,6,6,.97);backdrop-filter:blur(20px);border-top:1px solid var(--b2);z-index:200;padding:0 .2rem;padding-bottom:env(safe-area-inset-bottom,0);align-items:stretch;justify-content:space-around;}
+  .bn-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;cursor:pointer;border-radius:var(--r-lg);margin:4px 2px;position:relative;transition:all .15s;}
+  .bn-item:active{transform:scale(.88);background:var(--d4);}
+  .bn-icon{font-size:1.1rem;line-height:1;}
+  .bn-label{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;transition:color .15s;}
+  .bn-item.active .bn-label{color:var(--blue2);}
+  .bn-item.active .bn-icon{filter:drop-shadow(0 0 5px rgba(26,111,255,.5));}
+  .bn-active-pill{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:20px;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:99px;opacity:0;transition:opacity .2s;}
+  .bn-item.active .bn-active-pill{opacity:1;}
+  /* FAB */
+  #mobile-fab{display:flex!important;position:fixed;bottom:72px;right:.9rem;width:50px;height:50px;background:var(--blue);border-radius:50%;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 20px rgba(26,111,255,.5);cursor:pointer;z-index:150;transition:transform .15s;border:none;color:#fff;}
+  #mobile-fab:active{transform:scale(.88);}
+  #mobile-search-btn{display:flex!important;}
+  #mobile-search-overlay{display:none;position:fixed;inset:0;background:var(--black);z-index:300;flex-direction:column;padding:1rem;gap:1rem;}
+  #mobile-search-overlay.open{display:flex;}
+  .mob-search-bar{display:flex;align-items:center;gap:10px;background:var(--d3);border:1px solid var(--b3);border-radius:var(--r-xl);padding:.6rem 1rem;}
+  .mob-search-bar input{flex:1;background:none;border:none;outline:none;font-size:.95rem;color:var(--t1);}
+  #mob-search-results{flex:1;overflow-y:auto;}
+  .mob-result-item{display:flex;align-items:center;gap:10px;padding:.75rem 1rem;border-radius:var(--r-lg);cursor:pointer;border-bottom:1px solid var(--b1);}
+  .mob-result-item:active{background:var(--d3);}
+  .mob-result-name{font-size:.84rem;color:var(--t1);}
+  .mob-result-meta{font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);margin-top:1px;}
+  .mob-profile-strip{display:flex!important;align-items:center;gap:10px;background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:.85rem 1.1rem;margin-bottom:1rem;cursor:pointer;}
+  .mob-profile-strip .mob-av{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:600;color:#fff;overflow:hidden;flex-shrink:0;}
+  .mob-profile-strip .mob-av img{width:100%;height:100%;object-fit:cover;}
+  .mob-profile-strip-info{flex:1;min-width:0;}
+  .mob-profile-name{font-size:.86rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mob-profile-role{font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);}
+  .stat-grid-4{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
+  .stat-grid-3{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
+  .stat-card{padding:1rem!important;}
+  .stat-val{font-size:1.6rem!important;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
+  .kpi-val{font-size:1.4rem!important;}
+  .device-grid{grid-template-columns:1fr!important;}
+  .files-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px!important;}
+  .files-grid.list-view{grid-template-columns:1fr!important;}
+  .two-col{grid-template-columns:1fr!important;gap:12px!important;}
+  .settings-layout{grid-template-columns:1fr!important;gap:10px!important;}
+  .settings-nav{display:flex!important;flex-wrap:wrap;gap:5px;padding:.5rem!important;}
+  .s-nav-item{padding:.38rem .62rem!important;font-size:.72rem!important;flex-shrink:0;}
+  .field-row{grid-template-columns:1fr!important;}
+  #view-grid-btn,#view-list-btn{display:none!important;}
+  .toolbar{flex-wrap:nowrap!important;overflow-x:auto!important;padding-bottom:4px!important;}
+  .toolbar::-webkit-scrollbar{display:none;}
+  .filter-chip{flex-shrink:0!important;}
+  .data-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .data-table{min-width:460px;}
+  .data-table td,.data-table thead th{padding:.55rem .7rem!important;font-size:.72rem!important;}
+  .transfer-card{padding:.8rem 1rem!important;}
+  .modal-bg{align-items:flex-end!important;}
+  .modal{width:100%!important;max-width:100%!important;border-radius:var(--r-2xl) var(--r-2xl) 0 0!important;padding:1.2rem 1rem!important;padding-bottom:calc(1.2rem + env(safe-area-inset-bottom,0))!important;animation:bsUp .22s ease!important;}
+  @keyframes bsUp{from{transform:translateY(100%);}to{transform:none;}}
+  .modal::before{content:'';display:block;width:30px;height:3px;background:var(--b3);border-radius:99px;margin:0 auto .9rem;}
+  .modal-footer{flex-direction:column-reverse!important;}
+  .modal-footer .btn{width:100%!important;justify-content:center!important;}
+  .notif-panel{position:fixed!important;top:auto!important;bottom:68px!important;left:.6rem!important;right:.6rem!important;min-width:auto!important;}
+  #toast-wrap{bottom:70px!important;left:.8rem!important;right:.8rem!important;}
+  .toast{max-width:100%!important;}
+  /* More panel */
+  #bn-more-panel{display:none;position:fixed;bottom:64px;left:0;right:0;background:var(--d2);border-top:1px solid var(--b2);z-index:199;padding:1rem;border-radius:var(--r-xl) var(--r-xl) 0 0;animation:bsUp .2s ease;}
+  #bn-more-panel.open{display:block;}
+  .bn-more-item{display:flex;align-items:center;gap:12px;padding:.8rem 1rem;border-radius:var(--r-lg);font-size:.88rem;color:var(--t2);cursor:pointer;}
+  .bn-more-item:active{background:var(--d4);color:var(--t1);}
+  .bn-more-icon{font-size:1.1rem;width:26px;text-align:center;}
+  .bn-more-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:198;}
+  .bn-more-overlay.open{display:block;}
+  /* Récupérer responsive */
+  #recup-top-grid{grid-template-columns:1fr!important;}
+  #send-user-grid{grid-template-columns:1fr!important;}
+  #send-user-grid button{width:100%;}
+  /* Section header */
+  .section-header{flex-wrap:wrap;gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen">
+  <div class="loading-logo">CR<span>E</span>O</div>
+  <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+  <div class="loading-txt" id="loading-txt">Vérification de la session…</div>
+</div>
+
+<!-- APP -->
+<div id="app-shell">
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></div>
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-i18n="section_principal">Principal</div>
+      <div class="nav-link active" data-page="transferts"><span class="n-icon">⚡</span> <span data-i18n="nav_transfers">Transferts</span></div>
+      <div class="nav-link" data-page="appareils"><span class="n-icon">📱</span> <span data-i18n="nav_devices">Appareils</span></div>
+      <div class="nav-link" data-page="fichiers"><span class="n-icon">📂</span> <span data-i18n="nav_files">Fichiers</span></div>
+      <div class="nav-link" data-page="recuperer"><span class="n-icon">🔑</span> <span data-i18n="nav_recover">Récupérer</span> <span id="recup-badge" style="display:none;background:var(--red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:1px 6px;border-radius:99px;"></span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label" style="color:var(--red);opacity:.8;" data-i18n="nav_admin">Administration</div>
+      <div class="nav-link" data-page="admin"><span class="n-icon">🛡️</span> <span data-i18n="nav_admin">Panneau admin</span> <span id="admin-badge" style="background:var(--red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:.5rem;padding:1px 6px;border-radius:99px;margin-left:4px;vertical-align:middle;">ADMIN</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label" data-i18n="section_account">Compte</div>
+      <div class="nav-link" data-page="parametres"><span class="n-icon">⚙️</span> <span data-i18n="nav_settings">Paramètres</span></div>
+      <div class="nav-link" data-page="analytiques"><span class="n-icon">📊</span> <span data-i18n="nav_analytics">Analytiques</span></div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="user-card" id="user-card">
+        <div class="user-avatar" id="sidebar-avatar">?</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-name">…</div>
+          <div class="user-role" id="sidebar-role">…</div>
+        </div>
+        <span style="color:var(--t3);font-size:.7rem;flex-shrink:0;">›</span>
+      </div>
+      <div class="logout-link" id="logout-btn" data-i18n="logout">⎋ &nbsp;Déconnexion</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <header class="topbar">
+      <div class="topbar-left">
+        <span class="page-title" id="topbar-title">TRANSFERTS</span>
+        <span class="breadcrumb" id="topbar-bc">// envoyer des fichiers</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-search">
+          <span style="color:var(--t3);font-size:.8rem;">🔍</span>
+          <input type="text" id="search-input" placeholder="Rechercher…" autocomplete="off">
+          <span id="search-clear" style="color:var(--t3);font-size:.7rem;cursor:pointer;display:none;">✕</span>
+        </div>
+        <div class="icon-btn" id="mobile-search-btn">🔍</div>
+        <div class="icon-btn" id="notif-btn" style="position:relative;">
+          🔔<span class="badge-dot" id="notif-dot" style="display:none;"></span>
+        </div>
+        <button class="btn btn-primary btn-sm" id="action-btn">⬆ Envoyer</button>
+      </div>
+    </header>
+
+    <!-- NOTIF PANEL -->
+    <div class="notif-panel" id="notif-panel">
+      <div class="notif-head">
+        <span class="notif-head-title">Notifications</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--blue2);cursor:pointer;" id="notif-read-all">Tout lire</span>
+      </div>
+      <div id="notif-list"></div>
+    </div>
+
+    <div class="page-content">
+
+      <!-- ══ TRANSFERTS ══ -->
+      <div class="page active" id="page-transferts">
+
+        <!-- Alerte quota -->
+        <div id="quota-alert" style="display:none;background:rgba(255,59,92,.06);border:1px solid rgba(255,59,92,.2);
+             border-radius:var(--r-xl);padding:.9rem 1.2rem;margin-bottom:1.5rem;font-size:.82rem;
+             color:var(--red);align-items:center;gap:10px;"></div>
+
+        <!-- Stats -->
+        <div class="stat-grid stat-grid-4">
+          <div class="stat-card">
+            <div class="stat-label">Envoyés cette semaine</div>
+            <div class="stat-val" id="stat-total">0 <span class="unit">fichiers</span></div>
+            <div class="stat-sub">sur 7 jours glissants</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Stockage utilisé</div>
+            <div id="stat-size">
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);">0 B</div>
+              <div style="margin-top:.4rem;height:4px;background:var(--d5);border-radius:99px;"><div style="width:0%;height:100%;background:var(--green);border-radius:99px;"></div></div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--green);margin-top:3px;">0% de 1 GB</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Appareils en ligne</div>
+            <div class="stat-val" id="stat-devices">0</div>
+            <div class="stat-sub">vus dans les 10 min</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Vitesse réseau</div>
+            <div class="stat-val" id="stat-speed">— <span class="unit">MB/s</span></div>
+            <div class="stat-sub">en temps réel</div>
+          </div>
+        </div>
+
+        <!-- Zone upload -->
+        <div class="upload-zone" id="upload-zone">
+          <div style="color:var(--t3);margin-bottom:.6rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17,8 12,3 7,8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div class="upload-zone-title">Glisse tes fichiers ici ou clique pour choisir</div>
+          <div class="upload-zone-sub">Tous formats · Max 50 MB · Stocké 7 jours · Forfait free 1 GB</div>
+        </div>
+
+        <!-- Uploads actifs -->
+        <div class="section-header" style="margin-bottom:.8rem;">
+          <div class="section-title">En cours <small id="active-count">0 en cours</small></div>
+          <button class="btn btn-ghost btn-sm" id="btn-new-transfer">＋ Nouveau</button>
+        </div>
+        <div id="active-transfers-container" style="margin-bottom:2rem;"></div>
+
+        <!-- Historique 7 jours -->
+        <div class="section-header">
+          <div class="section-title">Historique <small>7 jours</small></div>
+          <div class="toolbar" style="margin-bottom:0;gap:6px;">
+            <div class="filter-chip active" data-filter="all">Tous</div>
+            <div class="filter-chip" data-filter="sent">Liens publics</div>
+            <div class="filter-chip" data-filter="device">Vers appareils</div>
+            <div class="filter-chip" data-filter="received">Reçus</div>
+            <div class="filter-chip" data-filter="error">Erreurs</div>
+            <select class="sort-select" id="transfers-sort">
+              <option value="date-desc">Plus récent</option>
+              <option value="date-asc">Plus ancien</option>
+              <option value="size-desc">Plus grand</option>
+              <option value="size-asc">Plus petit</option>
+              <option value="name-asc">Nom A→Z</option>
+            </select>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr>
+              <th>Fichier</th>
+              <th>Destination</th>
+              <th>Statut</th>
+              <th>Date</th>
+              <th>Partager</th>
+              <th>Action</th>
+            </tr></thead>
+            <tbody id="transfers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ APPAREILS ══ -->
+      <div class="page" id="page-appareils">
+        <div class="stat-grid stat-grid-3">
+          <div class="stat-card">
+            <div class="stat-label">Total appareils</div>
+            <div class="stat-val" id="dev-online">0 <span class="unit" style="color:var(--green);">appareils</span></div>
+            <div class="stat-sub" id="dev-total">aucun enregistré</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">TB cette semaine</div>
+            <div class="stat-val" id="dev-bw">0 <span class="unit">TB/sem</span></div>
+            <div class="stat-sub">uploads des 7 derniers jours</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Dernière activité</div>
+            <div class="stat-val" style="font-size:1.6rem;" id="dev-last-sync">—</div>
+            <div class="stat-sub">cet appareil</div>
+          </div>
+        </div>
+        <div class="section-header">
+          <div class="section-title">Mes appareils</div>
+          <button class="btn btn-ghost btn-sm" id="btn-add-device">＋ Ajouter</button>
+        </div>
+        <div style="background:rgba(26,111,255,.04);border:1px solid rgba(26,111,255,.15);border-radius:var(--r-xl);padding:.9rem 1.2rem;margin-bottom:1.5rem;font-size:.82rem;color:var(--blue2);">
+          💡 Chaque navigateur que tu utilises est enregistré automatiquement. Ajoute manuellement un appareil pour lui envoyer des fichiers ciblés.
+        </div>
+        <div class="device-grid" id="devices-grid"></div>
+      </div>
+
+      <!-- ══ FICHIERS ══ -->
+      <div class="page" id="page-fichiers">
+        <div class="stat-grid stat-grid-4">
+          <div class="stat-card"><div class="stat-label">Total fichiers</div><div class="stat-val" id="files-count">0</div><div class="stat-sub">indexés</div></div>
+          <div class="stat-card"><div class="stat-label">Espace utilisé</div><div class="stat-val" id="files-size">0 <span class="unit">MB</span></div><div class="stat-sub">stockage total</div></div>
+          <div class="stat-card"><div class="stat-label">Avec code</div><div class="stat-val" id="files-shared">0</div><div class="stat-sub">partages actifs</div></div>
+          <div class="stat-card"><div class="stat-label">Dernier fichier</div><div class="stat-val" style="font-size:1.5rem;" id="files-lastmod">—</div><div class="stat-sub" id="files-lastmod-name">—</div></div>
+        </div>
+        <div class="toolbar">
+          <div class="filter-chip active" data-filter="all">Tous</div>
+          <div class="filter-chip" data-filter="video">🎬 Vidéos</div>
+          <div class="filter-chip" data-filter="image">🖼️ Images</div>
+          <div class="filter-chip" data-filter="doc">📄 Docs</div>
+          <div class="filter-chip" data-filter="audio">🎵 Audio</div>
+          <div class="filter-chip" data-filter="archive">📦 Archives</div>
+          <div style="flex:1;"></div>
+          <select class="sort-select" id="files-sort">
+            <option value="date-desc">Plus récent</option>
+            <option value="date-asc">Plus ancien</option>
+            <option value="size-desc">Plus grand</option>
+            <option value="name-asc">Nom A→Z</option>
+          </select>
+          <div class="view-btn active" id="view-grid-btn" title="Grille">⊞</div>
+          <div class="view-btn" id="view-list-btn" title="Liste">☰</div>
+        </div>
+        <div class="section-header"><div class="section-title">Récents</div></div>
+        <div class="files-grid" id="files-grid"></div>
+        <div class="section-header"><div class="section-title">Tous les fichiers</div></div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr>
+              <th>Nom</th><th>Type</th><th>Taille</th><th>Code</th><th>Date</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="files-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ RÉCUPÉRER ══ -->
+      <div class="page" id="page-recuperer">
+
+        <!-- Entrer un code / lien -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;" id="recup-top-grid">
+          <div style="background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;">
+            <div class="section-title" style="margin-bottom:.4rem;">🔑 Code de partage</div>
+            <p style="font-size:.78rem;color:var(--t2);margin-bottom:1rem;">6 caractères — sans compte requis</p>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <input id="code-input" type="text" maxlength="6" placeholder="AB12CD"
+                style="background:var(--d3);border:2px solid var(--b3);border-radius:var(--r-xl);
+                       padding:.65rem 1rem;color:var(--white);font-family:'Bebas Neue',sans-serif;
+                       font-size:1.5rem;letter-spacing:.3em;text-transform:uppercase;outline:none;
+                       width:150px;text-align:center;transition:border-color .2s;"
+                onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--b3)'">
+              <button class="btn btn-primary" id="btn-redeem-code">Récupérer</button>
+            </div>
+            <div id="code-result" style="margin-top:1rem;"></div>
+          </div>
+          <div style="background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;">
+            <div class="section-title" style="margin-bottom:.4rem;">🔗 Lien direct</div>
+            <p style="font-size:.78rem;color:var(--t2);margin-bottom:1rem;">Lien CREO ou externe — télécharge directement</p>
+            <div style="display:flex;gap:8px;">
+              <input id="link-input" type="url" placeholder="https://…"
+                style="flex:1;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);
+                       padding:.62rem .9rem;color:var(--t1);font-size:.82rem;outline:none;
+                       transition:border-color .2s;"
+                onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--b2)'">
+              <button class="btn btn-primary" id="btn-redeem-link">Ouvrir</button>
+            </div>
+            <div id="link-result" style="margin-top:1rem;"></div>
+          </div>
+        </div>
+
+        <!-- Envoyer à un user -->
+        <div style="background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.5rem;margin-bottom:2rem;">
+          <div class="section-title" style="margin-bottom:.4rem;">📤 Envoyer à un utilisateur CREO</div>
+          <p style="font-size:.78rem;color:var(--t2);margin-bottom:1rem;">Partage un fichier directement vers un autre compte. Il pourra accepter ou refuser.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;" id="send-user-grid">
+            <div class="field" style="margin:0;">
+              <label>Fichier à envoyer</label>
+              <select id="send-file-sel"><option value="">— Choisir —</option></select>
+            </div>
+            <div class="field" style="margin:0;">
+              <label>Pseudo destinataire</label>
+              <input type="text" id="send-username" placeholder="@pseudo">
+            </div>
+            <button class="btn btn-primary" id="btn-send-to-user">Envoyer →</button>
+          </div>
+        </div>
+
+        <!-- Fichiers reçus (shared_files) -->
+        <div class="section-header">
+          <div class="section-title">Fichiers reçus <small>accepter ou refuser</small></div>
+        </div>
+        <div id="shared-list" style="margin-bottom:2rem;"></div>
+
+        <!-- Fichiers Express reçus sur cet appareil -->
+        <div class="section-header">
+          <div class="section-title">Fichiers Express <small>envoyés depuis Express</small></div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Fichier</th><th>Code</th><th>Date</th><th>Télécharger</th></tr></thead>
+            <tbody id="express-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ SYNC ══ -->
+      <div class="page" id="page-sync">
+        <div class="two-col">
+          <div style="background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.8rem;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem;">
+              <div>
+                <div class="section-title">État de sync</div>
+                <div style="font-size:.78rem;color:var(--t3);margin-top:3px;" id="sync-last-update">—</div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-launch-sync">▶ Lancer</button>
+            </div>
+            <div class="sync-circle">
+              <svg viewBox="0 0 120 120" width="120" height="120">
+                <defs><linearGradient id="grad-stroke" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#1a6fff"/>
+                  <stop offset="100%" style="stop-color:#00d4ff"/>
+                </linearGradient></defs>
+                <circle class="circle-bg" cx="60" cy="60" r="54"/>
+                <circle class="circle-prog" id="sync-circle-prog" cx="60" cy="60" r="54" style="stroke-dashoffset:84.82;"/>
+              </svg>
+              <div class="sync-val">
+                <div class="sync-val-num" id="sync-pct">—</div>
+                <div class="sync-val-label">Sync</div>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--green);" id="sync-synced">0</div><div style="font-size:.73rem;color:var(--t3);">Sync</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--amber);" id="sync-pending">0</div><div style="font-size:.73rem;color:var(--t3);">En cours</div></div>
+              <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--red);" id="sync-conflicts">0</div><div style="font-size:.73rem;color:var(--t3);">Erreurs</div></div>
+            </div>
+          </div>
+          <div class="feed-card">
+            <div class="section-header" style="margin-bottom:.5rem;">
+              <div class="section-title">Journal</div>
+              <button class="btn btn-ghost btn-sm" id="btn-clear-log">Effacer</button>
+            </div>
+            <div id="sync-log"></div>
+          </div>
+        </div>
+        <div class="section-header">
+          <div class="section-title">Règles de sync</div>
+          <button class="btn btn-ghost btn-sm" id="btn-add-rule">＋ Ajouter</button>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Règle</th><th>Source</th><th>Destination</th><th>Fréquence</th><th>État</th><th></th></tr></thead>
+            <tbody id="sync-rules-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PARAMÈTRES ══ -->
+      <div class="page" id="page-parametres">
+        <!-- Mobile profile strip -->
+        <div class="mob-profile-strip" id="mob-profile-strip">
+          <div class="mob-av" id="mob-strip-av">?</div>
+          <div class="mob-profile-strip-info">
+            <div class="mob-profile-name" id="mob-strip-name">…</div>
+            <div class="mob-profile-role" id="mob-strip-role">…</div>
+          </div>
+          <span style="color:var(--t3);font-size:.8rem;">›</span>
+        </div>
+        <div class="settings-layout">
+          <div class="settings-nav">
+            <div class="s-nav-item active" data-tab="st-profil"><span>👤</span> Profil</div>
+            <div class="s-nav-item" data-tab="st-securite"><span>🔐</span> Sécurité</div>
+            <div class="s-nav-item" data-tab="st-langue"><span>🌐</span> Langue</div>
+            <div class="s-nav-item" data-tab="st-notifications"><span>🔔</span> Notifications</div>
+            <div class="s-nav-item" data-tab="st-reseau"><span>📡</span> Réseau</div>
+            <div class="s-nav-item" data-tab="st-avance"><span>💎</span> Forfait</div>
+          </div>
+          <div>
+            <!-- PROFIL -->
+            <div class="settings-panel" id="st-profil">
+              <div class="s-group">
+                <div class="s-group-title">Photo de profil</div>
+                <div class="avatar-wrap">
+                  <div class="avatar-lg" id="settings-avatar" onclick="document.getElementById('avatar-input').click()">
+                    <span id="settings-avatar-initials">?</span>
+                    <div class="avatar-overlay">📷</div>
+                  </div>
+                  <input type="file" id="avatar-input" accept="image/png,image/jpeg,image/webp">
+                  <div>
+                    <div style="font-size:.88rem;color:var(--t1);margin-bottom:3px;">Avatar</div>
+                    <div style="font-size:.76rem;color:var(--t3);">PNG, JPG, WEBP · max 2 MB</div>
+                    <div style="display:flex;gap:8px;margin-top:.7rem;">
+                      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('avatar-input').click()">Changer</button>
+                      <button class="btn btn-sm btn-danger" id="btn-remove-avatar">Supprimer</button>
+                    </div>
+                    <div class="avatar-prog"><div class="avatar-prog-fill" id="avatar-prog-fill"></div></div>
+                  </div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Informations personnelles</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.1rem;">
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.7rem .9rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Code client</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--blue2);" id="settings-code">—</div>
+                  </div>
+                  <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.7rem .9rem;">
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Forfait</div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--green);" id="settings-plan">—</div>
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div class="field"><label>Prénom</label><input type="text" id="s-firstname" placeholder="Prénom"></div>
+                  <div class="field"><label>Nom</label><input type="text" id="s-lastname" placeholder="Nom"></div>
+                </div>
+                <div class="field"><label>Email</label><input type="email" id="s-email" disabled></div>
+                <div class="field"><label>Nom d'utilisateur</label><input type="text" id="s-username" placeholder="@pseudo"></div>
+              </div>
+              <div id="storage-bar-section" style="margin-bottom:1.2rem;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:1rem;"></div>
+              <button class="btn btn-primary" id="btn-save-profile">✓ Enregistrer</button>
+            </div>
+
+            <!-- SECURITE -->
+            <div class="settings-panel" id="st-securite" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Changer le mot de passe</div>
+                <div class="field"><label>Nouveau mot de passe</label><input type="password" id="s-pw-new" placeholder="••••••••"></div>
+                <div class="field"><label>Confirmer</label><input type="password" id="s-pw-confirm" placeholder="••••••••"></div>
+                <button class="btn btn-primary" id="btn-change-pw">Changer</button>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Changer le code client</div>
+                <p style="font-size:.8rem;color:var(--t2);margin-bottom:.9rem;">Ton code client est utilisé comme identifiant de partage. Le changer met à jour tous tes fichiers automatiquement.</p>
+                <div style="display:flex;gap:8px;align-items:flex-end;">
+                  <div class="field" style="flex:1;margin:0;">
+                    <label>Nouveau code</label>
+                    <input type="text" id="s-new-code" placeholder="ex: MONCODE42" style="text-transform:uppercase;">
+                  </div>
+                  <button class="btn btn-primary btn-sm" id="btn-change-code" style="flex-shrink:0;margin-bottom:1px;">Changer</button>
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:5px;">Code actuel : <span id="current-code-display" style="color:var(--blue2);">—</span></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Session active</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Connecté en tant que <span class="badge badge-green" style="margin-left:6px;">Actif</span></div>
+                    <div class="s-row-desc" id="s-session-email">—</div>
+                  </div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Zone de danger</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label" style="color:var(--red);">Déconnexion globale</div>
+                    <div class="s-row-desc">Révoquer toutes les sessions</div>
+                  </div>
+                  <button class="btn btn-danger btn-sm" id="btn-signout-all">Déconnecter partout</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- LANGUE -->
+            <div class="settings-panel" id="st-langue" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Langue de l'interface</div>
+                <p style="font-size:.83rem;color:var(--t2);margin-bottom:1.3rem;">Sauvegardée dans ton profil et synchronisée sur tous tes appareils.</p>
+                <div class="lang-grid">
+                  <div class="lang-btn" data-lang="fr">🇫🇷 Français</div>
+                  <div class="lang-btn" data-lang="en">🇬🇧 English</div>
+                  <div class="lang-btn" data-lang="es">🇪🇸 Español</div>
+                  <div class="lang-btn" data-lang="de">🇩🇪 Deutsch</div>
+                  <div class="lang-btn" data-lang="pt">🇧🇷 Português</div>
+                  <div class="lang-btn" data-lang="ja">🇯🇵 日本語</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- NOTIFICATIONS -->
+            <div class="settings-panel" id="st-notifications" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Transferts</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Upload terminé</div><div class="s-row-desc">Notification quand un fichier est uploadé</div></div><div class="toggle on" id="notif-done"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Erreur d'upload</div><div class="s-row-desc">Notification en cas d'échec</div></div><div class="toggle on" id="notif-error"></div></div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Démarrage upload</div><div class="s-row-desc">Notification au début de l'envoi</div></div><div class="toggle" id="notif-start"></div></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Appareils</div>
+                <div class="s-row"><div class="s-row-info"><div class="s-row-label">Nouvel appareil</div><div class="s-row-desc">Quand tu te connectes depuis un nouvel appareil</div></div><div class="toggle on" id="notif-device"></div></div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-save-notif">✓ Sauvegarder</button>
+            </div>
+
+            <!-- RÉSEAU -->
+            <div class="settings-panel" id="st-reseau" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Connexion &amp; Upload</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Notifier après réception</div>
+                    <div class="s-row-desc">Affiche une notification quand un fichier est bien reçu par l'autre appareil</div>
+                  </div>
+                  <div class="toggle on" id="net-notify-recv"></div>
+                </div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Upload en arrière-plan</div>
+                    <div class="s-row-desc">Continue l'envoi si tu changes de page</div>
+                  </div>
+                  <div class="toggle on" id="net-bg-upload"></div>
+                </div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Taille max d'upload</div>
+                    <div class="s-row-desc">Limite la taille des fichiers envoyés (0 = illimité)</div>
+                  </div>
+                  <input type="number" value="50" id="net-max-size" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-family:'JetBrains Mono',monospace;font-size:.78rem;outline:none;width:70px;text-align:center;"> <span style="font-size:.72rem;color:var(--t3);margin-left:4px;">MB</span>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Informations réseau</div>
+                <div id="net-info-box" style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:1rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t2);line-height:1.8;">
+                  Chargement…
+                </div>
+              </div>
+              <button class="btn btn-primary btn-sm" id="btn-save-network">Appliquer</button>
+            </div>
+
+            <!-- AVANCÉ -->
+            <div class="settings-panel" id="st-avance" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Forfait &amp; stockage</div>
+                <div id="plan-upgrade-section"></div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Cache</div>
+                <div class="s-row">
+                  <div class="s-row-info"><div class="s-row-label">Cache local</div><div class="s-row-desc" id="cache-size">0 MB utilisés</div></div>
+                  <button class="btn btn-ghost btn-sm" id="btn-clear-cache">Vider</button>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Zone de danger</div>
+                <div class="s-row">
+                  <div class="s-row-info"><div class="s-row-label" style="color:var(--red);">Réinitialiser les paramètres</div><div class="s-row-desc">Remettre par défaut</div></div>
+                  <button class="btn btn-danger btn-sm" id="btn-reset-settings">Réinitialiser</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ANALYTIQUES ══ -->
+      <div class="page" id="page-analytiques">
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-label">Données transférées</div><div class="kpi-val" id="kpi-data">—</div><div class="kpi-trend up">↑ depuis le début</div></div>
+          <div class="kpi-card"><div class="kpi-label">Uploads réussis</div><div class="kpi-val" id="kpi-success">—</div><div class="kpi-trend up">↑ total</div></div>
+          <div class="kpi-card"><div class="kpi-label">Appareils en ligne</div><div class="kpi-val" id="kpi-speed">—</div><div class="kpi-trend up">↑ actifs</div></div>
+          <div class="kpi-card"><div class="kpi-label">Taux de succès</div><div class="kpi-val" id="kpi-error">— <span style="font-size:1.1rem;color:var(--blue2);">%</span></div><div class="kpi-trend up">↑ uploads</div></div>
+        </div>
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Uploads / jour <small>7 jours</small></div></div>
+            <div class="chart-bars" id="chart-daily"></div>
+          </div>
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:0;"><div class="section-title">Types de fichiers</div></div>
+            <div id="chart-types" style="margin-top:1rem;display:flex;flex-direction:column;gap:9px;"></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div class="chart-card">
+            <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Appareils</div></div>
+            <table class="data-table">
+              <thead><tr><th>Appareil</th><th>Navigateur</th><th>OS</th><th>Volume</th><th>Vu</th></tr></thead>
+              <tbody id="analytics-devices-tbody"></tbody>
+            </table>
+          </div>
+          <div class="feed-card">
+            <div class="section-header" style="margin-bottom:.3rem;"><div class="section-title">Activité récente</div></div>
+            <div id="analytics-feed"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ADMIN ══ -->
+      <div class="page" id="page-admin">
+        <!-- Stats globales -->
+        <div class="stat-grid stat-grid-4" style="margin-bottom:2rem;">
+          <div class="stat-card">
+            <div class="stat-label">Utilisateurs total</div>
+            <div class="stat-val" id="adm-total-users">—</div>
+            <div class="stat-sub" id="adm-new-users">chargement…</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Fichiers sur le site</div>
+            <div class="stat-val" id="adm-total-files">—</div>
+            <div class="stat-sub" id="adm-total-size">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Utilisateurs actifs</div>
+            <div class="stat-val" id="adm-active-users">—</div>
+            <div class="stat-sub">connectés cette semaine</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Stockage total</div>
+            <div class="stat-val" id="adm-storage">—</div>
+            <div class="stat-sub">tous les comptes</div>
+          </div>
+        </div>
+
+        <!-- Filtres + recherche users -->
+        <div class="section-header" style="margin-bottom:1rem;">
+          <div class="section-title">Comptes utilisateurs</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <div class="filter-chip adm-filter active" data-filter="all">Tous</div>
+            <div class="filter-chip adm-filter" data-filter="free">Free</div>
+            <div class="filter-chip adm-filter" data-filter="pro">Pro</div>
+            <div class="filter-chip adm-filter" data-filter="equipe">Équipe</div>
+            <div class="filter-chip adm-filter" data-filter="admin">Admin</div>
+            <div class="filter-chip adm-filter" data-filter="sous-admin">Sous-admin</div>
+            <input type="text" id="adm-search" placeholder="Rechercher pseudo / email…"
+              style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);
+                     padding:.4rem .8rem;color:var(--t1);font-size:.8rem;outline:none;
+                     width:220px;transition:border-color .2s;"
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--b2)'">
+          </div>
+        </div>
+
+        <!-- Table des comptes -->
+        <div class="data-table-wrap" style="margin-bottom:2rem;">
+          <table class="data-table">
+            <thead><tr>
+              <th>Utilisateur</th>
+              <th>Email</th>
+              <th>Rôle</th>
+              <th>Fichiers</th>
+              <th>Stockage</th>
+              <th>Inscrit le</th>
+              <th id="adm-actions-th">Actions</th>
+            </tr></thead>
+            <tbody id="adm-users-tbody">
+              <tr><td colspan="7" class="table-empty">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Logs d'activité -->
+        <div class="section-header" style="margin-bottom:1rem;">
+          <div class="section-title">Logs d'activité <small>dernières 50 actions</small></div>
+          <button class="btn btn-ghost btn-sm" id="adm-refresh-logs">↺ Actualiser</button>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead><tr>
+              <th>Date</th>
+              <th>Utilisateur</th>
+              <th>Action</th>
+              <th>Détail</th>
+            </tr></thead>
+            <tbody id="adm-logs-tbody">
+              <tr><td colspan="4" class="table-empty">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- page-content -->
+  </div><!-- main-area -->
+</div>
+</div><!-- app-shell -->
+
+<!-- BOTTOM NAV (mobile) -->
+<nav id="bottom-nav">
+  <div class="bn-item active" data-page="transferts"><div class="bn-active-pill"></div><div class="bn-icon">⚡</div><div class="bn-label">Envois</div></div>
+  <div class="bn-item" data-page="appareils"><div class="bn-active-pill"></div><div class="bn-icon">📱</div><div class="bn-label">Appareils</div></div>
+  <div class="bn-item" data-page="fichiers"><div class="bn-active-pill"></div><div class="bn-icon">📂</div><div class="bn-label">Fichiers</div></div>
+  <div class="bn-item" data-page="recuperer"><div class="bn-active-pill"></div><div class="bn-icon">🔑</div><div class="bn-label">Code</div></div>
+  <div class="bn-item" id="bn-more-btn"><div class="bn-active-pill"></div><div class="bn-icon">⋯</div><div class="bn-label">Plus</div></div>
+</nav>
+<div class="bn-more-overlay" id="bn-more-overlay"></div>
+<div id="bn-more-panel">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;padding:.3rem 1rem .7rem;border-bottom:1px solid var(--b1);margin-bottom:.5rem;">Navigation</div>
+  <div class="bn-more-item" id="more-settings"><span class="bn-more-icon">⚙️</span> Paramètres</div>
+  <div class="bn-more-item" id="more-analytics"><span class="bn-more-icon">📊</span> Analytiques</div>
+  <div class="bn-more-item" id="more-logout" style="color:var(--red);margin-top:.3rem;border-top:1px solid var(--b1);padding-top:.8rem;"><span class="bn-more-icon">⎋</span> Déconnexion</div>
+</div>
+<div id="mobile-fab">＋</div>
+<div id="mobile-search-overlay">
+  <div class="mob-search-bar">
+    <span style="color:var(--t3);font-size:1rem;">🔍</span>
+    <input type="text" id="mob-search-input" placeholder="Rechercher fichiers…" autocomplete="off">
+    <span style="color:var(--t3);font-size:.85rem;cursor:pointer;" id="mob-search-close">Annuler</span>
+  </div>
+  <div id="mob-search-results"></div>
+</div>
+
+<!-- MODAL ENVOI -->
+<div class="modal-bg" id="modal-transfer">
+  <div class="modal">
+    <div class="modal-title">Envoyer vers…</div>
+    <div id="modal-dest-preview" style="margin-bottom:1rem;max-height:160px;overflow-y:auto;"></div>
+    <div class="field">
+      <label>Destination</label>
+      <select id="mt-dest"><option value="__public__">🌐 Lien public (code + lien + QR)</option></select>
+    </div>
+    <div id="auto-dl-wrap" style="display:none;">
+      <div style="display:flex;align-items:center;gap:10px;padding:.7rem;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);margin-top:.5rem;">
+        <input type="checkbox" id="auto-dl-cb" style="width:16px;height:16px;cursor:pointer;accent-color:var(--blue);">
+        <label for="auto-dl-cb" style="font-size:.82rem;color:var(--t1);cursor:pointer;">
+          Télécharger automatiquement sur <strong id="auto-dl-name">cet appareil</strong>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modal-cancel">Annuler</button>
+      <button class="btn btn-primary" id="modal-confirm">⬆ Envoyer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER CET APPAREIL -->
+<div class="modal-bg" id="modal-add-this">
+  <div class="modal">
+    <div class="modal-title">Ajouter cet appareil</div>
+    <div class="field">
+      <label>Nom de cet appareil</label>
+      <input type="text" id="add-this-name" placeholder="ex: Mon iPhone, PC Bureau…">
+    </div>
+    <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.75rem 1rem;margin-bottom:1rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Détecté</div>
+      <div id="add-this-det" style="font-size:.8rem;color:var(--t2);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="add-this-cancel">Annuler</button>
+      <button class="btn btn-primary" id="add-this-confirm">＋ Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AJOUTER UN AUTRE APPAREIL -->
+<div class="modal-bg" id="modal-add-device">
+  <div class="modal">
+    <div class="modal-title">Ajouter un appareil</div>
+    <div class="field"><label>Nom</label><input type="text" id="add-dev-name" placeholder="ex: MacBook Pro 14"></div>
+    <div class="field-row">
+      <div class="field">
+        <label>Type</label>
+        <select id="add-dev-type">
+          <option value="desktop">Ordinateur</option>
+          <option value="laptop">Laptop</option>
+          <option value="phone">Mobile</option>
+          <option value="tablet">Tablette</option>
+          <option value="nas">NAS / Serveur</option>
+        </select>
+      </div>
+      <div class="field"><label>Système (optionnel)</label><input type="text" id="add-dev-os" placeholder="ex: Windows 11"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="add-dev-cancel">Annuler</button>
+      <button class="btn btn-primary" id="add-dev-confirm">Ajouter</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RENOMMER APPAREIL -->
+<div class="modal-bg" id="modal-rename">
+  <div class="modal">
+    <div class="modal-title">Renommer cet appareil</div>
+    <div class="field"><label>Nouveau nom</label><input type="text" id="rename-input" placeholder="ex: Mon iPhone…"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="rename-cancel">Annuler</button>
+      <button class="btn btn-primary" id="rename-confirm">✓ Renommer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FICHIER -->
+<div class="modal-bg" id="modal-file">
+  <div class="modal">
+    <div class="modal-title" id="modal-file-title">Fichier</div>
+    <div id="modal-file-preview" style="margin-bottom:1.2rem;text-align:center;"></div>
+    <div id="modal-code-section">
+      <div style="background:var(--d3);border:1px solid rgba(255,184,0,.2);border-radius:var(--r-xl);padding:1.2rem 1.4rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:3px;">Code</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:var(--white);letter-spacing:.3em;line-height:1;" id="modal-share-code">——</div>
+        </div>
+        <div style="flex:1;font-size:.8rem;color:var(--t2);">Entre ce code dans <strong style="color:var(--t1);">Récupérer</strong> pour télécharger.<br><button id="modal-copy-code" class="btn btn-ghost btn-sm" style="margin-top:.5rem;">Copier le code</button></div>
+      </div>
+    </div>
+    <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.8rem 1rem;margin-bottom:1rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:.3rem;">Lien direct</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--blue2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="modal-file-url">—</div>
+        <button class="btn btn-ghost btn-xs" id="modal-copy-link">Copier</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" id="modal-file-close">Fermer</button>
+      <a class="btn btn-primary" id="modal-download-btn" href="#" download target="_blank">⬇ Télécharger</a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARTAGE (code / lien / QR) -->
+<div class="modal-bg" id="modal-share">
+  <div class="modal" style="max-width:440px;">
+    <div class="modal-title">Partager</div>
+    <div style="font-size:.82rem;color:var(--t2);margin-bottom:1rem;" id="share-file-name">—</div>
+    <!-- Onglets -->
+    <div style="display:flex;gap:6px;margin-bottom:1.2rem;">
+      <button class="share-tab active" data-mode="code" style="flex:1;padding:.5rem;border-radius:var(--r-lg);font-family:'JetBrains Mono',monospace;font-size:.7rem;cursor:pointer;border:1px solid var(--b3);background:var(--d4);color:var(--t2);">Code</button>
+      <button class="share-tab" data-mode="link" style="flex:1;padding:.5rem;border-radius:var(--r-lg);font-family:'JetBrains Mono',monospace;font-size:.7rem;cursor:pointer;border:1px solid var(--b3);background:var(--d4);color:var(--t2);">Lien</button>
+      <button class="share-tab" data-mode="qr" style="flex:1;padding:.5rem;border-radius:var(--r-lg);font-family:'JetBrains Mono',monospace;font-size:.7rem;cursor:pointer;border:1px solid var(--b3);background:var(--d4);color:var(--t2);">QR</button>
+    </div>
+    <!-- Code -->
+    <div class="share-panel" data-mode="code">
+      <div style="background:var(--d3);border:1px solid rgba(255,184,0,.2);border-radius:var(--r-xl);padding:1.4rem;text-align:center;margin-bottom:.8rem;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;margin-bottom:.4rem;">Code de partage</div>
+        <div id="share-code-big" style="font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--white);letter-spacing:.4em;line-height:1;">——</div>
+        <div style="font-size:.76rem;color:var(--t2);margin-top:.6rem;">Entre ce code dans <strong style="color:var(--t1);">Récupérer</strong> ou scanne le QR.</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="share-btn-copy-code">📋 Copier le code</button>
+    </div>
+    <!-- Lien -->
+    <div class="share-panel" data-mode="link" style="display:none;">
+      <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:1rem;margin-bottom:.8rem;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:.3rem;">Lien de téléchargement direct</div>
+        <div id="share-link-value" style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--blue2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center;" id="share-btn-copy-link">📋 Copier le lien</button>
+        <a class="btn btn-ghost btn-sm" id="share-recv-link" href="#" target="_blank" style="flex:1;justify-content:center;">Page de téléchargement →</a>
+      </div>
+    </div>
+    <!-- QR -->
+    <div class="share-panel" data-mode="qr" style="display:none;">
+      <div style="text-align:center;padding:1rem 0;">
+        <img id="share-qr-img" src="" alt="QR Code" style="border-radius:var(--r-lg);border:1px solid var(--b2);max-width:200px;display:block;margin:0 auto;">
+        <div style="font-size:.76rem;color:var(--t2);margin-top:.8rem;">Scanne pour ouvrir la page Express et télécharger — sans compte requis.</div>
+      </div>
+    </div>
+    <div class="modal-footer" style="padding-top:.8rem;margin-top:.8rem;">
+      <button class="btn btn-ghost" id="share-modal-close">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
