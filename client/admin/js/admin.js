@@ -231,108 +231,6 @@ function renderAdminShell() {
     </div>
   `;
 }
-    <div class="stat-grid stat-grid-4" style="margin-bottom:1.8rem;" id="adm-kpi-row">
-      <div class="stat-card"><div class="stat-label">Utilisateurs</div><div class="stat-val" id="adm-total-users">—</div><div class="stat-sub" id="adm-new-users">chargement…</div></div>
-      <div class="stat-card"><div class="stat-label">Fichiers sur le site</div><div class="stat-val" id="adm-total-files">—</div><div class="stat-sub" id="adm-total-size">—</div></div>
-      <div class="stat-card"><div class="stat-label">Actifs (7 jours)</div><div class="stat-val" id="adm-active-users">—</div><div class="stat-sub">ont uploadé cette semaine</div></div>
-      <div class="stat-card"><div class="stat-label">Stockage total</div><div class="stat-val" id="adm-storage">—</div><div class="stat-sub">tous les comptes</div></div>
-    </div>
-
-    <!-- Comptes -->
-    <div id="adm-panel-users">
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:1rem;">
-        <div class="filter-chip adm-filter active" data-filter="all">Tous</div>
-        <div class="filter-chip adm-filter" data-filter="free">Free</div>
-        <div class="filter-chip adm-filter" data-filter="pro">Pro</div>
-        <div class="filter-chip adm-filter" data-filter="equipe">Équipe</div>
-        <div class="filter-chip adm-filter" data-filter="admin">Admin</div>
-        <div class="filter-chip adm-filter" data-filter="sous-admin">Sous-admin</div>
-        <input type="text" id="adm-search" placeholder="Rechercher pseudo / email…"
-          style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.4rem .8rem;color:var(--t1);font-size:.8rem;outline:none;width:230px;transition:border-color .2s;"
-          onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--b2)'">
-        <span id="adm-users-count" style="font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);"></span>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Utilisateur</th><th>Email</th><th>Rôle</th><th>Fichiers</th><th>Stockage</th><th>Inscrit</th><th>Actions</th></tr></thead>
-          <tbody id="adm-users-tbody"><tr><td colspan="7" class="table-empty">Chargement…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Fichiers -->
-    <div id="adm-panel-files" style="display:none;">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
-        <input type="text" id="adm-files-search" placeholder="Rechercher un fichier…"
-          style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.4rem .8rem;color:var(--t1);font-size:.8rem;outline:none;width:250px;">
-        <button class="btn btn-ghost btn-sm" id="adm-load-files">⬇ Charger tous les fichiers</button>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Fichier</th><th>Propriétaire</th><th>Taille</th><th>Type</th><th>Date</th><th>Action</th></tr></thead>
-          <tbody id="adm-files-tbody"><tr><td colspan="6" class="table-empty">Clique sur "Charger" pour afficher tous les fichiers.</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Transferts -->
-    <div id="adm-panel-transfers" style="display:none;">
-      <div style="margin-bottom:1rem;">
-        <button class="btn btn-ghost btn-sm" id="adm-load-transfers">⬇ Charger les transferts récents (100)</button>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Fichier</th><th>Propriétaire</th><th>Destination</th><th>Statut</th><th>Date</th><th>Action</th></tr></thead>
-          <tbody id="adm-transfers-tbody"><tr><td colspan="6" class="table-empty">Clique sur "Charger".</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Stats -->
-    <div id="adm-panel-stats" style="display:none;">
-      <div class="two-col">
-        <div class="chart-card">
-          <div class="section-header" style="margin-bottom:0;"><div class="section-title">Répartition des forfaits</div></div>
-          <div id="adm-plan-chart" style="margin-top:1.2rem;display:flex;flex-direction:column;gap:10px;"></div>
-        </div>
-        <div class="chart-card">
-          <div class="section-header" style="margin-bottom:0;"><div class="section-title">Types de fichiers (site)</div></div>
-          <div id="adm-types-chart" style="margin-top:1.2rem;display:flex;flex-direction:column;gap:10px;"></div>
-        </div>
-      </div>
-      <div class="chart-card" style="margin-top:1.2rem;">
-        <div class="section-header" style="margin-bottom:.5rem;"><div class="section-title">Top 10 par stockage</div></div>
-        <table class="data-table"><thead><tr><th>Utilisateur</th><th>Rôle</th><th>Fichiers</th><th>Stockage</th><th>% du total</th></tr></thead>
-        <tbody id="adm-top-users"></tbody></table>
-      </div>
-    </div>
-
-    <!-- Logs -->
-    <div id="adm-panel-logs" style="display:none;">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:1rem;">
-        <select id="adm-logs-limit" style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r);padding:.38rem .7rem;color:var(--t1);font-size:.78rem;outline:none;">
-          <option value="50">50 dernières</option><option value="100">100 dernières</option><option value="200">200 dernières</option>
-        </select>
-        <button class="btn btn-ghost btn-sm" id="adm-refresh-logs">↺ Actualiser</button>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table">
-          <thead><tr><th>Date</th><th>Utilisateur</th><th>Action</th></tr></thead>
-          <tbody id="adm-logs-tbody"><tr><td colspan="3" class="table-empty">Chargement…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-/* ══ Charger TOUS les users
-   Nécessite dans Supabase SQL Editor :
-   CREATE OR REPLACE FUNCTION get_all_profiles()
-   RETURNS SETOF profiles LANGUAGE sql SECURITY DEFINER AS $$
-     SELECT * FROM profiles ORDER BY created_at DESC;
-   $$;
-   Et dans Authentication > Policies, ajouter une SELECT policy sur profiles pour admins.
-══ */
 async function loadAllUsers() {
   let users = null;
 
@@ -469,17 +367,16 @@ function renderAdminUsers() {
     const av=u.avatar_url
       ?`<img src="${u.avatar_url}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;">`
       :`<div style="width:30px;height:30px;border-radius:50%;background:var(--d4);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--t3);flex-shrink:0;">${(u.first_name?.[0]||u.username?.[0]||'?').toUpperCase()}</div>`;
-    const actHtml=canEdit?`<div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
-        <select class="adm-role-sel" data-uid="${u.id}" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);padding:3px 6px;color:var(--t1);font-size:.7rem;cursor:pointer;outline:none;">
-          ${ROLES.map(r=>`<option value="${r}"${r===role?' selected':''}>${r}</option>`).join('')}
-        </select>
-        ${!isMe?`<button class="adm-ban-btn btn btn-ghost btn-xs" data-uid="${u.id}" data-name="${name}" title="Supprimer le compte" style="color:var(--red);border-color:rgba(255,59,92,.3);">✕</button>`:''}
-        <button class="adm-view-btn btn btn-ghost btn-xs" data-uid="${u.id}" data-name="${name}" title="Voir les fichiers">📂</button>
+    const actHtml=canEdit?`<div style="display:flex;gap:3px;align-items:center;flex-wrap:wrap;">
+        <button class="adm-upgrade-btn btn btn-ghost btn-xs" data-uid="${u.id}" data-role="${role}" data-uname="${u.username||name}" title="Changer le grade" style="color:var(--blue2);border-color:rgba(26,111,255,.3);">⬆ Grade</button>
+        <button class="adm-msg-btn btn btn-ghost btn-xs" data-uid="${u.id}" data-uname="${u.username||name}" title="Envoyer un message" style="color:var(--amber);border-color:rgba(245,158,11,.3);">📣</button>
+        <button class="adm-view-btn btn btn-ghost btn-xs" data-uid="${u.id}" data-uname="${u.username||name}" title="Voir les fichiers">📂</button>
+        ${!isMe?`<button class="adm-ban-btn btn btn-ghost btn-xs" data-uid="${u.id}" data-name="${name}" title="Supprimer" style="color:var(--red);border-color:rgba(255,59,92,.3);">✕</button>`:''}
       </div>`:`<span style="font-size:.7rem;color:var(--t3);">lecture seule</span>`;
     return `<tr${isMe?' style="background:rgba(26,111,255,.04);"':''}>
       <td><div style="display:flex;align-items:center;gap:8px;">${av}<div>
         <div style="font-size:.84rem;color:var(--t1);">${name}${isMe?` <span style="font-size:.58rem;color:var(--blue2);border:1px solid var(--blue2);border-radius:99px;padding:1px 5px;">vous</span>`:''}</div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);">@${u.username||'—'} · ${u._devices} app.</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);">@${u.username||'—'} · ${u._devices||0} app.</div>
       </div></div></td>
       <td style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t2);">${u.email||'—'}</td>
       <td>${BADGE(role)}</td>
@@ -490,10 +387,20 @@ function renderAdminUsers() {
     </tr>`;
   }).join('');
   if(canEdit){
-    tbody.querySelectorAll('.adm-role-sel').forEach(sel=>sel.addEventListener('change',async function(){await changeUserRole(this.dataset.uid,this.value);}));
-    tbody.querySelectorAll('.adm-ban-btn').forEach(btn=>btn.addEventListener('click',function(){banUser(this.dataset.uid,this.dataset.name);}));
+    tbody.querySelectorAll('.adm-upgrade-btn').forEach(btn=>btn.addEventListener('click',function(){
+      openUpgradeModal(this.dataset.uid, this.dataset.role, this.dataset.uname);
+    }));
+    tbody.querySelectorAll('.adm-msg-btn').forEach(btn=>btn.addEventListener('click',function(){
+      openSendMessageModal(this.dataset.uid, this.dataset.uname);
+    }));
+    tbody.querySelectorAll('.adm-ban-btn').forEach(btn=>btn.addEventListener('click',function(){
+      const n=this.dataset.name, uid=this.dataset.uid;
+      creoConfirm('Supprimer ce compte ?',
+        `Le compte de <strong>@${n}</strong> et tous ses fichiers seront supprimés définitivement. Cette action est irréversible.`,
+        ()=>banUser(uid,n), true);
+    }));
   }
-  tbody.querySelectorAll('.adm-view-btn').forEach(btn=>btn.addEventListener('click',function(){viewUserFiles(this.dataset.uid,this.dataset.name);}));
+  tbody.querySelectorAll('.adm-view-btn').forEach(btn=>btn.addEventListener('click',function(){viewUserFiles(this.dataset.uid,this.dataset.uname);}));
 }
 
 async function loadAllFiles(searchQ='') {
@@ -521,7 +428,11 @@ async function loadAllFiles(searchQ='') {
       </div></td>
     </tr>`;
   }).join('');
-  if(canDel) tbody.querySelectorAll('.adm-del-file').forEach(btn=>btn.addEventListener('click',async function(){await deleteFile(this.dataset.fid,this.dataset.path);loadAllFiles(searchQ);}));
+  if(canDel) tbody.querySelectorAll('.adm-del-file').forEach(btn=>btn.addEventListener('click',function(){
+    const fid=this.dataset.fid, path=this.dataset.path;
+    creoConfirm('Supprimer ce fichier ?','Ce fichier sera supprimé définitivement du stockage. Irréversible.',
+      async()=>{await deleteFile(fid,path);loadAllFiles(searchQ);},true);
+  }));
 }
 
 async function loadAllTransfers() {
@@ -548,7 +459,11 @@ async function loadAllTransfers() {
       </div></td>
     </tr>`;
   }).join('');
-  if(canDel) tbody.querySelectorAll('.adm-del-file').forEach(btn=>btn.addEventListener('click',async function(){await deleteFile(this.dataset.fid,this.dataset.path);loadAllTransfers();}));
+  if(canDel) tbody.querySelectorAll('.adm-del-file').forEach(btn=>btn.addEventListener('click',function(){
+    const fid=this.dataset.fid, path=this.dataset.path;
+    creoConfirm('Supprimer ce fichier ?','Ce fichier sera supprimé définitivement du stockage. Irréversible.',
+      async()=>{await deleteFile(fid,path);loadAllTransfers();},true);
+  }));
 }
 
 async function viewUserFiles(userId,name) {
@@ -572,7 +487,11 @@ async function viewUserFiles(userId,name) {
       </div></td>
     </tr>`;
   }).join('');
-  if(canDel) tbody.querySelectorAll('.adm-del-file').forEach(btn=>btn.addEventListener('click',async function(){await deleteFile(this.dataset.fid,this.dataset.path);viewUserFiles(userId,name);}));
+  if(canDel) tbody.querySelectorAll('.adm-del-file').forEach(btn=>btn.addEventListener('click',function(){
+    const fid=this.dataset.fid, path=this.dataset.path;
+    creoConfirm('Supprimer ce fichier ?','Ce fichier sera supprimé définitivement du stockage.',
+      async()=>{await deleteFile(fid,path);viewUserFiles(userId,name);},true);
+  }));
 }
 
 async function loadAdminLogs() {
@@ -604,7 +523,7 @@ async function changeUserRole(userId,newRole) {
 
 async function banUser(userId,name) {
   if(userId===state.session?.user?.id){uiToast('error','Tu ne peux pas te supprimer.');return;}
-  if(!confirm(`Supprimer le compte de "${name}" ?\nSes fichiers seront aussi supprimés. Irréversible.`))return;
+  // Confirmation gérée via creoConfirm() dans renderAdminUsers
   const{data:userFiles}=await supabase.from('files').select('storage_path').eq('user_id',userId);
   for(const f of (userFiles||[])){if(f.storage_path)await supabase.storage.from('creo-files').remove([f.storage_path]);}
   await supabase.from('files').delete().eq('user_id',userId);
@@ -618,7 +537,7 @@ async function banUser(userId,name) {
 }
 
 async function deleteFile(fileId,storagePath) {
-  if(!confirm('Supprimer ce fichier définitivement ?'))return;
+  // Appelé depuis creoConfirm - pas de confirm() natif
   if(storagePath)await supabase.storage.from('creo-files').remove([storagePath]);
   await supabase.from('files').delete().eq('id',fileId);
   uiToast('success','✓ Fichier supprimé');
@@ -801,6 +720,172 @@ async function loadMessages() {
       <td></td>
     </tr>`;
   }).join('');
+}
+
+/* ══════════════════════════════════════════
+   MODAL CONFIRMATION INTÉGRÉE (remplace alert/confirm natif)
+══════════════════════════════════════════ */
+function creoConfirm(title, body, onConfirm, danger=true) {
+  document.getElementById('_ccm')?.remove();
+  const m = document.createElement('div');
+  m.id = '_ccm';
+  m.style.cssText = `position:fixed;inset:0;z-index:10000;display:flex;align-items:center;
+    justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);`;
+  m.innerHTML = `<div style="background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-xl);
+      padding:2rem 2rem 1.5rem;max-width:420px;width:90%;box-shadow:0 32px 80px #000a;
+      ${danger?'border-top:3px solid var(--red);':'border-top:3px solid var(--blue);'}">
+    <div style="font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:.6rem;">${title}</div>
+    <div style="font-size:.84rem;color:var(--t2);line-height:1.55;margin-bottom:1.5rem;">${body}</div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;">
+      <button id="_ccm_cancel" style="padding:.52rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--b2);
+        background:var(--d4);color:var(--t2);font-size:.82rem;cursor:pointer;">Annuler</button>
+      <button id="_ccm_ok" style="padding:.52rem 1.3rem;border-radius:var(--r-lg);border:none;
+        background:${danger?'var(--red)':'var(--blue)'};color:#fff;font-size:.82rem;cursor:pointer;font-weight:600;">
+        ${danger?'⚠ Confirmer':'✓ Confirmer'}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  const close = () => m.remove();
+  m.querySelector('#_ccm_cancel').onclick = close;
+  m.querySelector('#_ccm_ok').onclick = () => { close(); onConfirm(); };
+  m.onclick = e => { if(e.target===m) close(); };
+}
+
+/* ══════════════════════════════════════════
+   MODAL INFO / ALERTE INTÉGRÉE
+══════════════════════════════════════════ */
+export function creoAlert(title, body, color='var(--blue)') {
+  document.getElementById('_cam')?.remove();
+  const m = document.createElement('div');
+  m.id = '_cam';
+  m.style.cssText = `position:fixed;inset:0;z-index:10000;display:flex;align-items:center;
+    justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);`;
+  m.innerHTML = `<div style="background:var(--d2);border:1px solid ${color}44;border-radius:var(--r-xl);
+      padding:2rem 2rem 1.5rem;max-width:440px;width:90%;box-shadow:0 32px 80px #000a;
+      border-left:3px solid ${color};">
+    <div style="font-size:1.05rem;font-weight:700;color:${color};margin-bottom:.7rem;">${title}</div>
+    <div style="font-size:.85rem;color:var(--t1);line-height:1.6;margin-bottom:1.4rem;">${body}</div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button id="_cam_ok" style="padding:.52rem 1.4rem;border-radius:var(--r-lg);border:none;
+        background:${color};color:#fff;font-size:.82rem;cursor:pointer;font-weight:600;">OK</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  m.querySelector('#_cam_ok').onclick = () => m.remove();
+  m.onclick = e => { if(e.target===m) m.remove(); };
+}
+
+/* ══════════════════════════════════════════
+   MODAL UPGRADE DE GRADE (depuis admin)
+══════════════════════════════════════════ */
+function openUpgradeModal(userId, currentRole, username) {
+  document.getElementById('_ugm')?.remove();
+  const m = document.createElement('div');
+  m.id = '_ugm';
+  m.style.cssText = `position:fixed;inset:0;z-index:10000;display:flex;align-items:center;
+    justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);`;
+
+  const opts = ROLES.map(r => `
+    <label style="display:flex;align-items:center;gap:.7rem;padding:.6rem .8rem;
+      border-radius:var(--r-lg);border:1px solid ${r===currentRole?'var(--blue)':'var(--b2)'};
+      background:${r===currentRole?'rgba(26,111,255,.08)':'var(--d4)'};cursor:pointer;
+      transition:all .15s;">
+      <input type="radio" name="_ugm_role" value="${r}" ${r===currentRole?'checked':''} style="accent-color:var(--blue);">
+      ${BADGE(r)}
+      <span style="font-size:.78rem;color:var(--t2);">${_roleDesc(r)}</span>
+    </label>`).join('');
+
+  m.innerHTML = `<div style="background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-xl);
+      padding:2rem;max-width:460px;width:90%;box-shadow:0 32px 80px #000a;">
+    <div style="font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:.3rem;">Changer le grade</div>
+    <div style="font-size:.8rem;color:var(--t3);margin-bottom:1.2rem;">Utilisateur : <strong style="color:var(--blue2);">@${username}</strong></div>
+    <div style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.4rem;">${opts}</div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;">
+      <button id="_ugm_cancel" style="padding:.52rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--b2);
+        background:var(--d4);color:var(--t2);font-size:.82rem;cursor:pointer;">Annuler</button>
+      <button id="_ugm_ok" style="padding:.52rem 1.3rem;border-radius:var(--r-lg);border:none;
+        background:var(--blue);color:#fff;font-size:.82rem;cursor:pointer;font-weight:600;">✓ Appliquer</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  const close = () => m.remove();
+  m.querySelector('#_ugm_cancel').onclick = close;
+  m.querySelector('#_ugm_ok').onclick = () => {
+    const sel = m.querySelector('input[name="_ugm_role"]:checked')?.value;
+    if(sel && sel !== currentRole) changeUserRole(userId, sel);
+    close();
+  };
+  m.onclick = e => { if(e.target===m) close(); };
+  // Highlight au survol
+  m.querySelectorAll('label').forEach(l => {
+    l.onmouseenter = () => { l.style.borderColor='var(--blue)'; l.style.background='rgba(26,111,255,.06)'; };
+    l.onmouseleave = () => {
+      const r=l.querySelector('input')?.value;
+      const isCurrent=r===currentRole;
+      l.style.borderColor=isCurrent?'var(--blue)':'var(--b2)';
+      l.style.background=isCurrent?'rgba(26,111,255,.08)':'var(--d4)';
+    };
+  });
+}
+
+function _roleDesc(r) {
+  return { free:'Accès de base, 1 GB', pro:'Accès étendu, 50 GB', equipe:'Accès équipe, 500 GB',
+    'sous-admin':'Modération, lecture seule admin', admin:'Contrôle total du site' }[r] || '';
+}
+
+/* ══════════════════════════════════════════
+   MODAL ENVOYER MESSAGE À UN USER SPÉCIFIQUE
+══════════════════════════════════════════ */
+function openSendMessageModal(userId, username) {
+  document.getElementById('_smm')?.remove();
+  const m = document.createElement('div');
+  m.id = '_smm';
+  m.style.cssText = `position:fixed;inset:0;z-index:10000;display:flex;align-items:center;
+    justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);`;
+  m.innerHTML = `<div style="background:var(--d2);border:1px solid var(--b3);border-radius:var(--r-xl);
+      padding:2rem;max-width:440px;width:90%;box-shadow:0 32px 80px #000a;">
+    <div style="font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:.3rem;">Envoyer un message</div>
+    <div style="font-size:.8rem;color:var(--t3);margin-bottom:1rem;">→ <strong style="color:var(--blue2);">@${username}</strong></div>
+    <div style="display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.2rem;">
+      <input id="_smm_title" type="text" placeholder="Titre du message…" maxlength="80"
+        style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r-lg);
+        padding:.55rem .85rem;color:var(--t1);font-size:.84rem;outline:none;width:100%;">
+      <textarea id="_smm_body" placeholder="Contenu…" rows="3" maxlength="500"
+        style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r-lg);
+        padding:.55rem .85rem;color:var(--t1);font-size:.82rem;outline:none;width:100%;
+        resize:vertical;font-family:inherit;"></textarea>
+      <select id="_smm_color" style="background:var(--d4);border:1px solid var(--b2);border-radius:var(--r);
+        padding:.38rem .7rem;color:var(--t1);font-size:.78rem;outline:none;width:fit-content;">
+        <option value="var(--blue)">🔵 Info</option>
+        <option value="var(--green)">🟢 Succès</option>
+        <option value="var(--amber)">🟡 Avertissement</option>
+        <option value="var(--red)">🔴 Urgent</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:.6rem;justify-content:flex-end;">
+      <button id="_smm_cancel" style="padding:.52rem 1.3rem;border-radius:var(--r-lg);border:1px solid var(--b2);
+        background:var(--d4);color:var(--t2);font-size:.82rem;cursor:pointer;">Annuler</button>
+      <button id="_smm_ok" style="padding:.52rem 1.3rem;border-radius:var(--r-lg);border:none;
+        background:var(--blue);color:#fff;font-size:.82rem;cursor:pointer;font-weight:600;">📣 Envoyer</button>
+    </div>
+  </div>`;
+  document.body.appendChild(m);
+  const close = () => m.remove();
+  m.querySelector('#_smm_cancel').onclick = close;
+  m.querySelector('#_smm_ok').onclick = async () => {
+    const title = m.querySelector('#_smm_title').value.trim();
+    const body  = m.querySelector('#_smm_body').value.trim();
+    const color = m.querySelector('#_smm_color').value;
+    if(!title||!body){ uiToast('warning','Titre et contenu requis.'); return; }
+    await supabase.from('notifications').insert({
+      user_id:userId, text:`📣 <strong>${title}</strong> — ${body}`,
+      color, read:false,
+    });
+    close();
+    uiToast('success',`✓ Message envoyé à @${username}`);
+    await logAction(`Message individuel envoyé`,`→ @${username} : "${title}"`);
+  };
+  m.onclick = e => { if(e.target===m) close(); };
 }
 
 function switchAdmTab(tab) {
