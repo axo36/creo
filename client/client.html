@@ -30,21 +30,21 @@ const supabase = createClient(
 const msg = document.getElementById('msg');
 async function route() {
   const { data: { session } } = await supabase.auth.getSession();
-  if (!session) { window.location.href = '../login/login.html'; return; }
+  if (!session) { window.location.href = '/creo/login/login.html'; return; }
   msg.textContent = 'Vérification du profil…';
   const { data: profile } = await supabase
     .from('profiles').select('type,username,client_code')
     .eq('id', session.user.id).single();
   if (!profile?.username || !profile?.client_code || !profile?.type) {
-    window.location.href = '../login/complete-profile.html'; return;
+    window.location.href = '/creo/login/complete-profile.html'; return;
   }
   const role = profile.type.toLowerCase();
   if (role === 'admin' || role === 'sous-admin') {
     msg.textContent = 'Accès administration…';
-    window.location.href = './admin/admin.html';
+    window.location.href = '/creo/client/admin/admin.html';
   } else {
     msg.textContent = 'Chargement…';
-    window.location.href = './public/client.html';
+    window.location.href = '/creo/client/public/client.html';
   }
 }
 route();
