@@ -84,10 +84,38 @@
   if(typeof trackPageVisit==='function')trackPageVisit();
   initReveal();
 
+  // Mapping des IDs vers les plateformes
+  const platformMap = {
+    'dl-mac':    'macos',
+    'dl-win':    'windows',
+    'dl-linux':  'linux',
+    'dl-mobile': null, // mobile = store, pas de téléchargement direct
+  };
+
+  // Récupérer l'UID de l'utilisateur connecté si disponible
+  async function getUid() {
+    try {
+      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+      const sb = createClient(
+        'https://mpnfvrizbluhhjcfzztc.supabase.co',
+        'sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr'
+      );
+      const { data: { session } } = await sb.auth.getSession();
+      return session?.user?.id || null;
+    } catch { return null; }
+  }
+
   ['dl-mac','dl-win','dl-linux','dl-mobile'].forEach(id => {
-    document.getElementById(id)?.addEventListener('click', () => {
-      toast('Créez un compte pour télécharger Creo.', 'info');
-      setTimeout(() => window.location.href = '../login/login.html', 1200);
+    document.getElementById(id)?.addEventListener('click', async () => {
+      const platform = platformMap[id];
+      if (!platform) {
+        toast('Disponible bientôt sur App Store et Google Play.', 'info');
+        return;
+      }
+      const uid = await getUid();
+      const token = btoa([uid||'anon', platform, Date.now()].join('|'));
+      const url = `download-secure.html?platform=${platform}&token=${token}${uid?'&uid='+uid:''}`;
+      window.location.href = url;
     });
   });
 </script>

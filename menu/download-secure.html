@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creo — Télécharger l'application</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap">
+  <link rel="preconnect" href="https://mpnfvrizbluhhjcfzztc.supabase.co">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <style>
+    :root {
+      --black:#000;--d1:#040404;--d2:#080808;--d3:#0e0e0e;
+      --d4:#141414;--d5:#1c1c1c;--d6:#242424;--d7:#2e2e2e;
+      --b1:rgba(255,255,255,.04);--b2:rgba(255,255,255,.08);
+      --b3:rgba(255,255,255,.14);--b4:rgba(255,255,255,.22);
+      --white:#fff;--t1:#e2e2e2;--t2:#7a7a7a;--t3:#3a3a3a;
+      --blue:#1a6fff;--blue2:#4d8fff;--blue3:#80b3ff;
+      --cyan:#00d4ff;--green:#00ff88;--red:#ff3b5c;
+      --amber:#ffb800;
+      --r:8px;--r-lg:14px;--r-xl:20px;--r-2xl:28px;
+    }
+    *,*::before,*::after { box-sizing:border-box;margin:0;padding:0; }
+    html { scroll-behavior:smooth; }
+    body {
+      background:var(--black);
+      color:var(--t1);
+      font-family:'Outfit',sans-serif;
+      font-weight:300;
+      line-height:1.65;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      overflow-x:hidden;
+    }
+
+    /* BG ORBS */
+    .bg-orbs { position:fixed;inset:0;pointer-events:none;z-index:0; }
+    .orb {
+      position:absolute;border-radius:50%;filter:blur(120px);opacity:.12;
+      animation:float 8s ease-in-out infinite;
+    }
+    .orb-1 { width:600px;height:600px;background:var(--blue);top:-200px;left:-200px;animation-delay:0s; }
+    .orb-2 { width:400px;height:400px;background:var(--cyan);bottom:-100px;right:-100px;animation-delay:-3s; }
+    .orb-3 { width:300px;height:300px;background:var(--blue);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-5s; }
+    @keyframes float { 0%,100%{transform:translateY(0)scale(1);} 50%{transform:translateY(-20px)scale(1.04);} }
+
+    /* CARD */
+    .card {
+      position:relative;z-index:1;
+      width:100%;max-width:520px;
+      margin:2rem;
+      background:var(--d2);
+      border:1px solid var(--b2);
+      border-radius:var(--r-2xl);
+      overflow:hidden;
+    }
+    .card-top-line {
+      height:2px;
+      background:linear-gradient(90deg,transparent,var(--blue),var(--cyan),transparent);
+    }
+    .card-inner { padding:2.4rem 2.4rem 2rem; }
+
+    /* LOGO */
+    .logo {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:2rem;letter-spacing:.1em;
+      color:var(--white);
+      margin-bottom:2rem;
+      display:flex;align-items:center;gap:2px;
+    }
+    .logo-e {
+      background:linear-gradient(135deg,var(--blue),var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .logo-dot {
+      width:5px;height:5px;background:var(--blue);border-radius:50%;
+      margin-left:3px;box-shadow:0 0 8px var(--blue);align-self:flex-end;margin-bottom:6px;
+    }
+
+    /* LOADING STATE */
+    #state-loading { text-align:center;padding:1rem 0 2rem; }
+    .loader {
+      width:40px;height:40px;border:2px solid var(--d6);
+      border-top-color:var(--blue);border-radius:50%;
+      animation:spin .7s linear infinite;margin:0 auto 1.2rem;
+    }
+    @keyframes spin { to{transform:rotate(360deg);} }
+
+    /* ERROR STATE */
+    #state-error { display:none;text-align:center;padding:.5rem 0 1rem; }
+    .error-icon { font-size:2.5rem;margin-bottom:1rem; }
+    .error-title { font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:.06em;color:var(--red);margin-bottom:.5rem; }
+
+    /* SUCCESS STATE */
+    #state-ready { display:none; }
+
+    /* PLATFORM BADGE */
+    .platform-badge {
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.2);
+      border-radius:var(--r-lg);padding:.5rem 1rem;
+      font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--blue2);
+      margin-bottom:1.5rem;
+    }
+
+    /* TITLE */
+    .dl-title {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:2.2rem;letter-spacing:.06em;
+      color:var(--white);
+      margin-bottom:.5rem;
+      line-height:1.1;
+    }
+    .dl-sub { font-size:.84rem;color:var(--t2);margin-bottom:1.8rem; }
+
+    /* USER CARD */
+    .user-info-box {
+      display:flex;align-items:center;gap:12px;
+      background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.12);
+      border-radius:var(--r-lg);padding:.9rem 1.1rem;
+      margin-bottom:1.8rem;
+    }
+    .user-avatar {
+      width:38px;height:38px;
+      background:linear-gradient(135deg,var(--blue),#8b5cf6);
+      border-radius:50%;display:flex;align-items:center;justify-content:center;
+      font-size:.78rem;font-weight:600;color:#fff;flex-shrink:0;overflow:hidden;
+    }
+    .user-avatar img { width:100%;height:100%;object-fit:cover; }
+    .user-name { font-size:.88rem;color:var(--t1);font-weight:500; }
+    .user-label { font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--green); }
+
+    /* VERSION INFO */
+    .version-row {
+      display:flex;gap:10px;margin-bottom:1.8rem;flex-wrap:wrap;
+    }
+    .version-chip {
+      display:inline-flex;align-items:center;gap:5px;
+      background:var(--d4);border:1px solid var(--b2);border-radius:99px;
+      padding:.28rem .9rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--t2);
+    }
+
+    /* DOWNLOAD BUTTON */
+    .btn-download {
+      width:100%;padding:1rem 1.4rem;
+      background:var(--blue);
+      border:none;border-radius:var(--r-xl);
+      font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;
+      color:#fff;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      box-shadow:0 0 30px rgba(26,111,255,.3),inset 0 1px 0 rgba(255,255,255,.12);
+      transition:all .22s;
+      position:relative;overflow:hidden;
+    }
+    .btn-download::before {
+      content:'';position:absolute;inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,.08),transparent);
+    }
+    .btn-download:hover {
+      background:#2a7aff;
+      box-shadow:0 0 60px rgba(26,111,255,.5);
+      transform:translateY(-2px);
+    }
+    .btn-download:active { transform:translateY(0); }
+    .btn-download.loading { opacity:.7;pointer-events:none; }
+
+    /* PROGRESS */
+    #dl-progress { display:none;margin-top:1.2rem; }
+    .progress-label {
+      display:flex;justify-content:space-between;
+      font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t3);
+      margin-bottom:.4rem;
+    }
+    .progress-track {
+      height:3px;background:var(--d5);border-radius:99px;overflow:hidden;
+    }
+    .progress-fill {
+      height:100%;width:0%;
+      background:linear-gradient(90deg,var(--blue),var(--cyan));
+      border-radius:99px;
+      transition:width .3s ease;
+      animation:progressGlow .8s ease infinite alternate;
+    }
+    @keyframes progressGlow {
+      from { box-shadow:0 0 4px var(--blue); }
+      to   { box-shadow:0 0 12px var(--cyan); }
+    }
+
+    /* SUCCESS DL */
+    #dl-done { display:none;margin-top:1rem; }
+    .done-box {
+      background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);
+      border-radius:var(--r-lg);padding:.9rem 1.1rem;
+      font-size:.82rem;color:var(--green);
+      display:flex;align-items:center;gap:.7rem;
+    }
+
+    /* FOOTER */
+    .card-footer {
+      margin-top:1.8rem;padding-top:1.2rem;
+      border-top:1px solid var(--b1);
+      display:flex;align-items:center;justify-content:space-between;gap:1rem;
+      flex-wrap:wrap;
+    }
+    .footer-copy {
+      font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);
+    }
+    .footer-link { font-size:.75rem;color:var(--t3);text-decoration:none;transition:color .2s; }
+    .footer-link:hover { color:var(--blue2); }
+
+    /* ANON WARNING */
+    .anon-box {
+      background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.15);
+      border-radius:var(--r-lg);padding:.8rem 1rem;
+      font-size:.78rem;color:var(--amber);
+      margin-bottom:1.5rem;
+      display:none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="card">
+  <div class="card-top-line"></div>
+  <div class="card-inner">
+
+    <div class="logo">CR<span class="logo-e">E</span>O<div class="logo-dot"></div></div>
+
+    <!-- STATE: LOADING -->
+    <div id="state-loading">
+      <div class="loader"></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--t3);" id="loading-msg">
+        Vérification du lien…
+      </div>
+    </div>
+
+    <!-- STATE: ERROR -->
+    <div id="state-error">
+      <div class="error-icon">⚠️</div>
+      <div class="error-title" id="error-title">LIEN INVALIDE</div>
+      <p style="font-size:.82rem;color:var(--t2);margin-bottom:1.5rem;" id="error-msg">
+        Ce lien de téléchargement n'est pas valide ou a expiré.
+      </p>
+      <a href="../login/login.html" style="display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border-radius:var(--r-lg);padding:.6rem 1.4rem;font-size:.85rem;font-weight:500;text-decoration:none;transition:all .2s;">
+        ⚡ Se connecter
+      </a>
+    </div>
+
+    <!-- STATE: READY TO DOWNLOAD -->
+    <div id="state-ready">
+      <div class="platform-badge" id="platform-badge">💾 —</div>
+
+      <div class="dl-title" id="dl-title">TÉLÉCHARGER CREO</div>
+      <p class="dl-sub" id="dl-sub">Chargement…</p>
+
+      <!-- Utilisateur identifié -->
+      <div class="user-info-box" id="user-box" style="display:none;">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <div>
+          <div class="user-name" id="user-name">Chargement…</div>
+          <div class="user-label">✓ Compte vérifié</div>
+        </div>
+      </div>
+
+      <!-- Avertissement invité -->
+      <div class="anon-box" id="anon-box">
+        ⚠ Vous n'êtes pas connecté. Créez un compte pour activer toutes les fonctionnalités.
+      </div>
+
+      <div class="version-row" id="version-row"></div>
+
+      <button class="btn-download" id="btn-download" onclick="startDownload()">
+        <span id="btn-icon">↓</span>
+        <span id="btn-label">Télécharger maintenant</span>
+      </button>
+
+      <div id="dl-progress">
+        <div class="progress-label">
+          <span>Téléchargement en cours…</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+
+      <div id="dl-done">
+        <div class="done-box">✓ Téléchargement lancé ! Installe Creo et connecte-toi avec ton compte.</div>
+      </div>
+
+      <div class="card-footer">
+        <div class="footer-copy">© 2025 Creo · Tous droits réservés</div>
+        <div style="display:flex;gap:1rem;">
+          <a href="../menu/index.html" class="footer-link">Accueil</a>
+          <a href="../menu/cgu.html" class="footer-link">CGU</a>
+          <a href="../login/login.html" class="footer-link">Connexion</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const supabase = createClient(
+  'https://mpnfvrizbluhhjcfzztc.supabase.co',
+  'sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr'
+);
+
+/* ══════════════════════════
+   CONFIG VERSIONS APP
+   Mets ici les vrais URLs de tes fichiers .exe / .dmg / .AppImage
+   (Supabase Storage, S3, Cloudflare R2, etc.)
+══════════════════════════ */
+const APP_VERSIONS = {
+  windows: {
+    label: 'Windows',
+    icon: '🪟',
+    version: '3.2.1',
+    size: '52 MB',
+    requirements: 'Windows 10/11 · 64-bit',
+    filename: 'CreoSetup-3.2.1.exe',
+    // ⬇ Remplace par ton vrai URL de stockage
+    base_url: 'https://mpnfvrizbluhhjcfzztc.supabase.co/storage/v1/object/public/app-releases/CreoSetup-3.2.1.exe',
+  },
+  macos: {
+    label: 'macOS',
+    icon: '🍎',
+    version: '3.2.1',
+    size: '48 MB',
+    requirements: 'macOS 12+ · Apple Silicon + Intel',
+    filename: 'Creo-3.2.1.dmg',
+    base_url: 'https://mpnfvrizbluhhjcfzztc.supabase.co/storage/v1/object/public/app-releases/Creo-3.2.1.dmg',
+  },
+  linux: {
+    label: 'Linux',
+    icon: '🐧',
+    version: '3.2.1',
+    size: '44 MB',
+    requirements: 'Ubuntu 20.04+ / Debian / Fedora',
+    filename: 'creo-3.2.1.AppImage',
+    base_url: 'https://mpnfvrizbluhhjcfzztc.supabase.co/storage/v1/object/public/app-releases/creo-3.2.1.AppImage',
+  },
+};
+
+/* ══ LECTURE PARAMS ══ */
+const params   = new URLSearchParams(window.location.search);
+const platform = params.get('platform') || 'windows';
+const token    = params.get('token');
+const uid      = params.get('uid');
+
+let userProfile = null;
+let downloadUrl = null;
+
+/* ══ INIT ══ */
+async function init() {
+  setMsg('Vérification du lien…');
+
+  // Valider la plateforme
+  if (!APP_VERSIONS[platform]) {
+    showError('PLATEFORME INCONNUE', 'La plateforme demandée n\'existe pas.');
+    return;
+  }
+
+  const v = APP_VERSIONS[platform];
+  downloadUrl = v.base_url;
+
+  // Essayer de récupérer l'utilisateur (session active ou uid dans le token)
+  setMsg('Identification de l\'utilisateur…');
+  let userId = uid;
+
+  // 1. Essai session active
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    userId = session.user.id;
+  }
+
+  // 2. Essai via uid param si pas de session
+  if (userId) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id, username, email, avatar_url, type')
+      .eq('id', userId)
+      .maybeSingle();
+    if (profile) userProfile = profile;
+  }
+
+  // Afficher l'interface
+  setMsg('Prêt !');
+  renderReady(v);
+
+  // Log le téléchargement (non bloquant)
+  logDownload(userId, platform, v.version);
+}
+
+/* ══ LOG SUPABASE ══ */
+async function logDownload(userId, platform, version) {
+  try {
+    await supabase.from('app_downloads').insert({
+      user_id: userId || null,
+      platform,
+      version,
+      user_agent: navigator.userAgent,
+    });
+  } catch (e) {
+    // Silencieux — la table peut ne pas exister encore
+    console.warn('app_downloads non disponible :', e.message);
+  }
+}
+
+/* ══ RENDER ══ */
+function renderReady(v) {
+  document.getElementById('state-loading').style.display = 'none';
+  document.getElementById('state-ready').style.display   = 'block';
+
+  document.getElementById('platform-badge').textContent = `${v.icon} ${v.label}`;
+  document.getElementById('dl-title').textContent = `TÉLÉCHARGER CREO`;
+  document.getElementById('dl-sub').textContent = `${v.label} · v${v.version} · ${v.size}`;
+
+  document.getElementById('version-row').innerHTML = [
+    { label: `v${v.version}`, icon: '🏷' },
+    { label: v.size,          icon: '📦' },
+    { label: v.requirements,  icon: '💻' },
+  ].map(c => `
+    <div class="version-chip">${c.icon} ${c.label}</div>
+  `).join('');
+
+  if (userProfile) {
+    const box    = document.getElementById('user-box');
+    const avatar = document.getElementById('user-avatar');
+    box.style.display = 'flex';
+    document.getElementById('user-name').textContent = userProfile.username || userProfile.email || 'Compte Creo';
+    if (userProfile.avatar_url) {
+      avatar.innerHTML = `<img src="${userProfile.avatar_url}" alt="">`;
+    } else {
+      avatar.textContent = (userProfile.username || '?').slice(0, 2).toUpperCase();
+    }
+  } else {
+    document.getElementById('anon-box').style.display = 'block';
+  }
+
+  document.getElementById('btn-label').textContent = `Télécharger Creo ${v.label} (${v.size})`;
+  document.getElementById('btn-icon').textContent  = v.icon;
+}
+
+/* ══ DOWNLOAD ══ */
+window.startDownload = async function() {
+  if (!downloadUrl) return;
+
+  const btn = document.getElementById('btn-download');
+  btn.classList.add('loading');
+  document.getElementById('btn-label').textContent = 'Lancement du téléchargement…';
+
+  // Animer la progress bar (simulée car on ne peut pas tracker fetch stream facilement)
+  document.getElementById('dl-progress').style.display = 'block';
+  let pct = 0;
+  const fill = document.getElementById('progress-fill');
+  const pctEl = document.getElementById('progress-pct');
+  const interval = setInterval(() => {
+    pct = Math.min(pct + Math.random() * 8, 90);
+    fill.style.width = pct + '%';
+    pctEl.textContent = Math.floor(pct) + '%';
+  }, 200);
+
+  // Lancer le téléchargement via un lien caché
+  const a = document.createElement('a');
+  a.href = downloadUrl;
+  a.download = APP_VERSIONS[platform].filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Fin de l'animation
+  await new Promise(r => setTimeout(r, 2000));
+  clearInterval(interval);
+  fill.style.width = '100%';
+  pctEl.textContent = '100%';
+
+  setTimeout(() => {
+    document.getElementById('dl-progress').style.display = 'none';
+    document.getElementById('dl-done').style.display     = 'block';
+    btn.classList.remove('loading');
+    document.getElementById('btn-label').textContent = '✓ Téléchargé';
+    btn.style.background = 'rgba(0,255,136,.15)';
+    btn.style.borderColor = 'rgba(0,255,136,.3)';
+    btn.style.color = 'var(--green)';
+    btn.style.boxShadow = '0 0 20px rgba(0,255,136,.1)';
+  }, 500);
+};
+
+/* ══ HELPERS ══ */
+function setMsg(msg) {
+  const el = document.getElementById('loading-msg');
+  if (el) el.textContent = msg;
+}
+
+function showError(title, msg) {
+  document.getElementById('state-loading').style.display = 'none';
+  document.getElementById('state-error').style.display   = 'block';
+  document.getElementById('error-title').textContent     = title;
+  document.getElementById('error-msg').textContent       = msg;
+}
+
+/* ══ START ══ */
+init().catch(err => {
+  showError('ERREUR', err.message || 'Une erreur inattendue s\'est produite.');
+});
+</script>
+</body>
+</html>
