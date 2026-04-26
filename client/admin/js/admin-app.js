@@ -38,13 +38,21 @@ async function loadDownloadLogs() {
 }
 
 async function loadDevices() {
-  // Charger TOUS les appareils — pas de filtre user_id
-  // Grâce à service_role ou policy admin, on voit tout
-  const { data } = await supabase
-    .from('devices')
-    .select('*, profiles(username, email, type)')
-    .order('online', { ascending: false })
-    .order('last_seen', { ascending: false });
+  // Charger via la vue v_admin_devices qui inclut TOUS les appareils
+  // même ceux sans user_id (agents partagés)
+  let { data, error } = await supabase
+    .from('v_admin_devices')
+    .select('*');
+
+  // Fallback sur la table directe si la vue n'existe pas encore
+  if (error) {
+    const res = await supabase
+      .from('devices')
+      .select('id, name, client_code, type, os, online, last_seen, icon, creo_version, outdated, user_id, fingerprint, profiles(username, email, type)')
+      .order('online', { ascending: false })
+      .order('last_seen', { ascending: false });
+    data = res.data;
+  }
   allDevices = data || [];
 }
 
