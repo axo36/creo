@@ -6,6 +6,7 @@ import { supabase } from './supabase.js';
 import { state }    from './state.js';
 import { formatBytes, uiToast, timeAgo } from './utils.js';
 import { initAppTab, renderAppTab } from './admin-app.js';
+import { initUpdateTab, renderUpdateTab } from './admin-update.js';
 
 const ROLES  = ['free','pro','equipe','sous-admin','admin'];
 const COLORS = { free:'var(--t3)', pro:'var(--blue2)', equipe:'var(--cyan)', 'sous-admin':'var(--amber)', admin:'var(--red)' };
@@ -42,6 +43,7 @@ function renderAdminShell() {
       <button class="adm-tab"        data-tab="messages"  style="padding:.45rem 1rem;border-radius:var(--r-lg);border:1px solid var(--b2);background:var(--d4);color:var(--t2);font-size:.8rem;cursor:pointer;transition:all .18s;">📣 Messages</button>
       <button class="adm-tab"        data-tab="logs"      style="padding:.45rem 1rem;border-radius:var(--r-lg);border:1px solid var(--b2);background:var(--d4);color:var(--t2);font-size:.8rem;cursor:pointer;transition:all .18s;">🗒 Logs</button>
       <button class="adm-tab"        data-tab="app"       style="padding:.45rem 1rem;border-radius:var(--r-lg);border:1px solid rgba(26,111,255,.3);background:rgba(26,111,255,.08);color:var(--blue2);font-size:.8rem;cursor:pointer;transition:all .18s;">📲 App</button>
+      <button class="adm-tab"        data-tab="update"    style="padding:.45rem 1rem;border-radius:var(--r-lg);border:1px solid rgba(0,255,136,.25);background:rgba(0,255,136,.06);color:var(--green);font-size:.8rem;cursor:pointer;transition:all .18s;">⟳ Mise à jour</button>
     </div>
     <div class="stat-grid stat-grid-4" style="margin-bottom:1.8rem;" id="adm-kpi-row">
       <div class="stat-card"><div class="stat-label">Utilisateurs</div><div class="stat-val" id="adm-total-users">—</div><div class="stat-sub" id="adm-new-users">chargement…</div></div>
@@ -234,6 +236,11 @@ function renderAdminShell() {
 
     <!-- App Downloads -->
     <div id="adm-panel-app" style="display:none;">
+      <div style="text-align:center;padding:2rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.75rem;">Chargement…</div>
+    </div>
+
+    <!-- Mise à jour auto -->
+    <div id="adm-panel-update" style="display:none;">
       <div style="text-align:center;padding:2rem;color:var(--t3);font-family:'JetBrains Mono',monospace;font-size:.75rem;">Chargement…</div>
     </div>
   `;
@@ -904,13 +911,14 @@ function switchAdmTab(tab) {
     b.style.color=isActive?'var(--t1)':'var(--t2)';
     b.style.borderColor=isActive?'var(--b3)':'var(--b2)';
   });
-  ['users','files','transfers','stats','visits','messages','logs','app'].forEach(p=>{
+  ['users','files','transfers','stats','visits','messages','logs','app','update'].forEach(p=>{
     const el=document.getElementById(`adm-panel-${p}`);
     if(el)el.style.display=p===tab?'block':'none';
   });
   if(tab==='visits') loadVisits();
   if(tab==='messages') loadMessages();
   if(tab==='app') initAppTab();
+  if(tab==='update') initUpdateTab();
 }
 
 function setupAdminEvents() {
