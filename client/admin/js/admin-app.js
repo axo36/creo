@@ -157,13 +157,61 @@ function _renderSendPanel() {
         <!-- Drop zone -->
         <input type="file" id="agent-file-input" multiple style="display:none;">
         <div id="agent-drop-zone"
-          style="border:2px dashed var(--b3);border-radius:var(--r-xl);padding:2.5rem 1.5rem;
+          style="border:2px dashed var(--b3);border-radius:var(--r-xl);padding:2rem 1.5rem;
                  text-align:center;transition:all .2s;background:var(--d2);
                  opacity:.4;pointer-events:none;">
           <div style="font-size:2rem;margin-bottom:.6rem;">📁</div>
           <div style="font-size:.88rem;color:var(--t1);margin-bottom:.3rem;">Glisse tes fichiers ici</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);">ou clique pour choisir · Tous formats</div>
         </div>
+
+        <!-- Dossier de destination -->
+        <div id="agent-dest-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;">
+            // Dossier de destination sur l'appareil
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" id="agent-dest-path"
+              placeholder="C:\Users\Utilisateur\Downloads\Creo"
+              style="flex:1;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);
+                     padding:.5rem .8rem;color:var(--t1);font-size:.78rem;outline:none;
+                     font-family:'JetBrains Mono',monospace;transition:border-color .2s;"
+              onfocus="this.style.borderColor='rgba(26,111,255,.5)'"
+              onblur="this.style.borderColor='var(--b2)'">
+            <button id="btn-browse-dest" class="btn btn-ghost btn-sm" style="flex-shrink:0;font-size:.75rem;white-space:nowrap;">
+              📂 Parcourir
+            </button>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);margin-top:.3rem;">
+            Laisser vide = dossier par défaut (Downloads\Creo)
+          </div>
+
+          <!-- Explorateur de dossiers du PC distant -->
+          <div id="remote-browser" style="display:none;margin-top:.6rem;background:var(--d3);border:1px solid rgba(26,111,255,.25);border-radius:var(--r-lg);overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem .8rem;border-bottom:1px solid var(--b1);background:var(--d4);">
+              <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--blue2);">EXPLORATEUR — PC DISTANT</div>
+              <button onclick="document.getElementById('remote-browser').style.display='none';" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:.85rem;padding:2px 6px;">X</button>
+            </div>
+            <div id="remote-breadcrumb" style="padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--blue2);border-bottom:1px solid var(--b1);min-height:28px;"></div>
+            <div id="remote-folder-list" style="max-height:220px;overflow-y:auto;padding:.3rem 0;">
+              <div style="text-align:center;padding:1.2rem;font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--t3);">Chargement...</div>
+            </div>
+            <div style="padding:.5rem .8rem;border-top:1px solid var(--b1);display:flex;gap:6px;">
+              <button id="btn-select-folder" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;font-size:.75rem;">Choisir ce dossier</button>
+              <button id="btn-go-parent" class="btn btn-ghost btn-sm" style="font-size:.75rem;">Dossier parent</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bouton envoyer -->
+        <div id="agent-send-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
+          <button id="btn-send-to-agent" class="btn btn-primary" style="width:100%;justify-content:center;gap:8px;">
+            <span>📤</span> <span>Envoyer vers l'appareil</span>
+          </button>
+        </div>
+
+        <!-- Fichiers sélectionnés -->
+        <div id="agent-files-preview" style="margin-top:.6rem;"></div>
 
         <!-- Progression -->
         <div id="agent-send-progress" style="margin-top:.8rem;"></div>
@@ -301,26 +349,31 @@ function _renderDownloadsPanel() {
 }
 
 /* ══ UPLOAD + ENVOI ══ */
-async function sendFileToAgent(file, deviceId, deviceName) {
+// Fichiers en attente d'envoi
+let pendingFiles = [];
+
+async function sendFileToAgent(file, deviceId, deviceName, destPath = '') {
   const progress = document.getElementById('agent-send-progress');
   if (progress) progress.innerHTML = _progressHTML(`Envoi de <strong>${file.name}</strong> vers <strong>${deviceName}</strong>…`);
 
   // 1. Upload Storage
-  const ext  = file.name.split('.').pop() || 'bin';
-  const path = `agent-sends/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const ext      = file.name.split('.').pop() || 'bin';
+  const filePath = `agent-sends/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
   const { error: upErr } = await supabase.storage
     .from('files')
-    .upload(path, file, { contentType: file.type, upsert: false });
+    .upload(filePath, file, { contentType: file.type, upsert: false });
 
   if (upErr) { if (progress) progress.innerHTML = _errHTML(`Upload échoué : ${upErr.message}`); return; }
 
   // 2. URL publique
-  const { data: urlData } = supabase.storage.from('files').getPublicUrl(path);
+  const { data: urlData } = supabase.storage.from('files').getPublicUrl(filePath);
   const url = urlData?.publicUrl;
   if (!url) { if (progress) progress.innerHTML = _errHTML('URL introuvable'); return; }
 
-  // 3. Ligne dans files avec target_device_id
+  // 3. Ligne dans files avec target_device_id + dest_path
+  // dest_path est envoyé dans le champ share_code (hack temporaire)
+  // ou dans un champ dédié si tu l'ajoutes à la table
   const { error: dbErr } = await supabase.from('files').insert({
     user_id:          state.session?.user?.id || null,
     name:             file.name,
@@ -329,9 +382,10 @@ async function sendFileToAgent(file, deviceId, deviceName) {
     size_label:       formatBytes(file.size),
     status:           'done',
     public_url:       url,
-    storage_path:     path,
+    storage_path:     filePath,
     mime_type:        file.type || null,
     target_device_id: deviceId,
+    share_code:       destPath || null, // on réutilise share_code pour stocker le chemin
     created_at:       new Date().toISOString(),
   });
 
@@ -341,12 +395,15 @@ async function sendFileToAgent(file, deviceId, deviceName) {
     <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);
                 border-radius:var(--r-lg);padding:.65rem 1rem;font-size:.82rem;color:var(--green);">
       ✓ <strong>${file.name}</strong> envoyé vers <strong>${deviceName}</strong>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--green);opacity:.7;margin-top:2px;">
+      ${destPath ? `<div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--green);opacity:.8;margin-top:3px;">📂 Destination : ${destPath}</div>` : ''}
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--green);opacity:.6;margin-top:2px;">
         Téléchargement automatique dans ~12 secondes
       </div>
     </div>`;
 
   uiToast('success', `📤 ${file.name} → ${deviceName}`);
+  pendingFiles = [];
+  _updateFilesPreview();
 }
 
 /* ══ EVENTS ══ */
@@ -405,12 +462,31 @@ function _setupEvents(panel) {
         dz.style.cursor        = 'pointer';
         dz.style.borderColor   = 'rgba(26,111,255,.3)';
       }
+      // Reset fichiers en attente
+      pendingFiles = [];
+      _updateFilesPreview();
+      // Reset progress
+      const prog = document.getElementById('agent-send-progress');
+      if (prog) prog.innerHTML = '';
     });
   });
 
   // Drop zone
   const dropZone  = document.getElementById('agent-drop-zone');
   const fileInput = document.getElementById('agent-file-input');
+
+  function _activateSendZone() {
+    const destZone = document.getElementById('agent-dest-zone');
+    const sendZone = document.getElementById('agent-send-zone');
+    if (destZone) { destZone.style.opacity = '1'; destZone.style.pointerEvents = 'auto'; }
+    if (sendZone) { sendZone.style.opacity = '1'; sendZone.style.pointerEvents = 'auto'; }
+  }
+
+  function _addFiles(files) {
+    pendingFiles = [...pendingFiles, ...files];
+    _updateFilesPreview();
+    _activateSendZone();
+  }
 
   dropZone?.addEventListener('click', () => {
     if (!selId) { uiToast('warning', 'Sélectionne un appareil d\'abord'); return; }
@@ -430,18 +506,46 @@ function _setupEvents(panel) {
     dropZone.style.background  = 'var(--d2)';
   });
 
-  dropZone?.addEventListener('drop', async e => {
+  dropZone?.addEventListener('drop', e => {
     e.preventDefault();
     dropZone.style.borderColor = selId ? 'rgba(26,111,255,.3)' : 'var(--b3)';
     dropZone.style.background  = 'var(--d2)';
     if (!selId) { uiToast('warning', 'Sélectionne un appareil d\'abord'); return; }
-    for (const f of [...e.dataTransfer.files]) await sendFileToAgent(f, selId, selName);
+    _addFiles([...e.dataTransfer.files]);
   });
 
-  fileInput?.addEventListener('change', async () => {
+  fileInput?.addEventListener('change', () => {
     if (!selId) return;
-    for (const f of [...fileInput.files]) await sendFileToAgent(f, selId, selName);
+    _addFiles([...fileInput.files]);
     fileInput.value = '';
+  });
+
+  // Bouton parcourir — ouvre l'explorateur du PC distant
+  document.getElementById('btn-browse-dest')?.addEventListener('click', async () => {
+    if (!selId) { uiToast('warning', "Sélectionne un appareil d'abord"); return; }
+    const browser = document.getElementById('remote-browser');
+    if (browser) browser.style.display = 'block';
+    await remoteBrowse(selId, null);
+  });
+
+  // Bouton choisir ce dossier
+  document.getElementById('btn-select-folder')?.addEventListener('click', () => {
+    const pathInp = document.getElementById('agent-dest-path');
+    if (pathInp && window._remoteCurrent) pathInp.value = window._remoteCurrent;
+    document.getElementById('remote-browser').style.display = 'none';
+  });
+
+  // Bouton envoyer
+  document.getElementById('btn-send-to-agent')?.addEventListener('click', async () => {
+    if (!selId) { uiToast('warning', 'Sélectionne un appareil'); return; }
+    if (!pendingFiles.length) { uiToast('warning', 'Aucun fichier sélectionné'); return; }
+    const destPath = document.getElementById('agent-dest-path')?.value?.trim() || '';
+    const btn = document.getElementById('btn-send-to-agent');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span> <span>Envoi en cours…</span>'; }
+    for (const f of pendingFiles) {
+      await sendFileToAgent(f, selId, selName, destPath);
+    }
+    if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> <span>Envoyer vers l\'appareil</span>'; }
   });
 
   // API globale
@@ -471,6 +575,140 @@ function _setupEvents(panel) {
     },
     toast: uiToast,
   };
+}
+
+/* ══ EXPLORATEUR DISTANT ══ */
+// Envoie une commande à l'agent et attend la réponse
+async function remoteBrowse(deviceId, browsePath) {
+  const listEl = document.getElementById('remote-folder-list');
+  const crumbEl = document.getElementById('remote-breadcrumb');
+  if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:1.2rem;font-family:monospace;font-size:.7rem;color:var(--t3);">Chargement...</div>';
+
+  // Insérer la commande dans agent_commands
+  const { data: cmd, error } = await supabase.from('agent_commands').insert({
+    device_id: deviceId,
+    type: browsePath ? 'browse' : 'get_drives',
+    payload: browsePath ? { path: browsePath } : {},
+    status: 'pending',
+    created_at: new Date().toISOString(),
+  }).select().single();
+
+  if (error) {
+    if (listEl) listEl.innerHTML = `<div style="color:var(--red);padding:1rem;font-size:.75rem;">Erreur : ${error.message}<br><br>Lance d'abord le SQL fix-agent-commands.sql</div>`;
+    return;
+  }
+
+  // Attendre la réponse (max 10s)
+  let result = null;
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 500));
+    const { data: updated } = await supabase.from('agent_commands').select('status,result').eq('id', cmd.id).single();
+    if (updated?.status === 'done') {
+      try { result = JSON.parse(updated.result); } catch {}
+      break;
+    }
+  }
+
+  // Nettoyer la commande
+  await supabase.from('agent_commands').delete().eq('id', cmd.id).catch(() => {});
+
+  if (!result) {
+    if (listEl) listEl.innerHTML = '<div style="color:var(--amber);padding:1rem;font-size:.75rem;text-align:center;">L'agent n'a pas répondu.<br>Vérifie qu'il est en ligne.</div>';
+    return;
+  }
+
+  if (result.error) {
+    if (listEl) listEl.innerHTML = `<div style="color:var(--red);padding:1rem;font-size:.75rem;">${result.error}</div>`;
+  }
+
+  window._remoteCurrent = result.current || browsePath;
+
+  // Breadcrumb
+  if (crumbEl) {
+    if (result.current) {
+      const parts = result.current.split(/[\/]/).filter(Boolean);
+      let built = '';
+      crumbEl.innerHTML = parts.map((p, i) => {
+        built += (i === 0 ? p + '\\' : p + '\\');
+        const capPath = built.replace(/\\$/, '');
+        return `<span style="cursor:pointer;color:var(--blue2);" onclick="remoteBrowse('${deviceId}','${capPath.replace(/\/g, '\\\\')}')">${p}</span> \\`;
+      }).join(' ');
+    } else {
+      crumbEl.textContent = 'Lecteurs';
+    }
+  }
+
+  // Liste dossiers + lecteurs
+  const items = [];
+
+  if (result.drives?.length) {
+    result.drives.forEach(d => {
+      items.push({ name: d, path: d, isDrive: true });
+    });
+  }
+
+  if (result.folders?.length) {
+    result.folders.forEach(f => items.push(f));
+  }
+
+  if (!items.length) {
+    if (listEl) listEl.innerHTML = '<div style="color:var(--t3);padding:1rem;font-size:.75rem;text-align:center;">Dossier vide</div>';
+    return;
+  }
+
+  if (listEl) {
+    listEl.innerHTML = items.map(item => `
+      <div onclick="remoteBrowse('${deviceId}', '${item.path.replace(/\/g, '\\\\')}')"
+        style="display:flex;align-items:center;gap:8px;padding:.5rem .9rem;cursor:pointer;transition:background .15s;font-size:.8rem;color:var(--t1);"
+        onmouseover="this.style.background='var(--d4)'" onmouseout="this.style.background='transparent'">
+        <span style="font-size:1rem;">${item.isDrive ? '💾' : '📁'}</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;">${item.name}</span>
+      </div>
+    `).join('');
+  }
+
+  // Bouton parent
+  const parentBtn = document.getElementById('btn-go-parent');
+  if (parentBtn) {
+    parentBtn.style.display = result.parent ? 'inline-flex' : 'none';
+    parentBtn.onclick = () => remoteBrowse(deviceId, result.parent);
+  }
+}
+
+/* ══ PREVIEW FICHIERS ══ */
+function _updateFilesPreview() {
+  const el = document.getElementById('agent-files-preview');
+  if (!el) return;
+  if (!pendingFiles.length) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.6rem .8rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:.4rem;">
+        ${pendingFiles.length} fichier(s) sélectionné(s)
+      </div>
+      ${pendingFiles.map((f, i) => `
+        <div style="display:flex;align-items:center;gap:8px;padding:.3rem 0;${i>0?'border-top:1px solid var(--b1);':''}">
+          <span style="font-size:.9rem;">${_fileIcon(f.type, f.name)}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:.78rem;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);">${formatBytes(f.size)}</div>
+          </div>
+          <button onclick="pendingFiles.splice(${i},1);_updateFilesPreview();"
+            style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:.8rem;padding:2px 5px;border-radius:4px;"
+            onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--t3)'">✕</button>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function _fileIcon(mime, name) {
+  if (mime?.startsWith('image/')) return '🖼️';
+  if (mime?.startsWith('video/')) return '🎬';
+  if (mime?.startsWith('audio/')) return '🎵';
+  const ext = (name||'').split('.').pop().toLowerCase();
+  if (['pdf','doc','docx'].includes(ext)) return '📄';
+  if (['zip','rar','7z'].includes(ext)) return '📦';
+  if (['xls','xlsx','csv'].includes(ext)) return '📊';
+  return '📎';
 }
 
 /* ══ UTILS ══ */
