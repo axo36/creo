@@ -613,7 +613,7 @@ async function remoteBrowse(deviceId, browsePath) {
   await supabase.from('agent_commands').delete().eq('id', cmd.id).catch(() => {});
 
   if (!result) {
-    if (listEl) listEl.innerHTML = '<div style="color:var(--amber);padding:1rem;font-size:.75rem;text-align:center;">L'agent n'a pas répondu.<br>Vérifie qu'il est en ligne.</div>';
+    if (listEl) listEl.innerHTML = `<div style="color:var(--amber);padding:1rem;font-size:.75rem;text-align:center;">L'agent n'a pas répondu.<br>Vérifie qu'il est en ligne.</div>`;
     return;
   }
 
@@ -631,7 +631,7 @@ async function remoteBrowse(deviceId, browsePath) {
       crumbEl.innerHTML = parts.map((p, i) => {
         built += (i === 0 ? p + '\\' : p + '\\');
         const capPath = built.replace(/\\$/, '');
-        return `<span style="cursor:pointer;color:var(--blue2);" onclick="remoteBrowse('${deviceId}','${capPath.replace(/\/g, '\\\\')}')">${p}</span> \\`;
+        return `<span style="cursor:pointer;color:var(--blue2);" onclick="remoteBrowse('${deviceId}','${capPath.replace(/\//g, '\\\\')}')">${p}</span> \\`;
       }).join(' ');
     } else {
       crumbEl.textContent = 'Lecteurs';
@@ -658,7 +658,7 @@ async function remoteBrowse(deviceId, browsePath) {
 
   if (listEl) {
     listEl.innerHTML = items.map(item => `
-      <div onclick="remoteBrowse('${deviceId}', '${item.path.replace(/\/g, '\\\\')}')"
+      <div onclick="remoteBrowse('${deviceId}', '${item.path.replace(/\//g, '\\\\')}')"
         style="display:flex;align-items:center;gap:8px;padding:.5rem .9rem;cursor:pointer;transition:background .15s;font-size:.8rem;color:var(--t1);"
         onmouseover="this.style.background='var(--d4)'" onmouseout="this.style.background='transparent'">
         <span style="font-size:1rem;">${item.isDrive ? '💾' : '📁'}</span>
