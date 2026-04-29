@@ -26,20 +26,7 @@ export async function requireAuth() {
 }
 export async function redirectIfAuth() {
   const s = await getSession();
-  if (s) await redirectByRole(s);
-}
-
-/* ── Routage selon le rôle du profil ─────────────────────────── */
-export async function redirectByRole(session) {
-  if (!session) return;
-  const { data: profile } = await supabase
-    .from('profiles').select('type').eq('id', session.user.id).single();
-  const role = profile?.type?.toLowerCase() || 'free';
-  if (role === 'admin' || role === 'sous-admin') {
-    window.location.href = '/creo/client/admin/admin.html';
-  } else {
-    window.location.href = '/creo/client/public/client.html';
-  }
+  if (s) window.location.href = '../client/client.html';
 }
 export async function signOut() {
   await supabase.auth.signOut();
