@@ -72,12 +72,11 @@ async function confirm() {
   const userId = data.session.user.id;
 
   // Mettre email_verified = true → le polling sur l'ORDI le détecte et avance
+  // Note: on NE se déconnecte PAS ici — la session reste active pour que
+  // le polling puisse ensuite rediriger correctement sans re-login.
   await supabase.from("profiles")
     .update({ email_verified: true })
     .eq("id", userId);
-
-  // Se déconnecter de ce téléphone (ne pas voler la session de l'ordi)
-  await supabase.auth.signOut();
 
   show("success");
 }

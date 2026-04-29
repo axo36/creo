@@ -106,10 +106,14 @@ export async function emailSignup(email, password, fullName) {
   if (!user) return { error: 'Erreur lors de la création du compte.' };
 
   await supabase.from('profiles').upsert({
-    id: user.id, email,
+    id: user.id,
+    email,
     email_verified: false,
-    first_name: firstName,
-    last_name: lastName
+    first_name: firstName || null,
+    last_name: lastName || null,
+    // Ne pas insérer client_code / type / username ici — ces champs
+    // sont définis dans complete-profile.html. Les laisser NULL évite
+    // tout 500 causé par des contraintes ou triggers sur ces colonnes.
   }, { onConflict: 'id' });
 
   return { needsConfirm: true, userId: user.id };
