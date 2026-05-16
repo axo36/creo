@@ -278,15 +278,26 @@ async function publishUpdate() {
   // Marquer tous les agents avec une version différente comme "outdated"
   const { data: agentDevices } = await supabase
     .from('devices')
-    .select('id, creo_version')
+    .select('id, creo_version, os')
     .eq('browser', 'Creo Agent');
 
   if (agentDevices?.length) {
     for (const dev of agentDevices) {
       const devVer = (dev.creo_version || '').replace(/^v/, '');
-      const latestVer = verWin.replace(/^v/, ''); // on compare avec Windows par défaut
+      // Comparer avec la version de la bonne plateforme selon l'OS de l'appareil
+      const osLower = (dev.os || '').toLowerCase();
+      let latestVer;
+      if (osLower.includes('mac') || osLower.includes('darwin')) {
+        latestVer = verMac.replace(/^v/, '');
+      } else if (osLower.includes('linux')) {
+        latestVer = verLinux.replace(/^v/, '');
+      } else {
+        latestVer = verWin.replace(/^v/, ''); // Windows par défaut
+      }
       if (devVer !== latestVer) {
         await supabase.from('devices').update({ outdated: true }).eq('id', dev.id);
+      } else {
+        await supabase.from('devices').update({ outdated: false }).eq('id', dev.id);
       }
     }
   }
