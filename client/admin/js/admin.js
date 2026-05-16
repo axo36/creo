@@ -692,13 +692,13 @@ async function setBanner() {
   const color=document.getElementById('banner-color')?.value||'var(--blue)';
   if(!text){uiToast('warning','Entre le texte de la bannière.');return;}
   const value=JSON.stringify({text,color,active:true,set_at:new Date().toISOString()});
-  await supabase.from('site_config').upsert({key:'banner',value}).eq('key','banner');
+  await supabase.from('site_config').upsert({key:'banner',value},{onConflict:'key'});
   uiToast('success','✓ Bannière activée — visible sur le client au prochain rechargement');
   await logAction('Bannière globale activée',text.slice(0,40));
 }
 
 async function clearBanner() {
-  await supabase.from('site_config').upsert({key:'banner',value:JSON.stringify({active:false})}).eq('key','banner');
+  await supabase.from('site_config').upsert({key:'banner',value:JSON.stringify({active:false})},{onConflict:'key'});
   uiToast('info','Bannière désactivée');
   const prev=document.getElementById('banner-preview');if(prev)prev.style.display='none';
 }
