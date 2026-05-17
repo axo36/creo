@@ -7,7 +7,8 @@ import { loadFiles, loadDevices, loadSharedFiles,
          loadSyncRules, loadSyncLog, setupRealtime }       from './data.js';
 import { checkDevice, addThisDevice, addOtherDevice,
          renameDevice, removeDevice, renderDevicesPage,
-         updateDeviceSelect }                             from './devices.js';
+         updateDeviceSelect, openDeviceInfo,
+         openExplorer, explorerConfirm }                 from './devices.js';
 import { startUpload, confirmSend, doUpload,
          renderActiveUploads, renderTransfersTable,
          updateTransfersStats, openShare, openShareForUpload,
@@ -36,6 +37,21 @@ window.creo = {
   toggleRule, deleteRule, redeemCode, redeemLink,
   upgradePlan,
   openUpgrade: () => { showPage('parametres', null); switchSettingsTab('st-avance'); },
+  // ── Info appareil + explorateur (admin)
+  openDeviceInfo,
+  _openExplorer: openExplorer,
+  _explorerConfirm: explorerConfirm,
+  _renameFromInfo: async (deviceId) => {
+    const inp = document.getElementById('di-rename-input');
+    const name = inp?.value?.trim();
+    if(!name) return;
+    await renameDevice(deviceId, name);
+    const el = document.getElementById('di-name-display');
+    if(el) el.textContent = name;
+    renderDevicesPage(); updateDeviceSelect();
+    const{uiToast}=await import('./utils.js');
+    uiToast('success', `✓ Renommé "${name}"`);
+  },
 };
 
 /* ── Messages de chargement ── */
