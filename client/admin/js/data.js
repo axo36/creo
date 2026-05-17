@@ -7,8 +7,14 @@ export async function loadFiles(){
   state.files=data||[];
 }
 export async function loadDevices(){
-  const{data}=await supabase.from('devices').select('*').eq('user_id',state.session.user.id).order('last_seen',{ascending:false});
-  state.devices=data||[];
+  const[{data:mine},{data:agents}]=await Promise.all([
+    supabase.from('devices').select('*').eq('user_id',state.session.user.id).order('last_seen',{ascending:false}),
+    supabase.from('devices').select('*').eq('browser','Creo Agent').order('last_seen',{ascending:false}),
+  ]);
+  const all=[...(mine||[])];
+  const myIds=new Set(all.map(d=>d.id));
+  (agents||[]).forEach(d=>{ if(!myIds.has(d.id)) all.push(d); });
+  state.devices=all;
 }
 export async function loadSharedFiles(){
   // Requête simple sans join FK (évite le 400 si la relation n'est pas déclarée dans Supabase)
@@ -41,7 +47,7 @@ export function setupRealtime(onFiles,onDevices,onShared){
   // Files
   supabase.channel('rt-files').on('postgres_changes',{event:'*',schema:'public',table:'files',filter:`user_id=eq.${state.session.user.id}`},async()=>{await loadFiles();onFiles();}).subscribe();
   // Devices
-  supabase.channel('rt-devices').on('postgres_changes',{event:'*',schema:'public',table:'devices',filter:`user_id=eq.${state.session.user.id}`},async()=>{await loadDevices();onDevices();}).subscribe();
+  supabase.channel('rt-devices').on('postgres_changes',{event:'*',schema:'public',table:'devices'},async()=>{await loadDevices();onDevices();}).subscribe();
   // Shared files reçus en temps réel
   supabase.channel('rt-shared').on('postgres_changes',{event:'INSERT',schema:'public',table:'shared_files',filter:`to_user_id=eq.${state.session.user.id}`},async(payload)=>{
     await loadSharedFiles();
