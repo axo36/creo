@@ -8,7 +8,7 @@ import { loadFiles, loadDevices, loadSharedFiles,
 import { checkDevice, addThisDevice, addOtherDevice,
          renameDevice, removeDevice, renderDevicesPage,
          updateDeviceSelect, openDeviceInfo,
-         openExplorer, explorerConfirm }                 from './devices.js';
+         openExplorer }                                  from './devices.js';
 import { startUpload, confirmSend, doUpload,
          renderActiveUploads, renderTransfersTable,
          updateTransfersStats, openShare, openShareForUpload,
@@ -40,7 +40,20 @@ window.creo = {
   // ── Info appareil + explorateur (admin)
   openDeviceInfo,
   _openExplorer: openExplorer,
-  _explorerConfirm: explorerConfirm,
+  _explorerConfirm: async () => {
+    const exp = window._creoExplorer;
+    if(!exp?.path || !exp?.deviceId) return;
+    await supabase.from('agent_commands').insert({
+      device_id: exp.deviceId,
+      type: 'set_download_path',
+      payload: { path: exp.path },
+      status: 'pending',
+    }).catch(()=>{});
+    document.getElementById('modal-explorer').style.display='none';
+    const pathEl = document.getElementById('di-path-display');
+    if(pathEl) pathEl.textContent = exp.path;
+    uiToast('success', `✓ Dossier défini : ${exp.path}`);
+  },
   _renameFromInfo: async (deviceId) => {
     const inp = document.getElementById('di-rename-input');
     const name = inp?.value?.trim();
