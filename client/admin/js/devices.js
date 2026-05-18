@@ -126,7 +126,7 @@ export function openDeviceInfo(deviceId){
       <div style="margin-bottom:1rem;">
         <div style="font-size:.7rem;color:var(--t3);margin-bottom:.4rem;font-family:'JetBrains Mono',monospace;">DOSSIER DE TÉLÉCHARGEMENT</div>
         <div id="di-path-display" style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--t2);background:var(--d3);border-radius:var(--r);padding:.5rem .8rem;margin-bottom:.4rem;min-height:1.4rem;">
-          Dossier par défaut : Downloads\\Creo
+          ${d.download_path || 'Dossier par défaut : Downloads\\Creo'}
         </div>
         <button onclick="window.creo._openExplorer('${d.id}')"
           style="width:100%;padding:.5rem 1rem;background:rgba(26,111,255,.08);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-lg);color:var(--blue2);font-size:.8rem;cursor:pointer;text-align:left;">
@@ -300,15 +300,22 @@ export async function explorerConfirm(){
   const exp = window._creoExplorer;
   if(!exp?.path || !exp?.deviceId) return;
 
-  const{data:cmd} = await supabase.from('agent_commands').insert({
+  // Envoyer la commande à l'agent
+  await supabase.from('agent_commands').insert({
     device_id: exp.deviceId,
     type: 'set_download_path',
     payload: { path: exp.path },
     status: 'pending',
-  }).select().single().catch(()=>({data:null}));
+  }).catch(()=>{});
+
+  // Sauvegarder le chemin sur la ligne de l'appareil
+  await supabase.from('devices').update({ download_path: exp.path }).eq('id', exp.deviceId).catch(()=>{});
+
+  // Mettre à jour l'état local
+  const d = (await import('./state.js')).state.devices.find(x=>x.id===exp.deviceId);
+  if(d) d.download_path = exp.path;
 
   document.getElementById('modal-explorer').style.display='none';
-
   const pathEl = document.getElementById('di-path-display');
   if(pathEl) pathEl.textContent = exp.path;
   uiToast('success', `✓ Dossier défini : ${exp.path}`);
