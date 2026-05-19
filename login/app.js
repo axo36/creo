@@ -8,7 +8,7 @@ const URL  = "https://mpnfvrizbluhhjcfzztc.supabase.co";
 const KEY  = "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr";
 
 const _public  = createClient(URL, KEY, { db: { schema: 'public' } });
-const _auth    = createClient(URL, KEY, { db: { schema: '-Utilisateurs_Auth' } });
+const _auth    = createClient(URL, KEY, { db: { schema: '_Utilisateurs_Auth' } });
 
 const SCHEMA_MAP = {
   profiles:           _auth,
