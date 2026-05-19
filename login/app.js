@@ -3,11 +3,28 @@
 ══════════════════════════════════════════ */
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-/* ── SUPABASE ──────────────────────────── */
-export const supabase = createClient(
-  "https://mpnfvrizbluhhjcfzztc.supabase.co",
-  "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
-);
+/* ── SUPABASE — clients par schema ──────── */
+const URL  = "https://mpnfvrizbluhhjcfzztc.supabase.co";
+const KEY  = "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr";
+
+const _public  = createClient(URL, KEY, { db: { schema: 'public' } });
+const _auth    = createClient(URL, KEY, { db: { schema: '-Utilisateurs_Auth' } });
+
+const SCHEMA_MAP = {
+  profiles:           _auth,
+  email_verification: _auth,
+  temp_codes:         _auth,
+};
+
+export const supabase = new Proxy(_public, {
+  get(target, prop) {
+    if (prop === 'from') return (table) => (SCHEMA_MAP[table] ?? _public).from(table);
+    if (prop === 'auth')    return _public.auth;
+    if (prop === 'storage') return _public.storage;
+    if (prop === 'channel') return (...a) => _public.channel(...a);
+    return typeof target[prop] === 'function' ? target[prop].bind(target) : target[prop];
+  }
+});
 
 function getBase() {
   const p = window.location.pathname;
