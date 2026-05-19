@@ -3,120 +3,34 @@
 ══════════════════════════════════════════ */
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-/* ── SUPABASE — clients par schema ──────── */
-const URL  = "https://mpnfvrizbluhhjcfzztc.supabase.co";
-const KEY  = "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr";
+/* ── SUPABASE ──────────────────────────── */
+const SUPABASE_URL = "https://mpnfvrizbluhhjcfzztc.supabase.co";
+const SUPABASE_KEY = "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr";
 
-const _public  = createClient(URL, KEY, { db: { schema: 'public' } });
-const _auth    = createClient(URL, KEY, { db: { schema: '_Utilisateurs_Auth' } });
+const _client = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const SCHEMA_MAP = {
-  profiles:           _auth,
-  email_verification: _auth,
-  temp_codes:         _auth,
+  profiles:           '_Utilisateurs_Auth',
+  email_verification: '_Utilisateurs_Auth',
+  temp_codes:         '_Utilisateurs_Auth',
+  site_visits:        '_Application_Analytics',
+  site_config:        '_Application_Analytics',
+  app_downloads:      '_Application_Analytics',
 };
 
-export const supabase = new Proxy(_public, {
+export const supabase = new Proxy(_client, {
   get(target, prop) {
-    if (prop === 'from') return (table) => (SCHEMA_MAP[table] ?? _public).from(table);
-    if (prop === 'auth')    return _public.auth;
-    if (prop === 'storage') return _public.storage;
-    if (prop === 'channel') return (...a) => _public.channel(...a);
-    return typeof target[prop] === 'function' ? target[prop].bind(target) : target[prop];
+    if (prop === 'from') {
+      return (table) => {
+        const schema = SCHEMA_MAP[table];
+        if (schema) return target.schema(schema).from(table);
+        return target.from(table);
+      };
+    }
+    const val = target[prop];
+    return typeof val === 'function' ? val.bind(target) : val;
   }
 });
-
-function getBase() {
-  const p = window.location.pathname;
-  return window.location.origin + p.substring(0, p.lastIndexOf('/') + 1);
-}
-
-/* ── AUTH ──────────────────────────────── */
-export async function getSession() {
-  const { data } = await supabase.auth.getSession();
-  return data.session ?? null;
-}
-export async function requireAuth() {
-  const s = await getSession();
-  if (!s) { window.location.href = '../login/login.html'; return null; }
-  return s;
-}
-export async function redirectIfAuth() {
-  const s = await getSession();
-  if (s) await redirectByRole(s);
-}
-
-/* ── Routage selon le rôle du profil ─────────────────────────── */
-export async function redirectByRole(session) {
-  if (!session) return;
-  const { data: profile } = await supabase
-    .from('profiles').select('type').eq('id', session.user.id).single();
-  const role = profile?.type?.toLowerCase() || 'free';
-  if (role === 'admin' || role === 'sous-admin') {
-    window.location.href = '/creo/client/admin/admin.html';
-  } else {
-    window.location.href = '/creo/client/public/client.html';
-  }
-}
-export async function signOut() {
-  await supabase.auth.signOut();
-  window.location.href = '/creo/login/login.html';
-}
-export function getDisplayName(s) {
-  if (!s) return 'Invité';
-  const m = s.user.user_metadata;
-  return m?.full_name || m?.name || s.user.email?.split('@')[0] || 'Utilisateur';
-}
-export function getInitials(s) {
-  return getDisplayName(s).split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-}
-export function getAvatar(s) {
-  return s?.user?.user_metadata?.avatar_url ?? null;
-}
-
-/* ── OAUTH ─────────────────────────────── */
-export async function oauthLogin(provider) {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: { redirectTo: getBase() + 'oauth-callback.html' }
-  });
-  if (error) toast(error.message, 'error');
-}
-
-/* ── LOGIN (email ou pseudo) ───────────── */
-export async function emailLogin(emailOrUsername, password) {
-  let email = emailOrUsername.trim();
-
-  if (!email.includes('@')) {
-    const { data: p } = await supabase
-      .from('profiles').select('email')
-      .eq('username', email.toLowerCase()).single();
-    if (!p) return 'Pseudo ou mot de passe incorrect.';
-    email = p.email;
-  }
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) {
-    const m = error.message;
-    if (m.includes('Invalid login credentials')) return 'Email/pseudo ou mot de passe incorrect.';
-    if (m.includes('Email not confirmed'))       return 'Confirmez votre email avant de vous connecter.';
-    return 'Connexion impossible. Réessayez.';
-  }
-  return null;
-}
-
-/* ── SIGNUP ────────────────────────────── */
-export async function emailSignup(email, password, fullName) {
-  const firstName = fullName.trim().split(' ')[0] || '';
-  const lastName  = fullName.trim().split(' ').slice(1).join(' ') || '';
-
-  const { data, error } = await supabase.auth.signUp({
-    email, password,
-    options: {
-      emailRedirectTo: getBase() + 'email-confirmed.html',
-      data: { full_name: fullName, first_name: firstName, last_name: lastName }
-    }
-  });
 
   if (error) return { error: error.message };
   const user = data.user;
