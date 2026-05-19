@@ -630,16 +630,26 @@ async function remoteBrowse(deviceId, browsePath) {
   // Breadcrumb
   if (crumbEl) {
     if (result.current) {
-      const parts = result.current.split(/[\/]/).filter(Boolean);
+      // Normalise les séparateurs pour affichage et navigation
+      const normalized = result.current.replace(/\//g, '\\');
+      const parts = normalized.split('\\').filter(Boolean);
       let built = '';
-      crumbEl.innerHTML = parts.map((p, i) => {
-        built += (i === 0 ? p + '\\' : p + '\\');
-        const capPath = built.replace(/\\$/, '');
-        return `<span style="cursor:pointer;color:var(--blue2);" onclick="remoteBrowse('${deviceId}','${capPath.replace(/\//g, '\\\\')}')">${p}</span> \\`;
-      }).join(' ');
+      crumbEl.innerHTML = '<span style="cursor:pointer;color:var(--blue2);" data-nav-path="">🏠</span> \\ ' +
+        parts.map((p, i) => {
+          built += (i === 0 ? p + '\\' : p + '\\');
+          const capPath = built.replace(/\\$/, '');
+          return `<span style="cursor:pointer;color:var(--blue2);" data-nav-path="${capPath.replace(/"/g, '&quot;')}">${p}</span>`;
+        }).join(' \\ ');
     } else {
       crumbEl.textContent = 'Lecteurs';
     }
+    // Délégation d'événements — pas de chemins injectés dans onclick
+    crumbEl.onclick = (e) => {
+      const span = e.target.closest('[data-nav-path]');
+      if (!span) return;
+      const p = span.getAttribute('data-nav-path');
+      remoteBrowse(deviceId, p || null);
+    };
   }
 
   // Liste dossiers + lecteurs
@@ -661,21 +671,32 @@ async function remoteBrowse(deviceId, browsePath) {
   }
 
   if (listEl) {
+    // FIX NAVIGATION: on stocke le chemin dans data-path (encodé HTML) au lieu de
+    // l'injecter brut dans un onclick="" — les backslashes Windows cassaient le JS inline.
     listEl.innerHTML = items.map(item => `
-      <div onclick="remoteBrowse('${deviceId}', '${item.path.replace(/\//g, '\\\\')}')"
+      <div data-nav-path="${item.path.replace(/"/g, '&quot;')}"
         style="display:flex;align-items:center;gap:8px;padding:.5rem .9rem;cursor:pointer;transition:background .15s;font-size:.8rem;color:var(--t1);"
         onmouseover="this.style.background='var(--d4)'" onmouseout="this.style.background='transparent'">
         <span style="font-size:1rem;">${item.isDrive ? '💾' : '📁'}</span>
         <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;">${item.name}</span>
       </div>
     `).join('');
+    // Délégation d'événements — un seul listener propre
+    listEl.onclick = (e) => {
+      const div = e.target.closest('[data-nav-path]');
+      if (!div) return;
+      remoteBrowse(deviceId, div.getAttribute('data-nav-path'));
+    };
   }
 
   // Bouton parent
   const parentBtn = document.getElementById('btn-go-parent');
   if (parentBtn) {
-    parentBtn.style.display = result.parent ? 'inline-flex' : 'none';
-    parentBtn.onclick = () => remoteBrowse(deviceId, result.parent);
+    // result.parent peut être null si on est à la racine d'un lecteur (ex: C:\)
+    // dans ce cas on remonte à la liste des lecteurs (null)
+    const parentPath = result.parent && result.parent !== result.current ? result.parent : null;
+    parentBtn.style.display = (result.current) ? 'inline-flex' : 'none';
+    parentBtn.onclick = () => remoteBrowse(deviceId, parentPath);
   }
 }
 
