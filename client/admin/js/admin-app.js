@@ -585,9 +585,11 @@ async function remoteBrowse(deviceId, browsePath) {
   if (listEl) listEl.innerHTML = '<div style="text-align:center;padding:1.2rem;font-family:monospace;font-size:.7rem;color:var(--t3);">Chargement...</div>';
 
   // Insérer la commande dans agent_commands
+  // NOTE: on utilise toujours le type 'browse' — l'agent gère browse avec path=null
+  // pour retourner les lecteurs disponibles (racine). 'get_drives' n'est pas géré par l'agent.
   const { data: cmd, error } = await supabase.from('agent_commands').insert({
     device_id: deviceId,
-    type: browsePath ? 'browse' : 'get_drives',
+    type: 'browse',
     payload: browsePath ? { path: browsePath } : {},
     status: 'pending',
     created_at: new Date().toISOString(),
@@ -610,7 +612,9 @@ async function remoteBrowse(deviceId, browsePath) {
   }
 
   // Nettoyer la commande
-  await supabase.from('agent_commands').delete().eq('id', cmd.id).catch(() => {});
+  // FIX: le client Supabase JS v2 retourne un PromiseLike qui ne supporte pas .catch()
+  // directement chaîné — utiliser try/catch à la place.
+  try { await supabase.from('agent_commands').delete().eq('id', cmd.id); } catch { /* silence */ }
 
   if (!result) {
     if (listEl) listEl.innerHTML = `<div style="color:var(--amber);padding:1rem;font-size:.75rem;text-align:center;">L'agent n'a pas répondu.<br>Vérifie qu'il est en ligne.</div>`;
