@@ -4,33 +4,10 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 /* ── SUPABASE ──────────────────────────── */
-const _client = createClient(
+export const supabase = createClient(
   "https://mpnfvrizbluhhjcfzztc.supabase.co",
   "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
 );
-
-const SCHEMA_MAP = {
-  profiles:           '_Utilisateurs_Auth',
-  email_verification: '_Utilisateurs_Auth',
-  temp_codes:         '_Utilisateurs_Auth',
-  site_visits:        '_Application_Analytics',
-  site_config:        '_Application_Analytics',
-  app_downloads:      '_Application_Analytics',
-};
-
-export const supabase = new Proxy(_client, {
-  get(target, prop) {
-    if (prop === 'from') {
-      return (table) => {
-        const schema = SCHEMA_MAP[table];
-        if (schema) return target.schema(schema).from(table);
-        return target.from(table);
-      };
-    }
-    const val = target[prop];
-    return typeof val === 'function' ? val.bind(target) : val;
-  }
-});
 
 function getBase() {
   const p = window.location.pathname;
@@ -56,7 +33,7 @@ export async function redirectIfAuth() {
 export async function redirectByRole(session) {
   if (!session) return;
   const { data: profile } = await supabase
-    .schema('_Utilisateurs_Auth').from('profiles').select('type').eq('id', session.user.id).single();
+    .from('profiles').select('type').eq('id', session.user.id).single();
   const role = profile?.type?.toLowerCase() || 'free';
   if (role === 'admin' || role === 'sous-admin') {
     window.location.href = '/creo/client/admin/admin.html';
@@ -95,7 +72,7 @@ export async function emailLogin(emailOrUsername, password) {
 
   if (!email.includes('@')) {
     const { data: p } = await supabase
-      .schema('_Utilisateurs_Auth').from('profiles').select('email')
+      .from('profiles').select('email')
       .eq('username', email.toLowerCase()).single();
     if (!p) return 'Pseudo ou mot de passe incorrect.';
     email = p.email;
@@ -128,7 +105,7 @@ export async function emailSignup(email, password, fullName) {
   const user = data.user;
   if (!user) return { error: 'Erreur lors de la création du compte.' };
 
-  await supabase.schema('_Utilisateurs_Auth').from('profiles').upsert({
+  await supabase.from('profiles').upsert({
     id: user.id,
     email,
     email_verified: false,
@@ -144,14 +121,14 @@ export async function emailSignup(email, password, fullName) {
 
 /* ── CODE TEMP 4 CHARS ─────────────────── */
 export async function generateTempCode(userId) {
-  await supabase.schema('_Utilisateurs_Auth').from('temp_codes').delete().eq('user_id', userId);
+  await supabase.from('temp_codes').delete().eq('user_id', userId);
   let code, exists = true;
   while (exists) {
     code = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const { data } = await supabase.schema('_Utilisateurs_Auth').from('temp_codes').select('code').eq('code', code).maybeSingle();
+    const { data } = await supabase.from('temp_codes').select('code').eq('code', code).maybeSingle();
     exists = !!data;
   }
-  await supabase.schema('_Utilisateurs_Auth').from('temp_codes').insert({ code, user_id: userId });
+  await supabase.from('temp_codes').insert({ code, user_id: userId });
   return code;
 }
 
