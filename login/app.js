@@ -56,7 +56,7 @@ export async function redirectIfAuth() {
 export async function redirectByRole(session) {
   if (!session) return;
   const { data: profile } = await supabase
-    .from('profiles').select('type').eq('id', session.user.id).single();
+    .schema('_Utilisateurs_Auth').from('profiles').select('type').eq('id', session.user.id).single();
   const role = profile?.type?.toLowerCase() || 'free';
   if (role === 'admin' || role === 'sous-admin') {
     window.location.href = '/creo/client/admin/admin.html';
@@ -95,7 +95,7 @@ export async function emailLogin(emailOrUsername, password) {
 
   if (!email.includes('@')) {
     const { data: p } = await supabase
-      .from('profiles').select('email')
+      .schema('_Utilisateurs_Auth').from('profiles').select('email')
       .eq('username', email.toLowerCase()).single();
     if (!p) return 'Pseudo ou mot de passe incorrect.';
     email = p.email;
@@ -128,7 +128,7 @@ export async function emailSignup(email, password, fullName) {
   const user = data.user;
   if (!user) return { error: 'Erreur lors de la création du compte.' };
 
-  await supabase.from('profiles').upsert({
+  await supabase.schema('_Utilisateurs_Auth').from('profiles').upsert({
     id: user.id,
     email,
     email_verified: false,
@@ -144,14 +144,14 @@ export async function emailSignup(email, password, fullName) {
 
 /* ── CODE TEMP 4 CHARS ─────────────────── */
 export async function generateTempCode(userId) {
-  await supabase.from('temp_codes').delete().eq('user_id', userId);
+  await supabase.schema('_Utilisateurs_Auth').from('temp_codes').delete().eq('user_id', userId);
   let code, exists = true;
   while (exists) {
     code = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const { data } = await supabase.from('temp_codes').select('code').eq('code', code).maybeSingle();
+    const { data } = await supabase.schema('_Utilisateurs_Auth').from('temp_codes').select('code').eq('code', code).maybeSingle();
     exists = !!data;
   }
-  await supabase.from('temp_codes').insert({ code, user_id: userId });
+  await supabase.schema('_Utilisateurs_Auth').from('temp_codes').insert({ code, user_id: userId });
   return code;
 }
 
