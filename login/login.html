@@ -177,6 +177,18 @@ async function startPolling(userId) {
 
     if (data?.email_verified) {
       stopPolling();
+
+      // Vérifier si une session est déjà active (email-confirmed.html ne sign out plus)
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session && session.user.id === userId) {
+        // Session active → générer un code et rediriger directement
+        const code = await generateTempCode(userId);
+        toast('Email confirmé ! Redirection…', 'success');
+        setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
+        return;
+      }
+
+      // Pas de session active → tenter un login classique
       const { error: loginErr } = await supabase.auth.signInWithPassword({
         email: savedEmail, password: savedPass
       });
