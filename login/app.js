@@ -5,8 +5,8 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 /* ── SUPABASE ──────────────────────────── */
 export const supabase = createClient(
-  "https://jlefealonvkznfwtajxl.supabase.co",
-  "sb_publishable_Fb4k32LO7Y8YgWQXAhJzzw_gLbwWgLe"
+  "https://mpnfvrizbluhhjcfzztc.supabase.co",
+  "sb_publishable_PMOkki7SEbuv11glUpmNTQ_7KTnMrEr"
 );
 
 function getBase() {
