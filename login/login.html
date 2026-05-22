@@ -151,7 +151,7 @@ document.getElementById('btn-login').addEventListener('click', async () => {
   const { data: { session } } = await supabase.auth.getSession();
   const { data: profile } = await supabase
     .from('profiles').select('username, client_code, type')
-    .eq('id', session.user.id).single();
+    .eq('id', session.user.id).maybeSingle();
 
   if (!profile?.username || !profile?.client_code || !profile?.type) {
     const code = await generateTempCode(session.user.id);
@@ -172,44 +172,23 @@ function stopPolling() {
 }
 
 async function checkConfirmed(userId) {
-  // Ne pas interroger si l'onglet est caché (économise le quota Supabase)
   if (document.hidden) return;
 
-  const { data, error } = await supabase
-    .from('profiles').select('email_verified').eq('id', userId).single();
+  // Tenter un login silencieux pour voir si l'email est confirmé
+  const { error: loginErr } = await supabase.auth.signInWithPassword({
+    email: savedEmail, password: savedPass
+  });
 
-  // Ignorer les erreurs réseau passagères
-  if (error) return;
+  if (loginErr) return; // pas encore confirmé
 
-  if (data?.email_verified) {
-    stopPolling();
+  // Login réussi = email confirmé
+  stopPolling();
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
 
-    // Vérifier si une session est déjà active (email-confirmed.html ne sign out plus)
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user.id === userId) {
-      // Session active → générer un code et rediriger directement
-      const code = await generateTempCode(userId);
-      toast('Email confirmé ! Redirection…', 'success');
-      setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
-      return;
-    }
-
-    // Pas de session active → tenter un login classique
-    const { error: loginErr } = await supabase.auth.signInWithPassword({
-      email: savedEmail, password: savedPass
-    });
-    if (loginErr) {
-      confirmBox.innerHTML = `
-        <div class="confirm-icon">✅</div>
-        <div class="confirm-title">Email confirmé !</div>
-        <p class="confirm-text">Connectez-vous pour finaliser votre profil.</p>
-        <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="location.reload()">Se connecter →</button>`;
-      return;
-    }
-    const code = await generateTempCode(userId);
-    toast('Email confirmé ! Redirection…', 'success');
-    setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
-  }
+  const code = await generateTempCode(session.user.id);
+  toast('Email confirmé ! Redirection…', 'success');
+  setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
 }
 
 async function startPolling(userId) {

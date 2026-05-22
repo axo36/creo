@@ -33,7 +33,7 @@ export async function redirectIfAuth() {
 export async function redirectByRole(session) {
   if (!session) return;
   const { data: profile } = await supabase
-    .from('profiles').select('type').eq('id', session.user.id).single();
+    .from('profiles').select('type').eq('id', session.user.id).maybeSingle();
   const role = profile?.type?.toLowerCase() || 'free';
   if (role === 'admin' || role === 'sous-admin') {
     window.location.href = '/creo/client/admin/admin.html';
@@ -73,7 +73,7 @@ export async function emailLogin(emailOrUsername, password) {
   if (!email.includes('@')) {
     const { data: p } = await supabase
       .from('profiles').select('email')
-      .eq('username', email.toLowerCase()).single();
+      .eq('username', email.toLowerCase()).maybeSingle();
     if (!p) return 'Pseudo ou mot de passe incorrect.';
     email = p.email;
   }
@@ -105,16 +105,8 @@ export async function emailSignup(email, password, fullName) {
   const user = data.user;
   if (!user) return { error: 'Erreur lors de la création du compte.' };
 
-  await supabase.from('profiles').upsert({
-    id: user.id,
-    email,
-    email_verified: false,
-    first_name: firstName || null,
-    last_name: lastName || null,
-    // Ne pas insérer client_code / type / username ici — ces champs
-    // sont définis dans complete-profile.html. Les laisser NULL évite
-    // tout 500 causé par des contraintes ou triggers sur ces colonnes.
-  }, { onConflict: 'id' });
+  // On n'insère PAS dans profiles ici — Supabase n'a pas encore de session active
+  // Le profil sera créé dans complete-profile.html après confirmation email
 
   return { needsConfirm: true, userId: user.id };
 }
