@@ -202,7 +202,7 @@ async function init() {
       .from("temp_codes")
       .select("user_id, created_at")
       .eq("code", tempCode)
-      .single();
+      .maybeSingle();
 
     if (error || !row) {
       document.getElementById("error-msg").textContent =
@@ -233,7 +233,7 @@ async function init() {
 
   // Vérifier si profil déjà complet
   const { data: profile } = await supabase
-    .from("profiles").select("*").eq("id", currentUser.id).single();
+    .from("profiles").select("*").eq("id", currentUser.id).maybeSingle();
 
   if (profile?.username && profile?.client_code && profile?.type) {
     const { data: { session } } = await supabase.auth.getSession();
