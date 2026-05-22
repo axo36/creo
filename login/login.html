@@ -163,51 +163,72 @@ document.getElementById('btn-login').addEventListener('click', async () => {
 
 /* ── SIGNUP ── */
 let pollInterval = null;
+let pollRunning  = false;   // garde-fou anti-doublon
 let savedEmail = '', savedPass = '';
 
 function stopPolling() {
   if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+  pollRunning = false;
 }
 
-async function startPolling(userId) {
-  stopPolling();
-  pollInterval = setInterval(async () => {
-    const { data } = await supabase
-      .from('profiles').select('email_verified').eq('id', userId).single();
+async function checkConfirmed(userId) {
+  // Ne pas interroger si l'onglet est caché (économise le quota Supabase)
+  if (document.hidden) return;
 
-    if (data?.email_verified) {
-      stopPolling();
+  const { data, error } = await supabase
+    .from('profiles').select('email_verified').eq('id', userId).single();
 
-      // Vérifier si une session est déjà active (email-confirmed.html ne sign out plus)
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && session.user.id === userId) {
-        // Session active → générer un code et rediriger directement
-        const code = await generateTempCode(userId);
-        toast('Email confirmé ! Redirection…', 'success');
-        setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
-        return;
-      }
+  // Ignorer les erreurs réseau passagères
+  if (error) return;
 
-      // Pas de session active → tenter un login classique
-      const { error: loginErr } = await supabase.auth.signInWithPassword({
-        email: savedEmail, password: savedPass
-      });
-      if (loginErr) {
-        confirmBox.innerHTML = `
-          <div class="confirm-icon">✅</div>
-          <div class="confirm-title">Email confirmé !</div>
-          <p class="confirm-text">Connectez-vous pour finaliser votre profil.</p>
-          <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="location.reload()">Se connecter →</button>`;
-        return;
-      }
+  if (data?.email_verified) {
+    stopPolling();
+
+    // Vérifier si une session est déjà active (email-confirmed.html ne sign out plus)
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.user.id === userId) {
+      // Session active → générer un code et rediriger directement
       const code = await generateTempCode(userId);
       toast('Email confirmé ! Redirection…', 'success');
       setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
+      return;
     }
-  }, 3000);
+
+    // Pas de session active → tenter un login classique
+    const { error: loginErr } = await supabase.auth.signInWithPassword({
+      email: savedEmail, password: savedPass
+    });
+    if (loginErr) {
+      confirmBox.innerHTML = `
+        <div class="confirm-icon">✅</div>
+        <div class="confirm-title">Email confirmé !</div>
+        <p class="confirm-text">Connectez-vous pour finaliser votre profil.</p>
+        <button class="btn btn-primary btn-full" style="margin-top:1.5rem;" onclick="location.reload()">Se connecter →</button>`;
+      return;
+    }
+    const code = await generateTempCode(userId);
+    toast('Email confirmé ! Redirection…', 'success');
+    setTimeout(() => { window.location.href = 'complete-profile.html?code=' + code; }, 600);
+  }
 }
 
+async function startPolling(userId) {
+  stopPolling();                    // annule tout intervalle précédent
+  if (pollRunning) return;          // sécurité anti-doublon
+  pollRunning = true;
+
+  // Premier check immédiat (sans attendre 8 s)
+  await checkConfirmed(userId);
+  if (!pollRunning) return;         // déjà redirigé
+
+  // Puis toutes les 8 secondes (au lieu de 3 s) → ~4× moins de requêtes
+  pollInterval = setInterval(() => checkConfirmed(userId), 8000);
+}
+
+let signupPending = false;
 document.getElementById('btn-signup').addEventListener('click', async () => {
+  if (signupPending) return;        // évite les doubles-clics
+
   const btn       = document.getElementById('btn-signup');
   const firstname = document.getElementById('signup-firstname').value.trim();
   const lastname  = document.getElementById('signup-lastname').value.trim();
@@ -222,9 +243,11 @@ document.getElementById('btn-signup').addEventListener('click', async () => {
   if (pass !== pass2)
     return toast('Les mots de passe ne correspondent pas.', 'error');
 
+  signupPending = true;
   setLoading(btn, true);
   const res = await emailSignup(email, pass, firstname + ' ' + lastname);
   setLoading(btn, false);
+  signupPending = false;
 
   if (res.error) return toast(res.error, 'error');
 
