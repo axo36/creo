@@ -131,14 +131,16 @@ function _renderSendPanel() {
         `}
       </div>
 
-      <!-- Colonne droite : envoi fichier -->
-      <div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.8rem;">
+      <!-- Colonne droite : envoi + options -->
+      <div style="display:flex;flex-direction:column;gap:.75rem;">
+
+        <!-- Header -->
+        <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;">
           // Fichier à envoyer
         </div>
 
         <!-- Appareil sélectionné -->
-        <div id="sel-dev-info" style="display:none;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.25);border-radius:var(--r-lg);padding:.7rem 1rem;margin-bottom:.8rem;">
+        <div id="sel-dev-info" style="display:none;background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.25);border-radius:var(--r-lg);padding:.7rem 1rem;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--blue2);text-transform:uppercase;margin-bottom:2px;">Appareil sélectionné</div>
           <div style="display:flex;align-items:center;gap:8px;">
             <span id="sel-dev-icon" style="font-size:1.1rem;">🖥️</span>
@@ -150,29 +152,29 @@ function _renderSendPanel() {
         </div>
 
         <!-- Avertissement si pas de sélection -->
-        <div id="sel-dev-warn" style="background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.2);border-radius:var(--r-lg);padding:.65rem 1rem;margin-bottom:.8rem;">
+        <div id="sel-dev-warn" style="background:rgba(255,184,0,.04);border:1px solid rgba(255,184,0,.2);border-radius:var(--r-lg);padding:.65rem 1rem;">
           <div style="font-size:.78rem;color:var(--amber);">← Sélectionne d'abord un appareil</div>
         </div>
 
         <!-- Drop zone -->
         <input type="file" id="agent-file-input" multiple style="display:none;">
         <div id="agent-drop-zone"
-          style="border:2px dashed var(--b3);border-radius:var(--r-xl);padding:2rem 1.5rem;
+          style="border:2px dashed var(--b3);border-radius:var(--r-xl);padding:1.5rem 1.5rem;
                  text-align:center;transition:all .2s;background:var(--d2);
                  opacity:.4;pointer-events:none;">
-          <div style="font-size:2rem;margin-bottom:.6rem;">📁</div>
-          <div style="font-size:.88rem;color:var(--t1);margin-bottom:.3rem;">Glisse tes fichiers ici</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);">ou clique pour choisir · Tous formats</div>
+          <div style="font-size:1.8rem;margin-bottom:.5rem;">📁</div>
+          <div style="font-size:.85rem;color:var(--t1);margin-bottom:.25rem;">Glisse tes fichiers ici</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);">ou clique pour choisir · Tous formats</div>
         </div>
 
         <!-- Dossier de destination -->
-        <div id="agent-dest-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
+        <div id="agent-dest-zone" style="opacity:.4;pointer-events:none;transition:opacity .2s;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem;">
-            // Dossier de destination sur l'appareil
+            // Destination sur l'appareil
           </div>
           <div style="display:flex;gap:6px;align-items:center;">
             <input type="text" id="agent-dest-path"
-              placeholder="C:\Users\Utilisateur\Downloads\Creo"
+              placeholder="C:\Users\...\Downloads\Creo"
               style="flex:1;background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);
                      padding:.5rem .8rem;color:var(--t1);font-size:.78rem;outline:none;
                      font-family:'JetBrains Mono',monospace;transition:border-color .2s;"
@@ -185,12 +187,11 @@ function _renderSendPanel() {
           <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);margin-top:.3rem;">
             Laisser vide = dossier par défaut (Downloads\Creo)
           </div>
-
-          <!-- Explorateur de dossiers du PC distant -->
+          <!-- Explorateur distant -->
           <div id="remote-browser" style="display:none;margin-top:.6rem;background:var(--d3);border:1px solid rgba(26,111,255,.25);border-radius:var(--r-lg);overflow:hidden;">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem .8rem;border-bottom:1px solid var(--b1);background:var(--d4);">
               <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--blue2);">EXPLORATEUR — PC DISTANT</div>
-              <button onclick="document.getElementById('remote-browser').style.display='none';" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:.85rem;padding:2px 6px;">X</button>
+              <button onclick="document.getElementById('remote-browser').style.display='none';" style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:.85rem;padding:2px 6px;">✕</button>
             </div>
             <div id="remote-breadcrumb" style="padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--blue2);border-bottom:1px solid var(--b1);min-height:28px;"></div>
             <div id="remote-folder-list" style="max-height:220px;overflow-y:auto;padding:.3rem 0;">
@@ -203,36 +204,119 @@ function _renderSendPanel() {
           </div>
         </div>
 
-        <!-- Case : Lancer automatiquement (cochée par défaut) -->
-        <div id="agent-launch-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
-          <div style="background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-lg);padding:.65rem .9rem;">
-            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
-              <input type="checkbox" id="agent-launch-cb" checked
-                style="width:16px;height:16px;accent-color:var(--blue);flex-shrink:0;margin-top:2px;">
-              <div>
-                <div style="font-size:.83rem;color:var(--t1);font-weight:500;">🚀 Lancer automatiquement</div>
-                <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:3px;line-height:1.5;">
-                  Le fichier s'ouvre dès réception sur l'appareil distant.<br>
-                  Pour un dossier ou une archive : tu choisiras quel fichier lancer.
+        <!-- ══════════════════════════════════════════════
+             BLOC LANCEMENT — s'anime à l'apparition
+        ══════════════════════════════════════════════ -->
+        <div id="agent-launch-zone"
+          style="opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;transform:translateY(8px);">
+
+          <!-- Séparateur titré -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:.7rem;">
+            <div style="height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--b3));"></div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);
+                          text-transform:uppercase;letter-spacing:.1em;white-space:nowrap;">
+              ▶ Lancement automatique
+            </span>
+            <div style="height:1px;flex:1;background:linear-gradient(90deg,var(--b3),transparent);"></div>
+          </div>
+
+          <!-- Card toggle -->
+          <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-xl);
+                       overflow:hidden;">
+
+            <!-- Ligne toggle -->
+            <div style="display:flex;align-items:center;justify-content:space-between;
+                         padding:.9rem 1rem;gap:14px;">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:.85rem;color:var(--t1);font-weight:600;margin-bottom:3px;
+                             display:flex;align-items:center;gap:7px;">
+                  <span style="font-size:1rem;">🚀</span> Lancer après réception
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);line-height:1.5;">
+                  Ouvre automatiquement le fichier choisi sur l'appareil distant
                 </div>
               </div>
-            </label>
-          </div>
-        </div>
+
+              <!-- Toggle switch pill -->
+              <label style="position:relative;flex-shrink:0;width:48px;height:26px;cursor:pointer;display:block;">
+                <input type="checkbox" id="agent-launch-cb" checked
+                  style="opacity:0;width:0;height:0;position:absolute;"
+                  onchange="(function(cb){
+                    const on  = cb.checked;
+                    const track = document.getElementById('ltTrack');
+                    const thumb = document.getElementById('ltThumb');
+                    const sel   = document.getElementById('launch-file-selector');
+                    track.style.background   = on ? 'var(--blue)' : 'var(--d5)';
+                    track.style.borderColor  = on ? 'rgba(26,111,255,.5)' : 'var(--b3)';
+                    thumb.style.transform    = on ? 'translateX(22px)' : 'translateX(0px)';
+                    thumb.style.background   = on ? '#fff' : 'var(--t3)';
+                    if(sel) sel.style.display = on ? 'block' : 'none';
+                  })(this)">
+                <div id="ltTrack"
+                  style="position:absolute;inset:0;border-radius:99px;
+                         background:var(--blue);border:1px solid rgba(26,111,255,.5);
+                         transition:background .22s,border-color .22s;"></div>
+                <div id="ltThumb"
+                  style="position:absolute;top:4px;left:4px;
+                         width:16px;height:16px;border-radius:50%;
+                         background:#fff;
+                         box-shadow:0 1px 5px rgba(0,0,0,.4);
+                         transition:transform .22s,background .22s;
+                         transform:translateX(22px);"></div>
+              </label>
+            </div>
+
+            <!-- Sélecteur de fichier à lancer (inline, visible par défaut car toggle ON) -->
+            <div id="launch-file-selector"
+              style="border-top:1px solid var(--b1);">
+
+              <!-- Header sélecteur -->
+              <div style="display:flex;align-items:center;gap:8px;padding:.55rem 1rem;
+                           background:var(--d4);">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;
+                              color:var(--t3);text-transform:uppercase;letter-spacing:.08em;flex:1;">
+                  Choisir le fichier à lancer
+                </span>
+                <span id="launch-sel-count"
+                  style="font-family:'JetBrains Mono',monospace;font-size:.57rem;
+                         color:var(--blue2);background:rgba(26,111,255,.12);
+                         padding:1px 8px;border-radius:99px;border:1px solid rgba(26,111,255,.2);">
+                  aucun
+                </span>
+              </div>
+
+              <!-- Liste des fichiers (peuplée par JS) -->
+              <div id="launch-file-list"
+                style="padding:.4rem .5rem;display:flex;flex-direction:column;gap:3px;max-height:180px;overflow-y:auto;">
+                <div id="launch-empty-hint"
+                  style="text-align:center;padding:.8rem;font-family:'JetBrains Mono',monospace;
+                         font-size:.65rem;color:var(--t3);">
+                  Ajoute des fichiers ci-dessus
+                </div>
+              </div>
+
+            </div><!-- /launch-file-selector -->
+
+          </div><!-- /card -->
+
+        </div><!-- /agent-launch-zone -->
+
+        <!-- Fichiers en attente (compteur minimaliste) -->
+        <div id="agent-files-preview"></div>
 
         <!-- Bouton envoyer -->
-        <div id="agent-send-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
-          <button id="btn-send-to-agent" class="btn btn-primary" style="width:100%;justify-content:center;gap:8px;">
-            <span>📤</span> <span>Envoyer vers l'appareil</span>
+        <div id="agent-send-zone" style="opacity:.4;pointer-events:none;transition:opacity .2s;">
+          <button id="btn-send-to-agent" class="btn btn-primary"
+            style="width:100%;justify-content:center;gap:8px;padding:.7rem 1rem;">
+            <span>📤</span>
+            <span id="btn-send-label">Envoyer vers l'appareil</span>
           </button>
         </div>
 
-        <!-- Fichiers sélectionnés -->
-        <div id="agent-files-preview" style="margin-top:.6rem;"></div>
+        <!-- Progression envoi -->
+        <div id="agent-send-progress"></div>
 
-        <!-- Progression -->
-        <div id="agent-send-progress" style="margin-top:.8rem;"></div>
-      </div>
+      </div><!-- /col droite -->
 
     </div>
   `;
@@ -483,6 +567,7 @@ function _setupEvents(panel) {
       }
       // Reset fichiers en attente
       pendingFiles = [];
+      window._launchSelectedIdx = 0;
       _updateFilesPreview();
       // Reset progress
       const prog = document.getElementById('agent-send-progress');
@@ -500,7 +585,11 @@ function _setupEvents(panel) {
     const launchZone = document.getElementById('agent-launch-zone');
     if (destZone)   { destZone.style.opacity   = '1'; destZone.style.pointerEvents   = 'auto'; }
     if (sendZone)   { sendZone.style.opacity   = '1'; sendZone.style.pointerEvents   = 'auto'; }
-    if (launchZone) { launchZone.style.opacity = '1'; launchZone.style.pointerEvents = 'auto'; }
+    if (launchZone) {
+      launchZone.style.opacity       = '1';
+      launchZone.style.pointerEvents = 'auto';
+      launchZone.style.transform     = 'translateY(0)';
+    }
   }
 
   function _addFiles(files) {
@@ -562,18 +651,35 @@ function _setupEvents(panel) {
     if (!pendingFiles.length) { uiToast('warning', 'Aucun fichier sélectionné'); return; }
     const destPath   = document.getElementById('agent-dest-path')?.value?.trim() || '';
     const autoLaunch = document.getElementById('agent-launch-cb')?.checked ?? true;
-    const btn = document.getElementById('btn-send-to-agent');
-    if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span> <span>Envoi en cours…</span>'; }
+    const launchIdx  = typeof window._launchSelectedIdx !== 'undefined' ? window._launchSelectedIdx : 0;
+    const fileToLaunch = autoLaunch && pendingFiles[launchIdx] ? pendingFiles[launchIdx] : null;
+
+    const btn      = document.getElementById('btn-send-to-agent');
+    const lblEl    = document.getElementById('btn-send-label');
+    if (btn) { btn.disabled = true; }
+    if (lblEl) { lblEl.textContent = 'Envoi en cours…'; }
+
     const sentFiles = [];
     for (const f of pendingFiles) {
       const row = await sendFileToAgent(f, selId, selName, destPath, autoLaunch);
       if (row) sentFiles.push(row);
     }
-    if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> <span>Envoyer vers l\'appareil</span>'; }
-    // Si auto-launch activé et plusieurs fichiers → ouvrir le sélecteur
-    if (autoLaunch && sentFiles.length > 0) {
-      setTimeout(() => openLaunchPicker(selId, selName, sentFiles), 400);
+    if (btn) { btn.disabled = false; }
+    if (lblEl) { lblEl.textContent = 'Envoyer vers l\'appareil'; }
+
+    // Lancement : fichier ciblé directement, pas de modal intermédiaire
+    if (autoLaunch && fileToLaunch) {
+      const ext = (fileToLaunch.name.split('.').pop() || '').toLowerCase();
+      const isArchive = ['zip','rar','7z','tar','gz'].includes(ext);
+      if (isArchive) {
+        // Demander l'entrée à lancer via le sélecteur d'archive
+        setTimeout(() => _requestArchiveListing(selId, selName, fileToLaunch.name), 300);
+      } else {
+        await _sendLaunchCmd(selId, { file_name: fileToLaunch.name, auto: true });
+        uiToast('success', \`▶ Lancement de \${fileToLaunch.name} en cours…\`);
+      }
     }
+    window._launchSelectedIdx = 0;
   });
 
   // API globale
@@ -730,28 +836,102 @@ async function remoteBrowse(deviceId, browsePath) {
 
 /* ══ PREVIEW FICHIERS ══ */
 function _updateFilesPreview() {
+  // Compteur minimaliste au-dessus du bouton
   const el = document.getElementById('agent-files-preview');
-  if (!el) return;
-  if (!pendingFiles.length) { el.innerHTML = ''; return; }
-  el.innerHTML = `
-    <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.6rem .8rem;">
-      <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);text-transform:uppercase;margin-bottom:.4rem;">
-        ${pendingFiles.length} fichier(s) sélectionné(s)
-      </div>
-      ${pendingFiles.map((f, i) => `
-        <div style="display:flex;align-items:center;gap:8px;padding:.3rem 0;${i>0?'border-top:1px solid var(--b1);':''}">
-          <span style="font-size:.9rem;">${_fileIcon(f.type, f.name)}</span>
-          <div style="flex:1;min-width:0;">
-            <div style="font-size:.78rem;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);">${formatBytes(f.size)}</div>
-          </div>
-          <button onclick="pendingFiles.splice(${i},1);_updateFilesPreview();"
-            style="background:none;border:none;color:var(--t3);cursor:pointer;font-size:.8rem;padding:2px 5px;border-radius:4px;"
-            onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--t3)'">✕</button>
+  if (el) {
+    if (!pendingFiles.length) {
+      el.innerHTML = '';
+    } else {
+      el.innerHTML = `
+        <div style="display:flex;align-items:center;gap:6px;padding:.4rem .6rem;
+                     background:var(--d3);border:1px solid var(--b1);border-radius:var(--r-lg);">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);">
+            ${pendingFiles.length} fichier(s) sélectionné(s)
+          </span>
+          <button onclick="pendingFiles=[];_updateFilesPreview();"
+            style="margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;
+                   font-size:.72rem;padding:0 3px;border-radius:4px;line-height:1;"
+            onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--t3)'">
+            Tout effacer
+          </button>
+        </div>`;
+    }
+  }
+
+  // ── Peupler la liste de sélection de fichier à lancer ──
+  const list  = document.getElementById('launch-file-list');
+  const count = document.getElementById('launch-sel-count');
+  if (!list) return;
+
+  if (!pendingFiles.length) {
+    list.innerHTML = `
+      <div id="launch-empty-hint"
+        style="text-align:center;padding:.8rem;font-family:'JetBrains Mono',monospace;
+               font-size:.65rem;color:var(--t3);">
+        Ajoute des fichiers ci-dessus
+      </div>`;
+    if (count) count.textContent = 'aucun';
+    return;
+  }
+
+  if (count) count.textContent = `${pendingFiles.length} fichier(s)`;
+
+  // Sélection courante (première par défaut)
+  if (typeof window._launchSelectedIdx === 'undefined') window._launchSelectedIdx = 0;
+  if (window._launchSelectedIdx >= pendingFiles.length) window._launchSelectedIdx = 0;
+
+  list.innerHTML = pendingFiles.map((f, i) => {
+    const ext      = (f.name.split('.').pop() || '').toLowerCase();
+    const icon     = _launchIcon(ext);
+    const isActive = (i === window._launchSelectedIdx);
+    const isArchive = ['zip','rar','7z','tar','gz'].includes(ext);
+
+    return `
+      <div data-launch-idx="${i}"
+        style="display:flex;align-items:center;gap:9px;padding:.5rem .65rem;
+               border-radius:var(--r-lg);cursor:pointer;transition:all .15s;
+               border:1px solid ${isActive ? 'rgba(26,111,255,.45)' : 'transparent'};
+               background:${isActive ? 'rgba(26,111,255,.08)' : 'transparent'};"
+        onmouseenter="if(${!isActive}){this.style.background='var(--d4)';}"
+        onmouseleave="if(${!isActive}){this.style.background='transparent';}">
+
+        <!-- Sélecteur rond -->
+        <div style="width:16px;height:16px;border-radius:50%;flex-shrink:0;
+                     border:2px solid ${isActive ? 'var(--blue)' : 'var(--b3)'};
+                     background:${isActive ? 'var(--blue)' : 'transparent'};
+                     display:flex;align-items:center;justify-content:center;
+                     transition:all .15s;">
+          ${isActive ? '<div style="width:6px;height:6px;border-radius:50%;background:#fff;"></div>' : ''}
         </div>
-      `).join('')}
-    </div>`;
+
+        <!-- Icône + nom -->
+        <span style="font-size:1rem;flex-shrink:0;">${icon}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.8rem;color:var(--t1);white-space:nowrap;overflow:hidden;
+                       text-overflow:ellipsis;font-weight:${isActive?'600':'400'};">${f.name}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--t3);margin-top:1px;">
+            ${formatBytes(f.size)}${isArchive ? ' · <span style="color:var(--amber);">archive — tu choisiras l'entrée</span>' : ''}
+          </div>
+        </div>
+
+        <!-- Badge sélectionné -->
+        ${isActive ? `
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:2px 7px;
+                        border-radius:99px;background:rgba(26,111,255,.15);
+                        border:1px solid rgba(26,111,255,.3);color:var(--blue2);
+                        flex-shrink:0;white-space:nowrap;">▶ sélectionné</span>` : ''}
+      </div>`;
+  }).join('');
+
+  // Déléguer les clics
+  list.onclick = (e) => {
+    const row = e.target.closest('[data-launch-idx]');
+    if (!row) return;
+    window._launchSelectedIdx = parseInt(row.dataset.launchIdx);
+    _updateFilesPreview();
+  };
 }
+
 
 function _fileIcon(mime, name) {
   if (mime?.startsWith('image/')) return '🖼️';
