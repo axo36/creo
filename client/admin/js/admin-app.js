@@ -676,7 +676,7 @@ function _setupEvents(panel) {
         setTimeout(() => _requestArchiveListing(selId, selName, fileToLaunch.name), 300);
       } else {
         await _sendLaunchCmd(selId, { file_name: fileToLaunch.name, auto: true });
-        uiToast('success', \`▶ Lancement de \${fileToLaunch.name} en cours…\`);
+        uiToast('success', '▶ Lancement de ' + fileToLaunch.name + ' en cours…');
       }
     }
     window._launchSelectedIdx = 0;
@@ -910,7 +910,7 @@ function _updateFilesPreview() {
           <div style="font-size:.8rem;color:var(--t1);white-space:nowrap;overflow:hidden;
                        text-overflow:ellipsis;font-weight:${isActive?'600':'400'};">${f.name}</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--t3);margin-top:1px;">
-            ${formatBytes(f.size)}${isArchive ? ' · <span style="color:var(--amber);">archive — tu choisiras l'entrée</span>' : ''}
+            ${formatBytes(f.size)}${isArchive ? ' · <span style="color:var(--amber);">archive &#8212; choisir l\'entr&#233;e</span>' : ''}
           </div>
         </div>
 
