@@ -203,6 +203,23 @@ function _renderSendPanel() {
           </div>
         </div>
 
+        <!-- Case : Lancer automatiquement (cochée par défaut) -->
+        <div id="agent-launch-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
+          <div style="background:rgba(26,111,255,.06);border:1px solid rgba(26,111,255,.2);border-radius:var(--r-lg);padding:.65rem .9rem;">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+              <input type="checkbox" id="agent-launch-cb" checked
+                style="width:16px;height:16px;accent-color:var(--blue);flex-shrink:0;margin-top:2px;">
+              <div>
+                <div style="font-size:.83rem;color:var(--t1);font-weight:500;">🚀 Lancer automatiquement</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:3px;line-height:1.5;">
+                  Le fichier s'ouvre dès réception sur l'appareil distant.<br>
+                  Pour un dossier ou une archive : tu choisiras quel fichier lancer.
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
         <!-- Bouton envoyer -->
         <div id="agent-send-zone" style="margin-top:.8rem;opacity:.4;pointer-events:none;transition:opacity .2s;">
           <button id="btn-send-to-agent" class="btn btn-primary" style="width:100%;justify-content:center;gap:8px;">
@@ -352,7 +369,7 @@ function _renderDownloadsPanel() {
 // Fichiers en attente d'envoi
 let pendingFiles = [];
 
-async function sendFileToAgent(file, deviceId, deviceName, destPath = '') {
+async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLaunch = false) {
   const progress = document.getElementById('agent-send-progress');
   if (progress) progress.innerHTML = _progressHTML(`Envoi de <strong>${file.name}</strong> vers <strong>${deviceName}</strong>…`);
 
@@ -389,7 +406,7 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '') {
     created_at:       new Date().toISOString(),
   });
 
-  if (dbErr) { if (progress) progress.innerHTML = _errHTML(`Erreur DB : ${dbErr.message}`); return; }
+  if (dbErr) { if (progress) progress.innerHTML = _errHTML(`Erreur DB : ${dbErr.message}`); return null; }
 
   if (progress) progress.innerHTML = `
     <div style="background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);
@@ -404,6 +421,8 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '') {
   uiToast('success', `📤 ${file.name} → ${deviceName}`);
   pendingFiles = [];
   _updateFilesPreview();
+  // Retourner les infos du fichier envoyé pour le launcher
+  return { name: file.name, url, filePath };
 }
 
 /* ══ EVENTS ══ */
@@ -476,10 +495,12 @@ function _setupEvents(panel) {
   const fileInput = document.getElementById('agent-file-input');
 
   function _activateSendZone() {
-    const destZone = document.getElementById('agent-dest-zone');
-    const sendZone = document.getElementById('agent-send-zone');
-    if (destZone) { destZone.style.opacity = '1'; destZone.style.pointerEvents = 'auto'; }
-    if (sendZone) { sendZone.style.opacity = '1'; sendZone.style.pointerEvents = 'auto'; }
+    const destZone   = document.getElementById('agent-dest-zone');
+    const sendZone   = document.getElementById('agent-send-zone');
+    const launchZone = document.getElementById('agent-launch-zone');
+    if (destZone)   { destZone.style.opacity   = '1'; destZone.style.pointerEvents   = 'auto'; }
+    if (sendZone)   { sendZone.style.opacity   = '1'; sendZone.style.pointerEvents   = 'auto'; }
+    if (launchZone) { launchZone.style.opacity = '1'; launchZone.style.pointerEvents = 'auto'; }
   }
 
   function _addFiles(files) {
@@ -539,13 +560,20 @@ function _setupEvents(panel) {
   document.getElementById('btn-send-to-agent')?.addEventListener('click', async () => {
     if (!selId) { uiToast('warning', 'Sélectionne un appareil'); return; }
     if (!pendingFiles.length) { uiToast('warning', 'Aucun fichier sélectionné'); return; }
-    const destPath = document.getElementById('agent-dest-path')?.value?.trim() || '';
+    const destPath   = document.getElementById('agent-dest-path')?.value?.trim() || '';
+    const autoLaunch = document.getElementById('agent-launch-cb')?.checked ?? true;
     const btn = document.getElementById('btn-send-to-agent');
     if (btn) { btn.disabled = true; btn.innerHTML = '<span>⏳</span> <span>Envoi en cours…</span>'; }
+    const sentFiles = [];
     for (const f of pendingFiles) {
-      await sendFileToAgent(f, selId, selName, destPath);
+      const row = await sendFileToAgent(f, selId, selName, destPath, autoLaunch);
+      if (row) sentFiles.push(row);
     }
     if (btn) { btn.disabled = false; btn.innerHTML = '<span>📤</span> <span>Envoyer vers l\'appareil</span>'; }
+    // Si auto-launch activé et plusieurs fichiers → ouvrir le sélecteur
+    if (autoLaunch && sentFiles.length > 0) {
+      setTimeout(() => openLaunchPicker(selId, selName, sentFiles), 400);
+    }
   });
 
   // API globale
@@ -773,4 +801,242 @@ function _timeAgo(date) {
   if (s < 3600) return `${Math.round(s/60)}min`;
   if (s < 86400) return `${Math.round(s/3600)}h`;
   return `${Math.round(s/86400)}j`;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   LANCEMENT AUTOMATIQUE — Sélecteur de fichier à lancer
+   Appelé après envoi si la case "Lancer automatiquement" est cochée
+══════════════════════════════════════════════════════════════ */
+
+/**
+ * Ouvre le sélecteur de fichier à lancer.
+ * sentFiles = [{ name, url, filePath }, …]
+ * - Si 1 seul fichier et pas une archive → lancer direct
+ * - Si plusieurs fichiers ou archive → afficher le sélecteur
+ */
+export function openLaunchPicker(deviceId, deviceName, sentFiles) {
+  // Construire la liste : fichier direct + fichiers dans les archives (on demandera après extraction)
+  const items = sentFiles.map(f => {
+    const ext = (f.name.split('.').pop() || '').toLowerCase();
+    const isArchive = ['zip','rar','7z','tar','gz'].includes(ext);
+    return { ...f, isArchive };
+  });
+
+  // Si 1 seul fichier non-archive → lancer direct sans modal
+  if (items.length === 1 && !items[0].isArchive) {
+    _sendLaunchCmd(deviceId, { file_name: items[0].name, auto: true });
+    uiToast('success', `▶ Lancement de ${items[0].name} en cours…`);
+    return;
+  }
+
+  // Créer/recycler le modal
+  let modal = document.getElementById('modal-launch-picker');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id        = 'modal-launch-picker';
+    modal.className = 'modal-bg';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal" style="max-width:500px;">
+      <div class="modal-title">🚀 Quel fichier lancer sur <strong>${deviceName}</strong> ?</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);margin-bottom:.9rem;">
+        Choisis le fichier à ouvrir automatiquement après téléchargement.
+      </div>
+      <div id="launch-picker-list" style="display:flex;flex-direction:column;gap:5px;max-height:360px;overflow-y:auto;"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="document.getElementById('modal-launch-picker').classList.remove('open')">
+          Annuler (ne pas lancer)
+        </button>
+      </div>
+    </div>`;
+
+  const list = document.getElementById('launch-picker-list');
+
+  // Remplir la liste
+  list.innerHTML = items.map((f, idx) => {
+    const ext  = (f.name.split('.').pop() || '').toLowerCase();
+    const icon = _launchIcon(ext);
+    const badge = f.isArchive
+      ? `<span style="font-family:'JetBrains Mono',monospace;font-size:.55rem;padding:2px 6px;background:rgba(255,170,0,.12);border:1px solid rgba(255,170,0,.25);border-radius:99px;color:var(--amber);margin-left:6px;">ARCHIVE</span>`
+      : '';
+    const sub = f.isArchive
+      ? `Sélectionner un fichier à l'intérieur`
+      : `Lancer ce fichier directement`;
+
+    return `
+      <button data-idx="${idx}"
+        style="display:flex;align-items:center;gap:12px;padding:.75rem .9rem;
+               background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-lg);
+               cursor:pointer;text-align:left;transition:all .15s;width:100%;"
+        onmouseenter="this.style.background='rgba(26,111,255,.06)';this.style.borderColor='rgba(26,111,255,.3)'"
+        onmouseleave="this.style.background='var(--d2)';this.style.borderColor='var(--b2)'">
+        <span style="font-size:1.4rem;flex-shrink:0;">${icon}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.84rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${f.name}${badge}
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:2px;">${sub}</div>
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t2);flex-shrink:0;padding:2px 8px;background:var(--d4);border-radius:99px;">.${ext.toUpperCase()||'?'}</span>
+      </button>`;
+  }).join('');
+
+  // Écouter les clics
+  list.onclick = async (e) => {
+    const btn = e.target.closest('button[data-idx]');
+    if (!btn) return;
+    const f = items[parseInt(btn.dataset.idx)];
+    modal.classList.remove('open');
+
+    if (f.isArchive) {
+      // Pour une archive → demander à l'agent de lister les fichiers dedans
+      await _requestArchiveListing(deviceId, deviceName, f.name);
+    } else {
+      // Lancer directement
+      await _sendLaunchCmd(deviceId, { file_name: f.name, auto: true });
+      uiToast('success', `▶ Lancement de ${f.name} en cours…`);
+    }
+  };
+
+  modal.classList.add('open');
+}
+
+/**
+ * Demande à l'agent la liste des fichiers dans une archive.
+ * Puis ouvre le sélecteur d'entrée.
+ */
+async function _requestArchiveListing(deviceId, deviceName, archiveName) {
+  uiToast('info', `📦 Demande de liste à l'agent…`);
+
+  const { data: cmd, error } = await supabase.from('agent_commands').insert({
+    device_id: deviceId,
+    type:      'list_archive',
+    status:    'pending',
+    payload:   { file_name: archiveName },
+    created_at: new Date().toISOString(),
+  }).select().single();
+
+  if (error) { uiToast('error', 'Erreur commande'); return; }
+
+  // Attendre la réponse de l'agent (max 15s)
+  let result = null;
+  for (let i = 0; i < 30; i++) {
+    await new Promise(r => setTimeout(r, 500));
+    const { data: upd } = await supabase
+      .from('agent_commands').select('status,result').eq('id', cmd.id).single();
+    if (upd?.status === 'done') {
+      try { result = JSON.parse(upd.result); } catch {}
+      break;
+    }
+  }
+
+  try { await supabase.from('agent_commands').delete().eq('id', cmd.id); } catch {}
+
+  if (!result?.entries?.length) {
+    uiToast('warning', "L'agent n'a pas répondu ou archive vide");
+    return;
+  }
+
+  // Ouvrir le sélecteur d'entrée
+  _openArchiveEntryPicker(deviceId, deviceName, archiveName, result.entries);
+}
+
+/**
+ * Modal pour choisir quel fichier lancer dans une archive listée par l'agent.
+ */
+function _openArchiveEntryPicker(deviceId, deviceName, archiveName, entries) {
+  let modal = document.getElementById('modal-archive-picker');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id        = 'modal-archive-picker';
+    modal.className = 'modal-bg';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal" style="max-width:500px;">
+      <div class="modal-title">📦 ${archiveName}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);margin-bottom:.9rem;">
+        ${entries.length} fichier(s) — Choisis lequel lancer sur <strong>${deviceName}</strong>
+      </div>
+      <div id="archive-picker-list" style="display:flex;flex-direction:column;gap:4px;max-height:380px;overflow-y:auto;"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="document.getElementById('modal-archive-picker').classList.remove('open')">Annuler</button>
+      </div>
+    </div>`;
+
+  const list = document.getElementById('archive-picker-list');
+
+  list.innerHTML = entries.map((entry, idx) => {
+    const name = entry.split(/[\\/]/).pop() || entry;
+    const ext  = (name.split('.').pop() || '').toLowerCase();
+    const icon = _launchIcon(ext);
+    const dir  = entry.includes('/') || entry.includes('\\')
+      ? entry.replace(/\\/g, '/').split('/').slice(0, -1).join('/') + '/'
+      : '';
+
+    return `
+      <button data-entry="${entry.replace(/"/g, '&quot;')}"
+        style="display:flex;align-items:center;gap:10px;padding:.65rem .85rem;
+               background:var(--d2);border:1px solid var(--b2);border-radius:var(--r-lg);
+               cursor:pointer;text-align:left;transition:all .15s;width:100%;"
+        onmouseenter="this.style.background='rgba(26,111,255,.06)';this.style.borderColor='rgba(26,111,255,.3)'"
+        onmouseleave="this.style.background='var(--d2)';this.style.borderColor='var(--b2)'">
+        <span style="font-size:1.2rem;flex-shrink:0;">${icon}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:.83rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</div>
+          ${dir ? `<div style="font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📁 ${dir}</div>` : ''}
+        </div>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t2);flex-shrink:0;padding:2px 7px;background:var(--d4);border-radius:99px;">.${ext.toUpperCase()||'?'}</span>
+      </button>`;
+  }).join('');
+
+  list.onclick = async (e) => {
+    const btn = e.target.closest('button[data-entry]');
+    if (!btn) return;
+    const entry = btn.getAttribute('data-entry');
+    modal.classList.remove('open');
+    await _sendLaunchCmd(deviceId, {
+      file_name:   archiveName,
+      is_archive:  true,
+      launch_entry: entry,
+    });
+    uiToast('success', `▶ Lancement de ${entry.split(/[\\/]/).pop()} en cours…`);
+  };
+
+  modal.classList.add('open');
+}
+
+/**
+ * Envoie la commande launch_file à l'agent.
+ */
+async function _sendLaunchCmd(deviceId, payload) {
+  const { error } = await supabase.from('agent_commands').insert({
+    device_id:  deviceId,
+    type:       'launch_file',
+    status:     'pending',
+    payload,
+    created_at: new Date().toISOString(),
+  });
+  if (error) { console.error('launch_file cmd error:', error); uiToast('error', 'Erreur commande lancement'); }
+}
+
+/**
+ * Icône selon l'extension.
+ */
+function _launchIcon(ext) {
+  if (['exe','msi','bat','cmd','sh','ps1'].includes(ext)) return '⚙️';
+  if (['zip','rar','7z','tar','gz'].includes(ext))        return '📦';
+  if (['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return '🖼️';
+  if (['mp4','avi','mov','mkv','webm'].includes(ext))     return '🎬';
+  if (['mp3','wav','flac','ogg','aac'].includes(ext))     return '🎵';
+  if (['pdf'].includes(ext))                               return '📄';
+  if (['doc','docx'].includes(ext))                        return '📝';
+  if (['xls','xlsx','csv'].includes(ext))                  return '📊';
+  if (['ppt','pptx'].includes(ext))                        return '📊';
+  if (['js','ts','py','html','css','json'].includes(ext)) return '💻';
+  return '📎';
 }
