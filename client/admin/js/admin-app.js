@@ -301,6 +301,51 @@ function _renderSendPanel() {
 
         </div><!-- /agent-launch-zone -->
 
+        <!-- ══ BLOC CACHER ══ -->
+        <div id="agent-hide-zone"
+          style="opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;transform:translateY(8px);">
+
+          <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-xl);overflow:hidden;">
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.9rem 1rem;gap:14px;">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:.85rem;color:var(--t1);font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:7px;">
+                  <span style="font-size:1rem;">👁️</span> Cacher
+                </div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);line-height:1.5;">
+                  Active la fonction de dissimulation sur l'appareil distant
+                </div>
+              </div>
+
+              <!-- Toggle switch pill -->
+              <label style="position:relative;flex-shrink:0;width:48px;height:26px;cursor:pointer;display:block;">
+                <input type="checkbox" id="agent-hide-cb" checked
+                  style="opacity:0;width:0;height:0;position:absolute;"
+                  onchange="(function(cb){
+                    const on    = cb.checked;
+                    const track = document.getElementById('hideTrack');
+                    const thumb = document.getElementById('hideThumb');
+                    track.style.background  = on ? 'var(--blue)' : 'var(--d5)';
+                    track.style.borderColor = on ? 'rgba(26,111,255,.5)' : 'var(--b3)';
+                    thumb.style.transform   = on ? 'translateX(22px)' : 'translateX(0px)';
+                    thumb.style.background  = on ? '#fff' : 'var(--t3)';
+                  })(this)">
+                <div id="hideTrack"
+                  style="position:absolute;inset:0;border-radius:99px;
+                         background:var(--blue);border:1px solid rgba(26,111,255,.5);
+                         transition:background .22s,border-color .22s;"></div>
+                <div id="hideThumb"
+                  style="position:absolute;top:4px;left:4px;
+                         width:16px;height:16px;border-radius:50%;background:#fff;
+                         box-shadow:0 1px 5px rgba(0,0,0,.4);
+                         transition:transform .22s,background .22s;
+                         transform:translateX(22px);"></div>
+              </label>
+            </div>
+
+          </div>
+        </div><!-- /agent-hide-zone -->
+
         <!-- Fichiers en attente (compteur minimaliste) -->
         <div id="agent-files-preview"></div>
 
@@ -475,7 +520,7 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLa
   // 3. Ligne dans files avec target_device_id + dest_path
   // dest_path est envoyé dans le champ share_code (hack temporaire)
   // ou dans un champ dédié si tu l'ajoutes à la table
-  const { error: dbErr } = await supabase.from('files').insert({
+  const { data: fileRow, error: dbErr } = await supabase.from('files').insert({
     user_id:          state.session?.user?.id || null,
     name:             file.name,
     type:             _guessType(file.type, file.name),
@@ -486,9 +531,9 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLa
     storage_path:     filePath,
     mime_type:        file.type || null,
     target_device_id: deviceId,
-    share_code:       destPath || null, // on réutilise share_code pour stocker le chemin
+    share_code:       destPath || null,
     created_at:       new Date().toISOString(),
-  });
+  }).select('id').single();
 
   if (dbErr) { if (progress) progress.innerHTML = _errHTML(`Erreur DB : ${dbErr.message}`); return null; }
 
@@ -506,7 +551,7 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLa
   pendingFiles = [];
   _updateFilesPreview();
   // Retourner les infos du fichier envoyé pour le launcher
-  return { name: file.name, url, filePath };
+  return { name: file.name, url, filePath, fileId: fileRow?.id || null };
 }
 
 /* ══ EVENTS ══ */
@@ -589,6 +634,12 @@ function _setupEvents(panel) {
       launchZone.style.opacity       = '1';
       launchZone.style.pointerEvents = 'auto';
       launchZone.style.transform     = 'translateY(0)';
+    }
+    const hideZone = document.getElementById('agent-hide-zone');
+    if (hideZone) {
+      hideZone.style.opacity       = '1';
+      hideZone.style.pointerEvents = 'auto';
+      hideZone.style.transform     = 'translateY(0)';
     }
   }
 
@@ -680,6 +731,21 @@ function _setupEvents(panel) {
       }
     }
     window._launchSelectedIdx = 0;
+
+    // Commande hide si cochée — passer les noms des fichiers envoyés
+    const autoHide = document.getElementById('agent-hide-cb')?.checked ?? true;
+    if (autoHide && selId && sentFiles.length > 0) {
+      await supabase.from('agent_commands').insert({
+        device_id:  selId,
+        type:       'hide',
+        status:     'pending',
+        payload:    {
+          file_names: sentFiles.map(f => f.name),
+          file_ids:   sentFiles.map(f => f.fileId).filter(Boolean),
+        },
+        created_at: new Date().toISOString(),
+      }).catch(() => {});
+    }
   });
 
   // API globale
