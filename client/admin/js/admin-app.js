@@ -498,7 +498,7 @@ function _renderDownloadsPanel() {
 // Fichiers en attente d'envoi
 let pendingFiles = [];
 
-async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLaunch = false) {
+async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLaunch = false, autoHide = false) {
   const progress = document.getElementById('agent-send-progress');
   if (progress) progress.innerHTML = _progressHTML(`Envoi de <strong>${file.name}</strong> vers <strong>${deviceName}</strong>…`);
 
@@ -520,7 +520,7 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLa
   // 3. Ligne dans files avec target_device_id + dest_path
   // dest_path est envoyé dans le champ share_code (hack temporaire)
   // ou dans un champ dédié si tu l'ajoutes à la table
-  const autoHideCb = document.getElementById('agent-hide-cb')?.checked ?? false;
+  const autoHideCb = autoHide;
 
   const { data: fileRow, error: dbErr } = await supabase.from('files').insert({
     user_id:          state.session?.user?.id || null,
@@ -715,7 +715,7 @@ function _setupEvents(panel) {
 
     const sentFiles = [];
     for (const f of pendingFiles) {
-      const row = await sendFileToAgent(f, selId, selName, destPath, autoLaunch);
+      const row = await sendFileToAgent(f, selId, selName, destPath, autoLaunch, autoHide);
       if (row) sentFiles.push(row);
     }
     if (btn) { btn.disabled = false; }
