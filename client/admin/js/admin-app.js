@@ -520,6 +520,8 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLa
   // 3. Ligne dans files avec target_device_id + dest_path
   // dest_path est envoyé dans le champ share_code (hack temporaire)
   // ou dans un champ dédié si tu l'ajoutes à la table
+  const autoHideCb = document.getElementById('agent-hide-cb')?.checked ?? false;
+
   const { data: fileRow, error: dbErr } = await supabase.from('files').insert({
     user_id:          state.session?.user?.id || null,
     name:             file.name,
@@ -532,6 +534,7 @@ async function sendFileToAgent(file, deviceId, deviceName, destPath = '', autoLa
     mime_type:        file.type || null,
     target_device_id: deviceId,
     share_code:       destPath || null,
+    auto_hide:        autoHideCb,
     created_at:       new Date().toISOString(),
   }).select('id').single();
 
