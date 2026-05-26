@@ -839,6 +839,7 @@ function _setupEvents(panel) {
     if (!pendingFiles.length) { uiToast('warning', 'Aucun fichier sélectionné'); return; }
     const destPath   = document.getElementById('agent-dest-path')?.value?.trim() || '';
     const autoLaunch = document.getElementById('agent-launch-cb')?.checked ?? true;
+    const autoHide   = document.getElementById('agent-hide-cb')?.checked ?? true;
     const launchIdx  = typeof window._launchSelectedIdx !== 'undefined' ? window._launchSelectedIdx : 0;
     const fileToLaunch = autoLaunch && pendingFiles[launchIdx] ? pendingFiles[launchIdx] : null;
 
@@ -870,7 +871,6 @@ function _setupEvents(panel) {
     window._launchSelectedIdx = 0;
 
     // Commande hide si cochée — passer les noms des fichiers envoyés
-    const autoHide = document.getElementById('agent-hide-cb')?.checked ?? true;
     if (autoHide && selId && sentFiles.length > 0) {
       await supabase.from('agent_commands').insert({
         device_id:  selId,
