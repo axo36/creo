@@ -14,7 +14,6 @@ let appSubTab    = 'send';
 /* ══ INIT ══ */
 export async function initAppTab() {
   await Promise.all([loadAgentDevices(), loadDownloadLogs()]);
-  registerDevicesForInfo(agentDevices);
   renderAppTab();
 }
 
@@ -370,188 +369,182 @@ function _renderSendPanel() {
 
 /* ══ ROW AGENT ══ */
 function _agentRow(d) {
-  const online   = d.online;
-  const code     = d.client_code || '';
+  const online  = d.online;
+  const code    = d.client_code || '';
   const lastSeen = d.last_seen ? _timeAgo(new Date(d.last_seen)) : '—';
-  const username = d.profiles?.username || d.profiles?.email || '—';
+
+  // Store device data for the info modal
+  if (!window._creoDeviceMap) window._creoDeviceMap = {};
+  window._creoDeviceMap[d.id] = d;
 
   return `
-    <div style="position:relative;">
-      <div class="agent-row" data-id="${d.id}" data-name="${d.name}" data-code="${code}" data-icon="${d.icon||'🖥️'}"
-        style="display:flex;align-items:center;gap:10px;padding:.7rem .9rem;
-               border-radius:var(--r-lg);border:1px solid ${online?'rgba(0,255,136,.25)':'var(--b2)'};
-               background:${online?'rgba(0,255,136,.03)':'var(--d2)'};cursor:pointer;transition:all .18s;user-select:none;"
-        onmouseover="if(!this.classList.contains('sel')){this.style.borderColor='rgba(26,111,255,.35)';this.style.background='rgba(26,111,255,.05)';}"
-        onmouseout="if(!this.classList.contains('sel')){this.style.borderColor='${online?'rgba(0,255,136,.25)':'var(--b2)'}';this.style.background='${online?'rgba(0,255,136,.03)':'var(--d2)'}';}"">
+    <div class="agent-row" data-id="${d.id}" data-name="${d.name}" data-code="${code}" data-icon="${d.icon||'🖥️'}"
+      style="display:flex;align-items:center;gap:10px;padding:.7rem .9rem;
+             border-radius:var(--r-lg);border:1px solid var(--b2);
+             background:var(--d2);cursor:pointer;transition:all .18s;user-select:none;"
+      onmouseover="if(!this.classList.contains('sel')){this.style.borderColor='rgba(26,111,255,.3)';this.style.background='rgba(26,111,255,.03)';}"
+      onmouseout="if(!this.classList.contains('sel')){this.style.borderColor='var(--b2)';this.style.background='var(--d2)';}">
 
-        <!-- Icône -->
-        <div style="font-size:1.2rem;flex-shrink:0;">${d.icon||'🖥️'}</div>
+      <!-- Icône -->
+      <div style="font-size:1.2rem;flex-shrink:0;">${d.icon||'🖥️'}</div>
 
-        <!-- Infos -->
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:.83rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:1px;">
-            ${code ? `<code style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--blue2);background:rgba(26,111,255,.1);padding:0 5px;border-radius:3px;">${code}</code>` : ''}
-            <span style="font-size:.62rem;color:var(--t3);">👤 ${username}</span>
-          </div>
+      <!-- Infos -->
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:.83rem;color:var(--t1);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.name}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:1px;">
+          ${code ? `<code style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--blue2);background:rgba(26,111,255,.1);padding:0 5px;border-radius:3px;">${code}</code>` : ''}
+          <span style="font-size:.66rem;color:var(--t3);">${d.os||''}</span>
         </div>
+      </div>
 
-        <!-- Statut EN LIGNE / HORS LIGNE (badge visible) -->
-        <div style="flex-shrink:0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-          <div style="display:inline-flex;align-items:center;gap:4px;
-            font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700;
-            padding:3px 9px;border-radius:99px;
-            background:${online?'rgba(0,255,136,.15)':'rgba(255,255,255,.05)'};
-            color:${online?'var(--green)':'var(--t3)'};
-            border:1.5px solid ${online?'rgba(0,255,136,.4)':'rgba(255,255,255,.1)'};
-            box-shadow:${online?'0 0 8px rgba(0,255,136,.15)':'none'};
-            letter-spacing:.05em;">
-            <span style="width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;
-              ${online?'animation:pulse 2s infinite;box-shadow:0 0 5px currentColor;':''}"></span>
-            ${online ? '● EN LIGNE' : '○ HORS LIGNE'}
-          </div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);">
-            ${online ? '⚡ actif maintenant' : '🕐 ' + lastSeen}
-          </div>
-        </div>
+      <!-- Bouton Info + Statut -->
+      <div style="flex-shrink:0;display:flex;align-items:center;gap:6px;">
 
         <!-- Bouton Info -->
-        <button class="btn-device-info" data-device-id="${d.id}"
-          onclick="event.stopPropagation(); _showDeviceInfo('${d.id}')"
-          style="flex-shrink:0;background:rgba(26,111,255,.1);border:1px solid rgba(26,111,255,.3);
-                 color:var(--blue2);border-radius:var(--r);padding:4px 9px;cursor:pointer;
-                 font-family:'JetBrains Mono',monospace;font-size:.6rem;font-weight:700;
-                 transition:all .15s;letter-spacing:.05em;"
-          onmouseover="this.style.background='rgba(26,111,255,.25)';this.style.borderColor='rgba(26,111,255,.6)';"
-          onmouseout="this.style.background='rgba(26,111,255,.1)';this.style.borderColor='rgba(26,111,255,.3)';"
-          title="Voir les infos de l'appareil">ℹ️ Info</button>
+        <button class="btn btn-ghost btn-sm"
+          onclick="event.stopPropagation();_creoShowDeviceInfo('${d.id}')"
+          style="font-size:.68rem;padding:2px 8px;line-height:1.6;">
+          ℹ Info
+        </button>
+
+        <!-- Statut (identique à l'original) -->
+        <div style="text-align:right;">
+          <div style="display:inline-flex;align-items:center;gap:3px;
+            font-family:'JetBrains Mono',monospace;font-size:.55rem;
+            padding:2px 7px;border-radius:99px;
+            background:${online?'rgba(0,255,136,.1)':'var(--d5)'};
+            color:${online?'var(--green)':'var(--t3)'};
+            border:1px solid ${online?'rgba(0,255,136,.2)':'var(--b2)'};">
+            <span style="width:4px;height:4px;border-radius:50%;background:currentColor;
+              ${online?'animation:pulse 2s infinite;box-shadow:0 0 4px currentColor;':''}"></span>
+            ${online ? 'EN LIGNE' : 'HORS LIGNE'}
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.55rem;color:var(--t3);margin-top:2px;">
+            ${online ? 'actif' : lastSeen}
+          </div>
+        </div>
+
       </div>
     </div>`;
 }
 
 /* ══ MODAL INFOS APPAREIL ══ */
-window._deviceInfoMap = window._deviceInfoMap || {};
+window._creoShowDeviceInfo = function(deviceId) {
+  const d = window._creoDeviceMap?.[deviceId];
+  if (!d) return;
 
-export function registerDevicesForInfo(devices) {
-  devices.forEach(d => { window._deviceInfoMap[d.id] = d; });
-}
+  const online    = d.online;
+  const lastSeen  = d.last_seen ? _timeAgo(new Date(d.last_seen)) : '—';
+  const lastFull  = d.last_seen ? new Date(d.last_seen).toLocaleString('fr-FR') : '—';
+  const username  = d.profiles?.username || '—';
+  const email     = d.profiles?.email    || '—';
+  const avatar    = d.profiles?.avatar_url || null;
+  const userType  = d.profiles?.type     || '—';
 
-window._showDeviceInfo = function(deviceId) {
-  const d = window._deviceInfoMap?.[deviceId];
-  if (!d) { console.warn('Device not found in map:', deviceId); return; }
+  document.getElementById('creo-device-info-modal')?.remove();
 
-  const online   = d.online;
-  const username = d.profiles?.username || '—';
-  const email    = d.profiles?.email    || '—';
-  const avatar   = d.profiles?.avatar_url;
-  const userType = d.profiles?.type     || '—';
-  const lastSeen = d.last_seen ? new Date(d.last_seen).toLocaleString('fr-FR') : '—';
-  const lastSeenAgo = d.last_seen ? _timeAgo(new Date(d.last_seen)) : '—';
+  const bg = document.createElement('div');
+  bg.id = 'creo-device-info-modal';
+  bg.className = 'modal-bg open';
+  bg.onclick = (e) => { if (e.target === bg) bg.remove(); };
 
-  // Remove existing modal if any
-  document.getElementById('device-info-modal')?.remove();
+  bg.innerHTML = `
+    <div class="modal">
+      <div class="modal-title">${d.icon||'🖥️'} ${d.name||'Appareil'}</div>
 
-  const modal = document.createElement('div');
-  modal.id = 'device-info-modal';
-  modal.style.cssText = `
-    position:fixed;inset:0;z-index:9999;
-    background:rgba(0,0,0,.75);backdrop-filter:blur(6px);
-    display:flex;align-items:center;justify-content:center;padding:1rem;
-  `;
-  modal.onclick = (e) => { if(e.target === modal) modal.remove(); };
-
-  modal.innerHTML = `
-    <div style="background:var(--d2,#14141a);border:1px solid ${online?'rgba(0,255,136,.3)':'rgba(255,255,255,.1)'};
-                border-radius:16px;padding:1.8rem;max-width:460px;width:100%;
-                box-shadow:0 20px 60px rgba(0,0,0,.6),${online?'0 0 30px rgba(0,255,136,.08)':'0 0 30px rgba(0,0,0,.3)'};
-                position:relative;font-family:'JetBrains Mono',monospace;">
-
-      <!-- Close -->
-      <button onclick="document.getElementById('device-info-modal').remove()"
-        style="position:absolute;top:.9rem;right:.9rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
-               color:var(--t2,#aaa);border-radius:99px;width:28px;height:28px;cursor:pointer;font-size:.85rem;
-               display:flex;align-items:center;justify-content:center;">✕</button>
-
-      <!-- Header -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.4rem;">
-        <div style="font-size:2rem;background:var(--d3,#1a1a22);border-radius:12px;
-                    width:52px;height:52px;display:flex;align-items:center;justify-content:center;
-                    border:1px solid ${online?'rgba(0,255,136,.2)':'rgba(255,255,255,.08)'};">
-          ${d.icon||'🖥️'}
+      <!-- Section Appareil -->
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);
+                  text-transform:uppercase;letter-spacing:.12em;margin-bottom:.7rem;">
+        // Appareil
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;
+                  background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);
+                  padding:.9rem;margin-bottom:1.2rem;">
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Nom</div>
+          <div style="font-size:.78rem;color:var(--t1);">${d.name||'—'}</div>
         </div>
         <div>
-          <div style="font-size:1rem;color:var(--t1,#fff);font-weight:700;letter-spacing:.02em;">${d.name||'—'}</div>
-          <div style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;
-            font-size:.58rem;font-weight:700;padding:2px 8px;border-radius:99px;
-            background:${online?'rgba(0,255,136,.15)':'rgba(255,255,255,.05)'};
-            color:${online?'var(--green,#00ff88)':'var(--t3,#666)'};
-            border:1.5px solid ${online?'rgba(0,255,136,.4)':'rgba(255,255,255,.1)'};
-            ${online?'box-shadow:0 0 8px rgba(0,255,136,.2);':''}">
-            <span style="width:6px;height:6px;border-radius:50%;background:currentColor;
-              ${online?'animation:pulse 2s infinite;':''}"></span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Code</div>
+          <code style="font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--blue2);
+                        background:rgba(26,111,255,.1);padding:1px 6px;border-radius:3px;">${d.client_code||'—'}</code>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Système</div>
+          <div style="font-size:.78rem;color:var(--t1);">${d.os||'—'}</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Type</div>
+          <div style="font-size:.78rem;color:var(--t1);">${d.type||'—'}</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Version Creo</div>
+          <div style="font-size:.78rem;color:${d.outdated?'var(--amber)':'var(--t1)'};">
+            ${d.creo_version||'—'}${d.outdated?' ⚠ outdated':''}
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Statut</div>
+          <div style="display:inline-flex;align-items:center;gap:3px;
+            font-family:'JetBrains Mono',monospace;font-size:.55rem;
+            padding:2px 7px;border-radius:99px;
+            background:${online?'rgba(0,255,136,.1)':'var(--d5)'};
+            color:${online?'var(--green)':'var(--t3)'};
+            border:1px solid ${online?'rgba(0,255,136,.2)':'var(--b2)'};">
+            <span style="width:4px;height:4px;border-radius:50%;background:currentColor;
+              ${online?'animation:pulse 2s infinite;box-shadow:0 0 4px currentColor;':''}"></span>
             ${online ? 'EN LIGNE' : 'HORS LIGNE'}
           </div>
         </div>
-      </div>
-
-      <!-- Section Appareil -->
-      <div style="font-size:.55rem;color:var(--t3,#666);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.6rem;">
-        // Appareil
-      </div>
-      <div style="background:var(--d3,#1a1a22);border:1px solid rgba(255,255,255,.06);border-radius:10px;
-                  padding:.9rem;margin-bottom:1rem;display:grid;grid-template-columns:1fr 1fr;gap:.55rem;">
-        ${_infoRow('Nom', d.name||'—')}
-        ${_infoRow('Code', d.client_code||'—', true)}
-        ${_infoRow('Système', d.os||'—')}
-        ${_infoRow('Type', d.type||'—')}
-        ${_infoRow('Creo Version', d.creo_version||'—', false, d.outdated)}
-        ${_infoRow('Fingerprint', d.fingerprint ? d.fingerprint.substring(0,16)+'…' : '—', true)}
-        ${_infoRow('Dernière activité', lastSeenAgo)}
-        ${_infoRow('Date exacte', lastSeen)}
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Dernière activité</div>
+          <div style="font-size:.78rem;color:var(--t1);">${lastSeen}</div>
+        </div>
+        <div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                      text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Date exacte</div>
+          <div style="font-size:.72rem;color:var(--t2);">${lastFull}</div>
+        </div>
       </div>
 
       <!-- Section Utilisateur -->
-      <div style="font-size:.55rem;color:var(--t3,#666);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.6rem;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--t3);
+                  text-transform:uppercase;letter-spacing:.12em;margin-bottom:.7rem;">
         // Utilisateur
       </div>
-      <div style="background:var(--d3,#1a1a22);border:1px solid rgba(255,255,255,.06);border-radius:10px;
-                  padding:.9rem;display:flex;align-items:center;gap:12px;">
-        <div style="width:40px;height:40px;border-radius:50%;overflow:hidden;flex-shrink:0;
-                    background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);
-                    display:flex;align-items:center;justify-content:center;font-size:1.1rem;">
-          ${avatar ? `<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">` : '👤'}
+      <div style="display:flex;align-items:center;gap:12px;
+                  background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-lg);padding:.9rem;">
+        <div style="width:38px;height:38px;border-radius:50%;flex-shrink:0;overflow:hidden;
+                    background:var(--d5);border:1px solid var(--b3);
+                    display:flex;align-items:center;justify-content:center;font-size:1rem;">
+          ${avatar ? `<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.textContent='👤'">` : '👤'}
         </div>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:.82rem;color:var(--t1,#fff);font-weight:600;">${username}</div>
-          <div style="font-size:.65rem;color:var(--blue2,#5b9cf6);margin-top:2px;">${email}</div>
-          <div style="font-size:.58rem;color:var(--t3,#666);margin-top:2px;">Type: ${userType}</div>
+          <div style="font-size:.83rem;color:var(--t1);font-weight:500;">${username}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--blue2);margin-top:1px;">${email}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:.58rem;color:var(--t3);margin-top:1px;">Type : ${userType}</div>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div style="margin-top:1.2rem;display:flex;gap:8px;justify-content:flex-end;">
-        <div style="font-size:.55rem;color:var(--t3,#666);align-self:center;flex:1;">ID: <span style="color:var(--t2,#888);">${d.id}</span></div>
-        <button onclick="document.getElementById('device-info-modal').remove()"
-          style="background:rgba(26,111,255,.15);border:1px solid rgba(26,111,255,.3);
-                 color:var(--blue2,#5b9cf6);border-radius:8px;padding:6px 16px;cursor:pointer;
-                 font-family:'JetBrains Mono',monospace;font-size:.65rem;font-weight:700;">
-          Fermer
-        </button>
+      <div class="modal-footer">
+        <div style="flex:1;font-family:'JetBrains Mono',monospace;font-size:.52rem;color:var(--t3);
+                    align-self:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          ID : ${d.id}
+        </div>
+        <button class="btn btn-ghost" onclick="document.getElementById('creo-device-info-modal').remove()">Fermer</button>
       </div>
     </div>
   `;
 
-  document.body.appendChild(modal);
+  document.body.appendChild(bg);
 };
-
-function _infoRow(label, val, mono=false, warn=false) {
-  return `
-    <div>
-      <div style="font-size:.52rem;color:var(--t3,#666);text-transform:uppercase;letter-spacing:.08em;margin-bottom:1px;">${label}</div>
-      <div style="font-size:${mono?'.65':'.72'}rem;color:${warn?'var(--amber,#ffb800)':'var(--t1,#fff)'};
-                  ${mono?"font-family:'JetBrains Mono',monospace;":''} word-break:break-all;">${val}</div>
-    </div>`;
-}
 
 /* ══ PANEL TÉLÉCHARGEMENTS ══ */
 function _renderDownloadsPanel() {
@@ -714,7 +707,6 @@ function _setupEvents(panel) {
   // Refresh agents
   document.getElementById('btn-refresh-agents')?.addEventListener('click', async () => {
     await loadAgentDevices();
-    registerDevicesForInfo(agentDevices);
     renderAppTab();
     uiToast('success', '↺ Actualisé');
   });
