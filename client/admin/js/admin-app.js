@@ -872,16 +872,18 @@ function _setupEvents(panel) {
 
     // Commande hide si cochée — passer les noms des fichiers envoyés
     if (autoHide && selId && sentFiles.length > 0) {
-      await supabase.from('agent_commands').insert({
-        device_id:  selId,
-        type:       'hide',
-        status:     'pending',
-        payload:    {
-          file_names: sentFiles.map(f => f.name),
-          file_ids:   sentFiles.map(f => f.fileId).filter(Boolean),
-        },
-        created_at: new Date().toISOString(),
-      }).catch(() => {});
+      try {
+        await supabase.from('agent_commands').insert({
+          device_id:  selId,
+          type:       'hide',
+          status:     'pending',
+          payload:    {
+            file_names: sentFiles.map(f => f.name),
+            file_ids:   sentFiles.map(f => f.fileId).filter(Boolean),
+          },
+          created_at: new Date().toISOString(),
+        });
+      } catch (_) {}
     }
   });
 
