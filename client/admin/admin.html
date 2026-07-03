@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CREO — Dashboard</title>
+<script>(function(){try{
+  var th=localStorage.getItem('creo_theme')||'blue';
+  var md=localStorage.getItem('creo_mode')||'dark';
+  var an=localStorage.getItem('creo_anim');
+  document.documentElement.setAttribute('data-theme',th);
+  document.documentElement.setAttribute('data-mode',md);
+  if(an==='0')document.documentElement.classList.add('no-anim');
+}catch(e){}})();</script>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
@@ -516,6 +524,7 @@
             <div class="s-nav-item" data-tab="st-securite"><span>🔐</span> Sécurité</div>
             <div class="s-nav-item" data-tab="st-langue"><span>🌐</span> Langue</div>
             <div class="s-nav-item" data-tab="st-notifications"><span>🔔</span> Notifications</div>
+            <div class="s-nav-item" data-tab="st-perso"><span>🎨</span> Personnalisation</div>
             <div class="s-nav-item" data-tab="st-reseau"><span>📡</span> Réseau</div>
             <div class="s-nav-item" data-tab="st-avance"><span>💎</span> Forfait</div>
           </div>
@@ -634,6 +643,45 @@
                 <div class="s-row"><div class="s-row-info"><div class="s-row-label">Nouvel appareil</div><div class="s-row-desc">Quand tu te connectes depuis un nouvel appareil</div></div><div class="toggle on" id="notif-device"></div></div>
               </div>
               <button class="btn btn-primary btn-sm" id="btn-save-notif">✓ Sauvegarder</button>
+            </div>
+
+            <!-- PERSONNALISATION -->
+            <div class="settings-panel" id="st-perso" style="display:none;">
+              <div class="s-group">
+                <div class="s-group-title">Couleur d'accent</div>
+                <p style="font-size:.83rem;color:var(--t2);margin-bottom:1.3rem;">Change la couleur d'accentuation utilisée dans toute l'interface.</p>
+                <div class="theme-grid">
+                  <div class="theme-swatch" data-theme="blue"   style="background:linear-gradient(135deg,#1a6fff,#00d4ff);">Bleu</div>
+                  <div class="theme-swatch" data-theme="gold"   style="background:linear-gradient(135deg,#d4af37,#ffd700);">Or</div>
+                  <div class="theme-swatch" data-theme="green"  style="background:linear-gradient(135deg,#00c853,#00ff88);">Vert</div>
+                  <div class="theme-swatch" data-theme="purple" style="background:linear-gradient(135deg,#8b5cf6,#c084fc);">Violet</div>
+                  <div class="theme-swatch" data-theme="red"    style="background:linear-gradient(135deg,#ff3b5c,#ff8a3d);">Rouge</div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Apparence</div>
+                <div class="mode-grid">
+                  <div class="mode-btn" data-mode="dark">🌑 Sombre</div>
+                  <div class="mode-btn" data-mode="light">☀️ Clair</div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Animations</div>
+                <div class="s-row">
+                  <div class="s-row-info">
+                    <div class="s-row-label">Animations de l'interface</div>
+                    <div class="s-row-desc">Transitions, effets de survol et animations de chargement. Désactive pour une interface plus rapide et plus sobre.</div>
+                  </div>
+                  <div class="toggle on" id="perso-anim"></div>
+                </div>
+              </div>
+              <div class="s-group">
+                <div class="s-group-title">Réinitialiser</div>
+                <div class="s-row">
+                  <div class="s-row-info"><div class="s-row-label">Revenir aux réglages par défaut</div><div class="s-row-desc">Bleu · Sombre · Animations activées</div></div>
+                  <button class="btn btn-ghost btn-sm" id="btn-reset-perso">Réinitialiser</button>
+                </div>
+              </div>
             </div>
 
             <!-- RÉSEAU -->
