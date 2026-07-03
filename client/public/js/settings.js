@@ -330,9 +330,12 @@ window._creoLangs = (lang) => LANGS[lang] || LANGS.fr;
 
 /* ── Forfaits ── */
 const PLANS = {
-  free:     { label:'Gratuit / Free',   storage:1,  color:'var(--green)',  price:'0€' },
-  pro:      { label:'Pro',              storage:50, color:'var(--blue2)',  price:'4.99€/mois' },
-  business: { label:'Business',         storage:500,color:'var(--amber)',  price:'19.99€/mois' },
+  free:        { label:'Gratuit / Free',   storage:1,   color:'var(--green)',  price:'0€' },
+  pro:         { label:'Pro',              storage:50,  color:'var(--blue2)',  price:'4.99€/mois' },
+  business:    { label:'Business',         storage:500, color:'var(--amber)',  price:'19.99€/mois' },
+  equipe:      { label:'Équipe',           storage:1000,color:'var(--purple, #a855f7)', price:'—', internal:true },
+  'sous-admin':{ label:'Sous-admin',       storage:2000,color:'var(--red, #ef4444)',     price:'—', internal:true },
+  admin:       { label:'Admin',            storage:100000, color:'var(--red, #ef4444)',  price:'—', internal:true },
 };
 
 export function renderSettings() {
@@ -393,6 +396,22 @@ function renderPlanSection() {
   const current = state.profile?.type || 'free';
   const currentPlan = PLANS[current] || PLANS.free;
 
+  if (currentPlan.internal) {
+    planSection.innerHTML = `
+      <div style="margin-bottom:1.2rem;">
+        <div style="font-size:.82rem;color:var(--t2);margin-bottom:.8rem;">
+          Forfait actuel : <strong style="color:${currentPlan.color};">${currentPlan.label}</strong>
+          · Stockage : ${currentPlan.storage} GB
+        </div>
+      </div>
+      <div style="background:var(--d3);border:1px solid var(--b2);border-radius:var(--r-xl);padding:1.2rem;text-align:center;font-size:.8rem;color:var(--t2);">
+        Compte interne (${currentPlan.label}) — accès complet, aucune mise à niveau nécessaire.
+      </div>`;
+    return;
+  }
+
+  const purchasable = Object.entries(PLANS).filter(([, p]) => !p.internal);
+
   planSection.innerHTML = `
     <div style="margin-bottom:1.2rem;">
       <div style="font-size:.82rem;color:var(--t2);margin-bottom:.8rem;">
@@ -401,7 +420,7 @@ function renderPlanSection() {
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" id="plan-cards-grid">
-      ${Object.entries(PLANS).map(([key, p]) => {
+      ${purchasable.map(([key, p]) => {
         const isCurrent = key === current;
         return `<div style="background:${isCurrent?'rgba(26,111,255,.08)':'var(--d3)'};border:1px solid ${isCurrent?'rgba(26,111,255,.3)':'var(--b2)'};border-radius:var(--r-xl);padding:1.2rem;text-align:center;">
           <div style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--t3);text-transform:uppercase;margin-bottom:.4rem;">${p.label}</div>
@@ -488,7 +507,7 @@ export async function changePassword() {
 
 export async function uploadAvatar(file) {
   if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { uiToast('error', 'Max 2 MB'); return; }
+  if (file.size > 20 * 1024 * 1024) { uiToast('error', 'Max 20 MB'); return; }
   const prog = document.getElementById('avatar-prog');
   const fill = document.getElementById('avatar-prog-fill');
   if (prog) prog.style.display = 'block';
