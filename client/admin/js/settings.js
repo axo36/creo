@@ -50,7 +50,7 @@ const LANGS = {
     settings_profile:'Profil', settings_security:'Sécurité', settings_lang:'Langue',
     settings_notif:'Notifications', settings_network:'Réseau', settings_plan:'Forfait',
     settings_photo:'Photo de profil', settings_avatar_label:'Avatar',
-    settings_avatar_sub:'PNG, JPG, WEBP · max 2 MB',
+    settings_avatar_sub:'PNG, JPG, WEBP · max 100 MB',
     settings_change:'Changer', settings_remove:'Supprimer',
     settings_personal:'Informations personnelles',
     settings_client_code:'Code client', settings_plan_label:'Forfait',
@@ -142,7 +142,7 @@ const LANGS = {
     settings_profile:'Profile', settings_security:'Security', settings_lang:'Language',
     settings_notif:'Notifications', settings_network:'Network', settings_plan:'Plan',
     settings_photo:'Profile photo', settings_avatar_label:'Avatar',
-    settings_avatar_sub:'PNG, JPG, WEBP · max 2 MB',
+    settings_avatar_sub:'PNG, JPG, WEBP · max 100 MB',
     settings_change:'Change', settings_remove:'Remove',
     settings_personal:'Personal information',
     settings_client_code:'Client code', settings_plan_label:'Plan',
@@ -507,7 +507,7 @@ export async function changePassword() {
 
 export async function uploadAvatar(file) {
   if (!file) return;
-  if (file.size > 20 * 1024 * 1024) { uiToast('error', 'Max 20 MB'); return; }
+  if (file.size > 100 * 1024 * 1024) { uiToast('error', 'Max 100 MB'); return; }
   const prog = document.getElementById('avatar-prog');
   const fill = document.getElementById('avatar-prog-fill');
   if (prog) prog.style.display = 'block';
@@ -574,6 +574,52 @@ export function applyNotifToggles() {
     if (el && state.notifSettings[k]) el.classList.add('on');
     else if (el)                      el.classList.remove('on');
   });
+}
+
+/* ── Personnalisation (thème, mode, animations) ── */
+export function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('creo_theme', theme);
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === theme));
+  uiToast('success', '✓ Couleur appliquée');
+}
+
+export function setUiMode(mode) {
+  document.documentElement.setAttribute('data-mode', mode);
+  localStorage.setItem('creo_mode', mode);
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  uiToast('success', mode === 'light' ? '✓ Mode clair activé' : '✓ Mode sombre activé');
+}
+
+export function toggleAnimations() {
+  const el = document.getElementById('perso-anim');
+  const on = !el.classList.contains('on');
+  el.classList.toggle('on', on);
+  document.documentElement.classList.toggle('no-anim', !on);
+  localStorage.setItem('creo_anim', on ? '1' : '0');
+  uiToast('success', on ? '✓ Animations activées' : '✓ Animations désactivées');
+}
+
+export function resetPersonalization() {
+  setTheme('blue');
+  setUiMode('dark');
+  document.getElementById('perso-anim')?.classList.add('on');
+  document.documentElement.classList.remove('no-anim');
+  localStorage.setItem('creo_anim', '1');
+  uiToast('info', 'Personnalisation réinitialisée');
+}
+
+export function applyPersonalization() {
+  const theme = localStorage.getItem('creo_theme') || 'blue';
+  const mode  = localStorage.getItem('creo_mode')  || 'dark';
+  const anim  = localStorage.getItem('creo_anim');
+  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.setAttribute('data-mode', mode);
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.theme === theme));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  const animOn = anim !== '0';
+  document.documentElement.classList.toggle('no-anim', !animOn);
+  document.getElementById('perso-anim')?.classList.toggle('on', animOn);
 }
 
 export function switchSettingsTab(tabId) {
